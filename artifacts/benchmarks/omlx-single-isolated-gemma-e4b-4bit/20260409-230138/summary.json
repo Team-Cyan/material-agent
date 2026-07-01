@@ -1,0 +1,393 @@
+{
+  "run_dir": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-single-isolated-gemma-e4b-4bit/20260409-230138",
+  "attempts_path": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-single-isolated-gemma-e4b-4bit/20260409-230138/attempts.jsonl",
+  "result_root": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-single-isolated-gemma-e4b-4bit",
+  "mode": "single_fixture",
+  "repeat_count": 1,
+  "sample_paths": [
+    "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg"
+  ],
+  "cache_enabled": true,
+  "preflight_status": {
+    "instance_root": "/Users/lancer/.material-agent/omlx",
+    "model_dir": "/Users/lancer/.material-agent/omlx/models",
+    "cache_dir": "/Users/lancer/.material-agent/omlx/cache",
+    "active_models": [
+      "gemma-4-e4b-it-4bit"
+    ],
+    "linked_models": [
+      "Qwen3-VL-4B-Instruct-4bit",
+      "Qwen3-VL-8B-Instruct-4bit"
+    ],
+    "pid": 26752,
+    "pid_alive": false,
+    "reachable": true,
+    "instance_matches": false,
+    "served_models": [
+      "Qwen3-VL-4B-Instruct-4bit",
+      "Qwen3-VL-8B-Instruct-4bit",
+      "gemma-4-e2b-it-4bit",
+      "gemma-4-e4b-it-4bit",
+      "gemma-4-e4b-it-8bit"
+    ],
+    "base_url": "http://localhost:11435",
+    "cache_enabled": true,
+    "error": null,
+    "version": "0.3.4",
+    "structured_outputs": false,
+    "xgrammar": false,
+    "settings_drift": [
+      "linked models do not match configured active models",
+      "served models include models outside the linked set"
+    ],
+    "capability_profile": {
+      "reachable": true,
+      "version": "0.3.4",
+      "structured_outputs": false,
+      "xgrammar": false,
+      "served_models": [
+        "Qwen3-VL-4B-Instruct-4bit",
+        "Qwen3-VL-8B-Instruct-4bit",
+        "gemma-4-e2b-it-4bit",
+        "gemma-4-e4b-it-4bit",
+        "gemma-4-e4b-it-8bit"
+      ],
+      "linked_models": [
+        "Qwen3-VL-4B-Instruct-4bit",
+        "Qwen3-VL-8B-Instruct-4bit"
+      ],
+      "expected_models": [
+        "gemma-4-e4b-it-4bit"
+      ],
+      "instance_matches": false,
+      "settings_drift": [
+        "linked models do not match configured active models",
+        "served models include models outside the linked set"
+      ],
+      "error": null,
+      "active_structured_probe": false,
+      "active_structured_probe_error": "Client error '400 Bad Request' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+    },
+    "capability_valid": true,
+    "capability_failure": null,
+    "failure_guidance": "OMLX capability requirements are satisfied."
+  },
+  "runtime_contract_support": {
+    "server_version": "0.3.4",
+    "xgrammar_available": false,
+    "structured_outputs_available": false,
+    "response_format_json_schema_path": "prompt_injection_and_post_parse",
+    "structured_outputs_path": "not_available"
+  },
+  "results": [
+    {
+      "model": "gemma-4-e4b-it-4bit",
+      "mode": "single_fixture",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "gemma",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 768,
+        "vision_jpeg_quality": 92
+      },
+      "sample_path": "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+      "task_summaries": {
+        "fast": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 2914.76,
+          "quality_average": 0.0,
+          "failure_examples": []
+        },
+        "full": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 5478.66,
+          "quality_average": 0.0,
+          "failure_examples": []
+        },
+        "post": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 1878.18,
+          "quality_average": 5.0,
+          "failure_examples": []
+        }
+      },
+      "overall_json_success_rate": 1.0,
+      "overall_schema_success_rate": 1.0,
+      "overall_average_latency_ms": 3423.87,
+      "post_quality_average": 5.0,
+      "best_rank_key": [
+        1.0,
+        -5478.66,
+        5.0
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    },
+    {
+      "model": "gemma-4-e4b-it-4bit",
+      "mode": "single_fixture",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "gemma",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 1024,
+        "vision_jpeg_quality": 92
+      },
+      "sample_path": "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+      "task_summaries": {
+        "fast": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 1980.47,
+          "quality_average": 0.0,
+          "failure_examples": []
+        },
+        "full": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 5429.86,
+          "quality_average": 0.0,
+          "failure_examples": []
+        },
+        "post": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 1877.49,
+          "quality_average": 5.0,
+          "failure_examples": []
+        }
+      },
+      "overall_json_success_rate": 1.0,
+      "overall_schema_success_rate": 1.0,
+      "overall_average_latency_ms": 3095.94,
+      "post_quality_average": 5.0,
+      "best_rank_key": [
+        1.0,
+        -5429.86,
+        5.0
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    },
+    {
+      "model": "gemma-4-e4b-it-4bit",
+      "mode": "single_fixture",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "qwen3",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 768,
+        "vision_jpeg_quality": 92
+      },
+      "sample_path": "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+      "task_summaries": {
+        "fast": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 3525.32,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Empty or non-text OMLX structured response: {'role': 'assistant', 'content': None, 'reasoning_content': 'Thinking Process:\\n\\n1.  **Analyze the Request:** The user wants me to act as a \"strict photography pre-screening assistant.\" I need to analyze the provided image and return a single JSON object following the `material_agent.fast_score` schema.\\n2.  **Analyze the Schema:** The required schema is `{\"overall\": <number from 0.0 to 10.0>}`.\\n3.  **Analyze', 'tool_calls': None}",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "full": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 4592.3,
+          "quality_average": 0.0,
+          "failure_examples": []
+        },
+        "post": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 2013.02,
+          "quality_average": 5.0,
+          "failure_examples": []
+        }
+      },
+      "overall_json_success_rate": 0.6667,
+      "overall_schema_success_rate": 0.6667,
+      "overall_average_latency_ms": 3376.88,
+      "post_quality_average": 5.0,
+      "best_rank_key": [
+        0.666667,
+        -4592.3,
+        5.0
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    },
+    {
+      "model": "gemma-4-e4b-it-4bit",
+      "mode": "single_fixture",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "qwen3",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 1024,
+        "vision_jpeg_quality": 92
+      },
+      "sample_path": "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+      "task_summaries": {
+        "fast": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 3547.24,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Empty or non-text OMLX structured response: {'role': 'assistant', 'content': None, 'reasoning_content': 'Thinking Process:\\n\\n1.  **Analyze the Request:** The user wants me to act as a \"strict photography pre-screening assistant.\" I need to evaluate an image (which is implied by the context, although the image itself is not provided in the prompt, I must assume I have analyzed it based on the prompt structure). I must output a single JSON object matching the `material_agent.fast_score` schema.\\n2.  **Analyze the', 'tool_calls': None}",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "full": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 4592.89,
+          "quality_average": 0.0,
+          "failure_examples": []
+        },
+        "post": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 2011.13,
+          "quality_average": 5.0,
+          "failure_examples": []
+        }
+      },
+      "overall_json_success_rate": 0.6667,
+      "overall_schema_success_rate": 0.6667,
+      "overall_average_latency_ms": 3383.75,
+      "post_quality_average": 5.0,
+      "best_rank_key": [
+        0.666667,
+        -4592.89,
+        5.0
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    }
+  ],
+  "best_by_model": {
+    "gemma-4-e4b-it-4bit": {
+      "model": "gemma-4-e4b-it-4bit",
+      "mode": "single_fixture",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "gemma",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 1024,
+        "vision_jpeg_quality": 92
+      },
+      "sample_path": "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+      "task_summaries": {
+        "fast": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 1980.47,
+          "quality_average": 0.0,
+          "failure_examples": []
+        },
+        "full": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 5429.86,
+          "quality_average": 0.0,
+          "failure_examples": []
+        },
+        "post": {
+          "attempt_count": 1,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 1877.49,
+          "quality_average": 5.0,
+          "failure_examples": []
+        }
+      },
+      "overall_json_success_rate": 1.0,
+      "overall_schema_success_rate": 1.0,
+      "overall_average_latency_ms": 3095.94,
+      "post_quality_average": 5.0,
+      "best_rank_key": [
+        1.0,
+        -5429.86,
+        5.0
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    }
+  }
+}

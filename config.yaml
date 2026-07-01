@@ -1,0 +1,181 @@
+# ---------------------------------------------------------------------------
+# material-agent NAS-first runtime profile
+#
+# Design target:
+#   - no Ollama or OMLX service dependency in the default path
+#   - Intel iGPU first through OpenVINO / ONNX Runtime provider work
+#   - CPU fallback must remain valid for any NAS
+# ---------------------------------------------------------------------------
+backend: local
+output_language: zh
+log_level: info
+commentary_enabled: false
+input_dir: "/path/to/photos"
+reprocess: false
+raw_extensions: [ARW, CR3, NEF, RAF, DNG, ORF, RW2]
+
+local:
+  # Local backend is the only default backend in material-agent. It currently
+  # provides deterministic heuristics and is the seam for ONNX/OpenVINO scorers.
+  max_concurrent: 1
+
+inference:
+  # First implementation target: Intel CPU + integrated/discrete GPU through
+  # OpenVINO. Later tags can add CUDA, MIGraphX, and native Apple providers
+  # without changing the scoring pipeline contract.
+  runtime: openvino
+  device: "AUTO:GPU,CPU"
+  fallback_device: "CPU"
+  model_cache_dir: "~/.material-agent/models"
+  provider_tags: [intel-openvino, cpu]
+
+grouping:
+  enabled: true
+  time_gap_seconds: 30
+  visual_similarity:
+    enabled: true
+    hash_threshold: 10
+    max_merge_gap_minutes: 10
+  group_guard:
+    enabled: true
+    min_score: 7.0
+
+preview:
+  max_size: 1024
+  jpeg_quality: 85
+
+scorers:
+  exposure:
+    enabled: true
+    weight: 0.25
+    min_score: 0.0
+    overexpose_threshold: 0.02
+    overexpose_hard_limit: 2.0
+    underexpose_threshold: 0.20
+    underexpose_hard_limit: 2.0
+  sharpness:
+    enabled: true
+    weight: 0.20
+    min_score: 0.0
+    min_variance: 50
+    max_variance: 1000
+  subject:
+    enabled: true
+  composition:
+    enabled: true
+  lighting:
+    enabled: true
+  color:
+    enabled: true
+  clarity:
+    enabled: true
+  depth:
+    enabled: true
+  mood:
+    enabled: true
+
+scoring:
+  pixel_weight: 0.35
+  vision_weight: 0.65
+
+screening:
+  # Keep MUSIQ as an optional quality gate while the OpenVINO scorer is being
+  # implemented. If torch/pyiqa is unavailable, the run logs the skip and
+  # continues through the local scoring path.
+  enabled: true
+  backend: musiq
+  tier1_threshold: 0.5
+  tier2_threshold: 0.25
+  musiq:
+    metric: musiq
+    device: cpu
+    score_divisor: 10.0
+    python_bin: "~/.material-agent/musiq-venv/bin/python"
+
+review_pipeline:
+  score_prefetch_window: 2
+
+decision_policy:
+  keep_threshold: 7.5
+  review_threshold: 5.5
+  hard_reject:
+    technical_quality_below: 1.5
+    subject_focus_below: 1.5
+
+screening_policy:
+  weight: 0.10
+  top1_review_fallback: true
+
+scene_weights:
+  default:
+    subject: 0.18
+    composition: 0.17
+    lighting: 0.16
+    color: 0.14
+    clarity: 0.17
+    depth: 0.08
+    mood: 0.10
+  people:
+    subject: 0.28
+    composition: 0.15
+    lighting: 0.15
+    color: 0.10
+    clarity: 0.20
+    depth: 0.05
+    mood: 0.07
+  sports:
+    subject: 0.25
+    composition: 0.13
+    lighting: 0.12
+    color: 0.08
+    clarity: 0.25
+    depth: 0.07
+    mood: 0.10
+  landscape:
+    subject: 0.08
+    composition: 0.22
+    lighting: 0.20
+    color: 0.18
+    clarity: 0.12
+    depth: 0.12
+    mood: 0.08
+  city:
+    subject: 0.10
+    composition: 0.22
+    lighting: 0.18
+    color: 0.14
+    clarity: 0.12
+    depth: 0.12
+    mood: 0.12
+  indoor:
+    subject: 0.20
+    composition: 0.17
+    lighting: 0.20
+    color: 0.14
+    clarity: 0.15
+    depth: 0.05
+    mood: 0.09
+  detail:
+    subject: 0.20
+    composition: 0.20
+    lighting: 0.16
+    color: 0.16
+    clarity: 0.18
+    depth: 0.05
+    mood: 0.05
+  animals:
+    subject: 0.28
+    composition: 0.14
+    lighting: 0.14
+    color: 0.10
+    clarity: 0.22
+    depth: 0.05
+    mood: 0.07
+  other:
+    subject: 0.18
+    composition: 0.17
+    lighting: 0.16
+    color: 0.14
+    clarity: 0.17
+    depth: 0.08
+    mood: 0.10

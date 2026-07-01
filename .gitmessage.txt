@@ -1,0 +1,14 @@
+# type(scope): summary
+#
+# Examples:
+# feat(cli): add export command
+# fix(writer): preserve user keywords in XMP
+# refactor(pipeline): split async scoring and write flow
+# docs(ai): update shared AI guidance
+# chore(git): refine ignore rules
+#
+# Recommended types:
+# feat, fix, refactor, test, docs, chore, perf
+#
+# Recommended scopes:
+# pipeline, writer, state, scorer, vision, cli, config, ai, git, tests

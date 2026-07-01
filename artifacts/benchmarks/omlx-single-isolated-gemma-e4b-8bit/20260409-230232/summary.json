@@ -1,0 +1,471 @@
+{
+  "run_dir": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-single-isolated-gemma-e4b-8bit/20260409-230232",
+  "attempts_path": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-single-isolated-gemma-e4b-8bit/20260409-230232/attempts.jsonl",
+  "result_root": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-single-isolated-gemma-e4b-8bit",
+  "mode": "single_fixture",
+  "repeat_count": 1,
+  "sample_paths": [
+    "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg"
+  ],
+  "cache_enabled": true,
+  "preflight_status": {
+    "instance_root": "/Users/lancer/.material-agent/omlx",
+    "model_dir": "/Users/lancer/.material-agent/omlx/models",
+    "cache_dir": "/Users/lancer/.material-agent/omlx/cache",
+    "active_models": [
+      "gemma-4-e4b-it-8bit"
+    ],
+    "linked_models": [
+      "Qwen3-VL-4B-Instruct-4bit",
+      "Qwen3-VL-8B-Instruct-4bit"
+    ],
+    "pid": 26752,
+    "pid_alive": false,
+    "reachable": true,
+    "instance_matches": false,
+    "served_models": [
+      "Qwen3-VL-4B-Instruct-4bit",
+      "Qwen3-VL-8B-Instruct-4bit",
+      "gemma-4-e2b-it-4bit",
+      "gemma-4-e4b-it-4bit",
+      "gemma-4-e4b-it-8bit"
+    ],
+    "base_url": "http://localhost:11435",
+    "cache_enabled": true,
+    "error": null,
+    "version": "0.3.4",
+    "structured_outputs": null,
+    "xgrammar": null,
+    "settings_drift": [
+      "linked models do not match configured active models",
+      "served models include models outside the linked set"
+    ],
+    "capability_profile": {
+      "reachable": true,
+      "version": "0.3.4",
+      "structured_outputs": null,
+      "xgrammar": null,
+      "served_models": [
+        "Qwen3-VL-4B-Instruct-4bit",
+        "Qwen3-VL-8B-Instruct-4bit",
+        "gemma-4-e2b-it-4bit",
+        "gemma-4-e4b-it-4bit",
+        "gemma-4-e4b-it-8bit"
+      ],
+      "linked_models": [
+        "Qwen3-VL-4B-Instruct-4bit",
+        "Qwen3-VL-8B-Instruct-4bit"
+      ],
+      "expected_models": [
+        "gemma-4-e4b-it-8bit"
+      ],
+      "instance_matches": false,
+      "settings_drift": [
+        "linked models do not match configured active models",
+        "served models include models outside the linked set"
+      ],
+      "error": null,
+      "active_structured_probe": null,
+      "active_structured_probe_error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507"
+    },
+    "capability_valid": true,
+    "capability_failure": null,
+    "failure_guidance": "OMLX capability requirements are satisfied."
+  },
+  "runtime_contract_support": {
+    "server_version": "0.3.4",
+    "xgrammar_available": false,
+    "structured_outputs_available": false,
+    "response_format_json_schema_path": "prompt_injection_and_post_parse",
+    "structured_outputs_path": "not_available"
+  },
+  "results": [
+    {
+      "model": "gemma-4-e4b-it-8bit",
+      "mode": "single_fixture",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "gemma",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 768,
+        "vision_jpeg_quality": 92
+      },
+      "sample_path": "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+      "task_summaries": {
+        "fast": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 21.5,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "full": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 20.84,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "post": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 15.7,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        }
+      },
+      "overall_json_success_rate": 0.0,
+      "overall_schema_success_rate": 0.0,
+      "overall_average_latency_ms": 19.35,
+      "post_quality_average": 0.0,
+      "best_rank_key": [
+        0.0,
+        -20.84,
+        0.0
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    },
+    {
+      "model": "gemma-4-e4b-it-8bit",
+      "mode": "single_fixture",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "gemma",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 1024,
+        "vision_jpeg_quality": 92
+      },
+      "sample_path": "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+      "task_summaries": {
+        "fast": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 18.9,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "full": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 19.27,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "post": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 16.61,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        }
+      },
+      "overall_json_success_rate": 0.0,
+      "overall_schema_success_rate": 0.0,
+      "overall_average_latency_ms": 18.26,
+      "post_quality_average": 0.0,
+      "best_rank_key": [
+        0.0,
+        -19.27,
+        0.0
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    },
+    {
+      "model": "gemma-4-e4b-it-8bit",
+      "mode": "single_fixture",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "qwen3",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 768,
+        "vision_jpeg_quality": 92
+      },
+      "sample_path": "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+      "task_summaries": {
+        "fast": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 16.35,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "full": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 17.0,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "post": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 16.19,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        }
+      },
+      "overall_json_success_rate": 0.0,
+      "overall_schema_success_rate": 0.0,
+      "overall_average_latency_ms": 16.51,
+      "post_quality_average": 0.0,
+      "best_rank_key": [
+        0.0,
+        -17.0,
+        0.0
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    },
+    {
+      "model": "gemma-4-e4b-it-8bit",
+      "mode": "single_fixture",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "qwen3",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 1024,
+        "vision_jpeg_quality": 92
+      },
+      "sample_path": "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+      "task_summaries": {
+        "fast": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 19.12,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "full": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 19.58,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "post": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 14.42,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        }
+      },
+      "overall_json_success_rate": 0.0,
+      "overall_schema_success_rate": 0.0,
+      "overall_average_latency_ms": 17.71,
+      "post_quality_average": 0.0,
+      "best_rank_key": [
+        0.0,
+        -19.58,
+        0.0
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    }
+  ],
+  "best_by_model": {
+    "gemma-4-e4b-it-8bit": {
+      "model": "gemma-4-e4b-it-8bit",
+      "mode": "single_fixture",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "qwen3",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 768,
+        "vision_jpeg_quality": 92
+      },
+      "sample_path": "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+      "task_summaries": {
+        "fast": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 16.35,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "full": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 17.0,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        },
+        "post": {
+          "attempt_count": 1,
+          "json_success_rate": 0.0,
+          "schema_success_rate": 0.0,
+          "average_latency_ms": 16.19,
+          "quality_average": 0.0,
+          "failure_examples": [
+            {
+              "iteration": 1,
+              "error": "Server error '507 Insufficient Storage' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/507",
+              "raw_preview": ""
+            }
+          ]
+        }
+      },
+      "overall_json_success_rate": 0.0,
+      "overall_schema_success_rate": 0.0,
+      "overall_average_latency_ms": 16.51,
+      "post_quality_average": 0.0,
+      "best_rank_key": [
+        0.0,
+        -17.0,
+        0.0
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    }
+  }
+}

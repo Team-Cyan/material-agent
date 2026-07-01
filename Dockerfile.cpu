@@ -1,0 +1,42 @@
+# syntax=docker/dockerfile:1.7
+
+ARG AGENT_PYTHON_UV_BASE=ghcr.io/astral-sh/uv:python3.14-trixie
+FROM ${AGENT_PYTHON_UV_BASE}
+
+ARG VERSION=0.4.0
+ARG REVISION=unknown
+ARG BUILD_DATE=unknown
+
+LABEL org.opencontainers.image.title="material-agent" \
+    org.opencontainers.image.description="NAS-first local photo culling and scoring agent" \
+    org.opencontainers.image.version="${VERSION}" \
+    org.opencontainers.image.revision="${REVISION}" \
+    org.opencontainers.image.created="${BUILD_DATE}"
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_LINK_MODE=copy \
+    UV_PROJECT_ENVIRONMENT=/usr/local \
+    MATERIAL_AGENT_CONFIG=/app/config/config.yaml \
+    MATERIAL_AGENT_WORK_DIR=/app/.material-agent
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libimage-exiftool-perl \
+        libgl1 \
+        libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY pyproject.toml uv.lock README.md /app/
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --extra cpu --no-dev --no-editable --no-install-project
+
+COPY src /app/src
+COPY docker /app/docker
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --extra cpu --no-dev --no-editable \
+    && chmod +x /app/docker/entrypoint.sh
+
+ENTRYPOINT ["/app/docker/entrypoint.sh"]

@@ -1,0 +1,203 @@
+{
+  "run_dir": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-kv-isolated-qwen8/20260409-230610",
+  "attempts_path": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-kv-isolated-qwen8/20260409-230610/attempts.jsonl",
+  "result_root": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-kv-isolated-qwen8",
+  "mode": "kv_cache_batch",
+  "repeat_count": 10,
+  "sample_paths": [
+    "/private/tmp/omlx-bench-samples/20241229_133026_01.jpg",
+    "/private/tmp/omlx-bench-samples/20241229_133057_01.jpg",
+    "/private/tmp/omlx-bench-samples/20241229_135515_01.jpg",
+    "/private/tmp/omlx-bench-samples/20241229_144450_01.jpg",
+    "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+    "/private/tmp/omlx-bench-samples/20241229_173103_01.jpg",
+    "/private/tmp/omlx-bench-samples/20241229_174644_01.jpg",
+    "/private/tmp/omlx-bench-samples/20241229_183646_01.jpg"
+  ],
+  "cache_enabled": true,
+  "preflight_status": {
+    "instance_root": "/Users/lancer/.material-agent/omlx",
+    "model_dir": "/Users/lancer/.material-agent/omlx/models",
+    "cache_dir": "/Users/lancer/.material-agent/omlx/cache",
+    "active_models": [
+      "Qwen3-VL-8B-Instruct-4bit"
+    ],
+    "linked_models": [
+      "Qwen3-VL-4B-Instruct-4bit",
+      "Qwen3-VL-8B-Instruct-4bit"
+    ],
+    "pid": 26752,
+    "pid_alive": false,
+    "reachable": true,
+    "instance_matches": false,
+    "served_models": [
+      "Qwen3-VL-4B-Instruct-4bit",
+      "Qwen3-VL-8B-Instruct-4bit",
+      "gemma-4-e2b-it-4bit",
+      "gemma-4-e4b-it-4bit",
+      "gemma-4-e4b-it-8bit"
+    ],
+    "base_url": "http://localhost:11435",
+    "cache_enabled": true,
+    "error": null,
+    "version": "0.3.4",
+    "structured_outputs": false,
+    "xgrammar": false,
+    "settings_drift": [
+      "linked models do not match configured active models",
+      "served models include models outside the linked set"
+    ],
+    "capability_profile": {
+      "reachable": true,
+      "version": "0.3.4",
+      "structured_outputs": false,
+      "xgrammar": false,
+      "served_models": [
+        "Qwen3-VL-4B-Instruct-4bit",
+        "Qwen3-VL-8B-Instruct-4bit",
+        "gemma-4-e2b-it-4bit",
+        "gemma-4-e4b-it-4bit",
+        "gemma-4-e4b-it-8bit"
+      ],
+      "linked_models": [
+        "Qwen3-VL-4B-Instruct-4bit",
+        "Qwen3-VL-8B-Instruct-4bit"
+      ],
+      "expected_models": [
+        "Qwen3-VL-8B-Instruct-4bit"
+      ],
+      "instance_matches": false,
+      "settings_drift": [
+        "linked models do not match configured active models",
+        "served models include models outside the linked set"
+      ],
+      "error": null,
+      "active_structured_probe": false,
+      "active_structured_probe_error": "Client error '400 Bad Request' for url 'http://localhost:11435/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+    },
+    "capability_valid": true,
+    "capability_failure": null,
+    "failure_guidance": "OMLX capability requirements are satisfied."
+  },
+  "runtime_contract_support": {
+    "server_version": "0.3.4",
+    "xgrammar_available": false,
+    "structured_outputs_available": false,
+    "response_format_json_schema_path": "prompt_injection_and_post_parse",
+    "structured_outputs_path": "not_available"
+  },
+  "results": [
+    {
+      "model": "Qwen3-VL-8B-Instruct-4bit",
+      "mode": "kv_cache_batch",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "qwen3",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 1024,
+        "vision_jpeg_quality": 92
+      },
+      "sample_count": 8,
+      "sample_paths": [
+        "/private/tmp/omlx-bench-samples/20241229_133026_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_133057_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_135515_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_144450_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_173103_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_174644_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_183646_01.jpg"
+      ],
+      "task_summaries": {
+        "kv_full": {
+          "attempt_count": 8,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 12585.45,
+          "quality_average": 0.0,
+          "failure_examples": [],
+          "first_latency_ms": 14015.34,
+          "subsequent_average_latency_ms": 12381.18,
+          "cache_speedup_ms": 1634.16
+        }
+      },
+      "overall_json_success_rate": 1.0,
+      "overall_schema_success_rate": 1.0,
+      "overall_average_latency_ms": 12585.45,
+      "best_rank_key": [
+        1.0,
+        -12585.45,
+        -12381.18
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    }
+  ],
+  "best_by_model": {
+    "Qwen3-VL-8B-Instruct-4bit": {
+      "model": "Qwen3-VL-8B-Instruct-4bit",
+      "mode": "kv_cache_batch",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "qwen3",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 1024,
+        "vision_jpeg_quality": 92
+      },
+      "sample_count": 8,
+      "sample_paths": [
+        "/private/tmp/omlx-bench-samples/20241229_133026_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_133057_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_135515_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_144450_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_173103_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_174644_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_183646_01.jpg"
+      ],
+      "task_summaries": {
+        "kv_full": {
+          "attempt_count": 8,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 12585.45,
+          "quality_average": 0.0,
+          "failure_examples": [],
+          "first_latency_ms": 14015.34,
+          "subsequent_average_latency_ms": 12381.18,
+          "cache_speedup_ms": 1634.16
+        }
+      },
+      "overall_json_success_rate": 1.0,
+      "overall_schema_success_rate": 1.0,
+      "overall_average_latency_ms": 12585.45,
+      "best_rank_key": [
+        1.0,
+        -12585.45,
+        -12381.18
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    }
+  }
+}

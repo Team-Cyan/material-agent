@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Poetry
+poetry.lock
+
+# material-agent runtime artefacts
+material-agent.db
+material-agent.log
+*.xmp
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Claude Code
+.claude/
+.claude/settings.local.json
+
+# Git worktrees
+.worktrees/
+
+# Docs (generated)
+docs/*
+!docs/module-map.md
+!docs/harness-runbook.md
+!docs/omlx-model-profiles.md
+!docs/omlx-benchmark-matrix.md
+!docs/README.md
+!docs/roadmap.md
+!docs/operations/
+!docs/operations/**
+!docs/ai/
+!docs/ai/**
+!docs/superpowers/
+!docs/superpowers/**

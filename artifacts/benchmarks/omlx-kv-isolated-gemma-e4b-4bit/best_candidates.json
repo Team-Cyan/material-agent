@@ -1,0 +1,59 @@
+{
+  "gemma-4-e4b-it-4bit": {
+    "kv_cache_batch": {
+      "model": "gemma-4-e4b-it-4bit",
+      "mode": "kv_cache_batch",
+      "candidate": {
+        "contract_mode": "response_format_json_schema",
+        "prompt_preset": "gemma",
+        "vision_temperature": 0.0,
+        "commentary_temperature": 0.0,
+        "vision_max_tokens": 192,
+        "post_commentary_max_tokens": 160,
+        "enable_thinking": false,
+        "image_max_edge": 1024,
+        "vision_jpeg_quality": 92
+      },
+      "sample_count": 8,
+      "sample_paths": [
+        "/private/tmp/omlx-bench-samples/20241229_133026_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_133057_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_135515_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_144450_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_162413_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_173103_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_174644_01.jpg",
+        "/private/tmp/omlx-bench-samples/20241229_183646_01.jpg"
+      ],
+      "task_summaries": {
+        "kv_full": {
+          "attempt_count": 8,
+          "json_success_rate": 1.0,
+          "schema_success_rate": 1.0,
+          "average_latency_ms": 5773.25,
+          "quality_average": 0.0,
+          "failure_examples": [],
+          "first_latency_ms": 6873.89,
+          "subsequent_average_latency_ms": 5616.01,
+          "cache_speedup_ms": 1257.88
+        }
+      },
+      "overall_json_success_rate": 1.0,
+      "overall_schema_success_rate": 1.0,
+      "overall_average_latency_ms": 5773.25,
+      "best_rank_key": [
+        1.0,
+        -5773.25,
+        -5616.01
+      ],
+      "contract_execution": {
+        "requested_contract_mode": "response_format_json_schema",
+        "effective_constraint_path": "prompt_injection_and_post_parse",
+        "server_version": "0.3.4",
+        "xgrammar_available": false,
+        "structured_outputs_available": false,
+        "note": "response_format json_schema falls back to JSON-only prompt injection plus post-parse validation on this runtime."
+      }
+    }
+  }
+}
