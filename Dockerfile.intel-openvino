@@ -27,6 +27,10 @@ RUN apt-get update \
         libimage-exiftool-perl \
         libgl1 \
         libglib2.0-0 \
+        ocl-icd-libopencl1 \
+        intel-opencl-icd \
+        intel-level-zero-gpu \
+        libze1 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml uv.lock README.md /app/
