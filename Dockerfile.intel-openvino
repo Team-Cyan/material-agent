@@ -42,6 +42,15 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ./*.deb \
     && rm -rf /tmp/intel-gpu /var/lib/apt/lists/*
 
+ARG DINOV3_REVISION=48988dfe73065df8d6f5ccc0edc7c8bcf307de41
+RUN mkdir -p /opt/material-agent/models/dinov3-vits16/onnx \
+    && curl -fL "https://huggingface.co/onnx-community/dinov3-vits16-pretrain-lvd1689m-ONNX/resolve/${DINOV3_REVISION}/onnx/model_quantized.onnx" \
+        -o /opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx \
+    && curl -fL "https://huggingface.co/onnx-community/dinov3-vits16-pretrain-lvd1689m-ONNX/resolve/${DINOV3_REVISION}/onnx/model_quantized.onnx_data" \
+        -o /opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx_data \
+    && curl -fL "https://huggingface.co/onnx-community/dinov3-vits16-pretrain-lvd1689m-ONNX/resolve/${DINOV3_REVISION}/preprocessor_config.json" \
+        -o /opt/material-agent/models/dinov3-vits16/preprocessor_config.json
+
 COPY pyproject.toml uv.lock README.md /app/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen \
