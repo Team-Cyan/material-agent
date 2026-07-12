@@ -56,6 +56,12 @@ class ReviewRunService:
             files = file_paths
             if files is None:
                 files = scan_arw_files(str(input_path), config.get("raw_extensions"))
+            max_files = config.get("review_pipeline", {}).get("max_files")
+            if max_files is not None:
+                max_files = int(max_files)
+                if max_files < 1:
+                    raise ValueError("review_pipeline.max_files must be at least 1")
+                files = files[:max_files]
             pending_files = [file_path for file_path in files if not state.is_done(file_path)]
             executor = build_executor(
                 repository=self.repository,

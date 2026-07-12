@@ -171,6 +171,33 @@ def test_review_run_service_creates_runtime_records_and_runs_executor(tmp_path):
     assert tuple(job_row) == ("review_photos", "discover", "queued")
 
 
+def test_review_run_service_limits_deterministic_pilot_input(tmp_path):
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    service = ReviewRunService(repo)
+    called = {}
+
+    class _FakeState:
+        def is_done(self, _path):
+            return False
+
+    class _FakeExecutor:
+        def run(self, job_id, file_paths):
+            called["file_paths"] = list(file_paths)
+            return {"status": "finished"}
+
+    service.run(
+        input_dir="/tmp/photos",
+        config={"backend": "local", "review_pipeline": {"max_files": 2}},
+        state=_FakeState(),
+        progress=None,
+        dry_run=True,
+        file_paths=["/tmp/photos/a.ARW", "/tmp/photos/b.ARW", "/tmp/photos/c.ARW"],
+        build_executor=lambda **kwargs: _FakeExecutor(),
+    )
+
+    assert called["file_paths"] == ["/tmp/photos/a.ARW", "/tmp/photos/b.ARW"]
+
+
 def test_review_run_service_marks_session_finished_with_errors_from_job_result(tmp_path):
     repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
     service = ReviewRunService(repo)
