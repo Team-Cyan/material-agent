@@ -23,6 +23,20 @@ cpu = [
 intel-openvino = [
     "openvino>=2026.2,<2027",
 ]
+local-models = [
+    "open-clip-torch>=3.2,<4.0",
+    "torch>=2.8,<3.0",
+    "transformers>=5.0,<6.0",
+]
+quality-models = [
+    "pyiqa>=0.1.15,<0.2",
+    # PyIQA's CLIPIQA path still imports pkg_resources through openai-clip.
+    "setuptools>=70,<81",
+    "torch>=2.8,<3.0",
+]
+face-models = [
+    "mediapipe>=0.10.31,<0.11",
+]
 
 [project.scripts]
 material-agent = "material_agent.shells.cli.main:main"

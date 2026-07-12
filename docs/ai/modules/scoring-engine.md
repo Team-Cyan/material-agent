@@ -2,7 +2,8 @@
 
 ## Purpose
 
-This module converts a decoded RAW preview plus backend responses into a stable `ScoreBundle`.
+This module converts a bounded image preview plus backend responses into a
+stable `ScoreBundle`.
 
 It owns score assembly, early rejection paths, scene-aware exposure rescoring, and layered signal generation.
 
@@ -16,7 +17,9 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 
 ## Responsibilities
 
-- decode RAW previews into grayscale and JPEG-ready data
+- decode bounded previews into grayscale and JPEG-ready data
+- prefer camera-embedded JPEG/thumbnail data before falling back to RAW
+  half-size postprocess
 - run local pixel scorers
 - optionally run fast screening
 - call the backend client for vision dimensions
@@ -32,7 +35,8 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 
 ## Inputs
 
-- `RawFrame`
+- `RawFrame` with JPEG bytes, grayscale preview, preview source, original size,
+  and preview size metadata
 - backend client implementing `BackendClient`
 - normalized config
 - optional fast-screening port
@@ -53,6 +57,8 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 - score bundle shape must remain compatible with runtime persistence and rewrite flows
 - rejection paths must still emit enough information for downstream summary and persistence
 - scene-aware exposure rescoring happens after the backend returns scene context
+- preview-derived focus signals must be identified as preview proxies when a
+  high-resolution ROI pass has not run
 
 ## Typical Safe Changes
 
@@ -60,6 +66,7 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 - add metadata to `ScoreBundle`
 - improve screening failure handling
 - adjust visible breakdown generation
+- add more preview metadata without changing sidecar output directly
 
 ## Risky Changes
 
@@ -88,3 +95,7 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 - The config contract is powerful but implicit; many scoring changes require careful reading of config normalization and constants.
 - The current VLM path is useful for structured scene/dimension scoring and explanation, but future culling improvements should be benchmarked as ranking work rather than assuming a larger VLM is the best main scorer.
 - Any learned scorer experiment should compare against the current `MUSIQ + VLM` path with group top-1 and pairwise preference metrics before replacing production scoring.
+- Focus integrity is currently a preview-proxy signal. It is suitable for obvious
+  blur rejection, but not for confirming eye focus on 30MP+ RAW captures. A
+  future candidate-only ROI pass should run after cheap group ranking and record
+  its own high-confidence focus signal.

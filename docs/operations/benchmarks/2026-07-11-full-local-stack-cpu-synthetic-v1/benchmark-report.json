@@ -1,0 +1,663 @@
+{
+  "schema_version": "material-agent.local-benchmark.v1",
+  "generated_at": "2026-07-11T08:15:40.666473+00:00",
+  "manifest": {
+    "path": "tests/fixtures/local_benchmark/manifest.yaml",
+    "sha256": "803184446eabd40d1b6dc818355f6405956ee8be77f845b2181402ddd9aa28cd",
+    "name": "synthetic-local-baseline",
+    "version": 1
+  },
+  "runtime": {
+    "backend": "local",
+    "scoring_mode": "hybrid",
+    "runtime": "cpu+open_clip:cpu+pyiqa:cpu+transformers:cpu+mediapipe:cpu",
+    "python": "3.14.3",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "repeat_count": 3,
+    "reject_threshold": 4.0,
+    "quality_reject_threshold": 5.0
+  },
+  "metrics": {
+    "item_count": 4,
+    "group_top1": {
+      "numerator": 1,
+      "total": 1,
+      "rate": 1.0
+    },
+    "pairwise_preference": {
+      "numerator": 3,
+      "total": 3,
+      "rate": 1.0
+    },
+    "reject_recall": {
+      "numerator": 1,
+      "total": 3,
+      "rate": 0.333333
+    },
+    "reject_false_negative_count": 2,
+    "scene_accuracy": {
+      "numerator": 4,
+      "total": 4,
+      "rate": 1.0
+    },
+    "scene_other_rate": {
+      "numerator": 1,
+      "total": 4,
+      "rate": 0.25
+    },
+    "face_positive_count": 2,
+    "face_recall": {
+      "numerator": 2,
+      "total": 2,
+      "rate": 1.0
+    },
+    "face_accuracy": {
+      "numerator": 4,
+      "total": 4,
+      "rate": 1.0
+    },
+    "screenshot_photo_separation": 0.795714,
+    "reject_prior_recall": {
+      "numerator": 2,
+      "total": 3,
+      "rate": 0.666667
+    },
+    "reject_prior_false_negative_count": 1,
+    "quality_pairwise_preference": {
+      "numerator": 2,
+      "total": 3,
+      "rate": 0.666667
+    },
+    "aesthetic_pairwise_preference": {
+      "numerator": 2,
+      "total": 3,
+      "rate": 0.666667
+    },
+    "embedding_same_group_top1": {
+      "numerator": 2,
+      "total": 2,
+      "rate": 1.0
+    },
+    "embedding_non_photo_photo_max_similarity": 0.000483,
+    "deterministic_scores": true,
+    "elapsed_seconds": 15.034839,
+    "cold_run_seconds": 9.222495,
+    "warm_p50_run_seconds": 2.906171,
+    "p50_run_seconds": 2.921404,
+    "images_per_second": 0.7981
+  },
+  "items": [
+    {
+      "id": "portrait-sharp",
+      "path": "portrait-sharp-source.png",
+      "group": "portrait-burst-001",
+      "score": 6.747143,
+      "scene": "people",
+      "scoring_mode": "hybrid",
+      "runtime": "cpu+open_clip:cpu+pyiqa:cpu+transformers:cpu+mediapipe:cpu",
+      "runtime_components": [
+        "cpu",
+        "open_clip:cpu",
+        "pyiqa:cpu",
+        "transformers:cpu",
+        "mediapipe:cpu"
+      ],
+      "model_stack": [
+        "MobileCLIP2-S0",
+        "brisque",
+        "niqe",
+        "musiq",
+        "nima",
+        "clipiqa+",
+        "facebook/dinov2-small",
+        "mediapipe-face-landmarker"
+      ],
+      "semantic": {
+        "status": "model",
+        "scene": "people",
+        "scene_raw": "people",
+        "confidence": 0.988251,
+        "non_photo": false,
+        "model_name": "MobileCLIP2-S0",
+        "model_version": "dfndr2b",
+        "runtime": "open_clip",
+        "device": "cpu",
+        "probabilities": {
+          "people": 0.988251,
+          "other": 0.011709,
+          "landscape": 3.6e-05,
+          "animal": 3e-06,
+          "sports": 1e-06,
+          "screenshot": 0.0,
+          "food": 0.0,
+          "indoor": 0.0,
+          "cityscape": 0.0
+        }
+      },
+      "quality": {
+        "status": "model",
+        "aggregate_score": 6.897487,
+        "aggregates": {
+          "reject_prior": 7.317328,
+          "quality": 7.478524,
+          "aesthetic": 5.89661
+        },
+        "signals": {
+          "brisque": {
+            "raw_score": -27.484192,
+            "normalized_score": 10.0,
+            "lower_better": true,
+            "raw_min": 0.0,
+            "raw_max": 100.0,
+            "weight": 0.5,
+            "role": "reject_prior"
+          },
+          "niqe": {
+            "raw_score": 5.365343,
+            "normalized_score": 4.634657,
+            "lower_better": true,
+            "raw_min": 0.0,
+            "raw_max": 10.0,
+            "weight": 0.5,
+            "role": "reject_prior"
+          },
+          "musiq": {
+            "raw_score": 74.78524,
+            "normalized_score": 7.478524,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 100.0,
+            "weight": 1.0,
+            "role": "quality"
+          },
+          "nima": {
+            "raw_score": 5.135404,
+            "normalized_score": 5.135404,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 10.0,
+            "weight": 0.5,
+            "role": "aesthetic"
+          },
+          "clipiqa+": {
+            "raw_score": 0.665782,
+            "normalized_score": 6.657816,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 1.0,
+            "weight": 0.5,
+            "role": "aesthetic"
+          }
+        },
+        "runtime": "pyiqa",
+        "device": "cpu",
+        "model_names": [
+          "brisque",
+          "niqe",
+          "musiq",
+          "nima",
+          "clipiqa+"
+        ],
+        "policy_version": "quality-priors-v1"
+      },
+      "embedding": {
+        "status": "model",
+        "dimensions": 384,
+        "model_name": "facebook/dinov2-small",
+        "model_version": "transformers",
+        "runtime": "transformers",
+        "device": "cpu"
+      },
+      "face": {
+        "status": "model",
+        "face_present": true,
+        "face_count": 1,
+        "max_face_area_ratio": 0.034603,
+        "landmark_counts": [
+          478
+        ],
+        "model_name": "mediapipe-face-landmarker",
+        "model_version": "face_landmarker.task",
+        "runtime": "mediapipe",
+        "device": "cpu"
+      },
+      "dimensions": {
+        "subject": 6.48,
+        "composition": 7.3,
+        "lighting": 7.66,
+        "color": 5.64,
+        "clarity": 6.23,
+        "depth": 7.12,
+        "mood": 6.8
+      }
+    },
+    {
+      "id": "portrait-motion-blur",
+      "path": "portrait-motion-blur-same-subject.png",
+      "group": "portrait-burst-001",
+      "score": 6.675714,
+      "scene": "people",
+      "scoring_mode": "hybrid",
+      "runtime": "cpu+open_clip:cpu+pyiqa:cpu+transformers:cpu+mediapipe:cpu",
+      "runtime_components": [
+        "cpu",
+        "open_clip:cpu",
+        "pyiqa:cpu",
+        "transformers:cpu",
+        "mediapipe:cpu"
+      ],
+      "model_stack": [
+        "MobileCLIP2-S0",
+        "brisque",
+        "niqe",
+        "musiq",
+        "nima",
+        "clipiqa+",
+        "facebook/dinov2-small",
+        "mediapipe-face-landmarker"
+      ],
+      "semantic": {
+        "status": "model",
+        "scene": "people",
+        "scene_raw": "people",
+        "confidence": 0.988216,
+        "non_photo": false,
+        "model_name": "MobileCLIP2-S0",
+        "model_version": "dfndr2b",
+        "runtime": "open_clip",
+        "device": "cpu",
+        "probabilities": {
+          "people": 0.988216,
+          "other": 0.011589,
+          "landscape": 0.000186,
+          "animal": 5e-06,
+          "sports": 5e-06,
+          "screenshot": 0.0,
+          "indoor": 0.0,
+          "food": 0.0,
+          "cityscape": 0.0
+        }
+      },
+      "quality": {
+        "status": "model",
+        "aggregate_score": 3.044109,
+        "aggregates": {
+          "reject_prior": 3.952689,
+          "quality": 1.853215,
+          "aesthetic": 3.326424
+        },
+        "signals": {
+          "brisque": {
+            "raw_score": 30.296082,
+            "normalized_score": 6.970392,
+            "lower_better": true,
+            "raw_min": 0.0,
+            "raw_max": 100.0,
+            "weight": 0.5,
+            "role": "reject_prior"
+          },
+          "niqe": {
+            "raw_score": 9.065015,
+            "normalized_score": 0.934985,
+            "lower_better": true,
+            "raw_min": 0.0,
+            "raw_max": 10.0,
+            "weight": 0.5,
+            "role": "reject_prior"
+          },
+          "musiq": {
+            "raw_score": 18.532146,
+            "normalized_score": 1.853215,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 100.0,
+            "weight": 1.0,
+            "role": "quality"
+          },
+          "nima": {
+            "raw_score": 4.451352,
+            "normalized_score": 4.451352,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 10.0,
+            "weight": 0.5,
+            "role": "aesthetic"
+          },
+          "clipiqa+": {
+            "raw_score": 0.22015,
+            "normalized_score": 2.201497,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 1.0,
+            "weight": 0.5,
+            "role": "aesthetic"
+          }
+        },
+        "runtime": "pyiqa",
+        "device": "cpu",
+        "model_names": [
+          "brisque",
+          "niqe",
+          "musiq",
+          "nima",
+          "clipiqa+"
+        ],
+        "policy_version": "quality-priors-v1"
+      },
+      "embedding": {
+        "status": "model",
+        "dimensions": 384,
+        "model_name": "facebook/dinov2-small",
+        "model_version": "transformers",
+        "runtime": "transformers",
+        "device": "cpu"
+      },
+      "face": {
+        "status": "model",
+        "face_present": true,
+        "face_count": 1,
+        "max_face_area_ratio": 0.054332,
+        "landmark_counts": [
+          478
+        ],
+        "model_name": "mediapipe-face-landmarker",
+        "model_version": "face_landmarker.task",
+        "runtime": "mediapipe",
+        "device": "cpu"
+      },
+      "dimensions": {
+        "subject": 6.35,
+        "composition": 7.3,
+        "lighting": 7.81,
+        "color": 5.61,
+        "clarity": 5.81,
+        "depth": 7.03,
+        "mood": 6.82
+      }
+    },
+    {
+      "id": "low-light-room",
+      "path": "low-light-room.png",
+      "group": "low-light-001",
+      "score": 4.668571,
+      "scene": "indoor",
+      "scoring_mode": "hybrid",
+      "runtime": "cpu+open_clip:cpu+pyiqa:cpu+transformers:cpu+mediapipe:cpu",
+      "runtime_components": [
+        "cpu",
+        "open_clip:cpu",
+        "pyiqa:cpu",
+        "transformers:cpu",
+        "mediapipe:cpu"
+      ],
+      "model_stack": [
+        "MobileCLIP2-S0",
+        "brisque",
+        "niqe",
+        "musiq",
+        "nima",
+        "clipiqa+",
+        "facebook/dinov2-small",
+        "mediapipe-face-landmarker"
+      ],
+      "semantic": {
+        "status": "model",
+        "scene": "indoor",
+        "scene_raw": "indoor",
+        "confidence": 0.932259,
+        "non_photo": false,
+        "model_name": "MobileCLIP2-S0",
+        "model_version": "dfndr2b",
+        "runtime": "open_clip",
+        "device": "cpu",
+        "probabilities": {
+          "indoor": 0.932259,
+          "other": 0.066922,
+          "food": 0.000762,
+          "people": 5.1e-05,
+          "animal": 5e-06,
+          "landscape": 0.0,
+          "sports": 0.0,
+          "screenshot": 0.0,
+          "cityscape": 0.0
+        }
+      },
+      "quality": {
+        "status": "model",
+        "aggregate_score": 4.481696,
+        "aggregates": {
+          "reject_prior": 6.896289,
+          "quality": 2.924894,
+          "aesthetic": 3.623905
+        },
+        "signals": {
+          "brisque": {
+            "raw_score": 9.37616,
+            "normalized_score": 9.062384,
+            "lower_better": true,
+            "raw_min": 0.0,
+            "raw_max": 100.0,
+            "weight": 0.5,
+            "role": "reject_prior"
+          },
+          "niqe": {
+            "raw_score": 5.269807,
+            "normalized_score": 4.730193,
+            "lower_better": true,
+            "raw_min": 0.0,
+            "raw_max": 10.0,
+            "weight": 0.5,
+            "role": "reject_prior"
+          },
+          "musiq": {
+            "raw_score": 29.248936,
+            "normalized_score": 2.924894,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 100.0,
+            "weight": 1.0,
+            "role": "quality"
+          },
+          "nima": {
+            "raw_score": 3.731753,
+            "normalized_score": 3.731753,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 10.0,
+            "weight": 0.5,
+            "role": "aesthetic"
+          },
+          "clipiqa+": {
+            "raw_score": 0.351606,
+            "normalized_score": 3.516056,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 1.0,
+            "weight": 0.5,
+            "role": "aesthetic"
+          }
+        },
+        "runtime": "pyiqa",
+        "device": "cpu",
+        "model_names": [
+          "brisque",
+          "niqe",
+          "musiq",
+          "nima",
+          "clipiqa+"
+        ],
+        "policy_version": "quality-priors-v1"
+      },
+      "embedding": {
+        "status": "model",
+        "dimensions": 384,
+        "model_name": "facebook/dinov2-small",
+        "model_version": "transformers",
+        "runtime": "transformers",
+        "device": "cpu"
+      },
+      "face": {
+        "status": "model",
+        "face_present": false,
+        "face_count": 0,
+        "max_face_area_ratio": 0.0,
+        "landmark_counts": [],
+        "model_name": "mediapipe-face-landmarker",
+        "model_version": "face_landmarker.task",
+        "runtime": "mediapipe",
+        "device": "cpu"
+      },
+      "dimensions": {
+        "subject": 4.1,
+        "composition": 6.32,
+        "lighting": 3.01,
+        "color": 4.9,
+        "clarity": 4.55,
+        "depth": 5.37,
+        "mood": 4.43
+      }
+    },
+    {
+      "id": "ui-screenshot",
+      "path": "ui-screenshot.png",
+      "group": "non-photo-001",
+      "score": 3.872857,
+      "scene": "other",
+      "scoring_mode": "hybrid",
+      "runtime": "cpu+open_clip:cpu+pyiqa:cpu+transformers:cpu+mediapipe:cpu",
+      "runtime_components": [
+        "cpu",
+        "open_clip:cpu",
+        "pyiqa:cpu",
+        "transformers:cpu",
+        "mediapipe:cpu"
+      ],
+      "model_stack": [
+        "MobileCLIP2-S0",
+        "brisque",
+        "niqe",
+        "musiq",
+        "nima",
+        "clipiqa+",
+        "facebook/dinov2-small",
+        "mediapipe-face-landmarker"
+      ],
+      "semantic": {
+        "status": "model",
+        "scene": "other",
+        "scene_raw": "screenshot",
+        "confidence": 0.999927,
+        "non_photo": true,
+        "model_name": "MobileCLIP2-S0",
+        "model_version": "dfndr2b",
+        "runtime": "open_clip",
+        "device": "cpu",
+        "probabilities": {
+          "screenshot": 0.999927,
+          "other": 7.2e-05,
+          "people": 0.0,
+          "indoor": 0.0,
+          "sports": 0.0,
+          "landscape": 0.0,
+          "food": 0.0,
+          "animal": 0.0,
+          "cityscape": 0.0
+        }
+      },
+      "quality": {
+        "status": "model",
+        "aggregate_score": 5.46807,
+        "aggregates": {
+          "reject_prior": 4.250964,
+          "quality": 6.580907,
+          "aesthetic": 5.57234
+        },
+        "signals": {
+          "brisque": {
+            "raw_score": 50.268738,
+            "normalized_score": 4.973126,
+            "lower_better": true,
+            "raw_min": 0.0,
+            "raw_max": 100.0,
+            "weight": 0.5,
+            "role": "reject_prior"
+          },
+          "niqe": {
+            "raw_score": 6.471199,
+            "normalized_score": 3.528801,
+            "lower_better": true,
+            "raw_min": 0.0,
+            "raw_max": 10.0,
+            "weight": 0.5,
+            "role": "reject_prior"
+          },
+          "musiq": {
+            "raw_score": 65.809074,
+            "normalized_score": 6.580907,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 100.0,
+            "weight": 1.0,
+            "role": "quality"
+          },
+          "nima": {
+            "raw_score": 5.173221,
+            "normalized_score": 5.173221,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 10.0,
+            "weight": 0.5,
+            "role": "aesthetic"
+          },
+          "clipiqa+": {
+            "raw_score": 0.597146,
+            "normalized_score": 5.971459,
+            "lower_better": false,
+            "raw_min": 0.0,
+            "raw_max": 1.0,
+            "weight": 0.5,
+            "role": "aesthetic"
+          }
+        },
+        "runtime": "pyiqa",
+        "device": "cpu",
+        "model_names": [
+          "brisque",
+          "niqe",
+          "musiq",
+          "nima",
+          "clipiqa+"
+        ],
+        "policy_version": "quality-priors-v1"
+      },
+      "embedding": {
+        "status": "model",
+        "dimensions": 384,
+        "model_name": "facebook/dinov2-small",
+        "model_version": "transformers",
+        "runtime": "transformers",
+        "device": "cpu"
+      },
+      "face": {
+        "status": "model",
+        "face_present": false,
+        "face_count": 0,
+        "max_face_area_ratio": 0.0,
+        "landmark_counts": [],
+        "model_name": "mediapipe-face-landmarker",
+        "model_version": "face_landmarker.task",
+        "runtime": "mediapipe",
+        "device": "cpu"
+      },
+      "dimensions": {
+        "subject": 3.09,
+        "composition": 6.22,
+        "lighting": 0.0,
+        "color": 4.66,
+        "clarity": 4.64,
+        "depth": 5.21,
+        "mood": 3.29
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+schema_version: material-agent.local-benchmark.v1
+name: synthetic-local-baseline
+version: 1
+provenance:
+  kind: ai-generated-synthetic-fixtures
+  generated_with: OpenAI built-in image generation
+  reviewed: true
+  intended_use: scoring regression tests only
+
+items:
+  - id: portrait-sharp
+    path: portrait-sharp-source.png
+    group: portrait-burst-001
+    labels:
+      scene: people
+      face_present: true
+      non_photo: false
+      reject: false
+  - id: portrait-motion-blur
+    path: portrait-motion-blur-same-subject.png
+    group: portrait-burst-001
+    labels:
+      scene: people
+      face_present: true
+      non_photo: false
+      reject: true
+  - id: low-light-room
+    path: low-light-room.png
+    group: low-light-001
+    labels:
+      scene: indoor
+      face_present: false
+      non_photo: false
+      reject: true
+  - id: ui-screenshot
+    path: ui-screenshot.png
+    group: non-photo-001
+    labels:
+      scene: other
+      face_present: false
+      non_photo: true
+      reject: true
+
+preferred_by_group:
+  portrait-burst-001: portrait-sharp
+
+pairwise_preferences:
+  - preferred: portrait-sharp
+    other: portrait-motion-blur
+  - preferred: portrait-sharp
+    other: low-light-room
+  - preferred: low-light-room
+    other: ui-screenshot

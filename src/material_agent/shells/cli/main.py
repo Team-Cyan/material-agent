@@ -66,6 +66,18 @@ def cmd_fix_db(args):
     return _cmd_fix_db(args)
 
 
+def cmd_benchmark_local(args):
+    from ...commands.benchmark import cmd_benchmark_local as _cmd_benchmark_local
+
+    return _cmd_benchmark_local(args)
+
+
+def cmd_prepare_openvino_model(args):
+    from ...commands.benchmark import cmd_prepare_openvino_model as _cmd_prepare_openvino_model
+
+    return _cmd_prepare_openvino_model(args)
+
+
 def configure_run_parser(parser) -> None:
     parser.add_argument("input_dir", help="Directory containing RAW files")
     parser.add_argument("--config", default="config.yaml")
@@ -74,7 +86,7 @@ def configure_run_parser(parser) -> None:
         "--dry-run",
         action="store_true",
         dest="dry_run",
-        help="Score files but skip writing XMP and DB",
+        help="Score files without XMP/processed writes; runtime job state is still recorded",
     )
     parser.add_argument("--scorers")
     parser.add_argument(
@@ -91,6 +103,37 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_run = sub.add_parser("run", help="Score photos")
     configure_run_parser(p_run)
+
+    p_benchmark = sub.add_parser(
+        "benchmark-local",
+        help="Run an isolated local heuristic benchmark from a fixture manifest",
+    )
+    p_benchmark.add_argument("--manifest", required=True)
+    p_benchmark.add_argument("--output-dir", required=True, dest="output_dir")
+    p_benchmark.add_argument(
+        "--config",
+        help="Optional local backend config used to enable benchmark model blocks",
+    )
+
+    p_prepare_openvino = sub.add_parser(
+        "prepare-openvino-model",
+        help="Materialize an ONNX external-data bundle for native OpenVINO loading",
+    )
+    p_prepare_openvino.add_argument("--source-model", required=True, dest="source_model")
+    p_prepare_openvino.add_argument(
+        "--source-processor", required=True, dest="source_processor"
+    )
+    p_prepare_openvino.add_argument("--output-dir", required=True, dest="output_dir")
+    p_benchmark.add_argument("--repeat-count", type=int, default=2, dest="repeat_count")
+    p_benchmark.add_argument(
+        "--reject-threshold", type=float, default=4.0, dest="reject_threshold"
+    )
+    p_benchmark.add_argument(
+        "--quality-reject-threshold",
+        type=float,
+        default=5.0,
+        dest="quality_reject_threshold",
+    )
 
     p_scan = sub.add_parser("scan-scenes", help="Show scene_raw distribution")
     p_scan.add_argument("--dir", required=True)
@@ -153,6 +196,10 @@ def main():
     parser = build_parser()
     args = parser.parse_args()
 
+    if args.command == "benchmark-local":
+        return cmd_benchmark_local(args)
+    if args.command == "prepare-openvino-model":
+        return cmd_prepare_openvino_model(args)
     if args.command == "scan-scenes":
         cmd_scan_scenes(args)
     elif args.command == "suggest-scenes":

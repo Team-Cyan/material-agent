@@ -23,9 +23,15 @@ The default config uses:
 - `backend: local`
 - `inference.runtime: openvino`
 - `inference.device: AUTO:GPU,CPU`
-- `.material-agent/state.db` under each processed photo folder
+- runtime state in `$MATERIAL_AGENT_WORK_DIR/state.db` when configured (the
+  Docker images default to `/app/.material-agent`); otherwise
+  `.material-agent/state.db` under the processed photo folder
 
-The first local backend is intentionally simple: it uses deterministic JPEG-preview heuristics as a safe stand-in while the OpenVINO/ONNX scorers are added. It lets the project run without a model server and gives the new architecture a clean seam.
+The local backend always retains deterministic JPEG-preview heuristics as its
+fallback. Optional learned blocks now provide MobileCLIP2 scene tags,
+BRISQUE/NIQE/MUSIQ/NIMA/CLIPIQA+ signals, DINO embeddings, and MediaPipe face
+structure. They remain disabled in the default config until broader real-camera
+calibration approves production promotion.
 
 ## Commands
 
@@ -43,6 +49,32 @@ Direct CLI:
 
 ```bash
 uv run material-agent run /path/to/photos --config config.yaml
+```
+
+For a read-only Docker pilot, mount the source library read-only and keep all
+runtime state in appdata:
+
+```bash
+docker run --rm --device /dev/dri \
+  -e MATERIAL_AGENT_INPUT_DIR=/photos \
+  -e MATERIAL_AGENT_WORK_DIR=/config \
+  -e MATERIAL_AGENT_DRY_RUN=true \
+  -v /mnt/user/material/photos:/photos:ro \
+  -v /mnt/user/appdata/material-agent:/config \
+  ghcr.io/team-cyan/material-agent:intel-openvino
+```
+
+Isolated benchmark and OpenVINO bundle preparation:
+
+```bash
+uv run material-agent benchmark-local \
+  --manifest tests/fixtures/local_benchmark/manifest.yaml \
+  --output-dir .local/benchmark
+
+uv run material-agent prepare-openvino-model \
+  --source-model /path/to/model.onnx \
+  --source-processor /path/to/processor \
+  --output-dir ~/.material-agent/models/model-name
 ```
 
 ## Dependency Model
@@ -75,11 +107,11 @@ Apple GPU acceleration should be native first. Docker's newer Model Runner can e
 
 ## Near-Term Work
 
-1. Add a native OpenVINO runtime adapter behind the `local` backend.
-2. Add report-only benchmarks for the default local model stack documented in `docs/ai/model-selection.md`.
-3. Add provider probes for CPU and Intel OpenVINO images.
-4. Delete or quarantine copied OMLX/Ollama legacy modules once equivalent local paths exist.
-5. Add a local label store for keep/review/reject and pairwise group preferences.
+1. Calibrate the optional local blocks on a reviewed real-camera RAW set.
+2. Verify native OpenVINO with `/dev/dri` on the target Intel NAS.
+3. Run an isolated XMP/SQLite production pilot and approve promotion thresholds.
+4. Decide whether to retain or delete the remaining legacy teacher modules.
+5. Add a durable local label store after the initial fixture workflow stabilizes.
 
 ## External Requirements
 

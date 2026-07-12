@@ -385,11 +385,37 @@ def test_visual_hash_cache_round_trip():
         }
 
 
+def test_embedding_cache_is_versioned_by_model_key():
+    with tempfile.TemporaryDirectory() as d:
+        s = State(d)
+        s.set_embedding_cache({"/foo/a.arw": [0.1, 0.2]}, "dino-v1")
+
+        assert s.get_embedding_cache(["/foo/a.arw"], "dino-v1") == {
+            "/foo/a.arw": [0.1, 0.2]
+        }
+        assert s.get_embedding_cache(["/foo/a.arw"], "dino-v2") == {}
+
+
+def test_embedding_cache_invalidates_when_file_changes(tmp_path):
+    image_path = tmp_path / "image.raw"
+    image_path.write_bytes(b"first")
+    s = State(tmp_path)
+    s.set_embedding_cache({str(image_path): [0.1, 0.2]}, "dino-v1")
+    assert s.get_embedding_cache([str(image_path)], "dino-v1") == {
+        str(image_path): [0.1, 0.2]
+    }
+
+    image_path.write_bytes(b"replacement-with-different-size")
+
+    assert s.get_embedding_cache([str(image_path)], "dino-v1") == {}
+
+
 def test_clear_ai_judgement_preserves_non_ai_caches():
     with tempfile.TemporaryDirectory() as d:
         s = State(d)
         s.set_exif_cache({"/foo/bar.arw": "2026:04:14 10:00:00"})
         s.set_visual_hash_cache({"/foo/bar.arw": "abcd1234"})
+        s.set_embedding_cache({"/foo/bar.arw": [0.1, 0.2]}, "dino-v1")
         s.mark_done(
             "/foo/bar.arw",
             total_score=8.0,
@@ -416,6 +442,7 @@ def test_clear_ai_judgement_preserves_non_ai_caches():
         assert s.conn.execute("SELECT COUNT(*) FROM score_signals").fetchone()[0] == 0
         assert s.conn.execute("SELECT datetime_original FROM exif_cache").fetchone()[0] == "2026:04:14 10:00:00"
         assert s.conn.execute("SELECT phash FROM visual_hash_cache").fetchone()[0] == "abcd1234"
+        assert s.conn.execute("SELECT vector_json FROM embedding_cache").fetchone()[0] == "[0.1, 0.2]"
 
 
 def test_state_allows_processed_access_from_worker_thread():

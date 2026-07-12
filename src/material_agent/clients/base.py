@@ -21,6 +21,11 @@ def make_client(config: dict) -> BackendClient:
     if backend == "local":
         from .local import AsyncLocalClient
 
+        backend_config["inference"] = normalized.get("inference", {})
+        backend_config["semantic"] = normalized.get("local", {}).get("semantic", {})
+        backend_config["quality"] = normalized.get("local", {}).get("quality", {})
+        backend_config["embedding"] = normalized.get("local", {}).get("embedding", {})
+        backend_config["face"] = normalized.get("local", {}).get("face", {})
         return AsyncLocalClient(backend_config)
     if backend == "omlx":
         from .omlx import AsyncOMLXClient

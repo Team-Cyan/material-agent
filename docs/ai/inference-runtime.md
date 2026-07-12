@@ -89,6 +89,65 @@ Python 3.14 smoke tests on Apple M4:
 The Intel image should therefore use native OpenVINO APIs directly. Plain ONNX
 Runtime remains useful for CPU fallback and non-OpenVINO providers.
 
+## Runtime Preflight
+
+`backend: local` now records a report-only runtime preflight event before a run.
+The preflight checks the configured `inference.runtime`, optional package
+availability, visible providers/devices, model cache path, and whether the run is
+still using heuristic scoring.
+
+The default remains non-blocking because the current scoring baseline must still
+run on CPU-only hosts without optional OpenVINO packages. Set
+`inference.enforce_available: true` only when a deployment must fail fast if the
+declared runtime package or provider is unavailable.
+
+Preflight is observability, not model execution. A passing OpenVINO preflight
+does not mean DINO, MobileCLIP, or IQA models are wired into the scoring path.
+
+## Semantic Vertical Slice
+
+The first learned local block is implemented behind
+`SemanticClassifierPort` and `OpenClipSemanticAdapter`. It loads lazily, so the
+default heuristic path does not import Torch or OpenCLIP. Enable it with
+`local.semantic.enabled: true` after installing the `local-models` optional
+dependencies.
+
+The verified CPU profile is:
+
+- model: `MobileCLIP2-S0`;
+- pretrained tag: `dfndr2b`;
+- runtime: OpenCLIP 3.3 with Torch on Python 3.14;
+- fallback: preserve heuristic `scene=other` and record `_semantic.status` as
+  `fallback` unless `local.semantic.enforce_available` is true;
+- provenance: report actual `open_clip:cpu` execution separately from the
+  configured future OpenVINO runtime.
+
+On the maintained synthetic v1 fixture set, this slice changed scene accuracy
+from 1/4 to 4/4 and the `other` rate from 4/4 to 1/4. This is architecture and
+regression evidence, not enough coverage to enable the model by default for
+production photography.
+
+## Native OpenVINO Vertical Slice
+
+`OpenVinoEmbeddingAdapter` now loads a local ONNX bundle with native OpenVINO,
+compiles it with a persistent cache, performs inference, and records actual
+execution devices. `prepare-openvino-model` materializes Hugging Face ONNX
+external-data symlinks into a self-contained bundle and records its digest.
+
+Verified on OpenVINO 2026.2.1 CPU:
+
+- DINOv3 ViT-S MHA Q4 is incompatible because the graph contains
+  `com.microsoft.MultiHeadAttention` without an OpenVINO conversion rule;
+- the standard-operator quantized DINOv3 ViT-S export compiles and runs;
+- the maintained near-duplicate metric is 2/2;
+- the compiled cache creates a device-specific blob;
+- repeated-process cold load improved from about 4.55 seconds to 2.89 seconds
+  with the cache, while warm fixture inference stayed around 0.53 seconds;
+- actual execution device readback on the Apple verification host is `CPU`.
+
+Intel GPU validation is still required on the target Linux NAS. CPU evidence
+must not be presented as proof that `/dev/dri` or `AUTO:GPU,CPU` works there.
+
 ## First Intel Implementation
 
 The first useful Intel pass should add:
@@ -99,12 +158,15 @@ The first useful Intel pass should add:
 - ONNX model cache directory under `~/.material-agent/models`
 - one embedding scorer and one quality scorer behind the local backend
 - benchmark output that records device, provider, throughput, and fallback decisions
+- an explicit score payload marker such as `scoring_mode=heuristic|hybrid|model`
+  so runtime preflight is not mistaken for model-backed scoring
 
 ## Model Candidate Order
 
 Start with the default model stack in `docs/ai/model-selection.md`:
 
-- MUSIQ, NIMA, and CLIPIQA for quality and aesthetic scoring
+- BRISQUE/NIQE reject priors plus MUSIQ, NIMA, and CLIPIQA+ for quality and
+  aesthetic scoring
 - DINOv2-small for grouping and similarity embeddings
 - MobileCLIP2 or MobileCLIP-S1 for scene and semantic tags
 - MediaPipe Face Landmarker for portrait/face structure
@@ -124,4 +186,9 @@ Track group-level and culling-risk metrics before per-image score aesthetics:
 
 ## Current Migration State
 
-`material-agent` still contains copied legacy OMLX/Ollama modules from `material-judge`. Treat them as migration debt. New work should not call them from the default path, and they should be quarantined or deleted after local diagnostics and benchmark commands exist.
+`material-agent` still contains copied legacy OMLX/Ollama modules from
+`material-judge`. Production `run` now requires `legacy.enabled: true` before a
+legacy backend may be selected, legacy commands are absent from the CLI, and
+the commands package no longer re-exports OMLX runtime helpers. Retain the
+remaining modules only for explicit teacher/compatibility work until their
+deprecation inventory is reviewed.

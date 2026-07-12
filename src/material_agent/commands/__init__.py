@@ -40,24 +40,6 @@ def cmd_reset_ai(*args, **kwargs):
     return _cmd_reset_ai(*args, **kwargs)
 
 
-def cmd_setup_omlx(*args, **kwargs):
-    from .omlx_runtime import cmd_setup_omlx as _cmd_setup_omlx
-
-    return _cmd_setup_omlx(*args, **kwargs)
-
-
-def cmd_start_omlx(*args, **kwargs):
-    from .omlx_runtime import cmd_start_omlx as _cmd_start_omlx
-
-    return _cmd_start_omlx(*args, **kwargs)
-
-
-def cmd_status_omlx(*args, **kwargs):
-    from .omlx_runtime import cmd_status_omlx as _cmd_status_omlx
-
-    return _cmd_status_omlx(*args, **kwargs)
-
-
 def cmd_rescore(*args, **kwargs):
     from .scoring import cmd_rescore as _cmd_rescore
 
@@ -90,9 +72,6 @@ __all__ = [
     "cmd_rescore",
     "cmd_run",
     "cmd_scan_scenes",
-    "cmd_setup_omlx",
-    "cmd_start_omlx",
-    "cmd_status_omlx",
     "cmd_suggest_scenes",
     "configure_run_parser",
     "load_config",

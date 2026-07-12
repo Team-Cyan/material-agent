@@ -100,6 +100,22 @@ def test_make_client_defaults_to_local():
     assert isinstance(client, AsyncLocalClient)
 
 
+def test_make_client_passes_inference_config_to_local_client():
+    cfg = _base_config()
+    cfg["inference"] = {
+        "runtime": "cpu",
+        "device": "CPU",
+        "fallback_device": "CPU",
+        "provider_tags": ["cpu"],
+    }
+
+    client = make_client(cfg)
+
+    assert isinstance(client, AsyncLocalClient)
+    assert client.inference["runtime"] == "cpu"
+    assert client.runtime == "cpu"
+
+
 def test_make_client_supports_legacy_vision_backend():
     cfg = _base_config()
     cfg["vision_backend"] = "omlx"

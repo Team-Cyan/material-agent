@@ -238,6 +238,28 @@ def test_compute_scores_uses_fast_screening_signal_object_as_prior_not_total():
     assert bundle.total != bundle.screening_prior
 
 
+def test_compute_scores_marks_large_downscale_focus_as_preview_proxy():
+    cfg = _base_config()
+    client = _VisionOnlyClient()
+    frame = RawFrame(
+        jpeg_bytes=b"jpeg",
+        gray=np.array([[0, 255] * 4, [255, 0] * 4] * 4, dtype=np.uint8),
+        preview_source="embedded",
+        original_size=(6720, 4480),
+        preview_size=(1024, 683),
+    )
+
+    bundle = asyncio.run(compute_scores(frame, client, cfg))
+
+    assert bundle.meta["preview_source"] == "embedded"
+    assert bundle.meta["focus_assessment"] == "preview_proxy"
+    assert bundle.meta["focus_review_required"] is True
+    assert bundle.meta["focus_review_reason"] == "high_resolution_roi_not_run"
+    focus_signal = next(signal for signal in bundle.signals if signal["signal_key"] == "focus_integrity")
+    assert focus_signal["source"] == "preview_proxy"
+    assert focus_signal["confidence"] < 0.5
+
+
 class _NullContext:
     def __enter__(self):
         return None

@@ -8,6 +8,7 @@ from material_agent.utils.constants import VISION_DIMS
 def _minimal_config():
     return {
         "backend": "ollama",
+        "legacy": {"enabled": True},
         "ollama": {
             "base_url": "http://localhost:11434",
             "vision_model": "llava:7b",
@@ -32,6 +33,16 @@ def test_normalize_config_defaults_commentary_enabled_true():
     assert normalized["commentary_enabled"] is True
 
 
+def test_legacy_backend_requires_explicit_compatibility_gate(capsys):
+    cfg = _minimal_config()
+    cfg["legacy"]["enabled"] = False
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert "quarantined" in capsys.readouterr().out
+
+
 def test_normalize_config_defaults_output_language_to_zh():
     cfg = _minimal_config()
     normalized = normalize_config(cfg)
@@ -50,6 +61,11 @@ def test_normalize_config_defaults_screening_backend_to_musiq():
     normalized = normalize_config(cfg)
     assert normalized["screening"]["backend"] == "musiq"
     assert normalized["screening"]["musiq"]["metric"] == "musiq"
+
+
+def test_normalize_config_defaults_inference_enforce_available_false():
+    normalized = normalize_config({"backend": "local"})
+    assert normalized["inference"]["enforce_available"] is False
 
 
 def test_normalize_config_sets_omlx_runtime_request_admin_defaults():
@@ -216,12 +232,40 @@ def test_invalid_log_level_exits(capsys):
     assert "log_level" in capsys.readouterr().out
 
 
+def test_invalid_backend_message_lists_supported_backends(capsys):
+    cfg = _minimal_config()
+    cfg["backend"] = "fast_vlm"
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+    out = capsys.readouterr().out
+    assert "['local', 'ollama', 'omlx']" in out
+
+
+def test_local_backend_rejects_commentary_enabled(capsys):
+    cfg = _minimal_config()
+    cfg["backend"] = "local"
+    cfg["commentary_enabled"] = True
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+    out = capsys.readouterr().out
+    assert "commentary_enabled is not supported" in out
+
+
 def test_invalid_review_pipeline_prefetch_window_exits(capsys):
     cfg = _minimal_config()
     cfg["review_pipeline"] = {"score_prefetch_window": 0}
     with pytest.raises(SystemExit):
         validate_config(cfg)
     assert "score_prefetch_window" in capsys.readouterr().out
+
+
+def test_invalid_inference_enforce_available_exits(capsys):
+    cfg = _minimal_config()
+    cfg["backend"] = "local"
+    cfg["inference"] = {"enforce_available": "sometimes"}
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+    assert "inference.enforce_available" in capsys.readouterr().out
 
 
 def test_missing_ollama_exits(capsys):
@@ -246,6 +290,31 @@ def test_invalid_max_concurrent_exits(capsys):
     with pytest.raises(SystemExit):
         validate_config(cfg)
     assert "max_concurrent" in capsys.readouterr().out
+
+
+def test_normalize_config_adds_local_semantic_defaults():
+    normalized = normalize_config(_minimal_config())
+
+    assert normalized["local"]["semantic"] == {
+        "enabled": False,
+        "enforce_available": False,
+        "model_name": "MobileCLIP2-S0",
+        "pretrained": "dfndr2b",
+        "device": "cpu",
+        "min_confidence": 0.30,
+    }
+
+
+def test_invalid_local_semantic_confidence_exits(capsys):
+    cfg = _minimal_config()
+    cfg["backend"] = "local"
+    cfg["commentary_enabled"] = False
+    cfg["local"] = {"semantic": {"min_confidence": 1.5}}
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert "local.semantic.min_confidence" in capsys.readouterr().out
 
 
 def test_invalid_screening_backend_exits(capsys):
@@ -448,6 +517,17 @@ def test_normalize_config_sets_layered_decision_defaults():
     normalized = normalize_config(_minimal_config())
 
     assert normalized["focus_integrity"]["enabled"] is True
-    assert normalized["portrait_face_eye"]["enabled"] is True
+    assert normalized["focus_integrity"]["mode"] == "preview_proxy"
+    assert normalized["focus_integrity"]["high_resolution_roi"] is False
+    assert normalized["portrait_face_eye"]["enabled"] is False
     assert normalized["decision_policy"]["keep_threshold"] == 7.5
     assert normalized["decision_policy"]["review_threshold"] == 5.5
+
+
+def test_normalize_config_sets_preview_and_xmp_defaults():
+    normalized = normalize_config(_minimal_config())
+
+    assert normalized["preview"]["prefer_embedded"] is True
+    assert normalized["preview"]["fallback_decode"] == "half_size"
+    assert normalized["xmp"]["write_mode"] == "sidecar"
+    assert normalized["xmp"]["machine_tag_target"] == "identifier"

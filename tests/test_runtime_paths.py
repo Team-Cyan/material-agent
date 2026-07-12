@@ -12,6 +12,33 @@ def test_runtime_paths_use_hidden_workdir(tmp_path):
     assert paths.log_path == tmp_path / ".material-agent" / "run.log"
 
 
+def test_runtime_paths_use_configured_external_workdir(tmp_path, monkeypatch):
+    input_dir = tmp_path / "photos"
+    work_dir = tmp_path / "appdata"
+    input_dir.mkdir()
+    monkeypatch.setenv("MATERIAL_AGENT_WORK_DIR", str(work_dir))
+
+    paths = build_runtime_paths(input_dir)
+
+    assert paths.work_dir == work_dir
+    assert paths.db_path == work_dir / "state.db"
+    assert paths.log_path == work_dir / "run.log"
+
+
+def test_external_workdir_does_not_move_legacy_input_db(tmp_path):
+    input_dir = tmp_path / "photos"
+    work_dir = tmp_path / "appdata"
+    input_dir.mkdir()
+    legacy_db_path = input_dir / "material-agent.db"
+    legacy_db_path.write_bytes(b"legacy")
+
+    paths = ensure_runtime_paths(input_dir, work_dir=work_dir)
+
+    assert paths.work_dir == work_dir
+    assert legacy_db_path.read_bytes() == b"legacy"
+    assert not paths.db_path.exists()
+
+
 def test_ensure_runtime_paths_migrates_legacy_db_and_sidecars(tmp_path):
     legacy_db_path = tmp_path / "material-agent.db"
     with sqlite3.connect(legacy_db_path) as conn:

@@ -164,10 +164,10 @@ def apply_group_review_fallback(results: list[tuple[str, dict]], *, enabled: boo
     return results
 
 
-def _average(values: list[float | None]) -> float:
+def _average(values: list[float | None]) -> float | None:
     known = [float(value) for value in values if value is not None]
     if not known:
-        return 0.0
+        return None
     return round(sum(known) / len(known), 2)
 
 

@@ -2,7 +2,8 @@
 
 ## Purpose
 
-This module owns the dedicated OMLX runtime integration used by the default model path.
+This legacy module owns the dedicated OMLX runtime compatibility integration.
+It is not part of the default `material-agent` path.
 
 It covers transport, capability probing, runtime instance management, and failure guidance.
 
@@ -45,7 +46,7 @@ It covers transport, capability probing, runtime instance management, and failur
 
 ## Invariants
 
-- OMLX is treated as fail-fast on the default path
+- OMLX is treated as fail-fast only after compatibility use is explicitly enabled
 - capability requirements must be checked before long review jobs when probing is enabled
 - the dedicated active model set must cover every configured OMLX request model: fast vision, full vision, and commentary
 - `response_format_json_schema` is the current default contract path for the local DMG runtime; `structured_outputs` and `xgrammar` remain observable capability fields and can be made hard requirements when the runtime supports them
@@ -82,5 +83,8 @@ It covers transport, capability probing, runtime instance management, and failur
 
 - The transport layer is intentionally tiny, but much of the effective contract lives across client, contract, and probe code rather than one obvious place.
 - Runtime capability validation is strong, but that also means configuration drift can fail runs before useful work starts.
-- OMLX remains a specialized integration path that requires more operational knowledge than the rest of the codebase.
-- Model-selection work should keep OMLX as the default structured vision runtime and Ollama as a fallback unless live benchmarks on this machine prove a different split.
+- OMLX remains a specialized legacy/teacher integration path that requires more
+  operational knowledge than the supported local stack.
+- Production `run` rejects OMLX unless `legacy.enabled: true` is set explicitly.
+- Do not use OMLX or Ollama as a fallback from local model failure. Local blocks
+  must use their documented CPU/heuristic fallback instead.

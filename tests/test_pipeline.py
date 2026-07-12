@@ -146,7 +146,7 @@ def test_review_runtime_builder_writes_commentary_into_description_and_state(mon
         monkeypatch.setattr("material_agent.app.review_runtime.decode_raw", lambda file_path, preview: object())
         monkeypatch.setattr("material_agent.app.review_runtime.compute_scores", fake_compute_scores)
         monkeypatch.setattr("material_agent.app.review_runtime.CommentaryGenerator", _Commentary)
-        monkeypatch.setattr("material_agent.app.review_runtime.ExifToolXMPWriter", lambda: fake_writer)
+        monkeypatch.setattr("material_agent.app.review_runtime.ExifToolXMPWriter", lambda *_args, **_kwargs: fake_writer)
 
         executor = build_review_job_executor(
             repository=repo,
@@ -250,7 +250,7 @@ def test_review_runtime_builder_passes_fast_screening_signals_through_pipeline(m
             gray=np.array([[0, 255] * 4, [255, 0] * 4] * 4, dtype=np.uint8),
         ))
         monkeypatch.setattr("material_agent.app.review_runtime.CommentaryGenerator", _Commentary)
-        monkeypatch.setattr("material_agent.app.review_runtime.ExifToolXMPWriter", lambda: fake_writer)
+        monkeypatch.setattr("material_agent.app.review_runtime.ExifToolXMPWriter", lambda *_args, **_kwargs: fake_writer)
 
         executor = build_review_job_executor(
             repository=repo,

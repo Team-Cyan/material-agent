@@ -1,0 +1,40 @@
+schema_version: material-agent.local-benchmark.v1
+name: replace-with-fixture-set-name
+version: 1
+
+# Paths are resolved relative to this manifest. Keep private photo fixtures out
+# of Git unless their publication and repository size are explicitly approved.
+items:
+  - id: burst-best
+    path: fixtures/burst-best.jpg
+    group: burst-001
+    labels:
+      scene: people
+      face_present: true
+      non_photo: false
+      reject: false
+  - id: burst-soft
+    path: fixtures/burst-soft.jpg
+    group: burst-001
+    labels:
+      scene: people
+      face_present: true
+      non_photo: false
+      reject: true
+  - id: screenshot
+    path: fixtures/screenshot.jpg
+    group: non-photo-001
+    labels:
+      scene: other
+      face_present: false
+      non_photo: true
+      reject: true
+
+preferred_by_group:
+  burst-001: burst-best
+
+pairwise_preferences:
+  - preferred: burst-best
+    other: burst-soft
+  - preferred: burst-soft
+    other: screenshot

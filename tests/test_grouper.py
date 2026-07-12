@@ -16,6 +16,7 @@ def _cfg(visual_enabled=False):
             "max_merge_gap_minutes": 10,
         },
         "group_guard": {"enabled": True, "min_score": 7.0},
+        "embedding_similarity": {"enabled": False, "threshold": 0.85},
     }
 
 
@@ -124,3 +125,72 @@ def test_visual_merge_reuses_cached_hashes_between_runs():
 
     assert groups == [["/a.arw", "/b.arw", "/c.arw", "/d.arw"]]
     assert hash_calls == []
+
+
+def test_embedding_similarity_merges_hash_miss_and_reuses_cache():
+    files = ["/a.arw", "/b.arw"]
+    times = {
+        "/a.arw": datetime(2024, 1, 1, 10, 0, 0),
+        "/b.arw": datetime(2024, 1, 1, 10, 1, 0),
+    }
+    config = _cfg(visual_enabled=True)
+    config["embedding_similarity"] = {"enabled": True, "threshold": 0.9}
+
+    class _State:
+        def __init__(self):
+            self.embeddings = {}
+
+        def get_visual_hash_cache(self, file_paths):
+            return {}
+
+        def set_visual_hash_cache(self, entries):
+            pass
+
+        def get_embedding_cache(self, file_paths, model_key):
+            return {
+                file_path: self.embeddings[file_path]
+                for file_path in file_paths
+                if file_path in self.embeddings
+            }
+
+        def set_embedding_cache(self, entries, model_key):
+            self.embeddings.update(entries)
+
+    state = _State()
+    calls = []
+
+    def embedding_loader(file_path):
+        calls.append(file_path)
+        return [1.0, 0.0] if file_path == "/a.arw" else [0.95, 0.05]
+
+    with patch("material_agent.core.grouper.read_exif_datetimes", return_value=times):
+        with patch.object(
+            Grouper,
+            "_hash_file",
+            side_effect=[imagehash.hex_to_hash("0" * 16), imagehash.hex_to_hash("f" * 16)],
+        ):
+            groups = Grouper(
+                config,
+                embedding_loader=embedding_loader,
+                embedding_model_key="fixture-v1",
+            ).group(files, state=state)
+
+    assert groups == [["/a.arw", "/b.arw"]]
+    assert calls == ["/a.arw", "/b.arw"]
+    assert set(state.embeddings) == set(files)
+
+    calls.clear()
+    with patch("material_agent.core.grouper.read_exif_datetimes", return_value=times):
+        with patch.object(
+            Grouper,
+            "_hash_file",
+            side_effect=[imagehash.hex_to_hash("0" * 16), imagehash.hex_to_hash("f" * 16)],
+        ):
+            groups = Grouper(
+                config,
+                embedding_loader=lambda path: calls.append(path),
+                embedding_model_key="fixture-v1",
+            ).group(files, state=state)
+
+    assert groups == [["/a.arw", "/b.arw"]]
+    assert calls == []

@@ -4,6 +4,7 @@ from pathlib import Path
 
 import yaml
 
+from ..adapters.models.local_runtime import probe_local_runtime
 from ..adapters.state.processed_sqlite import SQLiteProcessedRepository
 from ..adapters.state.sqlite_runtime import SQLiteRuntimeRepository
 from ..app.rescore_service import RescoreService
@@ -64,7 +65,10 @@ def cmd_run(args, config):
     runtime_repo = SQLiteRuntimeRepository(runtime_paths.db_path)
     review_service = ReviewRunService(runtime_repo)
     preflight_hook = _build_runtime_probe_preflight_hook(runtime_repo, config)
-    with SQLiteProcessedRepository(str(input_dir), reprocess=config.get("reprocess", False)) as state:
+    with SQLiteProcessedRepository(
+        runtime_paths.db_path,
+        reprocess=config.get("reprocess", False),
+    ) as state:
         base_progress = RichProgress(log_path=str(runtime_paths.log_path), log_level=config.get("log_level", "info"))
         review_service.run(
             input_dir=str(input_dir),
@@ -119,6 +123,8 @@ def _build_runtime_probe_preflight_hook(
     runtime_repo: SQLiteRuntimeRepository,
     config: dict,
 ) -> Callable[[str, str], None] | None:
+    if config.get("backend") == "local":
+        return _build_local_runtime_preflight_hook(runtime_repo, config)
     if config.get("backend") != "omlx":
         return None
     from ..app.omlx_instance_service import OMLXInstanceService
@@ -202,6 +208,57 @@ def _build_runtime_probe_preflight_hook(
                 "OMLX runtime probe failed: "
                 f"{error}. Review the OMLX runtime configuration and restart the dedicated instance."
             ) from error
+
+    return _preflight_hook
+
+
+def _build_local_runtime_preflight_hook(
+    runtime_repo: SQLiteRuntimeRepository,
+    config: dict,
+) -> Callable[[str, str], None]:
+    def _preflight_hook(session_id: str, job_id: str) -> None:
+        try:
+            payload = probe_local_runtime(config)
+        except Exception as error:  # pragma: no cover - defensive preflight boundary
+            payload = {
+                "backend": config.get("backend"),
+                "runtime": config.get("inference", {}).get("runtime"),
+                "enforce_available": bool(
+                    config.get("inference", {}).get("enforce_available", False)
+                ),
+                "heuristic_scoring_active": True,
+                "capability_valid": False,
+                "capability_failure": {"code": "probe_error", "summary": str(error)},
+            }
+
+        capability_valid = bool(payload.get("capability_valid"))
+        enforce_available = bool(payload.get("enforce_available", False))
+        event_type = "runtime_preflight_passed" if capability_valid else "runtime_preflight_warned"
+        runtime = payload.get("runtime") or "unknown"
+        status = "passed" if capability_valid else "warned"
+        runtime_repo.append_event(
+            session_id=session_id,
+            job_id=job_id,
+            event_type=event_type,
+            payload=payload,
+        )
+        runtime_repo.upsert_artifact(
+            job_id=job_id,
+            job_file_id=None,
+            kind="runtime_preflight",
+            uri=f"runtime://local/{runtime}/{status}",
+            metadata=payload,
+        )
+        if capability_valid or not enforce_available:
+            return
+        failure = payload.get("capability_failure") or {}
+        summary = failure.get("summary") or "local runtime preflight failed"
+        code = failure.get("code")
+        message = "Local runtime preflight failed"
+        if code:
+            message += f" ({code})"
+        message += f": {summary}"
+        raise RuntimeError(message)
 
     return _preflight_hook
 

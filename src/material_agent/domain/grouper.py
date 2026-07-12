@@ -79,8 +79,10 @@ def _read_exif_single(file_path: str) -> datetime | None:
 
 
 class Grouper:
-    def __init__(self, config: dict):
+    def __init__(self, config: dict, *, embedding_loader=None, embedding_model_key: str = ""):
         self.config = config
+        self.embedding_loader = embedding_loader
+        self.embedding_model_key = embedding_model_key
 
     def group(self, files: list[str], state=None, progress=None) -> list[list[str]]:
         if not files:
@@ -112,6 +114,17 @@ class Grouper:
         i = 0
         hash_cache = self._load_visual_hash_cache(groups, state=state)
         new_hash_entries: dict[str, str] = {}
+        embedding_cfg = self.config.get("embedding_similarity", {})
+        embedding_enabled = bool(
+            embedding_cfg.get("enabled", False) and self.embedding_loader is not None
+        )
+        boundary_files = [file_path for group in groups for file_path in (group[0], group[-1])]
+        embedding_cache = (
+            state.get_embedding_cache(boundary_files, self.embedding_model_key)
+            if embedding_enabled and state is not None and hasattr(state, "get_embedding_cache")
+            else {}
+        )
+        new_embedding_entries: dict[str, list[float]] = {}
 
         def _get_hash(file_path: str):
             if file_path in hash_cache:
@@ -130,10 +143,33 @@ class Grouper:
             if not (t1 and t2 and (t2 - t1).total_seconds() <= max_gap_s):
                 return False
             h1, h2 = _get_hash(tail), _get_hash(head)
-            if h1 is None or h2 is None or (h1 - h2) > threshold:
+            hash_matches = h1 is not None and h2 is not None and (h1 - h2) <= threshold
+            embedding_matches = False
+            if not hash_matches and embedding_enabled:
+                v1 = _get_embedding(tail)
+                v2 = _get_embedding(head)
+                if v1 is not None and v2 is not None:
+                    embedding_matches = _cosine(v1, v2) >= float(
+                        embedding_cfg.get("threshold", 0.85)
+                    )
+            if not hash_matches and not embedding_matches:
                 return False
             groups[idx + 1] = groups[idx] + groups[idx + 1]
             return True
+
+        def _get_embedding(file_path: str):
+            if file_path in embedding_cache:
+                return embedding_cache[file_path]
+            try:
+                vector = self.embedding_loader(file_path)
+            except Exception:
+                return None
+            if not vector:
+                return None
+            normalized = [float(value) for value in vector]
+            embedding_cache[file_path] = normalized
+            new_embedding_entries[file_path] = normalized
+            return normalized
 
         if progress:
             progress.on_phase_start("visual merge", len(groups))
@@ -154,6 +190,12 @@ class Grouper:
                 i += 1
         if state and new_hash_entries and hasattr(state, "set_visual_hash_cache"):
             state.set_visual_hash_cache(new_hash_entries)
+        if (
+            state
+            and new_embedding_entries
+            and hasattr(state, "set_embedding_cache")
+        ):
+            state.set_embedding_cache(new_embedding_entries, self.embedding_model_key)
         return merged
 
     @staticmethod
@@ -188,3 +230,14 @@ class Grouper:
             except Exception:
                 continue
         return loaded
+
+
+def _cosine(left: list[float], right: list[float]) -> float:
+    if len(left) != len(right) or not left:
+        return 0.0
+    dot = sum(a * b for a, b in zip(left, right, strict=True))
+    left_norm = sum(value * value for value in left) ** 0.5
+    right_norm = sum(value * value for value in right) ** 0.5
+    if left_norm == 0 or right_norm == 0:
+        return 0.0
+    return dot / (left_norm * right_norm)

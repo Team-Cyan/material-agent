@@ -2,7 +2,8 @@
 
 ## Purpose
 
-This module owns the live-sample evaluation path for OMLX-backed model comparison.
+This legacy module owns the optional live-sample teacher/comparison path for
+OMLX-backed models. It is not a production scoring dependency.
 
 Unlike `omlx-benchmark`, it is intentionally end-to-end and reuses the real review pipeline so the output reflects production behavior instead of a benchmark-only shortcut.
 

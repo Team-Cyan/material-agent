@@ -18,6 +18,14 @@ _log = logging.getLogger("material_agent")
 _VISION_COLUMNS = [f"score_{dim}" for dim in VISION_DIMS]
 _BASE_SCORE_COLUMNS = ["score_exposure", "score_sharpness"] + _VISION_COLUMNS
 
+
+def _file_fingerprint(file_path: str) -> tuple[int, int]:
+    try:
+        stat = Path(file_path).stat()
+    except OSError:
+        return -1, -1
+    return int(stat.st_size), int(stat.st_mtime_ns)
+
 DDL = f"""
 CREATE TABLE IF NOT EXISTS processed (
     file_path TEXT PRIMARY KEY,
@@ -52,6 +60,15 @@ CREATE TABLE IF NOT EXISTS exif_cache (
 CREATE TABLE IF NOT EXISTS visual_hash_cache (
     file_path TEXT PRIMARY KEY,
     phash TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS embedding_cache (
+    file_path TEXT NOT NULL,
+    model_key TEXT NOT NULL,
+    vector_json TEXT NOT NULL,
+    file_size INTEGER NOT NULL DEFAULT -1,
+    mtime_ns INTEGER NOT NULL DEFAULT -1,
+    computed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (file_path, model_key)
 );
 CREATE TABLE IF NOT EXISTS score_signals (
     file_path TEXT NOT NULL,
@@ -103,6 +120,13 @@ class SQLiteProcessedRepository:
         ]:
             try:
                 self.conn.execute(f"ALTER TABLE processed ADD COLUMN {column} {column_type}")
+            except sqlite3.OperationalError:
+                pass
+        for column in ("file_size", "mtime_ns"):
+            try:
+                self.conn.execute(
+                    f"ALTER TABLE embedding_cache ADD COLUMN {column} INTEGER NOT NULL DEFAULT -1"
+                )
             except sqlite3.OperationalError:
                 pass
         self._commit()
@@ -201,6 +225,50 @@ class SQLiteProcessedRepository:
         self._executemany(
             "INSERT OR REPLACE INTO visual_hash_cache (file_path, phash) VALUES (?,?)",
             [(k, v) for k, v in entries.items() if v],
+        )
+        self._commit()
+
+    def get_embedding_cache(
+        self, file_paths: list[str], model_key: str
+    ) -> dict[str, list[float]]:
+        if not file_paths:
+            return {}
+        placeholders = ",".join("?" * len(file_paths))
+        rows = self._execute(
+            f"SELECT file_path, vector_json, file_size, mtime_ns FROM embedding_cache "
+            f"WHERE model_key=? AND file_path IN ({placeholders})",
+            [model_key, *file_paths],
+        ).fetchall()
+        loaded: dict[str, list[float]] = {}
+        for row in rows:
+            if (row["file_size"], row["mtime_ns"]) != _file_fingerprint(row["file_path"]):
+                continue
+            try:
+                vector = json.loads(row["vector_json"])
+            except (TypeError, json.JSONDecodeError):
+                continue
+            if isinstance(vector, list) and vector:
+                loaded[row["file_path"]] = [float(value) for value in vector]
+        return loaded
+
+    def set_embedding_cache(
+        self, entries: dict[str, list[float]], model_key: str
+    ) -> None:
+        if not entries:
+            return
+        self._executemany(
+            "INSERT OR REPLACE INTO embedding_cache "
+            "(file_path, model_key, vector_json, file_size, mtime_ns) VALUES (?,?,?,?,?)",
+            [
+                (
+                    file_path,
+                    model_key,
+                    json.dumps(vector),
+                    *_file_fingerprint(file_path),
+                )
+                for file_path, vector in entries.items()
+                if vector
+            ],
         )
         self._commit()
 

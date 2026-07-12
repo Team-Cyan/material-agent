@@ -1,0 +1,171 @@
+{
+  "schema_version": "material-agent.local-benchmark.v1",
+  "generated_at": "2026-07-11T08:15:12.201907+00:00",
+  "manifest": {
+    "path": "tests/fixtures/local_benchmark/manifest.yaml",
+    "sha256": "803184446eabd40d1b6dc818355f6405956ee8be77f845b2181402ddd9aa28cd",
+    "name": "synthetic-local-baseline",
+    "version": 1
+  },
+  "runtime": {
+    "backend": "local",
+    "scoring_mode": "heuristic",
+    "runtime": "cpu",
+    "python": "3.14.3",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "repeat_count": 3,
+    "reject_threshold": 4.0,
+    "quality_reject_threshold": 5.0
+  },
+  "metrics": {
+    "item_count": 4,
+    "group_top1": {
+      "numerator": 1,
+      "total": 1,
+      "rate": 1.0
+    },
+    "pairwise_preference": {
+      "numerator": 3,
+      "total": 3,
+      "rate": 1.0
+    },
+    "reject_recall": {
+      "numerator": 1,
+      "total": 3,
+      "rate": 0.333333
+    },
+    "reject_false_negative_count": 2,
+    "scene_accuracy": {
+      "numerator": 1,
+      "total": 4,
+      "rate": 0.25
+    },
+    "scene_other_rate": {
+      "numerator": 4,
+      "total": 4,
+      "rate": 1.0
+    },
+    "face_positive_count": 2,
+    "face_recall": null,
+    "face_accuracy": null,
+    "screenshot_photo_separation": 0.795714,
+    "reject_prior_recall": null,
+    "reject_prior_false_negative_count": null,
+    "quality_pairwise_preference": null,
+    "aesthetic_pairwise_preference": null,
+    "embedding_same_group_top1": null,
+    "embedding_non_photo_photo_max_similarity": null,
+    "deterministic_scores": true,
+    "elapsed_seconds": 0.208067,
+    "cold_run_seconds": 0.073714,
+    "warm_p50_run_seconds": 0.067176,
+    "p50_run_seconds": 0.067261,
+    "images_per_second": 57.6738
+  },
+  "items": [
+    {
+      "id": "portrait-sharp",
+      "path": "portrait-sharp-source.png",
+      "group": "portrait-burst-001",
+      "score": 6.747143,
+      "scene": "other",
+      "scoring_mode": "heuristic",
+      "runtime": "cpu",
+      "runtime_components": [
+        "cpu"
+      ],
+      "model_stack": [],
+      "semantic": null,
+      "quality": null,
+      "embedding": null,
+      "face": null,
+      "dimensions": {
+        "subject": 6.48,
+        "composition": 7.3,
+        "lighting": 7.66,
+        "color": 5.64,
+        "clarity": 6.23,
+        "depth": 7.12,
+        "mood": 6.8
+      }
+    },
+    {
+      "id": "portrait-motion-blur",
+      "path": "portrait-motion-blur-same-subject.png",
+      "group": "portrait-burst-001",
+      "score": 6.675714,
+      "scene": "other",
+      "scoring_mode": "heuristic",
+      "runtime": "cpu",
+      "runtime_components": [
+        "cpu"
+      ],
+      "model_stack": [],
+      "semantic": null,
+      "quality": null,
+      "embedding": null,
+      "face": null,
+      "dimensions": {
+        "subject": 6.35,
+        "composition": 7.3,
+        "lighting": 7.81,
+        "color": 5.61,
+        "clarity": 5.81,
+        "depth": 7.03,
+        "mood": 6.82
+      }
+    },
+    {
+      "id": "low-light-room",
+      "path": "low-light-room.png",
+      "group": "low-light-001",
+      "score": 4.668571,
+      "scene": "other",
+      "scoring_mode": "heuristic",
+      "runtime": "cpu",
+      "runtime_components": [
+        "cpu"
+      ],
+      "model_stack": [],
+      "semantic": null,
+      "quality": null,
+      "embedding": null,
+      "face": null,
+      "dimensions": {
+        "subject": 4.1,
+        "composition": 6.32,
+        "lighting": 3.01,
+        "color": 4.9,
+        "clarity": 4.55,
+        "depth": 5.37,
+        "mood": 4.43
+      }
+    },
+    {
+      "id": "ui-screenshot",
+      "path": "ui-screenshot.png",
+      "group": "non-photo-001",
+      "score": 3.872857,
+      "scene": "other",
+      "scoring_mode": "heuristic",
+      "runtime": "cpu",
+      "runtime_components": [
+        "cpu"
+      ],
+      "model_stack": [],
+      "semantic": null,
+      "quality": null,
+      "embedding": null,
+      "face": null,
+      "dimensions": {
+        "subject": 3.09,
+        "composition": 6.22,
+        "lighting": 0.0,
+        "color": 4.66,
+        "clarity": 4.64,
+        "depth": 5.21,
+        "mood": 3.29
+      }
+    }
+  ]
+}

@@ -26,6 +26,7 @@ poetry.lock
 material-agent.db
 material-agent.log
 *.xmp
+.local/
 
 # Editor / IDE
 .idea/

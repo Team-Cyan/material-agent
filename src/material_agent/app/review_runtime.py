@@ -38,14 +38,34 @@ def build_review_job_executor(
         enabled=config.get("commentary_enabled", False),
         output_language=output_language,
     )
-    writer = ExifToolXMPWriter()
+    writer = ExifToolXMPWriter(config.get("xmp", {}))
     event_sink = RichEventSink(progress)
+
+    def embedding_for_file(file_path: str) -> list[float] | None:
+        embedding_cfg = config.get("grouping", {}).get("embedding_similarity", {})
+        if not embedding_cfg.get("enabled", False) or not hasattr(client, "embed_image"):
+            return None
+        frame = decode_raw(file_path, config["preview"])
+        result = run_coro_sync(client.embed_image(frame.jpeg_bytes))
+        return result.get("vector")
 
     def group_files(file_paths: list[str]) -> list[list[str]]:
         if not file_paths:
             return []
         if config["grouping"]["enabled"]:
-            return Grouper(config["grouping"]).group(file_paths, state=state, progress=progress)
+            embedding_config = config.get("local", {}).get("embedding", {})
+            model_key = ":".join(
+                [
+                    str(embedding_config.get("runtime", "transformers")),
+                    str(embedding_config.get("model_name", "unknown")),
+                    str(embedding_config.get("model_path", "")),
+                ]
+            )
+            return Grouper(
+                config["grouping"],
+                embedding_loader=embedding_for_file,
+                embedding_model_key=model_key,
+            ).group(file_paths, state=state, progress=progress)
         return [[file_path] for file_path in file_paths]
 
     def prepare_score(file_path: str) -> dict:

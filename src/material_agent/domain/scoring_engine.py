@@ -1,5 +1,6 @@
 import logging
 import cv2
+import numpy as np
 import rawpy
 from dataclasses import dataclass, field
 
@@ -24,9 +25,13 @@ _log = logging.getLogger("material_agent")
 
 @dataclass
 class RawFrame:
-    pixels: object
     jpeg_bytes: bytes
     gray: object
+    pixels: object | None = None
+    preview_source: str = "unknown"
+    original_size: tuple[int, int] | None = None
+    preview_size: tuple[int, int] | None = None
+    focus_assessment: str = "preview_proxy"
 
 
 @dataclass
@@ -60,18 +65,79 @@ def screening_prior_from_signals(signals: dict[str, float]) -> float:
 
 def decode_raw(file_path: str, preview_config: dict) -> RawFrame:
     with rawpy.imread(file_path) as raw:
-        pixels = raw.raw_image_visible.copy()
-        preview_rgb = raw.postprocess(use_camera_wb=True, output_bps=8, half_size=True)
-    max_size = preview_config["max_size"]
+        original_size = _raw_size(raw)
+        if preview_config.get("prefer_embedded", True):
+            preview_rgb = _embedded_preview_rgb(raw)
+            preview_source = "embedded"
+        else:
+            preview_rgb = None
+            preview_source = "raw_postprocess"
+        if preview_rgb is None:
+            preview_rgb = raw.postprocess(use_camera_wb=True, output_bps=8, half_size=True)
+            preview_source = "raw_postprocess"
+
+    max_size = int(preview_config["max_size"])
     h, w = preview_rgb.shape[:2]
     scale = min(max_size / max(h, w), 1.0)
     if scale < 1.0:
-        preview_rgb = cv2.resize(preview_rgb, (int(w * scale), int(h * scale)))
+        preview_rgb = cv2.resize(
+            preview_rgb,
+            (max(1, int(w * scale)), max(1, int(h * scale))),
+            interpolation=cv2.INTER_AREA,
+        )
     gray = cv2.cvtColor(preview_rgb, cv2.COLOR_RGB2GRAY)
     _, jpeg_enc = cv2.imencode(
         ".jpg", preview_rgb, [cv2.IMWRITE_JPEG_QUALITY, preview_config["jpeg_quality"]]
     )
-    return RawFrame(pixels=pixels, jpeg_bytes=jpeg_enc.tobytes(), gray=gray)
+    preview_h, preview_w = preview_rgb.shape[:2]
+    return RawFrame(
+        jpeg_bytes=jpeg_enc.tobytes(),
+        gray=gray,
+        pixels=None,
+        preview_source=preview_source,
+        original_size=original_size,
+        preview_size=(preview_w, preview_h),
+        focus_assessment="preview_proxy",
+    )
+
+
+def _embedded_preview_rgb(raw) -> np.ndarray | None:
+    try:
+        thumb = raw.extract_thumb()
+    except (rawpy.LibRawNoThumbnailError, rawpy.LibRawUnsupportedThumbnailError):
+        return None
+    if thumb.format is rawpy.ThumbFormat.JPEG:
+        encoded = np.frombuffer(thumb.data, dtype=np.uint8)
+        preview_bgr = cv2.imdecode(encoded, cv2.IMREAD_COLOR)
+        if preview_bgr is None:
+            return None
+        return cv2.cvtColor(preview_bgr, cv2.COLOR_BGR2RGB)
+    if thumb.format is rawpy.ThumbFormat.BITMAP:
+        preview = np.asarray(thumb.data)
+        if preview.ndim == 2:
+            return cv2.cvtColor(preview, cv2.COLOR_GRAY2RGB)
+        if preview.shape[2] >= 3:
+            return preview[:, :, :3].astype(np.uint8, copy=False)
+    return None
+
+
+def _raw_size(raw) -> tuple[int, int] | None:
+    sizes = getattr(raw, "sizes", None)
+    if sizes is None:
+        return None
+    width = (
+        getattr(sizes, "width", None)
+        or getattr(sizes, "iwidth", None)
+        or getattr(sizes, "raw_width", None)
+    )
+    height = (
+        getattr(sizes, "height", None)
+        or getattr(sizes, "iheight", None)
+        or getattr(sizes, "raw_height", None)
+    )
+    if width is None or height is None:
+        return None
+    return int(width), int(height)
 
 
 def build_score_instructions(scores: dict[str, float]) -> str:
@@ -141,7 +207,7 @@ async def compute_scores(
     fast_screening: FastScreeningPort | None = None,
 ) -> ScoreBundle:
     results: list[ScorerResult] = []
-    meta: dict = {}
+    meta: dict = _build_frame_meta(frame, config)
     exposure_scorer = None
 
     exp_cfg = config["scorers"]["exposure"]
@@ -230,6 +296,7 @@ async def compute_scores(
                 _log.warning("Fast screening skipped after parse failure: %s", error)
 
         raw_scores = await client.score_image(frame.jpeg_bytes)
+        _merge_backend_meta(meta, raw_scores)
         scene = raw_scores.get("scene", "other")
         scene_raw = raw_scores.get("scene_raw", "")
         if exposure_scorer is not None:
@@ -318,6 +385,9 @@ def _combine_scores(
 def _build_layered_signals(*, scores: dict[str, float], meta: dict, scene: str, config: dict) -> list[dict]:
     focus_integrity = _mean_known([scores.get("sharpness"), scores.get("clarity")])
     clarity_proxy = scores.get("clarity", focus_integrity)
+    focus_confidence = _focus_confidence(meta)
+    subject_focus = focus_integrity if focus_integrity is not None else scores.get("subject")
+    focus_source = "preview_proxy" if meta.get("focus_assessment") == "preview_proxy" else "cpu"
     technical_quality = _mean_known(
         [
             scores.get("exposure"),
@@ -339,8 +409,8 @@ def _build_layered_signals(*, scores: dict[str, float], meta: dict, scene: str, 
             "stage": "technical",
             "signal_key": "focus_integrity",
             "value": focus_integrity,
-            "confidence": 1.0,
-            "source": "cpu",
+            "confidence": focus_confidence,
+            "source": focus_source,
         },
         {
             "stage": "technical",
@@ -366,9 +436,9 @@ def _build_layered_signals(*, scores: dict[str, float], meta: dict, scene: str, 
         {
             "stage": "aggregate",
             "signal_key": "subject_focus",
-            "value": focus_integrity,
-            "confidence": 1.0,
-            "source": "aggregate",
+            "value": subject_focus,
+            "confidence": focus_confidence if focus_integrity is not None else 0.35,
+            "source": focus_source if focus_integrity is not None else "subject_proxy",
         },
         {
             "stage": "screening",
@@ -380,7 +450,7 @@ def _build_layered_signals(*, scores: dict[str, float], meta: dict, scene: str, 
             "model_version": "1" if "fast_score" in meta else None,
         },
     ]
-    if scene == "people" and config.get("portrait_face_eye", {}).get("enabled", True):
+    if scene == "people" and config.get("portrait_face_eye", {}).get("enabled", False):
         portrait_signal = _estimate_portrait_face_eye_usability(scores)
         if portrait_signal is not None:
             signals.append(
@@ -388,8 +458,8 @@ def _build_layered_signals(*, scores: dict[str, float], meta: dict, scene: str, 
                     "stage": "technical",
                     "signal_key": "portrait_face_eye_usability",
                     "value": portrait_signal,
-                    "confidence": 0.6,
-                    "source": "vision",
+                    "confidence": min(0.4, focus_confidence),
+                    "source": "preview_proxy",
                 }
             )
     for public_dim, source_dim in AESTHETIC_SOURCE_MAP.items():
@@ -403,6 +473,71 @@ def _build_layered_signals(*, scores: dict[str, float], meta: dict, scene: str, 
             }
         )
     return [signal for signal in signals if signal.get("value") is not None]
+
+
+def _build_frame_meta(frame: RawFrame, config: dict) -> dict:
+    meta = {
+        "preview_source": getattr(frame, "preview_source", "unknown"),
+        "focus_assessment": getattr(frame, "focus_assessment", "preview_proxy"),
+    }
+    original_size = getattr(frame, "original_size", None)
+    preview_size = getattr(frame, "preview_size", None)
+    if original_size is not None:
+        meta["original_size"] = list(original_size)
+    if preview_size is not None:
+        meta["preview_size"] = list(preview_size)
+    downscale_ratio = _downscale_ratio(frame)
+    if downscale_ratio is not None:
+        meta["preview_downscale_ratio"] = downscale_ratio
+        warning_ratio = float(
+            config.get("focus_integrity", {}).get("downscale_warning_ratio", 3.0) or 3.0
+        )
+        if downscale_ratio >= warning_ratio:
+            meta["focus_review_required"] = True
+            meta["focus_review_reason"] = "high_resolution_roi_not_run"
+    return meta
+
+
+def _merge_backend_meta(meta: dict, raw_scores: dict) -> None:
+    for key in (
+        "_scoring_mode",
+        "_runtime",
+        "_runtime_components",
+        "_configured_runtime",
+        "_model_stack",
+        "_semantic",
+        "_quality",
+        "_embedding",
+        "_face",
+    ):
+        value = raw_scores.get(key)
+        if value is not None:
+            meta[key.removeprefix("_")] = value
+
+
+def _downscale_ratio(frame: RawFrame) -> float | None:
+    original_size = getattr(frame, "original_size", None)
+    preview_size = getattr(frame, "preview_size", None)
+    if original_size is None or preview_size is None:
+        return None
+    original_edge = max(original_size)
+    preview_edge = max(preview_size)
+    if preview_edge <= 0:
+        return None
+    return round(float(original_edge) / float(preview_edge), 3)
+
+
+def _focus_confidence(meta: dict) -> float:
+    if meta.get("focus_assessment") != "preview_proxy":
+        return 1.0
+    ratio = meta.get("preview_downscale_ratio")
+    if ratio is None:
+        return 0.6
+    if ratio >= 6:
+        return 0.35
+    if ratio >= 3:
+        return 0.45
+    return 0.65
 
 
 def _estimate_portrait_face_eye_usability(scores: dict[str, float]) -> float | None:

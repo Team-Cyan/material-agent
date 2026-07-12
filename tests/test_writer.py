@@ -1,4 +1,9 @@
+import json
+import shutil
+import subprocess
 from unittest.mock import patch
+
+import pytest
 
 from material_agent.adapters.metadata.exiftool_xmp import ExifToolXMPWriter
 from material_agent.io.writer import XMPWriter
@@ -24,6 +29,12 @@ def test_writer_score_to_stars():
     assert w.score_to_stars(0.0) == 0
     assert w.score_to_stars(5.0) == 3
     assert w.score_to_stars(10.0) == 5
+    assert w.score_to_stars(20.0) == 5
+
+
+def test_writer_rejects_unsupported_machine_tag_target():
+    with pytest.raises(ValueError, match="machine_tag_target='identifier'"):
+        ExifToolXMPWriter({"machine_tag_target": "subject"})
 
 
 def test_writer_builds_subject_tags():
@@ -61,6 +72,8 @@ def test_writer_new_xmp_contains_subject_tags(tmp_path):
     w.write(str(arw), rating=4, subject_tags=["pj:score=8.0", "pj:scene=人物"],
             instructions="exp:8.0", description="好照片")
     content = xmp.read_text(encoding="utf-8")
+    assert "<dc:subject>" not in content
+    assert "<xmp:Identifier>" in content
     assert "pj:score=8.0" in content
     assert "pj:scene=人物" in content
 
@@ -99,7 +112,7 @@ def test_writer_new_xmp_uses_lang_alt_description(tmp_path):
     content = xmp.read_text(encoding="utf-8")
     assert "<dc:description>" in content
     assert "<rdf:Alt>" in content
-    assert "xml:lang='x-default'>好照片</rdf:li>" in content
+    assert 'xml:lang="x-default">好照片</rdf:li>' in content
 
 
 def test_writer_new_xmp_includes_lifecycle_metadata(tmp_path):
@@ -110,7 +123,7 @@ def test_writer_new_xmp_includes_lifecycle_metadata(tmp_path):
     w.write(str(arw), rating=3, subject_tags=[], instructions="x", description="x")
 
     content = xmp.read_text(encoding="utf-8")
-    assert "xmlns:xmpMM='http://ns.adobe.com/xap/1.0/mm/'" in content
+    assert 'xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"' in content
     assert "<xmp:CreatorTool>Team-Cyan material-agent</xmp:CreatorTool>" in content
     assert "<xmp:MetadataDate>" in content
     assert "<xmp:ModifyDate>" in content
@@ -146,6 +159,41 @@ def test_writer_new_xmp_instructions_has_no_timestamp(tmp_path):
     assert "T" not in instr  # ISO datetime contains 'T'
 
 
+def test_writer_new_xmp_uses_standard_xpacket_and_rating_element(tmp_path):
+    arw = tmp_path / "test.ARW"
+    arw.write_bytes(b"fake")
+    xmp = tmp_path / "test.xmp"
+    w = ExifToolXMPWriter()
+    w.write(str(arw), rating=4, subject_tags=["pj:score=8.0"], instructions="x", description="x")
+
+    content = xmp.read_text(encoding="utf-8")
+    assert '<?xpacket begin="\ufeff" id="W5M0MpCehiHzreSzNTczkc9d"?>' in content
+    assert "<xmp:Rating>4</xmp:Rating>" in content
+
+
+def test_writer_new_xmp_rating_is_readable_by_exiftool(tmp_path):
+    if shutil.which("exiftool") is None:
+        return
+    arw = tmp_path / "test.ARW"
+    arw.write_bytes(b"fake")
+    xmp = tmp_path / "test.xmp"
+    w = ExifToolXMPWriter()
+    w.write(str(arw), rating=4, subject_tags=["pj:score=8.0"], instructions="x", description="x")
+
+    result = subprocess.run(
+        ["exiftool", "-j", "-XMP:Rating", "-XMP-xmp:Identifier", str(xmp)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=30,
+        check=True,
+    )
+
+    payload = json.loads(result.stdout)[0]
+    assert payload["Rating"] == 4
+    assert "pj:score=8.0" in payload["Identifier"]
+
+
 def test_writer_updates_existing_xmp_without_output_flag(tmp_path):
     arw = tmp_path / "test.ARW"
     arw.write_bytes(b"fake")
@@ -159,6 +207,22 @@ def test_writer_updates_existing_xmp_without_output_flag(tmp_path):
     cmd = mock_run.call_args[0][0]
     assert str(xmp) == cmd[-1]
     assert "-o" not in cmd
+
+
+def test_writer_updates_existing_uppercase_xmp_sidecar(tmp_path):
+    arw = tmp_path / "test.ARW"
+    arw.write_bytes(b"fake")
+    xmp = tmp_path / "test.XMP"
+    xmp.write_text(_SAMPLE_XMP, encoding="utf-8")
+    w = ExifToolXMPWriter()
+    with patch("subprocess.run") as mock_run:
+        mock_run.return_value.returncode = 0
+        w.write(str(arw), rating=4, subject_tags=["pj:score=8.0"],
+                instructions="exp:8.0", description="好照片")
+
+    cmd = mock_run.call_args[0][0]
+    assert str(xmp) == cmd[-1]
+    assert "test.xmp" not in {path.name for path in tmp_path.iterdir()}
 
 
 def test_writer_updates_existing_xmp_description_as_x_default(tmp_path):
@@ -233,10 +297,12 @@ def test_writer_preserves_user_keywords_on_rewrite(tmp_path):
     # Only one subprocess call (the write); reading is done via ET.parse
     assert mock_run.call_count == 1
     write_cmd = mock_run.call_args[0][0]
-    assert "-xmp:Subject=wedding" in write_cmd
-    assert "-xmp:Subject=pj:score=8.0" in write_cmd
-    assert "-xmp:Subject=pj:score=7.0" not in write_cmd
-    assert "-xmp:Subject=pj:rank=1/3" not in write_cmd
+    assert "-XMP-dc:Subject=" in write_cmd
+    assert "-XMP-dc:Subject=wedding" in write_cmd
+    assert "-XMP-xmp:Identifier=pj:score=8.0" in write_cmd
+    assert "-XMP-dc:Subject=pj:score=8.0" not in write_cmd
+    assert "-XMP-dc:Subject=pj:score=7.0" not in write_cmd
+    assert "-XMP-dc:Subject=pj:rank=1/3" not in write_cmd
 
 
 def test_writer_read_subject_tags_parses_xmp_directly(tmp_path):
@@ -275,9 +341,10 @@ def test_writer_clear_ai_tags_preserves_non_pj_keywords(tmp_path):
     assert "-XMP-xmp:Rating=" in cmd
     assert "-XMP-photoshop:Instructions=" in cmd
     assert "-XMP-dc:Description-x-default=" in cmd
-    assert "-xmp:Subject=" in cmd
-    assert "-xmp:Subject=wedding" in cmd
-    assert "-xmp:Subject=pj:score=7.0" not in cmd
+    assert "-XMP-dc:Subject=" in cmd
+    assert "-XMP-dc:Subject=wedding" in cmd
+    assert "-XMP-dc:Subject=pj:score=7.0" not in cmd
+    assert "-XMP-xmp:Identifier=" in cmd
     assert "-overwrite_original" in cmd
 
 

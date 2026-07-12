@@ -31,12 +31,22 @@ RUN apt-get update \
 
 COPY pyproject.toml uv.lock README.md /app/
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --extra cpu --no-dev --no-editable --no-install-project
+    uv sync --frozen \
+        --extra cpu \
+        --extra local-models \
+        --extra quality-models \
+        --extra face-models \
+        --no-dev --no-editable --no-install-project
 
 COPY src /app/src
 COPY docker /app/docker
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --extra cpu --no-dev --no-editable \
+    uv sync --frozen \
+        --extra cpu \
+        --extra local-models \
+        --extra quality-models \
+        --extra face-models \
+        --no-dev --no-editable \
     && chmod +x /app/docker/entrypoint.sh
 
 ENTRYPOINT ["/app/docker/entrypoint.sh"]

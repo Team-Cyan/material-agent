@@ -16,7 +16,9 @@ This directory is the shared source of truth for AI assistants working in this r
 - `prompts/feature.md`: reusable feature prompt
 - `templates/subagent-task.md`: handoff template for narrow module-scoped tasks
 - `reference/`: externally sourced implementation notes and compatibility findings
-- `modules/omlx-harness.md`: ownership and safe-edit contract for the live OMLX harness
+- `modules/omlx-harness.md`: legacy teacher/comparison harness contract
+- `modules/local-benchmark.md`: isolated local benchmark and artifact contract
+- `modules/local-model-stack.md`: optional local model blocks and runtime provenance
 - `playbooks/tune-omlx-harness.md`: how to run and interpret the real-photo harness when tuning models or prompts
 - `checklists/omlx-harness-checklist.md`: final review checklist for live-harness changes
 

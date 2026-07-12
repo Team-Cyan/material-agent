@@ -11,7 +11,7 @@ Use this playbook when the task changes sidecar content, tag preservation behavi
 
 ## Typical Scope
 
-- add or change `pj:*` tags
+- add or change `pj:*` machine tags
 - preserve more user-authored metadata
 - change description or instruction formatting
 - adjust rewrite behavior from database rows
@@ -36,11 +36,15 @@ Use this playbook when the task changes sidecar content, tag preservation behavi
    - new XMP creation path
    - rewrite path
 2. Preserve non-machine user tags unless the task explicitly says otherwise.
-3. Keep generated `pj:*` tags deterministic.
+3. Keep generated `pj:*` tags deterministic and store them in `xmp:Identifier`
+   rather than normal `dc:subject` keywords.
 4. If changing text assembly, verify both normal review runs and rewrite flows still agree.
 5. Be careful with private helper usage between writer and rewrite service.
 6. Keep `dc:description` as `x-default` language alternative and avoid adding Adobe-only XML shortcuts to the new-sidecar path.
 7. Prefer explicit ExifTool namespace writes for standard fields such as `XMP-photoshop:Instructions` and `XMP-dc:Description-x-default`.
+8. Do not add direct proprietary RAW metadata writes to the default path. If a
+   direct writeback experiment is required, make it format-specific, opt-in,
+   fixture-backed, and non-default.
 
 ## Acceptance Checks
 
@@ -51,5 +55,6 @@ Use this playbook when the task changes sidecar content, tag preservation behavi
 
 - fixing one write path but forgetting the other
 - dropping user keywords during regeneration
+- leaking machine `pj:*` tags into user keyword lists
 - changing description formatting without checking rewrite output
 - treating Photomator/Resolve support as proven without a real software matrix run

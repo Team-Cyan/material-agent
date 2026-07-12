@@ -119,6 +119,7 @@ def test_repo_default_backend_uses_local_openvino_profile():
     assert cfg["inference"]["device"] == "AUTO:GPU,CPU"
     assert cfg["inference"]["fallback_device"] == "CPU"
     assert cfg["inference"]["provider_tags"] == ["intel-openvino", "cpu"]
+    assert cfg["inference"]["enforce_available"] is False
     assert "omlx" not in cfg
     assert "ollama" not in cfg
 
@@ -393,19 +394,28 @@ def test_cli_main_routes_reset_ai(monkeypatch):
 def test_cli_main_import_does_not_eagerly_import_scoring_stack():
     import importlib
 
-    for module_name in (
+    module_names = (
         "material_agent.shells.cli.main",
         "material_agent.commands.scoring",
         "material_agent.app.review_runtime",
         "material_agent.domain.scoring_engine",
-    ):
-        sys.modules.pop(module_name, None)
+    )
+    previous_modules = {name: sys.modules.get(name) for name in module_names}
+    try:
+        for module_name in module_names:
+            sys.modules.pop(module_name, None)
 
-    importlib.import_module("material_agent.shells.cli.main")
+        importlib.import_module("material_agent.shells.cli.main")
 
-    assert "material_agent.commands.scoring" not in sys.modules
-    assert "material_agent.app.review_runtime" not in sys.modules
-    assert "material_agent.domain.scoring_engine" not in sys.modules
+        assert "material_agent.commands.scoring" not in sys.modules
+        assert "material_agent.app.review_runtime" not in sys.modules
+        assert "material_agent.domain.scoring_engine" not in sys.modules
+    finally:
+        for module_name in module_names:
+            sys.modules.pop(module_name, None)
+            previous = previous_modules[module_name]
+            if previous is not None:
+                sys.modules[module_name] = previous
 
 
 def test_cmd_run_creates_runtime_session_and_job(monkeypatch):
@@ -548,7 +558,7 @@ def test_review_runtime_marks_done_with_commentary_in_single_write(monkeypatch):
         monkeypatch.setattr("material_agent.app.review_runtime.decode_raw", lambda file_path, preview: object())
         monkeypatch.setattr("material_agent.app.review_runtime.compute_scores", fake_compute_scores)
         monkeypatch.setattr("material_agent.app.review_runtime.CommentaryGenerator", _Commentary)
-        monkeypatch.setattr("material_agent.app.review_runtime.ExifToolXMPWriter", lambda: fake_writer)
+        monkeypatch.setattr("material_agent.app.review_runtime.ExifToolXMPWriter", lambda *_args, **_kwargs: fake_writer)
 
         executor = build_review_job_executor(
             repository=repo,
@@ -820,7 +830,7 @@ def test_cmd_run_only_builds_runtime_probe_hook_for_enabled_omlx_backend(
         assert called["kwargs"]["input_dir"] == d
 
 
-def test_cmd_run_with_local_backend_never_touches_omlx_probe(monkeypatch):
+def test_cmd_run_with_local_backend_uses_local_preflight(monkeypatch):
     from material_agent.commands.scoring import cmd_run
 
     with tempfile.TemporaryDirectory() as d:
@@ -843,7 +853,7 @@ def test_cmd_run_with_local_backend_never_touches_omlx_probe(monkeypatch):
 
             def run(self, **kwargs):
                 called["kwargs"] = kwargs
-                assert kwargs["preflight_hook"] is None
+                assert callable(kwargs["preflight_hook"])
                 return "job-123"
 
         monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
@@ -851,7 +861,7 @@ def test_cmd_run_with_local_backend_never_touches_omlx_probe(monkeypatch):
         cmd_run(args, cfg)
 
         assert called["kwargs"]["config"]["backend"] == "local"
-        assert called["kwargs"]["preflight_hook"] is None
+        assert callable(called["kwargs"]["preflight_hook"])
 
 
 def test_cmd_rescore_delegates_to_rescore_service(monkeypatch):

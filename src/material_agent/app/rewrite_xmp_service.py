@@ -31,8 +31,16 @@ class RewriteXmpService:
             progress.on_phase_start("rewrite-xmp", len(rows))
         for row in rows:
             arw_path = Path(row["file_path"])
-            xmp_path = arw_path.with_suffix(".xmp")
+            xmp_path = self.writer._sidecar_path(arw_path)
             user_keywords = self.writer._read_non_pj_subject_tags(xmp_path) if xmp_path.exists() else []
+            user_identifiers = (
+                self.writer._read_non_pj_identifier_tags(xmp_path) if xmp_path.exists() else []
+            )
+            user_hierarchical = (
+                self.writer._read_non_pj_hierarchical_subject_tags(xmp_path)
+                if xmp_path.exists()
+                else []
+            )
 
             if dry_run:
                 print(
@@ -52,7 +60,6 @@ class RewriteXmpService:
             )
             if row["scene"]:
                 subject_tags.append(f"pj:scene={scene_label(row['scene'], output_language)}")
-            all_tags = user_keywords + subject_tags
 
             visible_breakdown = {}
             if row["visible_breakdown_json"]:
@@ -82,7 +89,9 @@ class RewriteXmpService:
                 self._rewrite_xmp_atomically(
                     xmp_path=xmp_path,
                     rating=row["star_rating"],
-                    subject_tags=all_tags,
+                    subject_tags=user_keywords,
+                    identifier_tags=user_identifiers + subject_tags,
+                    hierarchical_subject_tags=user_hierarchical,
                     instructions=instructions,
                     description=description,
                 )
@@ -106,13 +115,23 @@ class RewriteXmpService:
         xmp_path: Path,
         rating: int,
         subject_tags: list[str],
+        identifier_tags: list[str],
+        hierarchical_subject_tags: list[str],
         instructions: str,
         description: str,
     ) -> None:
         temp_path = xmp_path.with_name(f"{xmp_path.name}.tmp")
         try:
             temp_path.unlink(missing_ok=True)
-            self.writer._write_minimal_xmp(temp_path, rating, subject_tags, instructions, description)
+            self.writer._write_minimal_xmp(
+                temp_path,
+                rating,
+                subject_tags,
+                identifier_tags,
+                hierarchical_subject_tags,
+                instructions,
+                description,
+            )
             temp_path.replace(xmp_path)
         except Exception:
             temp_path.unlink(missing_ok=True)

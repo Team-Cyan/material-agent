@@ -1,4 +1,5 @@
 import logging
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -14,13 +15,22 @@ class RuntimePaths:
     log_path: Path
 
 
-def build_runtime_paths(input_dir: str | Path) -> RuntimePaths:
+def build_runtime_paths(
+    input_dir: str | Path,
+    *,
+    work_dir: str | Path | None = None,
+) -> RuntimePaths:
     input_path = Path(input_dir)
-    work_dir = input_path / ".material-agent"
+    configured_work_dir = work_dir or os.environ.get("MATERIAL_AGENT_WORK_DIR")
+    resolved_work_dir = (
+        Path(configured_work_dir).expanduser()
+        if configured_work_dir
+        else input_path / ".material-agent"
+    )
     return RuntimePaths(
-        work_dir=work_dir,
-        db_path=work_dir / "state.db",
-        log_path=work_dir / "run.log",
+        work_dir=resolved_work_dir,
+        db_path=resolved_work_dir / "state.db",
+        log_path=resolved_work_dir / "run.log",
     )
 
 
@@ -40,13 +50,20 @@ def _migrate_legacy_runtime_db(legacy_db_path: Path, db_path: Path) -> None:
     _log.info("Migrated legacy runtime DB from %s to %s", legacy_db_path, db_path)
 
 
-def ensure_runtime_paths(input_dir: str | Path) -> RuntimePaths:
+def ensure_runtime_paths(
+    input_dir: str | Path,
+    *,
+    work_dir: str | Path | None = None,
+) -> RuntimePaths:
     input_path = Path(input_dir)
-    paths = build_runtime_paths(input_path)
+    paths = build_runtime_paths(input_path, work_dir=work_dir)
     legacy_db_path = input_path / _LEGACY_DB_NAME
 
     if paths.db_path.exists():
         return paths
-    if legacy_db_path.exists():
+    # Only adopt the legacy input-root DB when runtime state still belongs to
+    # that input root. An external/container work directory must never move
+    # files out of a read-only photo library.
+    if paths.work_dir == input_path / ".material-agent" and legacy_db_path.exists():
         _migrate_legacy_runtime_db(legacy_db_path, paths.db_path)
     return paths

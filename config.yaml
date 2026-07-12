@@ -14,10 +14,82 @@ input_dir: "/path/to/photos"
 reprocess: false
 raw_extensions: [ARW, CR3, NEF, RAF, DNG, ORF, RW2]
 
+legacy:
+  # OMLX/Ollama are compatibility and teacher-only paths. They cannot be
+  # selected by `run` unless this gate is explicitly enabled.
+  enabled: false
+
 local:
   # Local backend is the only default backend in material-agent. It currently
   # provides deterministic heuristics and is the seam for ONNX/OpenVINO scorers.
   max_concurrent: 1
+  semantic:
+    # First learned vertical slice. Keep disabled until the deployment installs
+    # the `local-models` optional dependencies and benchmark-approved weights.
+    enabled: false
+    enforce_available: false
+    model_name: MobileCLIP2-S0
+    pretrained: dfndr2b
+    device: cpu
+    min_confidence: 0.30
+  quality:
+    # Raw no-reference quality priors. They remain outside total-score fusion
+    # until benchmark calibration approves a versioned policy.
+    enabled: false
+    enforce_available: false
+    device: cpu
+    policy_version: quality-priors-v1
+    metrics:
+      brisque:
+        enabled: true
+        role: reject_prior
+        lower_better: true
+        raw_min: 0.0
+        raw_max: 100.0
+        weight: 0.5
+      niqe:
+        enabled: true
+        role: reject_prior
+        lower_better: true
+        raw_min: 0.0
+        raw_max: 10.0
+        weight: 0.5
+      musiq:
+        enabled: false
+        role: quality
+        lower_better: false
+        raw_min: 0.0
+        raw_max: 100.0
+        weight: 1.0
+      nima:
+        enabled: false
+        role: aesthetic
+        lower_better: false
+        raw_min: 0.0
+        raw_max: 10.0
+        weight: 0.5
+      clipiqa+:
+        enabled: false
+        role: aesthetic
+        lower_better: false
+        raw_min: 0.0
+        raw_max: 1.0
+        weight: 0.5
+  embedding:
+    enabled: false
+    enforce_available: false
+    runtime: transformers
+    model_name: facebook/dinov2-small
+    device: cpu
+    model_path: ""
+    processor_path: ""
+    compiled_cache_dir: "~/.material-agent/openvino-cache"
+  face:
+    enabled: false
+    enforce_available: false
+    model_asset_path: "~/.material-agent/models/face_landmarker.task"
+    num_faces: 5
+    min_detection_confidence: 0.5
 
 inference:
   # First implementation target: Intel CPU + integrated/discrete GPU through
@@ -28,6 +100,7 @@ inference:
   fallback_device: "CPU"
   model_cache_dir: "~/.material-agent/models"
   provider_tags: [intel-openvino, cpu]
+  enforce_available: false
 
 grouping:
   enabled: true
@@ -36,13 +109,35 @@ grouping:
     enabled: true
     hash_threshold: 10
     max_merge_gap_minutes: 10
+  embedding_similarity:
+    # Opt-in until real-camera grouping calibration is complete.
+    enabled: false
+    threshold: 0.85
   group_guard:
     enabled: true
     min_score: 7.0
 
 preview:
+  # Prefer the camera-embedded JPEG/thumbnail for NAS-scale scoring. Full RAW
+  # demosaic is only a fallback when the file has no usable embedded preview.
+  prefer_embedded: true
+  fallback_decode: half_size
   max_size: 1024
   jpeg_quality: 85
+
+focus_integrity:
+  enabled: true
+  # Current focus scoring is a preview proxy. High-resolution ROI focus should
+  # be enabled only after a dedicated candidate pass is wired.
+  mode: preview_proxy
+  high_resolution_roi: false
+  downscale_warning_ratio: 3.0
+
+portrait_face_eye:
+  # Disabled by default until a face/eye ROI model is wired into the pipeline.
+  enabled: false
+  min_face_ratio: 0.08
+  review_penalty: 0.8
 
 scorers:
   exposure:
@@ -94,6 +189,13 @@ screening:
 
 review_pipeline:
   score_prefetch_window: 2
+
+xmp:
+  write_mode: sidecar
+  compatibility_profile: adobe
+  # Machine-generated pj:* tags are stored in xmp:Identifier instead of normal
+  # dc:subject keywords, so Lightroom/Photomator see clean user keywords.
+  machine_tag_target: identifier
 
 decision_policy:
   keep_threshold: 7.5
