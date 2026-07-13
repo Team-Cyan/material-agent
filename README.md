@@ -23,9 +23,10 @@ The default config uses:
 - `backend: local`
 - `inference.runtime: openvino`
 - `inference.device: AUTO:GPU,CPU`
-- runtime state in `$MATERIAL_AGENT_WORK_DIR/state.db` when configured (the
-  Docker images default to `/app/.material-agent`); otherwise
-  `.material-agent/state.db` under the processed photo folder
+- runtime state in `$MATERIAL_AGENT_WORK_DIR/state.db` and operational logs in
+  `$MATERIAL_AGENT_WORK_DIR/run.log` when configured (the Docker images default
+  to `/app/.material-agent`); otherwise both live under `.material-agent/` in
+  the processed photo folder
 
 The local backend always retains deterministic JPEG-preview heuristics as its
 fallback. Optional learned blocks now provide MobileCLIP2 scene tags,
@@ -60,9 +61,13 @@ docker run --rm --device /dev/dri \
   -e MATERIAL_AGENT_WORK_DIR=/config \
   -e MATERIAL_AGENT_DRY_RUN=true \
   -v /mnt/user/material/photos:/photos:ro \
-  -v /mnt/user/appdata/material-agent:/config \
+  -v /mnt/user/appdata/material-agent/runtime/.material-agent:/config \
   ghcr.io/team-cyan/material-agent:intel-openvino
 ```
+
+With this layout, the photo library is input only. SQLite state is
+`/config/state.db` and the file log is `/config/run.log`; both resolve to the
+appdata bind mount rather than the photo directory.
 
 Isolated benchmark and OpenVINO bundle preparation:
 

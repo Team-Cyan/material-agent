@@ -145,8 +145,14 @@ Verified on OpenVINO 2026.2.1 CPU:
   with the cache, while warm fixture inference stayed around 0.53 seconds;
 - actual execution device readback on the Apple verification host is `CPU`.
 
-Intel GPU validation is still required on the target Linux NAS. CPU evidence
-must not be presented as proof that `/dev/dri` or `AUTO:GPU,CPU` works there.
+Target Intel GPU execution is now verified on the Unraid Linux NAS through a
+DockerMan-managed, read-only pilot. The container exposed `/dev/dri`, OpenVINO
+reported both `CPU` and `GPU`, and all ten bounded score payloads recorded
+`runtime=openvino` with actual execution device `GPU.0`. The pilot used a fresh
+appdata-backed runtime directory, mounted the photo library read-only, ran with
+dry-run enabled, and left both source-side XMP count and source-side runtime
+directory count at zero. This proves model execution on the target iGPU; it does
+not yet provide CPU/GPU parity or target-host utilization measurements.
 
 ## First Intel Implementation
 

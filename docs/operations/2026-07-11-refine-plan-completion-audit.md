@@ -86,7 +86,8 @@ Contradicting promotion evidence:
 
 ## Milestone 4: Native OpenVINO
 
-Status: native CPU vertical slice complete; Intel GPU acceptance incomplete.
+Status: native CPU and target Intel GPU vertical slices complete; parity and
+utilization acceptance incomplete.
 
 Evidence:
 
@@ -100,15 +101,19 @@ Evidence:
 - a persistent compiled blob is produced and cross-process cold load improves;
 - MHA Q4 is explicitly rejected because OpenVINO cannot convert
   `com.microsoft.MultiHeadAttention`.
+- the published `intel-openvino` image at revision `54e7654` exposes the target
+  Unraid host's `/dev/dri`, and OpenVINO 2026.2.1 reports `CPU` and `GPU`;
+- a fresh ten-file run recorded ten model embeddings, ten native OpenVINO
+  embeddings, and ten actual execution-device results on `GPU.0`.
 
 Missing acceptance evidence:
 
-- `/dev/dri` visibility and `AUTO:GPU,CPU` execution on the target Intel NAS;
 - CPU/GPU parity and target-host utilization measurements.
 
 ## Milestone 5: Production Pilot
 
-Status: isolated local pilot complete; target-host pilot incomplete.
+Status: isolated local pilot and target-host read-only pilot complete;
+target-host sidecar-write validation remains intentionally incomplete.
 
 Available evidence:
 
@@ -117,7 +122,15 @@ Available evidence:
 - current live Unraid safe-read confirms host `OMNI` on an i7-11700T;
 - the host has Docker but no host Python/uv, so validation must run in a
   purpose-built container;
-- no `material-agent` container is currently deployed;
+- `material-agent` is installed as a DockerMan-managed one-shot container using
+  `ghcr.io/team-cyan/material-agent:intel-openvino` at revision `54e7654`;
+- the bounded target-host run finished 10/10 files with zero errors and stored
+  its fresh database at `/config/state.db` under the appdata bind mount;
+- `/mnt/user/material/photos` was mounted at `/photos` with `RW=false`, dry-run
+  remained enabled, and the post-run audit found zero source-side XMP files and
+  zero source-side `.material-agent` directories;
+- runtime state and `run.log` stay in the writable `/config` appdata mount, not
+  in the photo library;
 - a five-file holdout copy completed both dry-run and real sidecar-write passes;
 - all five copied ARWs were scored and ranked in one group, five XMP sidecars
   were ExifTool-readable, and SQLite recorded five successful rows;
@@ -126,9 +139,9 @@ Available evidence:
 
 Required external inputs/actions:
 
-- a typed homelab safe-read action that exposes `/dev/dri` and bounded container
-  device details, or an approved material-agent container deployment plan;
-- a target-host isolated sidecar run after GPU/CPU parity is established;
+- a target-host isolated sidecar-write run only after separate operator
+  authorization; the current deployment must remain dry-run and read-only;
+- CPU/GPU parity and utilization measurements;
 - operator review of benchmark thresholds before default-model promotion.
 
 ## Milestone 6: Legacy Quarantine
@@ -151,6 +164,7 @@ Remaining decision:
 
 ## Verification Snapshot
 
+- full suite: 469 passed and 13 skipped after the target-host pilot changes;
 - focused RAW benchmark and semantic tests pass, including a mocked RAW decode
   regression and the maintained synthetic semantic gate;
 - `uv run ruff check src tests`: passed;
@@ -159,6 +173,7 @@ Remaining decision:
   the local Apple host; learned semantic+embedding+face repeat count 1 runs at
   0.95 images/second and records actual component runtimes.
 
-The refine plan must remain active. Real-camera and isolated XMP gates now have
-initial evidence, but missing Intel GPU parity, target-host pilot evidence, and
-operator-approved score thresholds prevent a defensible completion claim.
+The refine plan must remain active. Real-camera, isolated XMP, and target Intel
+GPU read-only gates now have initial evidence, but missing CPU/GPU parity,
+target-host sidecar-write evidence, and operator-approved score thresholds
+prevent a defensible completion claim.

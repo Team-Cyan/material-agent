@@ -27,6 +27,9 @@
   DINOv2-small, and MediaPipe Face Landmarker signal blocks
 - implemented native OpenVINO ONNX embedding, self-contained model bundle
   materialization, compiled cache identity, and actual execution-device readback
+- deployed the Intel OpenVINO image through Unraid DockerMan and completed a
+  bounded ten-file read-only pilot with ten OpenVINO embeddings executed on
+  `GPU.0`, appdata-backed SQLite/log state, and zero source-side XMP writes
 - quarantined OMLX/Ollama behind an explicit compatibility gate and removed
   legacy runtime helpers from the default command surface
 - added RAW input support to the isolated benchmark and completed the first
@@ -52,8 +55,8 @@
 ## Next
 
 - calibrate a versioned score policy only after per-block benchmark reports exist
-- run the current default stack on an Intel iGPU host with OpenVINO CPU/GPU
-  provider measurements
+- measure OpenVINO CPU/GPU parity, throughput, and target-host utilization on
+  the Intel iGPU host
 - run read-only and isolated-XMP production pilots before changing the default
   learned scoring policy
 
