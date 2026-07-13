@@ -24,7 +24,12 @@ jobs:
             -w /app \
             --entrypoint /bin/sh \
             ghcr.io/astral-sh/uv:python3.14-trixie@sha256:12a46aa8066ea9ab1236ccaa6ad02086e375d3b70830d05797f123eedabb2294 \
-            -lc 'uv sync --frozen --group dev --extra intel-openvino && uv run ruff check . && uv run pytest -q'
+            -lc 'apt-get update && \
+                 apt-get install -y --no-install-recommends libgl1 libglib2.0-0 && \
+                 rm -rf /var/lib/apt/lists/* && \
+                 uv sync --frozen --group dev --extra intel-openvino && \
+                 uv run ruff check . && \
+                 uv run pytest -q'
 
   publish:
     if: github.ref == 'refs/heads/main'
