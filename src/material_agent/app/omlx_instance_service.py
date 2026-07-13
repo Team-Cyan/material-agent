@@ -11,6 +11,7 @@ from ..adapters.models.omlx.instance import (
     collect_omlx_runtime_models,
     discover_local_omlx_version,
     discover_omlx_api_key,
+    ensure_dedicated_start_is_unauthenticated,
     find_omlx_command_prefix,
     is_configured_shared_omlx_runtime,
     is_local_omlx_base_url,
@@ -20,6 +21,7 @@ from ..adapters.models.omlx.instance import (
     setup_omlx_instance,
 )
 from ..adapters.models.omlx.probe import probe_omlx_capabilities, validate_omlx_capability
+from ..utils.file_security import secure_private_file
 
 
 class OMLXInstanceService:
@@ -188,6 +190,13 @@ class OMLXInstanceService:
             guidance = status.get("failure_guidance") or "Review the OMLX runtime configuration and restart."
             raise RuntimeError(f"{summary_text} {guidance}")
 
+        ensure_dedicated_start_is_unauthenticated(
+            discover_omlx_api_key(
+                config,
+                home_settings_path=self.home_settings_path,
+            )
+        )
+
         omlx_command_prefix = find_omlx_command_prefix()
         instance_root = Path(summary["instance_root"])
         model_dir = Path(summary["model_dir"])
@@ -207,6 +216,8 @@ class OMLXInstanceService:
         run_dir.mkdir(parents=True, exist_ok=True)
         pid_path = run_dir / "omlx.pid"
 
+        log_path.touch(mode=0o600, exist_ok=True)
+        secure_private_file(log_path)
         with log_path.open("a", encoding="utf-8") as handle:
             process = subprocess.Popen(
                 command,
@@ -216,6 +227,7 @@ class OMLXInstanceService:
                 start_new_session=True,
             )
         pid_path.write_text(f"{process.pid}\n", encoding="utf-8")
+        secure_private_file(pid_path)
 
         self._wait_until_ready(config)
         return {

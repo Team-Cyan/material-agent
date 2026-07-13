@@ -20,6 +20,12 @@ class RichEventSink:
             self.progress.on_score_done(payload["file_path"], float(payload.get("score_total", 0.0)))
         elif event_type == "job_file_written":
             self.progress.on_write_done(payload["file_path"], float(payload.get("score_total", 0.0)))
+        elif event_type == "job_file_simulated":
+            self.progress.on_file_done(
+                payload["file_path"],
+                float(payload.get("score_total", 0.0)),
+                skipped=True,
+            )
         elif event_type == "job_file_failed":
             self.progress.on_error(payload["file_path"], RuntimeError(payload.get("error", "unknown error")))
         elif event_type == "job_finished":

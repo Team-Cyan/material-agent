@@ -1,27 +1,27 @@
 """Regression tests for CLI command handlers in material_agent/main.py."""
 
+import copy
+import os
 import sqlite3
+import sys
 import tempfile
 from argparse import Namespace
-import os
-import sys
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
 import yaml
 
-from material_agent.commands.scoring import load_config
 from material_agent.app.dto import JobStage, JobStatus
+from material_agent.commands.scoring import (
+    build_score_cache_key,
+    load_config,
+    load_raw_config,
+)
 from material_agent.main import cmd_fix_db, cmd_rescore, cmd_scan_scenes, cmd_remap_scenes
 from material_agent.utils.constants import SCENE_LIST
 from material_agent.utils.runtime_paths import build_runtime_paths
 from material_agent.utils.state import State
-
-
-LEGACY_OMLX_RUNTIME_SKIP = (
-    "legacy OMLX runtime orchestration is no longer part of material-agent's default path"
-)
 
 
 # ---------------------------------------------------------------------------
@@ -69,6 +69,50 @@ def _make_db(d: str) -> str:
     return str(db_path)
 
 
+def _run_args(input_dir: str | Path, *, allow_empty: bool = False) -> Namespace:
+    return Namespace(
+        input_dir=str(input_dir),
+        config="config.yaml",
+        reprocess=False,
+        dry_run=False,
+        allow_empty=allow_empty,
+        scorers=None,
+        no_visual_merge=False,
+    )
+
+
+def _legacy_backend_config(backend: str) -> dict:
+    """Build an explicit compatibility config without changing repo defaults."""
+
+    config = load_config("config.yaml")
+    config["backend"] = backend
+    config["legacy"]["enabled"] = True
+    config["omlx"] = {
+        "base_url": "http://127.0.0.1:11435",
+        "full_vision_model": "Qwen3-VL-4B-Instruct-4bit",
+        "commentary_model": "Qwen3-VL-4B-Instruct-4bit",
+        "timeout": 120,
+        "runtime": {
+            "probe_on_run": True,
+            "enforce_dedicated_instance": False,
+        },
+    }
+    config["ollama"] = {
+        "base_url": "http://127.0.0.1:11434",
+        "vision_model": "llava:7b",
+        "commentary_model": "llama3.2:3b",
+        "timeout": 120,
+    }
+    return config
+
+
+def _mock_finished_job(monkeypatch, status: str = "finished") -> None:
+    monkeypatch.setattr(
+        "material_agent.adapters.state.sqlite_runtime.SQLiteRuntimeRepository.get_job_result",
+        lambda *_args: {"status": status, "summary": {}},
+    )
+
+
 # ---------------------------------------------------------------------------
 # cmd_scan_scenes
 # ---------------------------------------------------------------------------
@@ -77,10 +121,11 @@ def _make_db(d: str) -> str:
 def test_scan_scenes_missing_db(capsys):
     with tempfile.TemporaryDirectory() as d:
         args = Namespace(dir=d)
-        cmd_scan_scenes(args)
+        result = cmd_scan_scenes(args)
         out = capsys.readouterr().out
         assert "Error" in out
         assert "no database" in out
+        assert result == 1
 
 
 def test_scan_scenes_shows_distribution(capsys):
@@ -126,9 +171,128 @@ def test_repo_default_backend_uses_local_openvino_profile():
 
 def test_repo_default_local_settings_are_normalized():
     cfg = load_config("config.yaml")
-    assert cfg["local"]["max_concurrent"] == 1
+    assert "max_concurrent" not in cfg["local"]
     assert cfg["inference"]["model_cache_dir"] == "~/.material-agent/models"
     assert cfg["review_pipeline"]["score_prefetch_window"] == 2
+
+
+@pytest.mark.parametrize("content", ["", "- one\n- two\n"])
+def test_load_raw_config_rejects_non_mapping_documents(tmp_path, content):
+    config_path = tmp_path / "invalid.yaml"
+    config_path.write_text(content, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="top-level mapping"):
+        load_raw_config(str(config_path))
+
+
+def test_cmd_run_rejects_missing_input_before_any_runtime_write(tmp_path, monkeypatch):
+    from material_agent.commands.scoring import cmd_run
+
+    input_dir = tmp_path / "missing"
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._check_exiftool_version",
+        lambda: pytest.fail("ExifTool must not run for invalid input"),
+    )
+
+    with pytest.raises(ValueError, match="does not exist"):
+        cmd_run(_run_args(input_dir), load_config("config.yaml"))
+
+    assert not (input_dir / ".material-agent").exists()
+
+
+def test_cmd_run_rejects_file_input_before_any_runtime_write(tmp_path, monkeypatch):
+    from material_agent.commands.scoring import cmd_run
+
+    input_path = tmp_path / "photo.ARW"
+    input_path.write_bytes(b"not-a-directory")
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._check_exiftool_version",
+        lambda: pytest.fail("ExifTool must not run for invalid input"),
+    )
+
+    with pytest.raises(ValueError, match="not a directory"):
+        cmd_run(_run_args(input_path), load_config("config.yaml"))
+
+    assert not (tmp_path / ".material-agent").exists()
+
+
+def test_cmd_run_rejects_unreadable_input_before_any_runtime_write(tmp_path, monkeypatch):
+    from material_agent.commands.scoring import cmd_run
+
+    monkeypatch.setattr("material_agent.commands.scoring.os.access", lambda *_args: False)
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._check_exiftool_version",
+        lambda: pytest.fail("ExifTool must not run for invalid input"),
+    )
+
+    with pytest.raises(ValueError, match="not readable"):
+        cmd_run(_run_args(tmp_path), load_config("config.yaml"))
+
+    assert not (tmp_path / ".material-agent").exists()
+
+
+def test_cmd_run_rejects_empty_discovery_before_any_runtime_write(tmp_path, monkeypatch):
+    from material_agent.commands.scoring import cmd_run
+
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._check_exiftool_version",
+        lambda: pytest.fail("ExifTool must not run for empty input"),
+    )
+
+    with pytest.raises(ValueError, match="--allow-empty"):
+        cmd_run(_run_args(tmp_path), load_config("config.yaml"))
+
+    assert not (tmp_path / ".material-agent").exists()
+
+
+def test_score_cache_key_tracks_score_grouping_and_terminal_output_inputs():
+    config = load_config("config.yaml")
+    baseline = build_score_cache_key(config)
+
+    operational_only = copy.deepcopy(config)
+    operational_only["log_level"] = "debug"
+    operational_only["review_pipeline"]["score_prefetch_window"] = 1
+    assert build_score_cache_key(operational_only) == baseline
+
+    scoring_change = copy.deepcopy(config)
+    scoring_change["scorers"]["exposure"]["weight"] += 0.01
+    assert build_score_cache_key(scoring_change) != baseline
+
+    scene_change = copy.deepcopy(config)
+    scene_change["scene_weights"]["default"]["composition"] += 0.01
+    assert build_score_cache_key(scene_change) != baseline
+
+    grouping_change = copy.deepcopy(config)
+    grouping_change["grouping"]["time_gap_seconds"] += 1
+    assert build_score_cache_key(grouping_change) != baseline
+
+    output_change = copy.deepcopy(config)
+    output_change["commentary_enabled"] = not config["commentary_enabled"]
+    assert build_score_cache_key(output_change) != baseline
+
+
+def test_score_cache_key_redacts_credentials_before_hashing():
+    config = load_config("config.yaml")
+    config["legacy"]["enabled"] = True
+    config["backend"] = "omlx"
+    config["omlx"] = {"api_key": "first-secret", "full_vision_model": "fixture"}
+    baseline = build_score_cache_key(config)
+
+    config["omlx"]["api_key"] = "rotated-secret"
+
+    assert build_score_cache_key(config) == baseline
+
+
+def test_score_cache_key_tracks_pipeline_revision(monkeypatch):
+    config = load_config("config.yaml")
+    baseline = build_score_cache_key(config)
+
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._SCORE_PIPELINE_CACHE_REVISION",
+        "material-agent.score-output.next",
+    )
+
+    assert build_score_cache_key(config) != baseline
 
 
 def test_cmd_run_rejects_missing_raw_omlx_config():
@@ -192,7 +356,24 @@ def test_cli_shell_owns_run_parser_flags():
     help_text = run_parser.format_help()
 
     assert "--dry-run" in help_text
+    assert "--allow-empty" in help_text
     assert "--no-visual-merge" in help_text
+
+
+@pytest.mark.parametrize(
+    "argv",
+    [
+        ["run", "--conf", "config.yaml", "/tmp/photos"],
+        ["run", "--scor", "exposure", "/tmp/photos"],
+    ],
+)
+def test_cli_shell_rejects_abbreviated_run_options(argv):
+    from material_agent.shells.cli.main import build_parser
+
+    with pytest.raises(SystemExit) as exc_info:
+        build_parser().parse_args(argv)
+
+    assert exc_info.value.code == 2
 
 
 def test_cli_shell_excludes_legacy_omlx_commands():
@@ -241,20 +422,27 @@ def test_cli_shell_builds_parser_for_reset_ai():
     from material_agent.shells.cli.main import build_parser
 
     parser = build_parser()
-    args = parser.parse_args(
+    default_args = parser.parse_args(
         [
             "reset-ai",
             "--dir",
             "/tmp/photos",
             "--dry-run",
-            "--keep-xmp",
         ]
     )
+    clear_args = parser.parse_args(
+        ["reset-ai", "--dir", "/tmp/photos", "--clear-xmp"]
+    )
+    compatibility_args = parser.parse_args(
+        ["reset-ai", "--dir", "/tmp/photos", "--keep-xmp"]
+    )
 
-    assert args.command == "reset-ai"
-    assert args.dir == "/tmp/photos"
-    assert args.dry_run is True
-    assert args.keep_xmp is True
+    assert default_args.command == "reset-ai"
+    assert default_args.dir == "/tmp/photos"
+    assert default_args.dry_run is True
+    assert default_args.clear_xmp is False
+    assert clear_args.clear_xmp is True
+    assert compatibility_args.clear_xmp is False
 
 
 def test_legacy_main_delegates_to_cli_shell(monkeypatch):
@@ -345,6 +533,38 @@ def test_cli_main_run_passes_raw_config_to_cmd_run(monkeypatch):
     assert "omlx" not in captured["config"]
 
 
+def test_cli_main_returns_delegated_command_exit_code(monkeypatch):
+    import importlib
+
+    cli_main = importlib.import_module("material_agent.shells.cli.main")
+    monkeypatch.setattr(cli_main, "cmd_scan_scenes", lambda _args: 7)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["material-agent", "scan-scenes", "--dir", "/tmp/photos"],
+    )
+
+    assert cli_main.main() == 7
+
+
+def test_cli_main_returns_130_for_sigterm_cancellation(monkeypatch, capsys):
+    import importlib
+
+    from material_agent.app.errors import RunCancelled
+
+    cli_main = importlib.import_module("material_agent.shells.cli.main")
+    monkeypatch.setattr(cli_main, "load_raw_config", lambda _path: {})
+    monkeypatch.setattr(
+        cli_main,
+        "cmd_run",
+        lambda _args, _config: (_ for _ in ()).throw(RunCancelled("received SIGTERM")),
+    )
+    monkeypatch.setattr(sys, "argv", ["material-agent", "run", "/tmp/photos"])
+
+    assert cli_main.main() == 130
+    assert "Run cancelled: received SIGTERM" in capsys.readouterr().err
+
+
 def test_cli_main_routes_rewrite_commentary(monkeypatch):
     import importlib
 
@@ -368,6 +588,38 @@ def test_cli_main_routes_rewrite_commentary(monkeypatch):
     assert called["args"].rewrite_xmp is True
 
 
+def test_cmd_rewrite_commentary_returns_nonzero_for_xmp_errors(
+    tmp_path, monkeypatch, capsys
+):
+    from material_agent.commands.io import cmd_rewrite_commentary
+
+    _make_db(str(tmp_path))
+
+    class _FailingRewriteService:
+        def run(self, *_args, **_kwargs):
+            return {
+                "done_rows": 2,
+                "updated": 2,
+                "rewritten_xmp": 1,
+                "xmp_errors": 1,
+            }
+
+    monkeypatch.setattr(
+        "material_agent.commands.io.RewriteCommentaryService",
+        lambda: _FailingRewriteService(),
+    )
+    monkeypatch.setattr("material_agent.commands.io.load_config", lambda _path: {})
+    args = Namespace(
+        dir=str(tmp_path),
+        config="config.yaml",
+        dry_run=False,
+        rewrite_xmp=True,
+    )
+
+    assert cmd_rewrite_commentary(args) == 1
+    assert "1 errors" in capsys.readouterr().out
+
+
 def test_cli_main_routes_reset_ai(monkeypatch):
     import importlib
 
@@ -382,13 +634,13 @@ def test_cli_main_routes_reset_ai(monkeypatch):
     monkeypatch.setattr(
         sys,
         "argv",
-        ["material-agent", "reset-ai", "--dir", "/tmp/photos", "--keep-xmp"],
+        ["material-agent", "reset-ai", "--dir", "/tmp/photos", "--clear-xmp"],
     )
 
     cli_main.main()
 
     assert called["args"].dir == "/tmp/photos"
-    assert called["args"].keep_xmp is True
+    assert called["args"].clear_xmp is True
 
 
 def test_cli_main_import_does_not_eagerly_import_scoring_stack():
@@ -428,6 +680,7 @@ def test_cmd_run_creates_runtime_session_and_job(monkeypatch):
             config="config.yaml",
             reprocess=False,
             dry_run=False,
+            allow_empty=True,
             scorers=None,
             no_visual_merge=False,
         )
@@ -450,7 +703,7 @@ def test_cmd_run_creates_runtime_session_and_job(monkeypatch):
             lambda *args, **kwargs: _FakeExecutor(),
         )
 
-        cmd_run(args, cfg)
+        result = cmd_run(args, cfg)
 
         db_path = build_runtime_paths(d).db_path
         with sqlite3.connect(db_path) as conn:
@@ -468,6 +721,7 @@ def test_cmd_run_creates_runtime_session_and_job(monkeypatch):
         assert session_row[2] is not None
         assert job_row == (JobStage.DISCOVER.value, JobStatus.QUEUED.value)
         assert runtime_probe is None
+        assert result == 0
 
 
 def test_cmd_run_delegates_runtime_start_to_review_run_service(monkeypatch):
@@ -480,12 +734,17 @@ def test_cmd_run_delegates_runtime_start_to_review_run_service(monkeypatch):
             config="config.yaml",
             reprocess=False,
             dry_run=False,
+            allow_empty=True,
             scorers=None,
             no_visual_merge=False,
         )
         called = {}
 
         monkeypatch.setattr("material_agent.commands.scoring._check_exiftool_version", lambda: None)
+        monkeypatch.setattr(
+            "material_agent.adapters.models.omlx.instance.is_configured_shared_omlx_runtime",
+            lambda _config: True,
+        )
         monkeypatch.setattr(
             "material_agent.commands.scoring._sync_shared_omlx_models_if_needed",
             lambda _config: None,
@@ -500,12 +759,75 @@ def test_cmd_run_delegates_runtime_start_to_review_run_service(monkeypatch):
                 return "job-123"
 
         monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        monkeypatch.setattr(
+            "material_agent.adapters.state.sqlite_runtime.SQLiteRuntimeRepository.get_job_result",
+            lambda *_args: {"status": "finished", "summary": {}},
+        )
 
-        cmd_run(args, cfg)
+        result = cmd_run(args, cfg)
 
         assert called["kwargs"]["input_dir"] == d
         assert called["kwargs"]["config"]["input_dir"] == d
         assert called["kwargs"]["dry_run"] is False
+        assert result == 0
+
+
+def test_cmd_run_returns_nonzero_for_partial_errors_and_passes_score_cache_key(
+    tmp_path,
+    monkeypatch,
+):
+    from material_agent.commands.scoring import cmd_run
+
+    photo = tmp_path / "one.ARW"
+    photo.write_bytes(b"fake")
+    config = load_config("config.yaml")
+    expected_cache_key = build_score_cache_key(config)
+    captured = {}
+
+    class _FakeProcessedRepository:
+        def __init__(self, input_dir, *, reprocess, score_cache_key):
+            captured["processed_input"] = input_dir
+            captured["reprocess"] = reprocess
+            captured["score_cache_key"] = score_cache_key
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+    class _FakeReviewRunService:
+        def __init__(self, repository):
+            captured["runtime_repository"] = repository
+
+        def run(self, **kwargs):
+            captured["file_paths"] = kwargs["file_paths"]
+            return "job-with-errors"
+
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._check_exiftool_version", lambda: None
+    )
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._sync_shared_omlx_models_if_needed",
+        lambda _config: None,
+    )
+    monkeypatch.setattr(
+        "material_agent.commands.scoring.SQLiteProcessedRepository",
+        _FakeProcessedRepository,
+    )
+    monkeypatch.setattr(
+        "material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService
+    )
+    monkeypatch.setattr(
+        "material_agent.adapters.state.sqlite_runtime.SQLiteRuntimeRepository.get_job_result",
+        lambda *_args: {"status": "finished_with_errors", "summary": {"error_files": 1}},
+    )
+
+    result = cmd_run(_run_args(tmp_path), config)
+
+    assert result == 1
+    assert captured["file_paths"] == [str(photo)]
+    assert captured["score_cache_key"] == expected_cache_key
 
 
 def test_review_runtime_marks_done_with_commentary_in_single_write(monkeypatch):
@@ -577,25 +899,20 @@ def test_review_runtime_marks_done_with_commentary_in_single_write(monkeypatch):
         state.update_commentary.assert_not_called()
 
 
-@pytest.mark.skip(reason=LEGACY_OMLX_RUNTIME_SKIP)
 def test_cmd_run_restarts_shared_omlx_models_for_local_desktop_runtime(monkeypatch, capsys):
     from material_agent.commands.scoring import cmd_run
 
     with tempfile.TemporaryDirectory() as d:
-        cfg = load_config("config.yaml")
-        cfg["backend"] = "omlx"
+        cfg = _legacy_backend_config("omlx")
         cfg["omlx"]["runtime"]["enforce_dedicated_instance"] = False
-        args = Namespace(
-            input_dir=d,
-            config="config.yaml",
-            reprocess=False,
-            dry_run=False,
-            scorers=None,
-            no_visual_merge=False,
-        )
+        args = _run_args(d, allow_empty=True)
         called = {}
 
         monkeypatch.setattr("material_agent.commands.scoring._check_exiftool_version", lambda: None)
+        monkeypatch.setattr(
+            "material_agent.adapters.models.omlx.instance.is_configured_shared_omlx_runtime",
+            lambda _config: True,
+        )
 
         class _FakeService:
             def sync_shared(self, config):
@@ -626,38 +943,33 @@ def test_cmd_run_restarts_shared_omlx_models_for_local_desktop_runtime(monkeypat
                 called["kwargs"] = kwargs
                 return "job-123"
 
-        monkeypatch.setattr("material_agent.commands.scoring.OMLXInstanceService", lambda: _FakeService())
+        monkeypatch.setattr(
+            "material_agent.app.omlx_instance_service.OMLXInstanceService",
+            lambda: _FakeService(),
+        )
         monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        _mock_finished_job(monkeypatch)
 
-        cmd_run(args, cfg)
+        result = cmd_run(args, cfg)
         out = capsys.readouterr().out
 
         assert called["synced_config"]["backend"] == "omlx"
         assert called["status_config"]["backend"] == "omlx"
         assert called["restarted_config"]["backend"] == "omlx"
+        assert result == 0
         assert "Restarted shared oMLX runtime with active models: Qwen3-VL-4B-Instruct-4bit" in out
         assert "Inactive shared desktop models remain installed but unpinned: gemma-4-e2b-it-4bit" in out
 
 
-@pytest.mark.skip(reason=LEGACY_OMLX_RUNTIME_SKIP)
 def test_cmd_run_skips_shared_omlx_sync_for_dedicated_runtime(monkeypatch):
     from material_agent.commands.scoring import cmd_run
 
     with tempfile.TemporaryDirectory() as d:
-        cfg = load_config("config.yaml")
-        cfg["backend"] = "omlx"
+        cfg = _legacy_backend_config("omlx")
         cfg["omlx"]["runtime"]["enforce_dedicated_instance"] = True
-        args = Namespace(
-            input_dir=d,
-            config="config.yaml",
-            reprocess=False,
-            dry_run=False,
-            scorers=None,
-            no_visual_merge=False,
-        )
+        args = _run_args(d, allow_empty=True)
 
         monkeypatch.setattr("material_agent.commands.scoring._check_exiftool_version", lambda: None)
-
         class _FakeService:
             def sync_shared(self, config):
                 raise AssertionError("shared desktop sync should be skipped for dedicated runtime mode")
@@ -669,31 +981,30 @@ def test_cmd_run_skips_shared_omlx_sync_for_dedicated_runtime(monkeypatch):
             def run(self, **kwargs):
                 return "job-123"
 
-        monkeypatch.setattr("material_agent.commands.scoring.OMLXInstanceService", lambda: _FakeService())
+        monkeypatch.setattr(
+            "material_agent.app.omlx_instance_service.OMLXInstanceService",
+            lambda: _FakeService(),
+        )
         monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        _mock_finished_job(monkeypatch)
 
-        cmd_run(args, cfg)
+        assert cmd_run(args, cfg) == 0
 
 
-@pytest.mark.skip(reason=LEGACY_OMLX_RUNTIME_SKIP)
 def test_cmd_run_starts_shared_omlx_when_desktop_runtime_is_unreachable(monkeypatch, capsys):
     from material_agent.commands.scoring import cmd_run
 
     with tempfile.TemporaryDirectory() as d:
-        cfg = load_config("config.yaml")
-        cfg["backend"] = "omlx"
+        cfg = _legacy_backend_config("omlx")
         cfg["omlx"]["runtime"]["enforce_dedicated_instance"] = False
-        args = Namespace(
-            input_dir=d,
-            config="config.yaml",
-            reprocess=False,
-            dry_run=False,
-            scorers=None,
-            no_visual_merge=False,
-        )
+        args = _run_args(d, allow_empty=True)
         called = {}
 
         monkeypatch.setattr("material_agent.commands.scoring._check_exiftool_version", lambda: None)
+        monkeypatch.setattr(
+            "material_agent.adapters.models.omlx.instance.is_configured_shared_omlx_runtime",
+            lambda _config: True,
+        )
 
         class _FakeService:
             def sync_shared(self, config):
@@ -724,38 +1035,34 @@ def test_cmd_run_starts_shared_omlx_when_desktop_runtime_is_unreachable(monkeypa
                 called["kwargs"] = kwargs
                 return "job-123"
 
-        monkeypatch.setattr("material_agent.commands.scoring.OMLXInstanceService", lambda: _FakeService())
+        monkeypatch.setattr(
+            "material_agent.app.omlx_instance_service.OMLXInstanceService",
+            lambda: _FakeService(),
+        )
         monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        _mock_finished_job(monkeypatch)
 
-        cmd_run(args, cfg)
+        result = cmd_run(args, cfg)
         out = capsys.readouterr().out
 
         assert called["synced_config"]["backend"] == "omlx"
         assert called["status_config"]["backend"] == "omlx"
         assert called["restarted_config"]["backend"] == "omlx"
+        assert result == 0
         assert "Restarted shared oMLX runtime with active models: Qwen3-VL-4B-Instruct-4bit" in out
 
 
-@pytest.mark.skip(reason=LEGACY_OMLX_RUNTIME_SKIP)
 def test_cmd_run_skips_shared_omlx_sync_for_non_desktop_local_runtime(monkeypatch):
     from material_agent.commands.scoring import cmd_run
 
     with tempfile.TemporaryDirectory() as d:
-        cfg = load_config("config.yaml")
-        cfg["backend"] = "omlx"
+        cfg = _legacy_backend_config("omlx")
         cfg["omlx"]["base_url"] = "http://127.0.0.1:22445"
-        args = Namespace(
-            input_dir=d,
-            config="config.yaml",
-            reprocess=False,
-            dry_run=False,
-            scorers=None,
-            no_visual_merge=False,
-        )
+        args = _run_args(d, allow_empty=True)
 
         monkeypatch.setattr("material_agent.commands.scoring._check_exiftool_version", lambda: None)
         monkeypatch.setattr(
-            "material_agent.commands.scoring.is_configured_shared_omlx_runtime",
+            "material_agent.adapters.models.omlx.instance.is_configured_shared_omlx_runtime",
             lambda _config: False,
         )
 
@@ -770,10 +1077,14 @@ def test_cmd_run_skips_shared_omlx_sync_for_non_desktop_local_runtime(monkeypatc
             def run(self, **kwargs):
                 return "job-123"
 
-        monkeypatch.setattr("material_agent.commands.scoring.OMLXInstanceService", lambda: _FakeService())
+        monkeypatch.setattr(
+            "material_agent.app.omlx_instance_service.OMLXInstanceService",
+            lambda: _FakeService(),
+        )
         monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        _mock_finished_job(monkeypatch)
 
-        cmd_run(args, cfg)
+        assert cmd_run(args, cfg) == 0
 
 
 @pytest.mark.parametrize(
@@ -784,7 +1095,6 @@ def test_cmd_run_skips_shared_omlx_sync_for_non_desktop_local_runtime(monkeypatc
         ("ollama", True, False),
     ],
 )
-@pytest.mark.skip(reason=LEGACY_OMLX_RUNTIME_SKIP)
 def test_cmd_run_only_builds_runtime_probe_hook_for_enabled_omlx_backend(
     monkeypatch,
     backend,
@@ -794,17 +1104,9 @@ def test_cmd_run_only_builds_runtime_probe_hook_for_enabled_omlx_backend(
     from material_agent.commands.scoring import cmd_run
 
     with tempfile.TemporaryDirectory() as d:
-        cfg = load_config("config.yaml")
-        cfg["backend"] = backend
+        cfg = _legacy_backend_config(backend)
         cfg["omlx"]["runtime"]["probe_on_run"] = probe_on_run
-        args = Namespace(
-            input_dir=d,
-            config="config.yaml",
-            reprocess=False,
-            dry_run=False,
-            scorers=None,
-            no_visual_merge=False,
-        )
+        args = _run_args(d, allow_empty=True)
         called = {}
 
         monkeypatch.setattr("material_agent.commands.scoring._check_exiftool_version", lambda: None)
@@ -822,18 +1124,21 @@ def test_cmd_run_only_builds_runtime_probe_hook_for_enabled_omlx_backend(
                 return "job-123"
 
         monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        _mock_finished_job(monkeypatch)
 
-        cmd_run(args, cfg)
+        result = cmd_run(args, cfg)
 
         assert ("preflight_hook" in called["kwargs"]) is True
         assert callable(called["kwargs"]["preflight_hook"]) is expects_hook
         assert called["kwargs"]["input_dir"] == d
+        assert result == 0
 
 
 def test_cmd_run_with_local_backend_uses_local_preflight(monkeypatch):
     from material_agent.commands.scoring import cmd_run
 
     with tempfile.TemporaryDirectory() as d:
+        (Path(d) / "one.ARW").write_bytes(b"fake")
         cfg = load_config("config.yaml")
         args = Namespace(
             input_dir=d,
@@ -857,17 +1162,23 @@ def test_cmd_run_with_local_backend_uses_local_preflight(monkeypatch):
                 return "job-123"
 
         monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        monkeypatch.setattr(
+            "material_agent.adapters.state.sqlite_runtime.SQLiteRuntimeRepository.get_job_result",
+            lambda *_args: {"status": "finished", "summary": {}},
+        )
 
-        cmd_run(args, cfg)
+        result = cmd_run(args, cfg)
 
         assert called["kwargs"]["config"]["backend"] == "local"
         assert callable(called["kwargs"]["preflight_hook"])
+        assert result == 0
 
 
 def test_cmd_rescore_delegates_to_rescore_service(monkeypatch):
     from material_agent.commands.scoring import cmd_rescore
 
     with tempfile.TemporaryDirectory() as d:
+        _make_db(d)
         cfg = {
             "scene_weights": {"default": {"composition": 1.0}},
             "scoring": {"pixel_weight": 0.3, "vision_weight": 0.7},
@@ -906,6 +1217,55 @@ def test_cmd_rescore_delegates_to_rescore_service(monkeypatch):
         }
 
 
+def test_cmd_rescore_missing_db_returns_nonzero(tmp_path, capsys):
+    from material_agent.commands.scoring import cmd_rescore
+
+    result = cmd_rescore(Namespace(dir=str(tmp_path), scene=None), {})
+
+    assert result == 1
+    assert "no database" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize(
+    ("clear_xmp", "expected"),
+    [(None, False), (True, True)],
+)
+def test_cmd_reset_ai_only_clears_xmp_when_explicitly_requested(
+    tmp_path,
+    monkeypatch,
+    clear_xmp,
+    expected,
+):
+    from material_agent.commands.io import cmd_reset_ai
+
+    _make_db(str(tmp_path))
+    captured = {}
+
+    class _FakeResetService:
+        def run(self, input_dir, **kwargs):
+            captured["input_dir"] = input_dir
+            captured.update(kwargs)
+            return {
+                "files": 0,
+                "processed_rows_deleted": 0,
+                "signal_rows_deleted": 0,
+                "xmp_cleared": 0,
+            }
+
+    monkeypatch.setattr(
+        "material_agent.commands.io.ResetAiJudgementService", _FakeResetService
+    )
+    args = Namespace(dir=str(tmp_path), dry_run=False)
+    if clear_xmp is not None:
+        args.clear_xmp = clear_xmp
+
+    result = cmd_reset_ai(args)
+
+    assert result == 0
+    assert captured["input_dir"] == str(tmp_path)
+    assert captured["clear_xmp"] is expected
+
+
 # ---------------------------------------------------------------------------
 # cmd_remap_scenes
 # ---------------------------------------------------------------------------
@@ -915,19 +1275,21 @@ def test_remap_scenes_invalid_target(capsys):
     with tempfile.TemporaryDirectory() as d:
         _make_db(d)
         args = Namespace(dir=d, from_="candid", to="not_a_valid_scene")
-        cmd_remap_scenes(args)
+        result = cmd_remap_scenes(args)
         out = capsys.readouterr().out
         assert "Error" in out
         assert "not valid" in out
+        assert result == 2
 
 
 def test_remap_scenes_missing_db(capsys):
     with tempfile.TemporaryDirectory() as d:
         args = Namespace(dir=d, from_="candid", to="城市")
-        cmd_remap_scenes(args)
+        result = cmd_remap_scenes(args)
         out = capsys.readouterr().out
         assert "Error" in out
         assert "no database" in out
+        assert result == 1
 
 
 def test_remap_scenes_updates_rows(capsys):
@@ -964,10 +1326,21 @@ def test_remap_scenes_updates_rows(capsys):
 def test_fix_db_missing_db(capsys):
     with tempfile.TemporaryDirectory() as d:
         args = Namespace(dir=d)
-        cmd_fix_db(args)
+        result = cmd_fix_db(args)
         out = capsys.readouterr().out
         assert "Error" in out
         assert "no database" in out
+        assert result == 1
+
+
+def test_mutating_maintenance_command_rejects_active_run(tmp_path):
+    from material_agent.utils.run_control import exclusive_run_lock
+
+    db_path = Path(_make_db(str(tmp_path)))
+
+    with exclusive_run_lock(db_path.parent / "run.lock"):
+        with pytest.raises(ValueError, match="already active"):
+            cmd_fix_db(Namespace(dir=str(tmp_path)))
 
 
 def test_fix_db_repairs_star_rating(capsys):

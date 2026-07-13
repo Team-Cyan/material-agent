@@ -11,6 +11,7 @@ from material_agent.app.local_benchmark_service import (
     load_benchmark_manifest,
     run_local_benchmark,
 )
+from material_agent.clients.local import AsyncLocalClient
 from material_agent.shells.cli.main import build_parser
 
 
@@ -136,6 +137,48 @@ def test_cli_exposes_benchmark_local_command():
     assert args.repeat_count == 2
     assert args.config is None
     assert args.quality_reject_threshold == 5.0
+
+
+def test_benchmark_warm_repeat_clears_embedding_results_but_reuses_adapter(
+    monkeypatch,
+    tmp_path,
+):
+    manifest_path = _write_manifest(tmp_path)
+    client = AsyncLocalClient(
+        {"embedding": {"enabled": True, "result_cache_size": 16}}
+    )
+
+    class _CountingEmbeddingAdapter:
+        def __init__(self):
+            self.calls = 0
+
+        async def embed_image(self, _jpeg_bytes):
+            self.calls += 1
+            return {
+                "vector": [0.25, 0.75],
+                "dimensions": 2,
+                "model_name": "fixture-embedding",
+                "model_version": "fixture-v1",
+                "runtime": "fixture-runtime",
+                "device": "cpu",
+            }
+
+    adapter = _CountingEmbeddingAdapter()
+    client._embedding = adapter
+    monkeypatch.setattr(
+        "material_agent.app.local_benchmark_service.AsyncLocalClient",
+        lambda _config: client,
+    )
+
+    _, _, report = run_local_benchmark(
+        manifest_path,
+        tmp_path / "reports",
+        repeat_count=2,
+        client_config={"embedding": {"enabled": True, "result_cache_size": 16}},
+    )
+
+    assert adapter.calls == 6
+    assert report["metrics"]["deterministic_scores"] is True
 
 
 def test_run_local_benchmark_decodes_raw_preview(monkeypatch, tmp_path):

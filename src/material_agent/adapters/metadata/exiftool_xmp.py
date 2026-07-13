@@ -13,6 +13,7 @@ _XMP_NS = {
     "dc": "http://purl.org/dc/elements/1.1/",
     "xmp": "http://ns.adobe.com/xap/1.0/",
     "lr": "http://ns.adobe.com/lightroom/1.0/",
+    "photoshop": "http://ns.adobe.com/photoshop/1.0/",
 }
 _CREATOR_TOOL = "Team-Cyan material-agent"
 _MACHINE_TAG_PREFIX = "pj:"
@@ -110,18 +111,60 @@ class ExifToolXMPWriter:
             return existing_names[uppercase.name]
         return lowercase
 
-    def clear_ai_tags(self, arw_path: str) -> None:
+    def _read_ai_scalar_fields(self, xmp_path: str | Path) -> dict[str, str | None]:
+        try:
+            root = ET.parse(str(xmp_path)).getroot()
+        except (OSError, ET.ParseError) as error:
+            _log.warning("Failed to read AI scalar fields from %s: %s", xmp_path, error)
+            return {"rating": None, "instructions": None, "description": None}
+
+        description = None
+        for item in root.findall(".//dc:description/rdf:Alt/rdf:li", _XMP_NS):
+            language = item.attrib.get("{http://www.w3.org/XML/1998/namespace}lang")
+            if language in {None, "x-default"}:
+                description = item.text or ""
+                if language == "x-default":
+                    break
+
+        return {
+            "rating": _xmp_scalar_value(root, "xmp", "Rating"),
+            "instructions": _xmp_scalar_value(root, "photoshop", "Instructions"),
+            "description": description,
+        }
+
+    def clear_ai_tags(
+        self,
+        arw_path: str,
+        *,
+        expected_fields: dict | None = None,
+        force_scalar_clear: bool = False,
+    ) -> dict[str, bool]:
         xmp_path = self._sidecar_path(arw_path)
         if not xmp_path.exists():
-            return
+            return {"rating": False, "instructions": False, "description": False}
         preserved = self._read_non_pj_subject_tags(xmp_path)
         preserved_identifiers = self._read_non_pj_identifier_tags(xmp_path)
         preserved_hierarchical = self._read_non_pj_hierarchical_subject_tags(xmp_path)
-        cmd = [
-            "exiftool",
-            "-XMP-xmp:Rating=",
-            "-XMP-photoshop:Instructions=",
-            "-XMP-dc:Description-x-default=",
+        current_fields = self._read_ai_scalar_fields(xmp_path)
+        expected_fields = expected_fields or {}
+        cleared = {
+            key: bool(
+                force_scalar_clear
+                or (
+                    key in expected_fields
+                    and str(current_fields.get(key)) == str(expected_fields.get(key))
+                )
+            )
+            for key in ("rating", "instructions", "description")
+        }
+        cmd = ["exiftool"]
+        if cleared["rating"]:
+            cmd.append("-XMP-xmp:Rating=")
+        if cleared["instructions"]:
+            cmd.append("-XMP-photoshop:Instructions=")
+        if cleared["description"]:
+            cmd.append("-XMP-dc:Description-x-default=")
+        cmd += [
             "-XMP-dc:Subject=",
             "-XMP-xmp:Identifier=",
             "-XMP-lr:HierarchicalSubject=",
@@ -133,6 +176,7 @@ class ExifToolXMPWriter:
         result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=30)
         if result.returncode != 0:
             raise RuntimeError(f"exiftool failed: {result.stderr}")
+        return cleared
 
     def write(
         self,
@@ -274,6 +318,18 @@ def _dedupe(values: list[str]) -> list[str]:
         seen.add(value)
         result.append(value)
     return result
+
+
+def _xmp_scalar_value(root: ET.Element, prefix: str, local_name: str) -> str | None:
+    namespace = _XMP_NS[prefix]
+    qualified = f"{{{namespace}}}{local_name}"
+    element = root.find(f".//{prefix}:{local_name}", _XMP_NS)
+    if element is not None:
+        return element.text or ""
+    for description in root.findall(".//rdf:Description", _XMP_NS):
+        if qualified in description.attrib:
+            return description.attrib[qualified]
+    return None
 
 
 def _rdf_bag_xml(tag_name: str, values: list[str]) -> str:

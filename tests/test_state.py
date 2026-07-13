@@ -1,7 +1,9 @@
-import tempfile
-from pathlib import Path
+import json
 import sqlite3
+import tempfile
 import threading
+from pathlib import Path
+
 from material_agent.adapters.state.processed_sqlite import SQLiteProcessedRepository
 from material_agent.utils.state import State
 
@@ -21,6 +23,17 @@ def test_state_has_scene_columns():
         assert "score_lighting" in cols
         assert "score_depth" in cols
         assert "score_mood" in cols
+        assert "score_metadata_json" in cols
+        assert "score_metadata_version" in cols
+        assert "file_size" in cols
+        assert "mtime_ns" in cols
+        assert "score_cache_key" in cols
+        assert "xmp_payload_json" in cols
+        for table in ("exif_cache", "visual_hash_cache"):
+            cache_cols = {
+                row[1] for row in s.conn.execute(f"PRAGMA table_info({table})").fetchall()
+            }
+            assert {"file_size", "mtime_ns"} <= cache_cols
         score_signal_tables = [
             row[0]
             for row in s.conn.execute(
@@ -103,6 +116,60 @@ def test_state_mark_done_persists_commentary_fields_in_final_write():
             "拍摄时补一点面光",
             "后期把阴影提一点",
         )
+
+
+def test_state_mark_done_persists_xmp_payload_for_provenance_safe_reset(tmp_path):
+    owned_photo = tmp_path / "owned.ARW"
+    legacy_photo = tmp_path / "legacy.ARW"
+    owned_photo.write_bytes(b"owned")
+    legacy_photo.write_bytes(b"legacy")
+    expected_payload = {
+        "rating": 4,
+        "instructions": "agent instructions",
+        "description": "agent description",
+        "ignored": "not an owned scalar field",
+    }
+
+    with State(tmp_path) as state:
+        state.mark_done(
+            str(owned_photo),
+            total_score=7.5,
+            star_rating=4,
+            group_boosted=False,
+            scores={},
+            metadata={},
+            group_info={},
+            xmp_payload=expected_payload,
+        )
+        state.mark_done(
+            str(legacy_photo),
+            total_score=6.0,
+            star_rating=3,
+            group_boosted=False,
+            scores={},
+            metadata={},
+            group_info={},
+        )
+
+        stored = state.conn.execute(
+            "SELECT xmp_payload_json FROM processed WHERE file_path=?", (str(owned_photo),)
+        ).fetchone()[0]
+        assert json.loads(stored) == {
+            "rating": 4,
+            "instructions": "agent instructions",
+            "description": "agent description",
+        }
+        assert state.fetch_ai_reset_rows() == [
+            {"file_path": str(legacy_photo), "xmp_payload": None},
+            {
+                "file_path": str(owned_photo),
+                "xmp_payload": {
+                    "rating": 4,
+                    "instructions": "agent instructions",
+                    "description": "agent description",
+                },
+            },
+        ]
 
 
 def test_state_mark_done_persists_layered_summary_and_signals():
@@ -201,25 +268,43 @@ def test_state_reprocess_flag():
             group_info={},
         )
         assert not s.is_done("/foo/bar.arw")  # reprocess=True 时始终返回 False
+        s.mark_scored("/foo/scored.arw", total_score=6.0, scores={}, metadata={})
+        assert not s.is_scored("/foo/scored.arw")
+        assert s.get_scored("/foo/scored.arw") is None
 
 
 # ---------------------------------------------------------------------------
 # New regression tests
 # ---------------------------------------------------------------------------
 
+
 def test_get_scored_round_trip():
     """mark_scored followed by get_scored should return all stored values."""
     with tempfile.TemporaryDirectory() as d:
         s = State(d)
         scores = {
-            "exposure": 7.5, "sharpness": 6.0,
-            "subject": 9.0, "composition": 8.0, "lighting": 7.0,
-            "color": 7.0, "clarity": 8.5, "depth": 4.0, "mood": 5.5,
+            "exposure": 7.5,
+            "sharpness": 6.0,
+            "subject": 9.0,
+            "composition": 8.0,
+            "lighting": 7.0,
+            "color": 7.0,
+            "clarity": 8.5,
+            "depth": 4.0,
+            "mood": 5.5,
         }
         metadata = {
             "overexpose_ratio": 0.01,
             "underexpose_ratio": 0.05,
             "laplacian_variance": 350.2,
+            "preview_source": "embedded",
+            "runtime": "openvino:GPU.0",
+            "embedding": {
+                "model_name": "dinov3-vits16",
+                "device": "GPU.0",
+                "vector": [0.1, 0.2],
+            },
+            "_embedding_vector": [0.3, 0.4],
         }
         s.mark_scored(
             "/test/photo.arw",
@@ -238,6 +323,54 @@ def test_get_scored_round_trip():
             assert abs(result["scores"][key] - scores[key]) < 0.001
         assert abs(result["meta"]["overexpose_ratio"] - 0.01) < 0.001
         assert abs(result["meta"]["laplacian_variance"] - 350.2) < 0.001
+        assert result["meta"]["preview_source"] == "embedded"
+        assert result["meta"]["runtime"] == "openvino:GPU.0"
+        assert result["meta"]["embedding"] == {
+            "model_name": "dinov3-vits16",
+            "device": "GPU.0",
+        }
+        assert "_embedding_vector" not in result["meta"]
+        metadata_row = s.conn.execute(
+            "SELECT score_metadata_json, score_metadata_version FROM processed "
+            "WHERE file_path='/test/photo.arw'"
+        ).fetchone()
+        assert metadata_row["score_metadata_version"] == 1
+        stored_metadata = json.loads(metadata_row["score_metadata_json"])
+        assert "_embedding_vector" not in stored_metadata
+        assert "vector" not in stored_metadata["embedding"]
+
+
+def test_get_cached_score_payload_loads_done_result_with_group_state(tmp_path):
+    photo = tmp_path / "done.ARW"
+    photo.write_bytes(b"raw")
+    with State(tmp_path, score_cache_key="policy-a") as state:
+        state.mark_done(
+            str(photo),
+            total_score=8.2,
+            star_rating=4,
+            group_boosted=True,
+            scores={"composition": 8.2},
+            metadata={"runtime": "openvino:GPU.0"},
+            group_info={"group_id": "g1", "group_rank": 2, "group_size": 3},
+            scene="people",
+            commentary_post="post",
+        )
+
+        payload = state.get_cached_score_payload(str(photo))
+
+        assert payload is not None
+        assert payload["status"] == "done"
+        assert payload["score_total"] == 8.2
+        assert payload["star_rating"] == 4
+        assert payload["boosted"] is True
+        assert payload["meta"] == {"runtime": "openvino:GPU.0"}
+        assert payload["group_info"] == {
+            "group_id": "g1",
+            "group_rank": 2,
+            "group_size": 3,
+        }
+        assert payload["commentary_post"] == "post"
+        assert state.get_scored(str(photo)) is None
 
 
 def test_get_scored_returns_none_for_done_file():
@@ -272,8 +405,13 @@ def test_is_scored_true_only_for_scored_status():
         assert s.is_scored("/foo/bar.arw")
         # After mark_done the status changes to 'done' → is_scored should be False
         s.mark_done(
-            "/foo/bar.arw", total_score=5.0, star_rating=3, group_boosted=False,
-            scores={}, metadata={}, group_info={},
+            "/foo/bar.arw",
+            total_score=5.0,
+            star_rating=3,
+            group_boosted=False,
+            scores={},
+            metadata={},
+            group_info={},
         )
         assert not s.is_scored("/foo/bar.arw")
 
@@ -285,6 +423,7 @@ def test_state_context_manager_closes_connection():
             s.mark_error("/x.arw", "test")
         # After exit, further operations should raise
         import pytest
+
         with pytest.raises(Exception):
             s.conn.execute("SELECT 1")
 
@@ -312,7 +451,9 @@ def test_state_adopts_legacy_root_db_for_directory_input():
         legacy_db_path = Path(d) / "material-agent.db"
         with sqlite3.connect(legacy_db_path) as conn:
             conn.execute("CREATE TABLE processed (file_path TEXT PRIMARY KEY, status TEXT)")
-            conn.execute("INSERT INTO processed (file_path, status) VALUES ('/foo/bar.arw', 'done')")
+            conn.execute(
+                "INSERT INTO processed (file_path, status) VALUES ('/foo/bar.arw', 'done')"
+            )
             conn.commit()
 
         with State(d) as s:
@@ -385,14 +526,41 @@ def test_visual_hash_cache_round_trip():
         }
 
 
+def test_exif_cache_skips_none_and_invalidates_when_file_changes(tmp_path):
+    image_path = tmp_path / "image.raw"
+    image_path.write_bytes(b"first")
+    with State(tmp_path) as state:
+        state.set_exif_cache({str(image_path): None})
+        assert state.conn.execute("SELECT COUNT(*) FROM exif_cache").fetchone()[0] == 0
+
+        state.set_exif_cache({str(image_path): "2026:07:13 10:00:00"})
+        assert state.get_exif_cache([str(image_path)]) == {str(image_path): "2026:07:13 10:00:00"}
+
+        image_path.write_bytes(b"replacement-with-different-size")
+
+        assert state.get_exif_cache([str(image_path)]) == {}
+
+
+def test_visual_hash_cache_invalidates_when_file_changes(tmp_path):
+    image_path = tmp_path / "image.raw"
+    image_path.write_bytes(b"first")
+    with State(tmp_path) as state:
+        state.set_visual_hash_cache({str(image_path): "0123456789abcdef"})
+        assert state.get_visual_hash_cache([str(image_path)]) == {
+            str(image_path): "0123456789abcdef"
+        }
+
+        image_path.write_bytes(b"replacement-with-different-size")
+
+        assert state.get_visual_hash_cache([str(image_path)]) == {}
+
+
 def test_embedding_cache_is_versioned_by_model_key():
     with tempfile.TemporaryDirectory() as d:
         s = State(d)
         s.set_embedding_cache({"/foo/a.arw": [0.1, 0.2]}, "dino-v1")
 
-        assert s.get_embedding_cache(["/foo/a.arw"], "dino-v1") == {
-            "/foo/a.arw": [0.1, 0.2]
-        }
+        assert s.get_embedding_cache(["/foo/a.arw"], "dino-v1") == {"/foo/a.arw": [0.1, 0.2]}
         assert s.get_embedding_cache(["/foo/a.arw"], "dino-v2") == {}
 
 
@@ -401,13 +569,113 @@ def test_embedding_cache_invalidates_when_file_changes(tmp_path):
     image_path.write_bytes(b"first")
     s = State(tmp_path)
     s.set_embedding_cache({str(image_path): [0.1, 0.2]}, "dino-v1")
-    assert s.get_embedding_cache([str(image_path)], "dino-v1") == {
-        str(image_path): [0.1, 0.2]
-    }
+    assert s.get_embedding_cache([str(image_path)], "dino-v1") == {str(image_path): [0.1, 0.2]}
 
     image_path.write_bytes(b"replacement-with-different-size")
 
     assert s.get_embedding_cache([str(image_path)], "dino-v1") == {}
+
+
+def test_processed_cache_invalidates_when_file_changes(tmp_path):
+    done_path = tmp_path / "done.raw"
+    scored_path = tmp_path / "scored.raw"
+    done_path.write_bytes(b"done-first")
+    scored_path.write_bytes(b"scored-first")
+    with State(tmp_path) as state:
+        state.mark_done(
+            str(done_path),
+            total_score=8.0,
+            star_rating=4,
+            group_boosted=False,
+            scores={},
+            metadata={},
+            group_info={},
+        )
+        state.mark_scored(
+            str(scored_path),
+            total_score=7.0,
+            scores={},
+            metadata={},
+        )
+        assert state.is_done(str(done_path))
+        assert state.is_scored(str(scored_path))
+
+        done_path.write_bytes(b"done-replacement-with-different-size")
+        scored_path.write_bytes(b"scored-replacement-with-different-size")
+
+        assert not state.is_done(str(done_path))
+        assert not state.is_scored(str(scored_path))
+        assert state.get_cached_score_payload(str(done_path)) is None
+        assert state.get_scored(str(scored_path)) is None
+
+
+def test_score_cache_key_invalidates_done_and_scored_rows(tmp_path):
+    done_path = tmp_path / "done.raw"
+    scored_path = tmp_path / "scored.raw"
+    done_path.write_bytes(b"done")
+    scored_path.write_bytes(b"scored")
+    db_path = tmp_path / "state.db"
+
+    with SQLiteProcessedRepository(db_path, score_cache_key="policy-a") as state:
+        state.mark_done(
+            str(done_path),
+            total_score=8.0,
+            star_rating=4,
+            group_boosted=False,
+            scores={},
+            metadata={},
+            group_info={},
+        )
+        state.mark_scored(str(scored_path), total_score=7.0, scores={}, metadata={})
+
+    with SQLiteProcessedRepository(db_path, score_cache_key="policy-a") as matching:
+        assert matching.is_done(str(done_path))
+        assert matching.is_scored(str(scored_path))
+        assert matching.get_cached_score_payload(str(done_path)) is not None
+
+    with SQLiteProcessedRepository(db_path, score_cache_key="policy-b") as changed:
+        assert not changed.is_done(str(done_path))
+        assert not changed.is_scored(str(scored_path))
+        assert changed.get_cached_score_payload(str(done_path)) is None
+        assert changed.get_scored(str(scored_path)) is None
+
+    # Maintenance callers that do not supply a production key retain read access.
+    with SQLiteProcessedRepository(db_path) as unversioned_reader:
+        assert unversioned_reader.is_done(str(done_path))
+        assert unversioned_reader.is_scored(str(scored_path))
+
+
+def test_state_adds_integrity_columns_to_legacy_cache_tables(tmp_path):
+    db_path = tmp_path / "legacy.db"
+    with sqlite3.connect(db_path) as conn:
+        conn.execute("CREATE TABLE processed (file_path TEXT PRIMARY KEY, status TEXT)")
+        conn.execute("CREATE TABLE exif_cache (file_path TEXT PRIMARY KEY, datetime_original TEXT)")
+        conn.execute("CREATE TABLE visual_hash_cache (file_path TEXT PRIMARY KEY, phash TEXT)")
+        conn.execute("INSERT INTO processed VALUES ('/legacy.raw', 'done')")
+        conn.commit()
+
+    with SQLiteProcessedRepository(db_path) as state:
+        processed_columns = {
+            row[1] for row in state.conn.execute("PRAGMA table_info(processed)").fetchall()
+        }
+        exif_columns = {
+            row[1] for row in state.conn.execute("PRAGMA table_info(exif_cache)").fetchall()
+        }
+        hash_columns = {
+            row[1] for row in state.conn.execute("PRAGMA table_info(visual_hash_cache)").fetchall()
+        }
+
+        assert {
+            "score_metadata_json",
+            "score_metadata_version",
+            "file_size",
+            "mtime_ns",
+            "score_cache_key",
+            "xmp_payload_json",
+        } <= processed_columns
+        assert {"file_size", "mtime_ns"} <= exif_columns
+        assert {"file_size", "mtime_ns"} <= hash_columns
+        assert state.is_done("/legacy.raw")
 
 
 def test_clear_ai_judgement_preserves_non_ai_caches():
@@ -440,9 +708,14 @@ def test_clear_ai_judgement_preserves_non_ai_caches():
         assert summary == {"processed_rows_deleted": 1, "signal_rows_deleted": 1}
         assert s.conn.execute("SELECT COUNT(*) FROM processed").fetchone()[0] == 0
         assert s.conn.execute("SELECT COUNT(*) FROM score_signals").fetchone()[0] == 0
-        assert s.conn.execute("SELECT datetime_original FROM exif_cache").fetchone()[0] == "2026:04:14 10:00:00"
+        assert (
+            s.conn.execute("SELECT datetime_original FROM exif_cache").fetchone()[0]
+            == "2026:04:14 10:00:00"
+        )
         assert s.conn.execute("SELECT phash FROM visual_hash_cache").fetchone()[0] == "abcd1234"
-        assert s.conn.execute("SELECT vector_json FROM embedding_cache").fetchone()[0] == "[0.1, 0.2]"
+        assert (
+            s.conn.execute("SELECT vector_json FROM embedding_cache").fetchone()[0] == "[0.1, 0.2]"
+        )
 
 
 def test_state_allows_processed_access_from_worker_thread():

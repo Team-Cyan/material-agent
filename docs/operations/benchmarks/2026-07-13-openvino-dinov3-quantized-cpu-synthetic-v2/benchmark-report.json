@@ -1,0 +1,303 @@
+{
+  "schema_version": "material-agent.local-benchmark.v1",
+  "generated_at": "2026-07-13T16:11:22.965443+00:00",
+  "manifest": {
+    "path": "tests/fixtures/local_benchmark/manifest.yaml",
+    "sha256": "803184446eabd40d1b6dc818355f6405956ee8be77f845b2181402ddd9aa28cd",
+    "name": "synthetic-local-baseline",
+    "version": 1
+  },
+  "runtime": {
+    "backend": "local",
+    "scoring_mode": "hybrid",
+    "runtime": "cpu+openvino:CPU",
+    "python": "3.14.3",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "repeat_count": 3,
+    "reject_threshold": 4.0,
+    "quality_reject_threshold": 5.0
+  },
+  "metrics": {
+    "item_count": 4,
+    "group_top1": {
+      "numerator": 1,
+      "total": 1,
+      "rate": 1.0
+    },
+    "pairwise_preference": {
+      "numerator": 3,
+      "total": 3,
+      "rate": 1.0
+    },
+    "reject_recall": {
+      "numerator": 1,
+      "total": 3,
+      "rate": 0.333333
+    },
+    "reject_false_negative_count": 2,
+    "scene_accuracy": {
+      "numerator": 1,
+      "total": 4,
+      "rate": 0.25
+    },
+    "scene_other_rate": {
+      "numerator": 4,
+      "total": 4,
+      "rate": 1.0
+    },
+    "face_positive_count": 2,
+    "face_recall": null,
+    "face_accuracy": null,
+    "screenshot_photo_separation": 0.795714,
+    "reject_prior_recall": null,
+    "reject_prior_false_negative_count": null,
+    "quality_pairwise_preference": null,
+    "aesthetic_pairwise_preference": null,
+    "embedding_same_group_top1": {
+      "numerator": 2,
+      "total": 2,
+      "rate": 1.0
+    },
+    "embedding_non_photo_photo_max_similarity": 0.499365,
+    "deterministic_scores": true,
+    "elapsed_seconds": 2.621637,
+    "cold_run_seconds": 1.561323,
+    "warm_p50_run_seconds": 0.530149,
+    "p50_run_seconds": 0.530237,
+    "images_per_second": 4.5773
+  },
+  "items": [
+    {
+      "id": "portrait-sharp",
+      "path": "portrait-sharp-source.png",
+      "group": "portrait-burst-001",
+      "input_decode": {
+        "format": "raster",
+        "source": "file"
+      },
+      "score": 6.747143,
+      "scene": "other",
+      "scoring_mode": "hybrid",
+      "runtime": "cpu+openvino:CPU",
+      "runtime_components": [
+        "cpu",
+        "openvino:CPU"
+      ],
+      "model_stack": [
+        "model_quantized.onnx"
+      ],
+      "semantic": null,
+      "quality": null,
+      "embedding": {
+        "status": "model",
+        "dimensions": 384,
+        "model_name": "model_quantized.onnx",
+        "model_version": "onnx-openvino",
+        "runtime": "openvino",
+        "device": "CPU",
+        "requested_device": "CPU",
+        "compiled_device": "CPU",
+        "fallback_device": "CPU",
+        "fallback_used": false,
+        "fallback_reason": null,
+        "execution_devices": [
+          "CPU"
+        ],
+        "execution_device_readback": "actual",
+        "compiled_cache_dir": "/tmp/material-agent-openvino-cache",
+        "model_digest": "6894b6341ba0b4bfb668abcce8a3d5479c7318e39302c31799a21bc593b77b06",
+        "bundle_assets": [
+          "external/model_quantized.onnx_data",
+          "model/model_quantized.onnx",
+          "processor/preprocessor_config.json"
+        ],
+        "openvino_version": "2026.2.1-21919-ede283a88e3-releases/2026/2",
+        "cache_identity": "601d2fa915a61350db10ed31bd43144f465d237b2524400285863bbe1069b08f"
+      },
+      "face": null,
+      "dimensions": {
+        "subject": 6.48,
+        "composition": 7.3,
+        "lighting": 7.66,
+        "color": 5.64,
+        "clarity": 6.23,
+        "depth": 7.12,
+        "mood": 6.8
+      }
+    },
+    {
+      "id": "portrait-motion-blur",
+      "path": "portrait-motion-blur-same-subject.png",
+      "group": "portrait-burst-001",
+      "input_decode": {
+        "format": "raster",
+        "source": "file"
+      },
+      "score": 6.675714,
+      "scene": "other",
+      "scoring_mode": "hybrid",
+      "runtime": "cpu+openvino:CPU",
+      "runtime_components": [
+        "cpu",
+        "openvino:CPU"
+      ],
+      "model_stack": [
+        "model_quantized.onnx"
+      ],
+      "semantic": null,
+      "quality": null,
+      "embedding": {
+        "status": "model",
+        "dimensions": 384,
+        "model_name": "model_quantized.onnx",
+        "model_version": "onnx-openvino",
+        "runtime": "openvino",
+        "device": "CPU",
+        "requested_device": "CPU",
+        "compiled_device": "CPU",
+        "fallback_device": "CPU",
+        "fallback_used": false,
+        "fallback_reason": null,
+        "execution_devices": [
+          "CPU"
+        ],
+        "execution_device_readback": "actual",
+        "compiled_cache_dir": "/tmp/material-agent-openvino-cache",
+        "model_digest": "6894b6341ba0b4bfb668abcce8a3d5479c7318e39302c31799a21bc593b77b06",
+        "bundle_assets": [
+          "external/model_quantized.onnx_data",
+          "model/model_quantized.onnx",
+          "processor/preprocessor_config.json"
+        ],
+        "openvino_version": "2026.2.1-21919-ede283a88e3-releases/2026/2",
+        "cache_identity": "601d2fa915a61350db10ed31bd43144f465d237b2524400285863bbe1069b08f"
+      },
+      "face": null,
+      "dimensions": {
+        "subject": 6.35,
+        "composition": 7.3,
+        "lighting": 7.81,
+        "color": 5.61,
+        "clarity": 5.81,
+        "depth": 7.03,
+        "mood": 6.82
+      }
+    },
+    {
+      "id": "low-light-room",
+      "path": "low-light-room.png",
+      "group": "low-light-001",
+      "input_decode": {
+        "format": "raster",
+        "source": "file"
+      },
+      "score": 4.668571,
+      "scene": "other",
+      "scoring_mode": "hybrid",
+      "runtime": "cpu+openvino:CPU",
+      "runtime_components": [
+        "cpu",
+        "openvino:CPU"
+      ],
+      "model_stack": [
+        "model_quantized.onnx"
+      ],
+      "semantic": null,
+      "quality": null,
+      "embedding": {
+        "status": "model",
+        "dimensions": 384,
+        "model_name": "model_quantized.onnx",
+        "model_version": "onnx-openvino",
+        "runtime": "openvino",
+        "device": "CPU",
+        "requested_device": "CPU",
+        "compiled_device": "CPU",
+        "fallback_device": "CPU",
+        "fallback_used": false,
+        "fallback_reason": null,
+        "execution_devices": [
+          "CPU"
+        ],
+        "execution_device_readback": "actual",
+        "compiled_cache_dir": "/tmp/material-agent-openvino-cache",
+        "model_digest": "6894b6341ba0b4bfb668abcce8a3d5479c7318e39302c31799a21bc593b77b06",
+        "bundle_assets": [
+          "external/model_quantized.onnx_data",
+          "model/model_quantized.onnx",
+          "processor/preprocessor_config.json"
+        ],
+        "openvino_version": "2026.2.1-21919-ede283a88e3-releases/2026/2",
+        "cache_identity": "601d2fa915a61350db10ed31bd43144f465d237b2524400285863bbe1069b08f"
+      },
+      "face": null,
+      "dimensions": {
+        "subject": 4.1,
+        "composition": 6.32,
+        "lighting": 3.01,
+        "color": 4.9,
+        "clarity": 4.55,
+        "depth": 5.37,
+        "mood": 4.43
+      }
+    },
+    {
+      "id": "ui-screenshot",
+      "path": "ui-screenshot.png",
+      "group": "non-photo-001",
+      "input_decode": {
+        "format": "raster",
+        "source": "file"
+      },
+      "score": 3.872857,
+      "scene": "other",
+      "scoring_mode": "hybrid",
+      "runtime": "cpu+openvino:CPU",
+      "runtime_components": [
+        "cpu",
+        "openvino:CPU"
+      ],
+      "model_stack": [
+        "model_quantized.onnx"
+      ],
+      "semantic": null,
+      "quality": null,
+      "embedding": {
+        "status": "model",
+        "dimensions": 384,
+        "model_name": "model_quantized.onnx",
+        "model_version": "onnx-openvino",
+        "runtime": "openvino",
+        "device": "CPU",
+        "requested_device": "CPU",
+        "compiled_device": "CPU",
+        "fallback_device": "CPU",
+        "fallback_used": false,
+        "fallback_reason": null,
+        "execution_devices": [
+          "CPU"
+        ],
+        "execution_device_readback": "actual",
+        "compiled_cache_dir": "/tmp/material-agent-openvino-cache",
+        "model_digest": "6894b6341ba0b4bfb668abcce8a3d5479c7318e39302c31799a21bc593b77b06",
+        "bundle_assets": [
+          "external/model_quantized.onnx_data",
+          "model/model_quantized.onnx",
+          "processor/preprocessor_config.json"
+        ],
+        "openvino_version": "2026.2.1-21919-ede283a88e3-releases/2026/2",
+        "cache_identity": "601d2fa915a61350db10ed31bd43144f465d237b2524400285863bbe1069b08f"
+      },
+      "face": null,
+      "dimensions": {
+        "subject": 3.09,
+        "composition": 6.22,
+        "lighting": 0.0,
+        "color": 4.66,
+        "clarity": 4.64,
+        "depth": 5.21,
+        "mood": 3.29
+      }
+    }
+  ]
+}

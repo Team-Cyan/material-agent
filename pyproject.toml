@@ -21,6 +21,7 @@ cpu = [
     "onnxruntime>=1.27,<2.0",
 ]
 intel-openvino = [
+    "onnx>=1.20,<2.0",
     "openvino>=2026.2,<2027",
 ]
 local-models = [

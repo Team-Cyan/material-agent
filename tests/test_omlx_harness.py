@@ -1,8 +1,11 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from material_agent.adapters.state.processed_sqlite import SQLiteProcessedRepository
 from material_agent.app.omlx_harness_service import OMLXHarnessService
+from material_agent.app.omlx_harness_service import _default_run_command
 
 
 def _config() -> dict:
@@ -37,6 +40,37 @@ def _scores() -> dict:
         "clarity": 4.5,
         "depth": 6.0,
         "mood": 6.5,
+    }
+
+
+def test_default_omlx_harness_run_rejects_partial_cli_success(monkeypatch):
+    monkeypatch.setattr("material_agent.commands.scoring.cmd_run", lambda *_args: 1)
+
+    with pytest.raises(RuntimeError, match="exit code 1"):
+        _default_run_command(object(), {})
+
+
+def test_omlx_harness_redacts_nested_credential_like_config_keys():
+    redacted = OMLXHarnessService()._redact_config(
+        {
+            "api_key": "top-secret",
+            "nested": {
+                "Authorization": "Bearer nested-secret",
+                "clientSecret": "camel-secret",
+                "items": [{"refresh_token": "refresh-secret"}],
+                "max_tokens": 512,
+            },
+        }
+    )
+
+    assert redacted == {
+        "api_key": "[REDACTED]",
+        "nested": {
+            "Authorization": "[REDACTED]",
+            "clientSecret": "[REDACTED]",
+            "items": [{"refresh_token": "[REDACTED]"}],
+            "max_tokens": 512,
+        },
     }
 
 

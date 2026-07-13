@@ -1,0 +1,102 @@
+# Baked runtime profile for the Intel OpenVINO image. A bind-mounted config at
+# MATERIAL_AGENT_CONFIG may replace it, but the published image needs no bind
+# to execute the bundled DINOv3 model through OpenVINO.
+backend: local
+output_language: zh
+log_level: info
+commentary_enabled: false
+reprocess: false
+raw_extensions: [ARW, CR3, NEF, RAF, DNG, ORF, RW2]
+
+legacy:
+  enabled: false
+
+local:
+  embedding:
+    enabled: true
+    enforce_available: true
+    runtime: openvino
+    model_name: dinov3-vits16-quantized
+    device: "AUTO:GPU,CPU"
+    fallback_device: CPU
+    model_path: /opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx
+    processor_path: /opt/material-agent/models/dinov3-vits16
+    compiled_cache_dir: /config/openvino-cache
+    result_cache_size: 256
+
+inference:
+  runtime: openvino
+  device: "AUTO:GPU,CPU"
+  fallback_device: CPU
+  model_cache_dir: /opt/material-agent/models
+  provider_tags: [intel-openvino, cpu]
+  enforce_available: true
+
+grouping:
+  enabled: true
+  time_gap_seconds: 30
+  visual_similarity:
+    enabled: true
+    hash_threshold: 10
+    max_merge_gap_minutes: 10
+  # The model still runs for every scored image. Persisted embedding-based
+  # group merging remains opt-in until its threshold is camera-calibrated.
+  embedding_similarity:
+    enabled: false
+    threshold: 0.85
+  group_guard:
+    enabled: true
+    min_score: 7.0
+
+preview:
+  prefer_embedded: true
+  fallback_decode: half_size
+  max_size: 1024
+  jpeg_quality: 85
+
+scorers:
+  exposure:
+    enabled: true
+    weight: 0.25
+    min_score: 0.0
+    overexpose_threshold: 0.02
+    overexpose_hard_limit: 2.0
+    underexpose_threshold: 0.20
+    underexpose_hard_limit: 2.0
+  sharpness:
+    enabled: true
+    weight: 0.20
+    min_score: 0.0
+    min_variance: 50
+    max_variance: 1000
+  subject:
+    enabled: true
+  composition:
+    enabled: true
+  lighting:
+    enabled: true
+  color:
+    enabled: true
+  clarity:
+    enabled: true
+  depth:
+    enabled: true
+  mood:
+    enabled: true
+
+scoring:
+  pixel_weight: 0.35
+  vision_weight: 0.65
+
+# The lean image intentionally excludes torch/pyiqa.
+screening:
+  enabled: false
+  backend: musiq
+
+review_pipeline:
+  score_prefetch_window: 2
+
+xmp:
+  write_mode: sidecar
+  compatibility_profile: adobe
+  machine_tag_target: identifier

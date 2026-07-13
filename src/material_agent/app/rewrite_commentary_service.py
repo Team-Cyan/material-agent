@@ -75,6 +75,7 @@ class RewriteCommentaryService:
                 repository.update_commentary_batch(updates)
 
         rewritten_xmp = 0
+        xmp_errors = 0
         if rewrite_xmp:
             summary = (self.xmp_service or RewriteXmpService()).run(
                 input_dir,
@@ -82,8 +83,14 @@ class RewriteCommentaryService:
                 output_language=output_language,
             )
             rewritten_xmp = int(summary.get("ok", 0))
+            xmp_errors = int(summary.get("err", 0))
 
-        return {"done_rows": len(rows), "updated": changed, "rewritten_xmp": rewritten_xmp}
+        return {
+            "done_rows": len(rows),
+            "updated": changed,
+            "rewritten_xmp": rewritten_xmp,
+            "xmp_errors": xmp_errors,
+        }
 
     @staticmethod
     def _scores(row) -> dict[str, float]:

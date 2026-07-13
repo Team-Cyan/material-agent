@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-ARG AGENT_PYTHON_UV_BASE=ghcr.io/astral-sh/uv:python3.14-trixie
+ARG AGENT_PYTHON_UV_BASE=ghcr.io/astral-sh/uv:python3.14-trixie@sha256:12a46aa8066ea9ab1236ccaa6ad02086e375d3b70830d05797f123eedabb2294
 FROM ${AGENT_PYTHON_UV_BASE}
 
 ARG VERSION=0.4.0
@@ -17,6 +17,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_LINK_MODE=copy \
     UV_PROJECT_ENVIRONMENT=/usr/local \
+    PUID=1000 \
+    PGID=1000 \
     MATERIAL_AGENT_CONFIG=/app/config/config.yaml \
     MATERIAL_AGENT_WORK_DIR=/app/.material-agent
 
@@ -24,28 +26,31 @@ WORKDIR /app
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        findutils \
+        gosu \
         libimage-exiftool-perl \
         libgl1 \
         libglib2.0-0 \
+        passwd \
+    && groupadd --gid 1000 material-agent \
+    && useradd --uid 1000 --gid material-agent --create-home \
+        --home-dir /home/material-agent --shell /usr/sbin/nologin material-agent \
+    && install -d -m 0755 -o material-agent -g material-agent /app/.material-agent \
     && rm -rf /var/lib/apt/lists/*
 
-COPY pyproject.toml uv.lock README.md /app/
+COPY pyproject.toml uv.lock /app/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen \
         --extra cpu \
-        --extra local-models \
-        --extra quality-models \
-        --extra face-models \
         --no-dev --no-editable --no-install-project
 
+COPY README.md /app/README.md
+COPY config.yaml /app/config/config.yaml
 COPY src /app/src
 COPY docker /app/docker
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen \
         --extra cpu \
-        --extra local-models \
-        --extra quality-models \
-        --extra face-models \
         --no-dev --no-editable \
     && chmod +x /app/docker/entrypoint.sh
 

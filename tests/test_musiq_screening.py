@@ -1,9 +1,11 @@
 import asyncio
 import logging
+import subprocess
 import types
 from types import SimpleNamespace
 
 import numpy as np
+import pytest
 
 from material_agent.adapters.screening.musiq import MusiqFastScreeningAdapter
 from material_agent.domain.scoring_engine import RawFrame, compute_scores
@@ -166,17 +168,41 @@ def test_musiq_adapter_tolerates_helper_stdout_noise(monkeypatch, tmp_path):
         }
     )
 
-    monkeypatch.setattr(
-        "material_agent.adapters.screening.musiq.subprocess.run",
-        lambda *args, **kwargs: SimpleNamespace(
+    calls = []
+
+    def fake_run(*args, **kwargs):
+        calls.append((args, kwargs))
+        return SimpleNamespace(
             stdout='Loading pretrained model MUSIQ from /tmp/model.pth\n{"overall": 6.2}',
             stderr="",
-        ),
+        )
+
+    monkeypatch.setattr(
+        "material_agent.adapters.screening.musiq.subprocess.run",
+        fake_run,
     )
 
     score = adapter._score_via_helper(b"jpeg", helper_python)
 
     assert score == 6.2
+    assert calls[0][1]["timeout"] == 120.0
+
+
+def test_musiq_helper_timeout_is_configurable_and_explicit(monkeypatch, tmp_path):
+    helper_python = tmp_path / "python"
+    helper_python.write_text("", encoding="utf-8")
+    adapter = MusiqFastScreeningAdapter({"helper_timeout_seconds": 2.5})
+
+    def time_out(*_args, **kwargs):
+        raise subprocess.TimeoutExpired("musiq", kwargs["timeout"])
+
+    monkeypatch.setattr(
+        "material_agent.adapters.screening.musiq.subprocess.run",
+        time_out,
+    )
+
+    with pytest.raises(RuntimeError, match="timed out after 2.5 seconds"):
+        adapter._score_via_helper(b"jpeg", helper_python)
 
 
 def test_compute_scores_uses_independent_fast_screening_port():

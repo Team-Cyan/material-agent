@@ -1,5 +1,11 @@
 # Refine Plan Completion Audit
 
+> Historical snapshot: the implementation and test counts below reflect the
+> 2026-07-11 audit. The 2026-07-13 whole-project repair pass supersedes its
+> runtime-state, Docker, CI, and benchmark-cache conclusions; see
+> `2026-07-13-whole-project-review-fixes.md`. In particular, do not use the old
+> OpenVINO synthetic v1 0.07-second warm timing as inference evidence.
+
 This audit maps the acceptance conditions in
 `2026-07-01-local-runtime-migration-plan.md` to current evidence. A milestone is
 not marked complete from implementation intent alone.

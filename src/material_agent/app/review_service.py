@@ -3,6 +3,7 @@ from collections.abc import Callable
 
 from ..adapters.state.sqlite_runtime import SQLiteRuntimeRepository
 from ..app.dto import JobStage, JobStatus, JobType, SessionKind, SessionStatus
+from ..app.errors import RunCancelled
 from ..app.job_service import JobService
 from ..app.review_runtime import build_review_job_executor
 from ..app.session_service import SessionService
@@ -62,7 +63,10 @@ class ReviewRunService:
                 if max_files < 1:
                     raise ValueError("review_pipeline.max_files must be at least 1")
                 files = files[:max_files]
-            pending_files = [file_path for file_path in files if not state.is_done(file_path)]
+            # Group against the complete source set. The executor carries valid
+            # done rows through ranking as read-only members and skips their
+            # writes, which keeps rank/group_size stable after a mid-group crash.
+            review_files = list(files)
             executor = build_executor(
                 repository=self.repository,
                 config=config,
@@ -70,8 +74,23 @@ class ReviewRunService:
                 progress=progress,
                 dry_run=dry_run,
             )
-            job_result = executor.run(job_id, pending_files)
+            job_result = executor.run(job_id, review_files)
             session_status = self._resolve_session_status(job_result)
+        except RunCancelled as error:
+            self.job_service.update_job(
+                job_id,
+                stage=JobStage.FINALIZE,
+                status=JobStatus.CANCELLED,
+                summary={"error": str(error) or type(error).__name__},
+            )
+            self.repository.append_event(
+                session_id=session_id,
+                job_id=job_id,
+                event_type="job_cancelled",
+                payload={"error": str(error) or type(error).__name__},
+            )
+            self.session_service.update_session(session_id, status=SessionStatus.CANCELLED)
+            raise
         except Exception as error:
             self.job_service.update_job(
                 job_id,
@@ -86,6 +105,21 @@ class ReviewRunService:
                 payload={"error": str(error)},
             )
             self.session_service.update_session(session_id, status=SessionStatus.FAILED)
+            raise
+        except BaseException as error:
+            self.job_service.update_job(
+                job_id,
+                stage=JobStage.FINALIZE,
+                status=JobStatus.CANCELLED,
+                summary={"error": str(error) or type(error).__name__},
+            )
+            self.repository.append_event(
+                session_id=session_id,
+                job_id=job_id,
+                event_type="job_cancelled",
+                payload={"error": str(error) or type(error).__name__},
+            )
+            self.session_service.update_session(session_id, status=SessionStatus.CANCELLED)
             raise
         self.session_service.update_session(session_id, status=session_status)
         return job_id

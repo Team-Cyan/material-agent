@@ -1,0 +1,9 @@
+**
+!pyproject.toml
+!uv.lock
+!README.md
+!config.yaml
+!src/
+!src/**
+!docker/
+!docker/**

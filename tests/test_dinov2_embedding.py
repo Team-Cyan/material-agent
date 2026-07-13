@@ -8,9 +8,9 @@ from material_agent.adapters.models.dinov2_embedding import DinoV2EmbeddingAdapt
 from material_agent.clients.local import AsyncLocalClient
 
 
-def _jpeg_bytes() -> bytes:
+def _jpeg_bytes(color=(80, 100, 120)) -> bytes:
     output = BytesIO()
-    Image.new("RGB", (16, 16), (80, 100, 120)).save(output, format="JPEG")
+    Image.new("RGB", (16, 16), color).save(output, format="JPEG")
     return output.getvalue()
 
 
@@ -41,7 +41,8 @@ class _FakeEmbeddingAdapter:
             "model_name": "fixture-dino",
             "model_version": "fixture-v1",
             "runtime": "fixture-embedding",
-            "device": "cpu",
+            "device": "GPU",
+            "execution_devices": ["GPU.0"],
         }
 
 
@@ -58,9 +59,76 @@ def test_local_client_keeps_embedding_vector_out_of_embedding_metadata():
         "model_name": "fixture-dino",
         "model_version": "fixture-v1",
         "runtime": "fixture-embedding",
-        "device": "cpu",
+        "device": "GPU",
+        "execution_devices": ["GPU.0"],
     }
-    assert result["_runtime"] == "cpu+fixture-embedding:cpu"
+    assert result["_runtime"] == "cpu+fixture-embedding:GPU.0"
+
+
+class _CountingEmbeddingAdapter:
+    def __init__(self):
+        self.calls = 0
+
+    async def embed_image(self, jpeg_bytes):
+        self.calls += 1
+        return {
+            "vector": [float(self.calls), 0.5],
+            "dimensions": 2,
+            "model_name": "fixture-dino",
+            "model_version": "fixture-v1",
+            "runtime": "fixture-embedding",
+            "device": "cpu",
+        }
+
+
+def test_local_embedding_result_cache_is_lru_bounded_and_clearable():
+    client = AsyncLocalClient(
+        {"embedding": {"enabled": True, "result_cache_size": 2}}
+    )
+    adapter = _CountingEmbeddingAdapter()
+    client._embedding = adapter
+    first = _jpeg_bytes((10, 20, 30))
+    second = _jpeg_bytes((40, 50, 60))
+    third = _jpeg_bytes((70, 80, 90))
+
+    async def exercise_cache():
+        await client.embed_image(first)
+        await client.embed_image(second)
+        await client.embed_image(first)
+        await client.embed_image(third)
+        await client.embed_image(second)
+
+    asyncio.run(exercise_cache())
+
+    assert adapter.calls == 4
+    assert len(client._embedding_result_cache) == 2
+    client.clear_embedding_result_cache()
+    assert client._embedding_result_cache == {}
+
+    asyncio.run(client.embed_image(first))
+    assert adapter.calls == 5
+
+
+def test_openvino_embedding_inherits_inference_fallback_device(monkeypatch):
+    import material_agent.adapters.models.openvino_embedding as openvino_embedding
+
+    captured = {}
+    sentinel = object()
+
+    def build_adapter(config):
+        captured.update(config)
+        return sentinel
+
+    monkeypatch.setattr(openvino_embedding, "OpenVinoEmbeddingAdapter", build_adapter)
+    client = AsyncLocalClient(
+        {
+            "inference": {"fallback_device": "CPU"},
+            "embedding": {"runtime": "openvino"},
+        }
+    )
+
+    assert client._embedding_scorer() is sentinel
+    assert captured["fallback_device"] == "CPU"
 
 
 class _EmptyEmbeddingRuntime:

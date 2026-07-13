@@ -61,6 +61,75 @@ _OMLX_REQUEST_BOOLEAN_FIELDS = ("enable_thinking",)
 _OMLX_ADMIN_BOOLEAN_FIELDS = ("cache_enabled",)
 _OMLX_CONTRACT_MODES = {"structured_outputs", "response_format_json_schema"}
 _OMLX_MODEL_PROFILE_MODES = {"off", "auto"}
+_MAX_CONFIGURED_EXTENSIONS = 32
+_MAX_REVIEW_BATCH_SIZE = 32
+_MAX_SCORE_PREFETCH_WINDOW = 32
+_MAPPING_SECTION_PATHS = (
+    ("legacy",),
+    ("local",),
+    ("local", "semantic"),
+    ("local", "quality"),
+    ("local", "quality", "metrics"),
+    ("local", "embedding"),
+    ("local", "face"),
+    ("inference",),
+    ("preview",),
+    ("grouping",),
+    ("grouping", "visual_similarity"),
+    ("grouping", "embedding_similarity"),
+    ("grouping", "group_guard"),
+    ("screening",),
+    ("screening", "musiq"),
+    ("focus_integrity",),
+    ("portrait_face_eye",),
+    ("decision_policy",),
+    ("decision_policy", "hard_reject"),
+    ("screening_policy",),
+    ("review_pipeline",),
+    ("xmp",),
+    ("omlx",),
+    ("omlx", "runtime"),
+    ("omlx", "requests"),
+    ("omlx", "admin"),
+    ("omlx", "model_profiles"),
+    ("ollama",),
+    ("scene_profiles",),
+    ("scene_weights",),
+    ("scorers",),
+    ("scoring",),
+)
+
+
+def _mapping_shape_errors(cfg: object) -> list[str]:
+    if not isinstance(cfg, dict):
+        actual = "null" if cfg is None else type(cfg).__name__
+        return [f"Configuration root must be a mapping, got: {actual}"]
+
+    errors: list[str] = []
+    for path in _MAPPING_SECTION_PATHS:
+        current: object = cfg
+        for index, key in enumerate(path):
+            if not isinstance(current, dict) or key not in current:
+                break
+            value = current[key]
+            if index == len(path) - 1:
+                if not isinstance(value, dict):
+                    errors.append(
+                        f"Configuration section {'.'.join(path)!r} must be a mapping, "
+                        f"got: {'null' if value is None else type(value).__name__}"
+                    )
+                break
+            current = value
+
+    scorers = cfg.get("scorers")
+    if isinstance(scorers, dict):
+        for name, scorer in scorers.items():
+            if not isinstance(scorer, dict):
+                errors.append(
+                    f"Configuration section 'scorers.{name}' must be a mapping, "
+                    f"got: {'null' if scorer is None else type(scorer).__name__}"
+                )
+    return errors
 
 
 def _round_weight(value: float) -> float:
@@ -218,12 +287,24 @@ def sync_omlx_model_selection(
 
 
 def normalize_config(cfg: dict) -> dict:
+    shape_errors = _mapping_shape_errors(cfg)
+    if shape_errors:
+        raise ValueError("Invalid configuration: " + "; ".join(shape_errors))
     normalized = copy.deepcopy(cfg)
     backend = normalized.get("backend") or normalized.get("vision_backend") or "local"
     normalized["backend"] = backend
     normalized.pop("vision_backend", None)
     normalized["log_level"] = (normalized.get("log_level") or "info").lower()
     normalized["output_language"] = (normalized.get("output_language") or "zh").lower()
+    raw_extensions = normalized.get("raw_extensions", ["ARW"])
+    if isinstance(raw_extensions, list) and all(
+        isinstance(extension, str) for extension in raw_extensions
+    ):
+        normalized["raw_extensions"] = list(
+            dict.fromkeys(
+                extension.strip().lstrip(".").upper() for extension in raw_extensions
+            )
+        )
 
     commentary_enabled = normalized.get("commentary_enabled")
     if commentary_enabled is None:
@@ -233,13 +314,14 @@ def normalize_config(cfg: dict) -> dict:
             normalized.get("omlx", {}).get("commentary_enabled"),
         ]
         explicit_values = [value for value in legacy_values if value is not None]
-        commentary_enabled = bool(explicit_values[-1]) if explicit_values else backend != "local"
-    normalized["commentary_enabled"] = commentary_enabled
+        commentary_enabled = (
+            _coerce_bool_like(explicit_values[-1]) if explicit_values else backend != "local"
+        )
+    normalized["commentary_enabled"] = _coerce_bool_like(commentary_enabled)
     legacy = normalized.setdefault("legacy", {})
     legacy["enabled"] = _coerce_bool_like(legacy.get("enabled", False))
 
     local = normalized.setdefault("local", {})
-    local.setdefault("max_concurrent", 1)
     semantic = local.setdefault("semantic", {})
     semantic["enabled"] = _coerce_bool_like(semantic.get("enabled", False))
     semantic["enforce_available"] = _coerce_bool_like(
@@ -312,6 +394,7 @@ def normalize_config(cfg: dict) -> dict:
     embedding.setdefault("model_path", "")
     embedding.setdefault("processor_path", "")
     embedding.setdefault("compiled_cache_dir", "~/.material-agent/openvino-cache")
+    embedding.setdefault("result_cache_size", 256)
     face = local.setdefault("face", {})
     face["enabled"] = _coerce_bool_like(face.get("enabled", False))
     face["enforce_available"] = _coerce_bool_like(face.get("enforce_available", False))
@@ -347,6 +430,7 @@ def normalize_config(cfg: dict) -> dict:
         musiq.setdefault("device", "cpu")
         musiq.setdefault("score_divisor", 10.0)
         musiq.setdefault("python_bin", "~/.material-agent/musiq-venv/bin/python")
+        musiq.setdefault("helper_timeout_seconds", 120.0)
 
     if "omlx" in normalized:
         omlx = normalized.setdefault("omlx", {})
@@ -398,6 +482,12 @@ def normalize_config(cfg: dict) -> dict:
 
 
 def validate_config(cfg: dict) -> None:
+    shape_errors = _mapping_shape_errors(cfg)
+    if shape_errors:
+        print("Configuration errors:")
+        for error in shape_errors:
+            print(f"  • {error}")
+        sys.exit(1)
     raw_scene_profiles = copy.deepcopy(cfg.get("scene_profiles", {}))
     raw_omlx = copy.deepcopy(cfg.get("omlx", {}))
     cfg = normalize_config(cfg)
@@ -418,6 +508,32 @@ def validate_config(cfg: dict) -> None:
         errors.append(f"log_level must be 'info' or 'debug', got: {cfg.get('log_level')!r}")
     if cfg.get("output_language") not in {"zh", "en"}:
         errors.append(f"output_language must be 'zh' or 'en', got: {cfg.get('output_language')!r}")
+    if not _is_valid_bool_like(cfg.get("commentary_enabled", False)):
+        errors.append(
+            "commentary_enabled must be a boolean, "
+            f"got: {cfg.get('commentary_enabled')!r}"
+        )
+    raw_extensions = cfg.get("raw_extensions", ["ARW"])
+    if not isinstance(raw_extensions, list):
+        errors.append(f"raw_extensions must be a list, got: {raw_extensions!r}")
+    elif not raw_extensions:
+        errors.append("raw_extensions must contain at least one extension")
+    elif len(raw_extensions) > _MAX_CONFIGURED_EXTENSIONS:
+        errors.append(
+            f"raw_extensions must contain at most {_MAX_CONFIGURED_EXTENSIONS} entries"
+        )
+    else:
+        for extension in raw_extensions:
+            if (
+                not isinstance(extension, str)
+                or not extension
+                or len(extension) > 16
+                or not extension.isalnum()
+            ):
+                errors.append(
+                    "raw_extensions entries must be 1-16 alphanumeric characters, "
+                    f"got: {extension!r}"
+                )
     preview = cfg.get("preview", {})
     if "prefer_embedded" in preview and not _is_valid_bool_like(preview.get("prefer_embedded")):
         errors.append(
@@ -431,10 +547,25 @@ def validate_config(cfg: dict) -> None:
         )
     review_pipeline = cfg.get("review_pipeline", {})
     score_prefetch_window = review_pipeline.get("score_prefetch_window", 2)
-    if not isinstance(score_prefetch_window, int) or score_prefetch_window < 1:
+    if (
+        not isinstance(score_prefetch_window, int)
+        or isinstance(score_prefetch_window, bool)
+        or not 1 <= score_prefetch_window <= _MAX_SCORE_PREFETCH_WINDOW
+    ):
         errors.append(
-            "review_pipeline.score_prefetch_window must be an integer >= 1, "
+            "review_pipeline.score_prefetch_window must be an integer between "
+            f"1 and {_MAX_SCORE_PREFETCH_WINDOW}, "
             f"got: {score_prefetch_window!r}"
+        )
+    max_files = review_pipeline.get("max_files")
+    if max_files is not None and (
+        not isinstance(max_files, int)
+        or isinstance(max_files, bool)
+        or not 1 <= max_files <= _MAX_REVIEW_BATCH_SIZE
+    ):
+        errors.append(
+            "review_pipeline.max_files must be an integer between "
+            f"1 and {_MAX_REVIEW_BATCH_SIZE}, got: {max_files!r}"
         )
     grouping = cfg.get("grouping", {})
     embedding_similarity = grouping.get("embedding_similarity", {})
@@ -476,9 +607,6 @@ def validate_config(cfg: dict) -> None:
                 "keep commentary_enabled false or choose an explicit legacy backend"
             )
         local = cfg.get("local", {})
-        max_concurrent = local.get("max_concurrent", 1)
-        if not isinstance(max_concurrent, int) or max_concurrent < 1:
-            errors.append(f"local.max_concurrent must be an integer >= 1, got: {max_concurrent!r}")
         semantic = local.get("semantic", {})
         for key in ("enabled", "enforce_available"):
             if not _is_valid_bool_like(semantic.get(key, False)):
@@ -548,6 +676,16 @@ def validate_config(cfg: dict) -> None:
                 errors.append(
                     f"local.embedding.{key} must be a non-empty string, got: {value!r}"
                 )
+        result_cache_size = embedding.get("result_cache_size", 256)
+        if (
+            not isinstance(result_cache_size, int)
+            or isinstance(result_cache_size, bool)
+            or not 0 <= result_cache_size <= 4096
+        ):
+            errors.append(
+                "local.embedding.result_cache_size must be an integer between 0 and 4096, "
+                f"got: {result_cache_size!r}"
+            )
         if embedding.get("enabled", False) and embedding.get("runtime") == "openvino":
             for key in ("model_path", "processor_path", "compiled_cache_dir"):
                 value = embedding.get(key)
@@ -692,6 +830,16 @@ def validate_config(cfg: dict) -> None:
             score_divisor = musiq.get("score_divisor", 10.0)
             if not isinstance(score_divisor, (int, float)) or score_divisor <= 0:
                 errors.append(f"screening.musiq.score_divisor must be > 0, got: {score_divisor!r}")
+            helper_timeout = musiq.get("helper_timeout_seconds", 120.0)
+            if (
+                not isinstance(helper_timeout, int | float)
+                or isinstance(helper_timeout, bool)
+                or helper_timeout <= 0
+            ):
+                errors.append(
+                    "screening.musiq.helper_timeout_seconds must be > 0, "
+                    f"got: {helper_timeout!r}"
+                )
 
     scene_profiles = cfg.get("scene_profiles", {})
     for scene, profile in raw_scene_profiles.items():

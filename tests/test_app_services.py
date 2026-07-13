@@ -1,17 +1,26 @@
+import os
+import signal
 import sqlite3
+import threading
+from time import perf_counter
 
 import pytest
 
 from material_agent.adapters.metadata.exiftool_xmp import ExifToolXMPWriter
 from material_agent.adapters.state.sqlite_runtime import SQLiteRuntimeRepository
 from material_agent.app.dto import JobFileStatus, JobStage, JobStatus, JobType, SessionKind
+from material_agent.app.errors import RunCancelled
+from material_agent.app.job_executor import JobExecutor
 from material_agent.app.job_service import JobService
+from material_agent.app.jobs.review_photos import ReviewPhotosJob
 from material_agent.app.rescore_service import RescoreService
+from material_agent.app.reset_ai_judgement_service import ResetAiJudgementService
 from material_agent.app.scene_service import SceneDbService
 from material_agent.app.review_service import ReviewRunService
 from material_agent.app.rewrite_xmp_service import RewriteXmpService
 from material_agent.app.session_service import SessionService
 from material_agent.utils.runtime_paths import build_runtime_paths
+from material_agent.utils.run_control import sigterm_as_cancellation
 
 
 def test_session_service_creates_runtime_session(tmp_path):
@@ -229,7 +238,9 @@ def test_review_run_service_marks_session_finished_with_errors_from_job_result(t
 
 
 @pytest.mark.parametrize("executor_result", [None, {}, {"status": "unexpected"}])
-def test_review_run_service_fails_when_executor_result_status_is_missing_or_invalid(tmp_path, executor_result):
+def test_review_run_service_fails_when_executor_result_status_is_missing_or_invalid(
+    tmp_path, executor_result
+):
     repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
     service = ReviewRunService(repo)
 
@@ -389,7 +400,9 @@ def test_review_run_service_aborts_before_scan_when_preflight_hook_fails(tmp_pat
     artifacts = repo.list_artifacts(job_row["id"])
 
     assert tuple(job_row[1:3]) == ("finalize", "failed")
-    assert "Open /Applications/oMLX.app or start the dedicated OMLX runtime" in job_row["summary_json"]
+    assert (
+        "Open /Applications/oMLX.app or start the dedicated OMLX runtime" in job_row["summary_json"]
+    )
     assert session_row["status"] == "failed"
     assert session_row["finished_at"] is not None
     assert [event["event_type"] for event in events] == [
@@ -440,6 +453,152 @@ def test_review_run_service_marks_job_failed_and_records_event(tmp_path):
     assert session_row["finished_at"] is not None
     assert event_row["event_type"] == "job_failed"
     assert '"error": "boom"' in event_row["payload_json"]
+
+
+@pytest.mark.parametrize(
+    ("interruption", "expected_type", "message"),
+    [
+        pytest.param(
+            KeyboardInterrupt("ctrl-c"), KeyboardInterrupt, "ctrl-c", id="keyboard-interrupt"
+        ),
+        pytest.param(
+            RunCancelled("received SIGTERM"),
+            RunCancelled,
+            "received SIGTERM",
+            id="sigterm-cancellation",
+        ),
+    ],
+)
+def test_review_run_service_marks_operator_interruption_cancelled(
+    tmp_path, interruption, expected_type, message
+):
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    service = ReviewRunService(repo)
+
+    class _InterruptingExecutor:
+        def run(self, job_id, file_paths):
+            raise interruption
+
+    with pytest.raises(expected_type, match=message):
+        service.run(
+            input_dir="/tmp/photos",
+            config={"backend": "local"},
+            state=object(),
+            progress=None,
+            dry_run=False,
+            file_paths=["/tmp/photos/a.ARW"],
+            build_executor=lambda **kwargs: _InterruptingExecutor(),
+        )
+
+    job_row = repo.conn.execute(
+        "SELECT stage, status, summary_json FROM jobs ORDER BY started_at DESC, id DESC LIMIT 1"
+    ).fetchone()
+    session_row = repo.conn.execute(
+        "SELECT status, finished_at FROM sessions ORDER BY created_at DESC, id DESC LIMIT 1"
+    ).fetchone()
+    event_row = repo.conn.execute(
+        "SELECT event_type, payload_json FROM events WHERE event_type = 'job_cancelled' LIMIT 1"
+    ).fetchone()
+    assert tuple(job_row[:2]) == ("finalize", "cancelled")
+    assert f'"error": "{message}"' in job_row["summary_json"]
+    assert session_row["status"] == "cancelled"
+    assert session_row["finished_at"] is not None
+    assert event_row["event_type"] == "job_cancelled"
+
+
+def test_review_pipeline_does_not_downgrade_sigterm_to_a_file_error(tmp_path):
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    service = ReviewRunService(repo)
+
+    def _build_executor(**kwargs):
+        def _cancel_during_score(_file_path):
+            raise RunCancelled("received SIGTERM")
+
+        class _Sink:
+            def publish(self, **_kwargs):
+                return None
+
+        return JobExecutor(
+            ReviewPhotosJob(
+                repository=kwargs["repository"],
+                event_sink=_Sink(),
+                score_file=_cancel_during_score,
+            )
+        )
+
+    with pytest.raises(RunCancelled, match="SIGTERM"):
+        service.run(
+            input_dir="/tmp/photos",
+            config={"backend": "local"},
+            state=object(),
+            progress=None,
+            dry_run=False,
+            file_paths=["/tmp/photos/a.ARW"],
+            build_executor=_build_executor,
+        )
+
+    job_row = repo.conn.execute(
+        "SELECT stage, status FROM jobs ORDER BY started_at DESC, id DESC LIMIT 1"
+    ).fetchone()
+    session_row = repo.conn.execute(
+        "SELECT status FROM sessions ORDER BY created_at DESC, id DESC LIMIT 1"
+    ).fetchone()
+    failed_file_events = repo.conn.execute(
+        "SELECT COUNT(*) FROM events WHERE event_type = 'job_file_failed'"
+    ).fetchone()[0]
+    assert tuple(job_row) == ("finalize", "cancelled")
+    assert session_row["status"] == "cancelled"
+    assert failed_file_events == 0
+
+
+def test_sigterm_persists_cancelled_state_without_waiting_for_prepare_worker(tmp_path):
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    service = ReviewRunService(repo)
+    prepare_started = threading.Event()
+    release_prepare = threading.Event()
+
+    def _build_executor(**kwargs):
+        def _blocking_prepare(file_path):
+            prepare_started.set()
+            release_prepare.wait(timeout=2)
+            return file_path
+
+        return JobExecutor(
+            ReviewPhotosJob(
+                repository=kwargs["repository"],
+                event_sink=type("Sink", (), {"publish": lambda self, **_kwargs: None})(),
+                prepare_score=_blocking_prepare,
+                score_prepared=lambda _prepared: {"score_total": 5.0},
+            )
+        )
+
+    def _send_sigterm():
+        if prepare_started.wait(timeout=2):
+            os.kill(os.getpid(), signal.SIGTERM)
+
+    trigger = threading.Thread(target=_send_sigterm)
+    trigger.start()
+    started_at = perf_counter()
+    try:
+        with sigterm_as_cancellation(), pytest.raises(RunCancelled, match="SIGTERM"):
+            service.run(
+                input_dir="/tmp/photos",
+                config={"backend": "local"},
+                state=object(),
+                progress=None,
+                dry_run=False,
+                file_paths=["/tmp/photos/a.ARW"],
+                build_executor=_build_executor,
+            )
+        elapsed = perf_counter() - started_at
+        status = repo.conn.execute(
+            "SELECT status FROM jobs ORDER BY started_at DESC, id DESC LIMIT 1"
+        ).fetchone()["status"]
+        assert elapsed < 0.5
+        assert status == "cancelled"
+    finally:
+        release_prepare.set()
+        trigger.join(timeout=2)
 
 
 def test_review_run_service_scans_from_input_dir_when_file_paths_omitted(tmp_path, monkeypatch):
@@ -566,10 +725,31 @@ def test_rewrite_xmp_service_rewrites_done_rows_to_xmp(tmp_path):
             ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
             (
-                str(photo), "done", "animals", "猫趴在窗边", 8.0, 4, 1, 1,
-                0, "group_1", 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0,
-                "【组内问题】整体偏暗。", "【拍摄建议】拍摄时稳一点。", "【后期指导】把阴影提一点。",
-                "keep", '["sharp enough"]', 7.4,
+                str(photo),
+                "done",
+                "animals",
+                "猫趴在窗边",
+                8.0,
+                4,
+                1,
+                1,
+                0,
+                "group_1",
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                "【组内问题】整体偏暗。",
+                "【拍摄建议】拍摄时稳一点。",
+                "【后期指导】把阴影提一点。",
+                "keep",
+                '["sharp enough"]',
+                7.4,
                 '{"technical_quality": 8.0, "composition": 8.0, "lighting": 8.0, "color": 8.0, "space_depth": 8.0, "mood_story": 8.0, "subject_moment": 8.0}',
                 "layered-v1",
             ),
@@ -591,7 +771,9 @@ def test_scene_db_service_scans_scene_distribution(tmp_path):
     db_path = build_runtime_paths(tmp_path).db_path
     db_path.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(db_path) as conn:
-        conn.execute("CREATE TABLE processed (file_path TEXT PRIMARY KEY, status TEXT, scene TEXT, scene_raw TEXT)")
+        conn.execute(
+            "CREATE TABLE processed (file_path TEXT PRIMARY KEY, status TEXT, scene TEXT, scene_raw TEXT)"
+        )
         conn.executemany(
             "INSERT INTO processed (file_path, status, scene, scene_raw) VALUES (?,?,?,?)",
             [
@@ -662,10 +844,31 @@ def test_rewrite_xmp_preserves_existing_sidecar_when_rewrite_fails(tmp_path):
             ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
             (
-                str(photo), "done", "animals", "猫趴在窗边", 8.0, 4, 1, 1,
-                0, "group_1", 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0,
-                "【组内问题】整体偏暗。", "【拍摄建议】拍摄时稳一点。", "【后期指导】把阴影提一点。",
-                "keep", '["sharp enough"]', 7.4,
+                str(photo),
+                "done",
+                "animals",
+                "猫趴在窗边",
+                8.0,
+                4,
+                1,
+                1,
+                0,
+                "group_1",
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                8.0,
+                "【组内问题】整体偏暗。",
+                "【拍摄建议】拍摄时稳一点。",
+                "【后期指导】把阴影提一点。",
+                "keep",
+                '["sharp enough"]',
+                7.4,
                 '{"technical_quality": 8.0, "composition": 8.0, "lighting": 8.0, "color": 8.0, "space_depth": 8.0, "mood_story": 8.0, "subject_moment": 8.0}',
                 "layered-v1",
             ),
@@ -681,6 +884,72 @@ def test_rewrite_xmp_preserves_existing_sidecar_when_rewrite_fails(tmp_path):
     assert summary == {"ok": 0, "err": 1}
     assert xmp_path.read_text(encoding="utf-8") == original
     assert not (tmp_path / "cat.xmp.tmp").exists()
+
+
+def test_reset_ai_judgement_uses_xmp_provenance_and_preserves_legacy_scalars(tmp_path):
+    from material_agent.adapters.state.processed_sqlite import SQLiteProcessedRepository
+
+    class RecordingWriter:
+        def __init__(self):
+            self.calls = []
+
+        def clear_ai_tags(self, file_path, **kwargs):
+            self.calls.append((file_path, kwargs))
+            return {"rating": False, "instructions": False, "description": False}
+
+    legacy_photo = tmp_path / "a-legacy.ARW"
+    owned_photo = tmp_path / "b-owned.ARW"
+    legacy_photo.write_bytes(b"legacy")
+    owned_photo.write_bytes(b"owned")
+    repository = SQLiteProcessedRepository(tmp_path)
+    repository.mark_done(
+        str(legacy_photo),
+        total_score=6.0,
+        star_rating=3,
+        group_boosted=False,
+        scores={},
+        metadata={},
+        group_info={},
+    )
+    expected_fields = {
+        "rating": 4,
+        "instructions": "agent instructions",
+        "description": "agent description",
+    }
+    repository.mark_done(
+        str(owned_photo),
+        total_score=8.0,
+        star_rating=4,
+        group_boosted=False,
+        scores={},
+        metadata={},
+        group_info={},
+        xmp_payload=expected_fields,
+    )
+    writer = RecordingWriter()
+
+    summary = ResetAiJudgementService(repository=repository, writer=writer).run(
+        str(tmp_path), dry_run=False, clear_xmp=True
+    )
+
+    assert writer.calls == [
+        (
+            str(legacy_photo),
+            {"expected_fields": None, "force_scalar_clear": False},
+        ),
+        (
+            str(owned_photo),
+            {"expected_fields": expected_fields, "force_scalar_clear": False},
+        ),
+    ]
+    assert summary == {
+        "processed_rows_deleted": 2,
+        "signal_rows_deleted": 0,
+        "files": 2,
+        "xmp_cleared": 2,
+    }
+    assert repository.conn.execute("SELECT COUNT(*) FROM processed").fetchone()[0] == 0
+    repository.close()
 
 
 def test_rescore_service_recalculates_totals_without_ai(tmp_path):

@@ -22,12 +22,13 @@ legacy:
 local:
   # Local backend is the only default backend in material-agent. It currently
   # provides deterministic heuristics and is the seam for ONNX/OpenVINO scorers.
-  max_concurrent: 1
   semantic:
     # First learned vertical slice. Keep disabled until the deployment installs
     # the `local-models` optional dependencies and benchmark-approved weights.
     enabled: false
     enforce_available: false
+    # Bump if a mutable remote weight tag is replaced without changing its name.
+    cache_revision: mobileclip2-s0-dfndr2b-v1
     model_name: MobileCLIP2-S0
     pretrained: dfndr2b
     device: cpu
@@ -37,6 +38,8 @@ local:
     # until benchmark calibration approves a versioned policy.
     enabled: false
     enforce_available: false
+    # Bump when calibrated PyIQA weights change under the same metric names.
+    cache_revision: quality-priors-v1
     device: cpu
     policy_version: quality-priors-v1
     metrics:
@@ -87,6 +90,8 @@ local:
   face:
     enabled: false
     enforce_available: false
+    # Bump if model_asset_path is replaced in place.
+    cache_revision: face-landmarker-v1
     model_asset_path: "~/.material-agent/models/face_landmarker.task"
     num_faces: 5
     min_detection_confidence: 0.5
@@ -170,14 +175,15 @@ scorers:
     enabled: true
 
 scoring:
+  # Bump for deliberate scoring-policy migrations outside normal config fields.
+  cache_revision: score-policy-v2
   pixel_weight: 0.35
   vision_weight: 0.65
 
 screening:
-  # Keep MUSIQ as an optional quality gate while the OpenVINO scorer is being
-  # implemented. If torch/pyiqa is unavailable, the run logs the skip and
-  # continues through the local scoring path.
-  enabled: true
+  # MUSIQ remains opt-in because the lean CPU/OpenVINO images do not bundle
+  # torch/pyiqa. Enable it only in a calibrated quality-model environment.
+  enabled: false
   backend: musiq
   tier1_threshold: 0.5
   tier2_threshold: 0.25

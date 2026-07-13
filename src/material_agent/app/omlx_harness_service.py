@@ -15,6 +15,7 @@ from ..adapters.models.omlx.instance import (
     collect_omlx_runtime_models,
     is_configured_shared_omlx_runtime,
 )
+from ..adapters.state.sqlite_runtime import redact_secrets
 from ..app.omlx_instance_service import OMLXInstanceService
 from ..io.scanner import scan_arw_files
 from ..utils.config_validator import sync_omlx_model_selection
@@ -49,14 +50,15 @@ _VISION_SCORE_COLUMNS = (
     "score_depth",
     "score_mood",
 )
-_REDACTED_KEYS = {"api_key"}
 _HIGH_REPEAT_THRESHOLD = 3
 
 
 def _default_run_command(args, config) -> None:
     from ..commands.scoring import cmd_run
 
-    cmd_run(args, config)
+    exit_code = cmd_run(args, config)
+    if exit_code:
+        raise RuntimeError(f"material-agent run failed with exit code {exit_code}")
 
 
 def _slugify(value: str) -> str:
@@ -753,17 +755,7 @@ class OMLXHarnessService:
         return body.count("=") >= 3 and "这组" not in body and "set" not in body.lower()
 
     def _redact_config(self, value: Any) -> Any:
-        if isinstance(value, dict):
-            redacted: dict[str, Any] = {}
-            for key, item in value.items():
-                if key in _REDACTED_KEYS:
-                    redacted[key] = "***"
-                else:
-                    redacted[key] = self._redact_config(item)
-            return redacted
-        if isinstance(value, list):
-            return [self._redact_config(item) for item in value]
-        return value
+        return redact_secrets(value)
 
     def _build_model_report(self, result: dict[str, Any]) -> str:
         lines = [

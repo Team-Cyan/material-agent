@@ -1,4 +1,6 @@
 import json
+import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -6,6 +8,18 @@ from material_agent.adapters.models.local_runtime import probe_local_runtime
 from material_agent.adapters.state.sqlite_runtime import SQLiteRuntimeRepository
 from material_agent.app.dto import JobStage, JobStatus, JobType, SessionKind, SessionStatus
 from material_agent.commands.scoring import _build_runtime_probe_preflight_hook
+
+
+def _fake_openvino(monkeypatch, devices: list[str]) -> None:
+    fake_module = SimpleNamespace(
+        __version__="test-openvino",
+        Core=lambda: SimpleNamespace(available_devices=devices),
+    )
+    monkeypatch.setitem(sys.modules, "openvino", fake_module)
+    monkeypatch.setattr(
+        "material_agent.adapters.models.local_runtime.util.find_spec",
+        lambda name: object() if name == "openvino" else None,
+    )
 
 
 def _create_session_and_job(repo: SQLiteRuntimeRepository) -> tuple[str, str]:
@@ -57,6 +71,60 @@ def test_probe_local_runtime_parses_string_enforce_available_false():
 
     assert payload["enforce_available"] is False
     assert payload["provider_tags"] == ["cpu"]
+
+
+def test_openvino_preflight_rejects_missing_requested_device(monkeypatch):
+    _fake_openvino(monkeypatch, ["CPU"])
+
+    payload = probe_local_runtime(
+        {
+            "inference": {
+                "runtime": "openvino",
+                "device": "GPU",
+                "fallback_device": "CPU",
+                "enforce_available": True,
+            }
+        }
+    )
+
+    assert payload["capability_valid"] is False
+    assert payload["capability_failure"]["code"] == "requested_device_missing"
+
+
+def test_openvino_preflight_accepts_auto_cpu_fallback(monkeypatch):
+    _fake_openvino(monkeypatch, ["CPU"])
+
+    payload = probe_local_runtime(
+        {
+            "inference": {
+                "runtime": "openvino",
+                "device": "AUTO:GPU,CPU",
+                "fallback_device": "CPU",
+                "enforce_available": True,
+            }
+        }
+    )
+
+    assert payload["capability_valid"] is True
+    assert payload["accelerator_available"] is False
+
+
+def test_openvino_preflight_rejects_missing_fallback_device(monkeypatch):
+    _fake_openvino(monkeypatch, ["GPU.0"])
+
+    payload = probe_local_runtime(
+        {
+            "inference": {
+                "runtime": "openvino",
+                "device": "GPU",
+                "fallback_device": "CPU",
+                "enforce_available": True,
+            }
+        }
+    )
+
+    assert payload["capability_valid"] is False
+    assert payload["capability_failure"]["code"] == "fallback_device_missing"
 
 
 def test_local_runtime_preflight_records_report_only_warning(monkeypatch, tmp_path):

@@ -52,6 +52,14 @@ It does not define image-quality policy itself. Instead, it orchestrates groupin
 - `finished` means every targeted file reached the expected terminal write path without per-file failures
 - `finished_with_errors` means the batch completed orchestration but one or more files failed during scoring or write-back
 - `failed` means the pipeline itself broke before it could reach a valid terminal batch summary
+- `cancelled` means SIGTERM or another controller cancellation interrupted the run; it must not be collapsed into `failed`
+
+Runtime file states distinguish real writes from simulations and cache reuse:
+
+- `written` means the configured terminal writer completed;
+- `simulated` means a dry-run reached a terminal result without a source write;
+- `skipped` means a valid unchanged `done` result was reused without pretending
+  that a write occurred in the current run.
 
 ## Invariants
 
@@ -62,6 +70,18 @@ It does not define image-quality policy itself. Instead, it orchestrates groupin
 - a file must not be marked `done` before its terminal commentary payload is durable
 - batch-level partial failures must not be reported as clean success
 - already written files should not be rewritten unless the workflow explicitly requests it
+- discovery and grouping receive the complete current source set, including
+  valid `done` rows, so a new frame can change an existing burst's stable group
+  membership and rank without rescoring unchanged pixels
+- group IDs are membership-derived from sorted member paths rather than run order;
+  cached scores may be reused, but group/rank metadata and terminal output must
+  be refreshed when membership or rank changes
+- dry-run may persist runtime observability but must not create processed score,
+  `done`, XMP, or rating output
+- one work directory has one mutating controller at a time; `run` and mutating
+  maintenance commands share the same exclusive lock
+- startup reconciles abandoned open/running/paused runtime records before a new
+  run, and SIGTERM produces durable `cancelled` state with bounded shutdown
 - orchestration code should remain thin and delegate real rules outward
 
 ## Typical Safe Changes
@@ -80,6 +100,9 @@ It does not define image-quality policy itself. Instead, it orchestrates groupin
 - changing stage ordering
 - mutating score payload shape without checking all consumers
 - mixing domain logic into orchestration code
+- filtering `done` files before grouping, which silently makes incremental rank
+  and group metadata inconsistent
+- bypassing the shared run lock from a new mutating command
 
 ## Files Usually Safe To Edit Together
 

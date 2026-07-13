@@ -1,6 +1,7 @@
 import logging
 import multiprocessing
 import os
+import stat
 import tempfile
 
 from material_agent.utils.progress import RichProgress, TqdmProgress
@@ -15,6 +16,7 @@ def test_logger_handler_not_duplicated_on_reinit():
         TqdmProgress(log_path=log_path)
         logger = logging.getLogger("material_agent")
         assert len(logger.handlers) == 1
+        assert stat.S_IMODE(os.stat(log_path).st_mode) == 0o600
 
 
 def test_progress_respects_info_log_level():

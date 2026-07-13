@@ -70,6 +70,7 @@ def test_review_job_runs_stage_flow_and_marks_files_scored(tmp_path):
         "written_files": 2,
         "error_files": 0,
         "skipped_files": 0,
+        "simulated_files": 0,
         "scored_files": 2,
     }
     assert [tuple(row) for row in file_rows] == [
@@ -198,6 +199,7 @@ def test_review_job_continues_when_file_write_fails(tmp_path):
         "written_files": 1,
         "error_files": 1,
         "skipped_files": 0,
+        "simulated_files": 0,
         "scored_files": 2,
     }
 
@@ -297,7 +299,7 @@ def test_review_job_finished_summary_counts_files_that_reached_scoring(tmp_path)
 
     assert tuple(job_row[:2]) == ("finalize", "finished_with_errors")
     assert job_row[2] == (
-        '{"status": "finished_with_errors", "total_files": 2, "written_files": 1, "error_files": 1, "skipped_files": 0, "scored_files": 2}'
+        '{"status": "finished_with_errors", "total_files": 2, "written_files": 1, "error_files": 1, "skipped_files": 0, "simulated_files": 0, "scored_files": 2}'
     )
     assert finished_event == {
         "status": "finished_with_errors",
@@ -305,6 +307,7 @@ def test_review_job_finished_summary_counts_files_that_reached_scoring(tmp_path)
         "written_files": 1,
         "error_files": 1,
         "skipped_files": 0,
+        "simulated_files": 0,
         "scored_files": 2,
     }
     assert result == finished_event
@@ -412,10 +415,11 @@ def test_review_job_resumes_written_and_scored_files_from_artifacts(tmp_path):
         ["/tmp/photos/already-written.ARW", "/tmp/photos/already-scored.ARW"],
     )
 
+    scored_group_id = ReviewPhotosJob._group_id(["/tmp/photos/already-scored.ARW"])
     assert score_calls == []
-    assert finalize_calls == [("group_0002", ["/tmp/photos/already-scored.ARW"])]
+    assert finalize_calls == [(scored_group_id, ["/tmp/photos/already-scored.ARW"])]
     assert write_calls == [
-        ("/tmp/photos/already-scored.ARW", 1, "group_0002", 1, 6.0),
+        ("/tmp/photos/already-scored.ARW", 1, scored_group_id, 1, 6.0),
     ]
 
     file_rows = repo.conn.execute(
@@ -514,9 +518,12 @@ def test_review_job_refreshes_rank_and_group_metadata_for_already_written_files_
         (job_id,),
     ).fetchall()
 
+    current_group_id = ReviewPhotosJob._group_id(
+        ["/tmp/photos/already-written.ARW", "/tmp/photos/already-scored.ARW"]
+    )
     assert [tuple(row) for row in file_rows] == [
-        ("/tmp/photos/already-scored.ARW", "written", "group_0001", 1),
-        ("/tmp/photos/already-written.ARW", "written", "group_0001", 2),
+        ("/tmp/photos/already-scored.ARW", "written", current_group_id, 1),
+        ("/tmp/photos/already-written.ARW", "written", current_group_id, 2),
     ]
 
 

@@ -21,6 +21,9 @@ while preserving user-authored metadata when possible.
   and machine identifiers
 - update an existing `.xmp` or `.XMP` sidecar instead of creating a duplicate
 - support full XMP regeneration through rewrite flows
+- support provenance-safe AI reset: preserve XMP by default, remove machine
+  tags explicitly, and clear scalar fields only when they still equal the last
+  AI-owned values stored in SQLite
 
 ## Non-Goals
 
@@ -58,6 +61,9 @@ while preserving user-authored metadata when possible.
 - existing sidecar updates should clear stale `pj:*` data from `dc:subject`
   while preserving non-machine user keywords
 - XMP output must stay compatible with ExifTool writes and rewrite flows
+- `reset-ai` must not touch XMP unless the operator passes `--clear-xmp`
+- legacy processed rows without an owned XMP payload may clear deterministic
+  machine tags but must preserve rating, instructions, and description
 
 ## Typical Safe Changes
 
@@ -73,6 +79,8 @@ while preserving user-authored metadata when possible.
 - depending on ExifTool behavior that differs between updating an existing file and creating a new file
 - writing ratings directly into proprietary RAW files; use sidecars unless a
   format-specific, opt-in, verified writeback path exists
+- treating the existence of a processed row as proof that current user-visible
+  scalar XMP values are still owned by the application
 
 ## Files Usually Safe To Edit Together
 

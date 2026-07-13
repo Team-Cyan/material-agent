@@ -335,7 +335,7 @@ def test_writer_clear_ai_tags_preserves_non_pj_keywords(tmp_path):
 
     with patch("subprocess.run") as mock_run:
         mock_run.return_value.returncode = 0
-        w.clear_ai_tags(str(arw))
+        w.clear_ai_tags(str(arw), force_scalar_clear=True)
 
     cmd = mock_run.call_args[0][0]
     assert "-XMP-xmp:Rating=" in cmd
@@ -346,6 +346,44 @@ def test_writer_clear_ai_tags_preserves_non_pj_keywords(tmp_path):
     assert "-XMP-dc:Subject=pj:score=7.0" not in cmd
     assert "-XMP-xmp:Identifier=" in cmd
     assert "-overwrite_original" in cmd
+
+
+def test_writer_clear_ai_tags_preserves_human_edited_scalar_fields(tmp_path):
+    arw = tmp_path / "test.ARW"
+    arw.write_bytes(b"fake")
+    xmp = tmp_path / "test.xmp"
+    writer = ExifToolXMPWriter()
+    writer.write(
+        str(arw),
+        rating=4,
+        subject_tags=["pj:score=8.0"],
+        instructions="agent instructions",
+        description="agent description",
+    )
+    content = xmp.read_text(encoding="utf-8")
+    xmp.write_text(
+        content.replace("<xmp:Rating>4</xmp:Rating>", "<xmp:Rating>5</xmp:Rating>")
+        .replace("agent description", "human description"),
+        encoding="utf-8",
+    )
+
+    with patch("subprocess.run") as mock_run:
+        mock_run.return_value.returncode = 0
+        cleared = writer.clear_ai_tags(
+            str(arw),
+            expected_fields={
+                "rating": 4,
+                "instructions": "agent instructions",
+                "description": "agent description",
+            },
+        )
+
+    cmd = mock_run.call_args[0][0]
+    assert cleared == {"rating": False, "instructions": True, "description": False}
+    assert "-XMP-xmp:Rating=" not in cmd
+    assert "-XMP-photoshop:Instructions=" in cmd
+    assert "-XMP-dc:Description-x-default=" not in cmd
+    assert "-XMP-xmp:Identifier=" in cmd
 
 
 def test_io_writer_keeps_compatibility_alias():

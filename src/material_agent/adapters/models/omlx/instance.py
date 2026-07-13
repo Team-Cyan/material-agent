@@ -7,6 +7,11 @@ from urllib.parse import urlparse
 
 _LOCAL_OMLX_HOSTS = {"localhost", "127.0.0.1", "::1"}
 _APP_CLI_PATH = "/Applications/oMLX.app/Contents/MacOS/omlx-cli"
+_AUTHENTICATED_DEDICATED_START_ERROR = (
+    "Authenticated dedicated oMLX start is not supported securely because the "
+    "oMLX CLI accepts its API key through process arguments. Start the authenticated "
+    "runtime outside material-agent or use an unauthenticated loopback-only instance."
+)
 
 
 def _omlx_config(config: dict) -> dict:
@@ -14,6 +19,13 @@ def _omlx_config(config: dict) -> dict:
     if isinstance(nested, dict):
         return nested
     return config
+
+
+def ensure_dedicated_start_is_unauthenticated(api_key: object) -> None:
+    """Refuse to expose an oMLX credential through the process argument list."""
+
+    if str(api_key or "").strip():
+        raise RuntimeError(_AUTHENTICATED_DEDICATED_START_ERROR)
 
 
 def collect_omlx_runtime_models(config: dict) -> list[str]:
@@ -457,6 +469,10 @@ def build_omlx_start_command(
     cache_dir: Path,
 ) -> list[str]:
     omlx = _omlx_config(config)
+    admin = omlx.get("admin", {}) if isinstance(omlx.get("admin"), dict) else {}
+    ensure_dedicated_start_is_unauthenticated(
+        omlx.get("api_key") or admin.get("api_key")
+    )
     host, port = _parse_base_url(omlx.get("base_url", "http://127.0.0.1:11435"))
     command_prefix = list(omlx_command_prefix)
     if len(command_prefix) == 1 and command_prefix[0] == _APP_CLI_PATH:
@@ -475,7 +491,4 @@ def build_omlx_start_command(
     ]
     if omlx.get("cache_enabled", True):
         command.extend(["--paged-ssd-cache-dir", str(cache_dir)])
-    api_key = omlx.get("api_key", "")
-    if api_key:
-        command.extend(["--api-key", api_key])
     return command

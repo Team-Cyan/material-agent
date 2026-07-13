@@ -123,6 +123,7 @@ def run_local_benchmark(
     repetitions: list[list[dict[str, Any]]] = []
     durations: list[float] = []
     for _ in range(repeat_count):
+        client.clear_embedding_result_cache()
         repetition_started = time.perf_counter()
         repetitions.append(
             asyncio.run(_score_items(client, items, effective_client_config["preview"]))

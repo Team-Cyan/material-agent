@@ -18,6 +18,7 @@ class MusiqFastScreeningAdapter:
         self.device_name = config.get("device", "cpu")
         self.score_divisor = float(config.get("score_divisor", 10.0))
         self.python_bin = config.get("python_bin", "~/.material-agent/musiq-venv/bin/python")
+        self.helper_timeout_seconds = float(config.get("helper_timeout_seconds", 120.0))
         self._metric = None
         self._runtime = None
 
@@ -73,14 +74,20 @@ class MusiqFastScreeningAdapter:
         env["PYTHONPATH"] = (
             src_path if not existing_pythonpath else f"{src_path}{os.pathsep}{existing_pythonpath}"
         )
-        completed = subprocess.run(
-            [str(python_bin), "-m", "material_agent.adapters.screening.musiq_worker"],
-            input=json.dumps(payload),
-            text=True,
-            capture_output=True,
-            env=env,
-            check=True,
-        )
+        try:
+            completed = subprocess.run(
+                [str(python_bin), "-m", "material_agent.adapters.screening.musiq_worker"],
+                input=json.dumps(payload),
+                text=True,
+                capture_output=True,
+                env=env,
+                check=True,
+                timeout=self.helper_timeout_seconds,
+            )
+        except subprocess.TimeoutExpired as error:
+            raise RuntimeError(
+                f"MUSIQ helper timed out after {self.helper_timeout_seconds:g} seconds"
+            ) from error
         data = extract_last_json_object(completed.stdout)
         return float(data["overall"])
 

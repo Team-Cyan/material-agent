@@ -24,6 +24,8 @@ they enter the production review pipeline.
 - record scorer/runtime provenance and manifest digest;
 - write machine-readable JSON and generated Markdown reports;
 - detect score or scene nondeterminism between repeated runs.
+- clear the bounded in-process embedding-result cache before every repetition so
+  warm timings still execute model inference instead of measuring a result-cache hit.
 
 ## Non-Goals
 
@@ -68,7 +70,12 @@ must include:
 - per-item input decode format, preview source, original size, and preview size.
 
 Timing fields are observational and are not expected to be byte-identical
-between runs.
+between runs. A persistent compiled-model cache may remain warm across
+repetitions; the per-image embedding-result cache may not. The corrected
+OpenVINO CPU synthetic report is
+`docs/operations/benchmarks/2026-07-13-openvino-dinov3-quantized-cpu-synthetic-v2/`.
+The older 2026-07-11 v1 report is retained as history, but its 0.07-second warm
+timing is cache-contaminated and must not be used as throughput evidence.
 
 ## Safe Extension Order
 

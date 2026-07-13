@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from material_agent.adapters.models.omlx.instance import (
     build_omlx_start_command,
     collect_omlx_runtime_models,
@@ -283,6 +285,7 @@ def test_sync_omlx_shared_runtime_sets_active_models_without_deleting_inactive_e
 
 def test_build_omlx_start_command_uses_dedicated_model_and_cache_dirs(tmp_path):
     cfg = _base_config(tmp_path / "instance")
+    cfg["omlx"]["api_key"] = ""
 
     command = build_omlx_start_command(
         cfg,
@@ -305,6 +308,7 @@ def test_build_omlx_start_command_uses_dedicated_model_and_cache_dirs(tmp_path):
 
 def test_build_omlx_start_command_wraps_app_cli_with_pythonnouserite(tmp_path):
     cfg = _base_config(tmp_path / "instance")
+    cfg["omlx"]["api_key"] = ""
 
     command = build_omlx_start_command(
         cfg,
@@ -320,6 +324,41 @@ def test_build_omlx_start_command_wraps_app_cli_with_pythonnouserite(tmp_path):
         "/Applications/oMLX.app/Contents/MacOS/omlx-cli",
         "serve",
     ]
+
+
+def test_build_omlx_start_command_refuses_api_key_in_process_arguments(tmp_path):
+    cfg = _base_config(tmp_path / "instance")
+    configured_secret = cfg["omlx"]["api_key"]
+
+    with pytest.raises(RuntimeError) as exc_info:
+        build_omlx_start_command(
+            cfg,
+            omlx_command_prefix=["/opt/homebrew/bin/omlx"],
+            instance_root=tmp_path / "instance",
+            model_dir=tmp_path / "instance" / "models",
+            cache_dir=tmp_path / "instance" / "cache",
+        )
+
+    message = str(exc_info.value)
+    assert "process arguments" in message
+    assert configured_secret not in message
+
+
+def test_build_omlx_start_command_refuses_grouped_admin_api_key(tmp_path):
+    cfg = _base_config(tmp_path / "instance")
+    cfg["omlx"]["api_key"] = ""
+    cfg["omlx"]["admin"] = {"api_key": "grouped-admin-secret"}
+
+    with pytest.raises(RuntimeError) as exc_info:
+        build_omlx_start_command(
+            cfg,
+            omlx_command_prefix=["/opt/homebrew/bin/omlx"],
+            instance_root=tmp_path / "instance",
+            model_dir=tmp_path / "instance" / "models",
+            cache_dir=tmp_path / "instance" / "cache",
+        )
+
+    assert "grouped-admin-secret" not in str(exc_info.value)
 
 
 def test_find_omlx_command_prefix_supports_app_cli_wrapper(monkeypatch):

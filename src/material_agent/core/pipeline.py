@@ -1,10 +1,14 @@
+from contextlib import nullcontext
 from pathlib import Path
 
+from ..adapters.state.processed_sqlite import SQLiteProcessedRepository
 from ..adapters.state.sqlite_runtime import SQLiteRuntimeRepository
 from ..app.review_service import ReviewRunService
+from ..commands.scoring import build_score_cache_key
 from ..io.scanner import scan_arw_files
 from ..utils.config_validator import normalize_config
 from ..utils.progress import ProgressCallback, RichProgress
+from ..utils.run_control import exclusive_run_lock, sigterm_as_cancellation
 from ..utils.runtime_paths import ensure_runtime_paths
 from ..utils.state import State
 
@@ -30,23 +34,36 @@ class Pipeline:
         if not files:
             return
 
-        if self.state:
-            new_files = [f for f in files if not self.state.is_done(f) and not self.state.is_scored(f)]
-            scored_files = [f for f in files if self.state.is_scored(f)]
-            done_files = [f for f in files if self.state.is_done(f)]
-        else:
-            new_files, scored_files, done_files = files, [], []
-        for file_path in done_files:
-            self.progress.on_file_start(file_path, 0)
-            self.progress.on_file_done(file_path, 0.0, skipped=True)
-        runtime_db_path = ensure_runtime_paths(Path(cfg.get("input_dir", "") or ".")).db_path
-        runtime_repo = SQLiteRuntimeRepository(runtime_db_path)
-        review_service = ReviewRunService(runtime_repo)
-        review_service.run(
-            input_dir=cfg.get("input_dir", ""),
-            config=cfg,
-            state=self.state,
-            progress=self.progress,
-            dry_run=self.dry_run,
-            file_paths=new_files + scored_files,
-        )
+        runtime_paths = ensure_runtime_paths(Path(cfg.get("input_dir", "") or "."))
+        runtime_paths.work_dir.mkdir(parents=True, exist_ok=True)
+        with exclusive_run_lock(runtime_paths.work_dir / "run.lock"):
+            runtime_repo = SQLiteRuntimeRepository(runtime_paths.db_path)
+            try:
+                runtime_repo.reconcile_abandoned_runs()
+                review_service = ReviewRunService(runtime_repo)
+                state_context = (
+                    nullcontext(self.state)
+                    if self.state is not None
+                    else SQLiteProcessedRepository(
+                        runtime_paths.db_path,
+                        reprocess=cfg.get("reprocess", False),
+                        score_cache_key=build_score_cache_key(cfg),
+                    )
+                )
+                with state_context as state, sigterm_as_cancellation():
+                    job_id = review_service.run(
+                        input_dir=cfg.get("input_dir", ""),
+                        config=cfg,
+                        state=state,
+                        progress=self.progress,
+                        dry_run=self.dry_run,
+                        file_paths=list(files),
+                    )
+                job_result = runtime_repo.get_job_result(job_id)
+                return {
+                    "job_id": job_id,
+                    "status": job_result["status"],
+                    "summary": job_result["summary"],
+                }
+            finally:
+                runtime_repo.close()

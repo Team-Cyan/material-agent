@@ -2,6 +2,7 @@ from ..adapters.metadata.exiftool_xmp import ExifToolXMPWriter
 from ..adapters.progress import RichEventSink
 from ..app.job_executor import JobExecutor
 from ..app.jobs import ReviewPhotosJob
+from ..app.local_embedding_identity import build_local_embedding_cache_key
 from ..clients.base import make_client, make_fast_screening_port
 from ..domain.commentary import (
     CommentaryGenerator,
@@ -53,13 +54,11 @@ def build_review_job_executor(
         if not file_paths:
             return []
         if config["grouping"]["enabled"]:
-            embedding_config = config.get("local", {}).get("embedding", {})
-            model_key = ":".join(
-                [
-                    str(embedding_config.get("runtime", "transformers")),
-                    str(embedding_config.get("model_name", "unknown")),
-                    str(embedding_config.get("model_path", "")),
-                ]
+            embedding_enabled = bool(
+                config["grouping"].get("embedding_similarity", {}).get("enabled", False)
+            )
+            model_key = (
+                build_local_embedding_cache_key(config) if embedding_enabled else ""
             )
             return Grouper(
                 config["grouping"],
@@ -69,7 +68,7 @@ def build_review_job_executor(
         return [[file_path] for file_path in file_paths]
 
     def prepare_score(file_path: str) -> dict:
-        cached = state.get_scored(file_path) if state is not None else None
+        cached = state.get_cached_score_payload(file_path) if state is not None else None
         if cached:
             return {
                 "file_path": file_path,
@@ -87,6 +86,8 @@ def build_review_job_executor(
                 "visible_breakdown": cached.get("visible_breakdown", {}),
                 "policy_version": cached.get("policy_version", "layered-v1"),
                 "signals": cached.get("signals", []),
+                "previous_group_info": cached.get("group_info"),
+                "skip_write": cached.get("status") == "done",
             }
         frame = decode_raw(file_path, config["preview"])
         return {
@@ -101,7 +102,7 @@ def build_review_job_executor(
         file_path = prepared["file_path"]
         frame = prepared["frame"]
         bundle = run_coro_sync(compute_scores(frame, client, config, fast_screening=fast_screening))
-        if state is not None:
+        if state is not None and not dry_run:
             state.mark_scored(
                 file_path,
                 bundle.total,
@@ -260,6 +261,11 @@ def build_review_job_executor(
                 commentary_group_issues=commentary_issues,
                 commentary_shooting=commentary_shooting,
                 commentary_post=post_commentary,
+                xmp_payload={
+                    "rating": star,
+                    "instructions": xmp_instructions,
+                    "description": description,
+                },
             )
 
     review_job = ReviewPhotosJob(
@@ -271,5 +277,6 @@ def build_review_job_executor(
         finalize_group=finalize_group,
         write_file=write_file,
         score_prefetch_window=config.get("review_pipeline", {}).get("score_prefetch_window", 1),
+        write_outputs=not dry_run,
     )
     return JobExecutor(review_job)

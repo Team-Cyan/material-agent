@@ -11,12 +11,16 @@ from ...utils.constants import (
     SCENE_LIST,
     VISION_DIMS,
 )
+from ...utils.file_security import secure_sqlite_files
 from ...utils.runtime_paths import build_runtime_paths, ensure_runtime_paths
 
 _log = logging.getLogger("material_agent")
 
 _VISION_COLUMNS = [f"score_{dim}" for dim in VISION_DIMS]
 _BASE_SCORE_COLUMNS = ["score_exposure", "score_sharpness"] + _VISION_COLUMNS
+_SCORE_METADATA_VERSION = 1
+_RAW_EMBEDDING_KEYS = {"_embedding_vector", "embedding_vector", "vector"}
+_XMP_SCALAR_FIELDS = ("rating", "instructions", "description")
 
 
 def _file_fingerprint(file_path: str) -> tuple[int, int]:
@@ -25,6 +29,29 @@ def _file_fingerprint(file_path: str) -> tuple[int, int]:
     except OSError:
         return -1, -1
     return int(stat.st_size), int(stat.st_mtime_ns)
+
+
+def _stored_fingerprint_matches(row: sqlite3.Row) -> bool:
+    stored_size = row["file_size"]
+    stored_mtime = row["mtime_ns"]
+    # Additive migrations leave legacy rows unversioned. Keep them readable
+    # until the next successful write records a real fingerprint.
+    if stored_size is None or stored_mtime is None:
+        return True
+    return (int(stored_size), int(stored_mtime)) == _file_fingerprint(row["file_path"])
+
+
+def _sanitize_score_metadata(value):
+    if isinstance(value, dict):
+        return {
+            str(key): _sanitize_score_metadata(child)
+            for key, child in value.items()
+            if str(key).lower() not in _RAW_EMBEDDING_KEYS
+        }
+    if isinstance(value, list | tuple):
+        return [_sanitize_score_metadata(child) for child in value]
+    return value
+
 
 DDL = f"""
 CREATE TABLE IF NOT EXISTS processed (
@@ -51,15 +78,25 @@ CREATE TABLE IF NOT EXISTS processed (
     laplacian_variance REAL,
     commentary_group_issues TEXT,
     commentary_shooting TEXT,
-    commentary_post TEXT
+    commentary_post TEXT,
+    score_metadata_json TEXT,
+    score_metadata_version INTEGER,
+    file_size INTEGER,
+    mtime_ns INTEGER,
+    score_cache_key TEXT,
+    xmp_payload_json TEXT
 );
 CREATE TABLE IF NOT EXISTS exif_cache (
     file_path TEXT PRIMARY KEY,
-    datetime_original TEXT
+    datetime_original TEXT,
+    file_size INTEGER,
+    mtime_ns INTEGER
 );
 CREATE TABLE IF NOT EXISTS visual_hash_cache (
     file_path TEXT PRIMARY KEY,
-    phash TEXT NOT NULL
+    phash TEXT NOT NULL,
+    file_size INTEGER,
+    mtime_ns INTEGER
 );
 CREATE TABLE IF NOT EXISTS embedding_cache (
     file_path TEXT NOT NULL,
@@ -86,12 +123,22 @@ CREATE TABLE IF NOT EXISTS score_signals (
 
 
 class SQLiteProcessedRepository:
-    def __init__(self, input_dir: str | Path, reprocess: bool = False):
+    def __init__(
+        self,
+        input_dir: str | Path,
+        reprocess: bool = False,
+        score_cache_key: str | None = None,
+    ):
         self.reprocess = reprocess
+        self.score_cache_key = score_cache_key
         self._lock = threading.RLock()
         try:
             input_path = Path(input_dir)
-            self.db_path = ensure_runtime_paths(input_path).db_path if input_path.is_dir() or not input_path.suffix else input_path
+            self.db_path = (
+                ensure_runtime_paths(input_path).db_path
+                if input_path.is_dir() or not input_path.suffix
+                else input_path
+            )
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
             self._connect(str(self.db_path))
         except OSError:
@@ -116,12 +163,24 @@ class SQLiteProcessedRepository:
             ("screening_prior", "REAL"),
             ("visible_breakdown_json", "TEXT"),
             ("policy_version", "TEXT"),
+            ("score_metadata_json", "TEXT"),
+            ("score_metadata_version", "INTEGER"),
+            ("file_size", "INTEGER"),
+            ("mtime_ns", "INTEGER"),
+            ("score_cache_key", "TEXT"),
+            ("xmp_payload_json", "TEXT"),
             *[(column, "REAL") for column in _VISION_COLUMNS],
         ]:
             try:
                 self.conn.execute(f"ALTER TABLE processed ADD COLUMN {column} {column_type}")
             except sqlite3.OperationalError:
                 pass
+        for table in ("exif_cache", "visual_hash_cache"):
+            for column in ("file_size", "mtime_ns"):
+                try:
+                    self.conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} INTEGER")
+                except sqlite3.OperationalError:
+                    pass
         for column in ("file_size", "mtime_ns"):
             try:
                 self.conn.execute(
@@ -130,6 +189,7 @@ class SQLiteProcessedRepository:
             except sqlite3.OperationalError:
                 pass
         self._commit()
+        secure_sqlite_files(self.db_path)
 
     def _cleanup_sidecars(self):
         for suffix in ("-wal", "-shm", "-journal"):
@@ -193,15 +253,28 @@ class SQLiteProcessedRepository:
             return {}
         placeholders = ",".join("?" * len(file_paths))
         rows = self._execute(
-            f"SELECT file_path, datetime_original FROM exif_cache WHERE file_path IN ({placeholders})",
+            f"SELECT file_path, datetime_original, file_size, mtime_ns "
+            f"FROM exif_cache WHERE file_path IN ({placeholders})",
             file_paths,
         ).fetchall()
-        return {row["file_path"]: row["datetime_original"] for row in rows}
+        return {
+            row["file_path"]: row["datetime_original"]
+            for row in rows
+            if _stored_fingerprint_matches(row)
+        }
 
     def set_exif_cache(self, entries: dict[str, str | None]):
+        rows = [
+            (file_path, value, *_file_fingerprint(file_path))
+            for file_path, value in entries.items()
+            if value is not None
+        ]
+        if not rows:
+            return
         self._executemany(
-            "INSERT OR REPLACE INTO exif_cache (file_path, datetime_original) VALUES (?,?)",
-            [(k, v) for k, v in entries.items()],
+            "INSERT OR REPLACE INTO exif_cache "
+            "(file_path, datetime_original, file_size, mtime_ns) VALUES (?,?,?,?)",
+            rows,
         )
         self._commit()
 
@@ -210,27 +283,31 @@ class SQLiteProcessedRepository:
             return {}
         placeholders = ",".join("?" * len(file_paths))
         rows = self._execute(
-            f"SELECT file_path, phash FROM visual_hash_cache WHERE file_path IN ({placeholders})",
+            f"SELECT file_path, phash, file_size, mtime_ns "
+            f"FROM visual_hash_cache WHERE file_path IN ({placeholders})",
             file_paths,
         ).fetchall()
         return {
             row["file_path"]: row["phash"]
             for row in rows
-            if row["phash"]
+            if row["phash"] and _stored_fingerprint_matches(row)
         }
 
     def set_visual_hash_cache(self, entries: dict[str, str]):
         if not entries:
             return
         self._executemany(
-            "INSERT OR REPLACE INTO visual_hash_cache (file_path, phash) VALUES (?,?)",
-            [(k, v) for k, v in entries.items() if v],
+            "INSERT OR REPLACE INTO visual_hash_cache "
+            "(file_path, phash, file_size, mtime_ns) VALUES (?,?,?,?)",
+            [
+                (file_path, value, *_file_fingerprint(file_path))
+                for file_path, value in entries.items()
+                if value
+            ],
         )
         self._commit()
 
-    def get_embedding_cache(
-        self, file_paths: list[str], model_key: str
-    ) -> dict[str, list[float]]:
+    def get_embedding_cache(self, file_paths: list[str], model_key: str) -> dict[str, list[float]]:
         if not file_paths:
             return {}
         placeholders = ",".join("?" * len(file_paths))
@@ -245,15 +322,13 @@ class SQLiteProcessedRepository:
                 continue
             try:
                 vector = json.loads(row["vector_json"])
-            except (TypeError, json.JSONDecodeError):
+            except TypeError, json.JSONDecodeError:
                 continue
             if isinstance(vector, list) and vector:
                 loaded[row["file_path"]] = [float(value) for value in vector]
         return loaded
 
-    def set_embedding_cache(
-        self, entries: dict[str, list[float]], model_key: str
-    ) -> None:
+    def set_embedding_cache(self, entries: dict[str, list[float]], model_key: str) -> None:
         if not entries:
             return
         self._executemany(
@@ -276,61 +351,138 @@ class SQLiteProcessedRepository:
         if self.reprocess:
             return False
         row = self._execute(
-            "SELECT status FROM processed WHERE file_path=?",
+            "SELECT file_path, status, file_size, mtime_ns, score_cache_key "
+            "FROM processed WHERE file_path=?",
             (file_path,),
         ).fetchone()
-        return row is not None and row["status"] == "done"
+        return (
+            row is not None and row["status"] == "done" and self._processed_cache_row_is_valid(row)
+        )
 
     def is_scored(self, file_path: str) -> bool:
         if self.reprocess:
             return False
         row = self._execute(
-            "SELECT status FROM processed WHERE file_path=? AND status='scored'",
-            (file_path,),
-        ).fetchone()
-        return row is not None
-
-    def get_scored(self, file_path: str) -> dict | None:
-        score_columns = ", ".join(_BASE_SCORE_COLUMNS)
-        row = self._execute(
-            f"SELECT total_score, star_rating, group_boosted, {score_columns}, "
-            "overexpose_ratio, underexpose_ratio, laplacian_variance, scene, scene_raw, "
-            "decision, decision_reasons, screening_prior, visible_breakdown_json, policy_version "
+            "SELECT file_path, status, file_size, mtime_ns, score_cache_key "
             "FROM processed WHERE file_path=? AND status='scored'",
             (file_path,),
         ).fetchone()
-        if row is None:
+        return row is not None and self._processed_cache_row_is_valid(row)
+
+    def get_scored(self, file_path: str) -> dict | None:
+        if self.reprocess:
+            return None
+        return self._get_cached_score_payload(file_path, statuses=("scored",))
+
+    def get_cached_score_payload(self, file_path: str) -> dict | None:
+        """Load a valid scored or done result for cross-run group reconstruction."""
+        if self.reprocess:
+            return None
+        return self._get_cached_score_payload(file_path, statuses=("scored", "done"))
+
+    def _get_cached_score_payload(
+        self,
+        file_path: str,
+        *,
+        statuses: tuple[str, ...],
+    ) -> dict | None:
+        score_columns = ", ".join(_BASE_SCORE_COLUMNS)
+        placeholders = ",".join("?" for _ in statuses)
+        row = self._execute(
+            f"SELECT file_path, status, total_score, star_rating, group_boosted, {score_columns}, "
+            "overexpose_ratio, underexpose_ratio, laplacian_variance, scene, scene_raw, "
+            "decision, decision_reasons, screening_prior, visible_breakdown_json, policy_version, "
+            "group_id, group_rank, group_size, commentary_group_issues, commentary_shooting, "
+            "commentary_post, score_metadata_json, score_metadata_version, file_size, mtime_ns, "
+            "score_cache_key "
+            f"FROM processed WHERE file_path=? AND status IN ({placeholders})",
+            (file_path, *statuses),
+        ).fetchone()
+        if row is None or not self._processed_cache_row_is_valid(row):
             return None
 
-        scores = {}
-        for key, val in zip(["exposure", "sharpness", *VISION_DIMS], row[3 : 3 + len(_BASE_SCORE_COLUMNS)]):
-            if val is not None:
-                scores[key] = val
-
-        meta = {}
-        over_idx = 3 + len(_BASE_SCORE_COLUMNS)
-        if row[over_idx] is not None:
-            meta["overexpose_ratio"] = row[over_idx]
-        if row[over_idx + 1] is not None:
-            meta["underexpose_ratio"] = row[over_idx + 1]
-        if row[over_idx + 2] is not None:
-            meta["laplacian_variance"] = row[over_idx + 2]
+        scores = {
+            key: row[column]
+            for key, column in zip(
+                ["exposure", "sharpness", *VISION_DIMS],
+                _BASE_SCORE_COLUMNS,
+                strict=True,
+            )
+            if row[column] is not None
+        }
+        meta = self._decode_score_metadata(row)
+        decision_reasons = self._load_json_list(row["decision_reasons"])
+        visible_breakdown = self._load_json_dict(row["visible_breakdown_json"])
 
         return {
+            "status": row["status"],
             "total": row["total_score"],
+            "score_total": row["total_score"],
             "star": row["star_rating"],
+            "star_rating": row["star_rating"],
             "boosted": bool(row["group_boosted"]),
             "scores": scores,
             "meta": meta,
+            "meta_version": row["score_metadata_version"] or 0,
             "scene": row["scene"] or "other",
             "scene_raw": row["scene_raw"] or "",
-            "decision": row["decision"] if "decision" in row.keys() else None,
-            "decision_reasons": json.loads(row["decision_reasons"]) if "decision_reasons" in row.keys() and row["decision_reasons"] else [],
-            "screening_prior": row["screening_prior"] if "screening_prior" in row.keys() else None,
-            "visible_breakdown": json.loads(row["visible_breakdown_json"]) if "visible_breakdown_json" in row.keys() and row["visible_breakdown_json"] else {},
-            "policy_version": row["policy_version"] if "policy_version" in row.keys() else "layered-v1",
+            "decision": row["decision"],
+            "decision_reasons": decision_reasons,
+            "screening_prior": row["screening_prior"],
+            "visible_breakdown": visible_breakdown,
+            "policy_version": row["policy_version"] or "layered-v1",
             "signals": self.fetch_signals(file_path),
+            "group_info": {
+                "group_id": row["group_id"],
+                "group_rank": row["group_rank"],
+                "group_size": row["group_size"],
+            },
+            "commentary_group_issues": row["commentary_group_issues"],
+            "commentary_shooting": row["commentary_shooting"],
+            "commentary_post": row["commentary_post"],
         }
+
+    def _processed_cache_row_is_valid(self, row: sqlite3.Row) -> bool:
+        if not _stored_fingerprint_matches(row):
+            return False
+        if self.score_cache_key is None:
+            return True
+        return row["score_cache_key"] == self.score_cache_key
+
+    @staticmethod
+    def _load_json_dict(raw: str | None) -> dict:
+        if not raw:
+            return {}
+        try:
+            value = json.loads(raw)
+        except TypeError, json.JSONDecodeError:
+            return {}
+        return value if isinstance(value, dict) else {}
+
+    @staticmethod
+    def _load_json_list(raw: str | None) -> list:
+        if not raw:
+            return []
+        try:
+            value = json.loads(raw)
+        except TypeError, json.JSONDecodeError:
+            return []
+        return value if isinstance(value, list) else []
+
+    def _decode_score_metadata(self, row: sqlite3.Row) -> dict:
+        metadata = {}
+        version = row["score_metadata_version"] or 0
+        if 0 < int(version) <= _SCORE_METADATA_VERSION:
+            metadata = self._load_json_dict(row["score_metadata_json"])
+        legacy_values = {
+            "overexpose_ratio": row["overexpose_ratio"],
+            "underexpose_ratio": row["underexpose_ratio"],
+            "laplacian_variance": row["laplacian_variance"],
+        }
+        for key, value in legacy_values.items():
+            if value is not None:
+                metadata.setdefault(key, value)
+        return _sanitize_score_metadata(metadata)
 
     def mark_scored(
         self,
@@ -365,6 +517,7 @@ class SQLiteProcessedRepository:
                 "screening_prior": screening_prior,
                 "visible_breakdown_json": json.dumps(visible_breakdown or {}, ensure_ascii=False),
                 "policy_version": policy_version,
+                **self._score_storage_metadata(file_path, metadata),
             }
         )
         self._execute(
@@ -372,10 +525,12 @@ class SQLiteProcessedRepository:
             INSERT OR REPLACE INTO processed
             (file_path, status, total_score, {score_value_columns},
              overexpose_ratio, underexpose_ratio, laplacian_variance, scene, scene_raw,
-             decision, decision_reasons, screening_prior, visible_breakdown_json, policy_version)
+             decision, decision_reasons, screening_prior, visible_breakdown_json, policy_version,
+             score_metadata_json, score_metadata_version, file_size, mtime_ns, score_cache_key)
             VALUES (:file_path, :status, :total_score, {score_placeholders},
                     :overexpose_ratio, :underexpose_ratio, :laplacian_variance, :scene, :scene_raw,
-                    :decision, :decision_reasons, :screening_prior, :visible_breakdown_json, :policy_version)
+                    :decision, :decision_reasons, :screening_prior, :visible_breakdown_json, :policy_version,
+                    :score_metadata_json, :score_metadata_version, :file_size, :mtime_ns, :score_cache_key)
             """,
             payload,
         )
@@ -403,6 +558,7 @@ class SQLiteProcessedRepository:
         commentary_group_issues: str | None = None,
         commentary_shooting: str | None = None,
         commentary_post: str | None = None,
+        xmp_payload: dict | None = None,
     ):
         score_value_columns = ", ".join(_BASE_SCORE_COLUMNS)
         score_placeholders = ", ".join(f":{column}" for column in _BASE_SCORE_COLUMNS)
@@ -430,6 +586,8 @@ class SQLiteProcessedRepository:
                 "commentary_group_issues": commentary_group_issues,
                 "commentary_shooting": commentary_shooting,
                 "commentary_post": commentary_post,
+                "xmp_payload_json": self._encode_xmp_payload(xmp_payload),
+                **self._score_storage_metadata(file_path, metadata),
             }
         )
         self._execute(
@@ -439,12 +597,16 @@ class SQLiteProcessedRepository:
              {score_value_columns}, overexpose_ratio, underexpose_ratio, laplacian_variance,
              group_id, group_rank, group_size, scene, scene_raw,
              decision, decision_reasons, screening_prior, visible_breakdown_json, policy_version,
-             commentary_group_issues, commentary_shooting, commentary_post)
+             commentary_group_issues, commentary_shooting, commentary_post,
+             score_metadata_json, score_metadata_version, file_size, mtime_ns, score_cache_key,
+             xmp_payload_json)
             VALUES (:file_path, :status, :total_score, :star_rating, :group_boosted,
                     {score_placeholders}, :overexpose_ratio, :underexpose_ratio, :laplacian_variance,
                     :group_id, :group_rank, :group_size, :scene, :scene_raw,
                     :decision, :decision_reasons, :screening_prior, :visible_breakdown_json, :policy_version,
-                    :commentary_group_issues, :commentary_shooting, :commentary_post)
+                    :commentary_group_issues, :commentary_shooting, :commentary_post,
+                    :score_metadata_json, :score_metadata_version, :file_size, :mtime_ns, :score_cache_key,
+                    :xmp_payload_json)
             """,
             payload,
         )
@@ -551,7 +713,8 @@ class SQLiteProcessedRepository:
         return self._execute(
             "SELECT file_path, total_score, star_rating, scene, group_id, group_rank, "
             "group_size, group_boosted, score_exposure, score_sharpness, "
-            + ", ".join(f"score_{dim}" for dim in VISION_DIMS) + ", "
+            + ", ".join(f"score_{dim}" for dim in VISION_DIMS)
+            + ", "
             "commentary_group_issues, commentary_shooting, commentary_post, "
             "decision, decision_reasons, visible_breakdown_json "
             "FROM processed WHERE status='done'"
@@ -561,16 +724,31 @@ class SQLiteProcessedRepository:
         return self._execute(
             "SELECT file_path, total_score, scene, scene_raw, decision, group_id, group_rank, "
             "group_size, score_exposure, score_sharpness, "
-            + ", ".join(f"score_{dim}" for dim in VISION_DIMS) + ", "
+            + ", ".join(f"score_{dim}" for dim in VISION_DIMS)
+            + ", "
             "visible_breakdown_json, commentary_group_issues, commentary_shooting, commentary_post "
             "FROM processed WHERE status='done' ORDER BY group_id, group_rank, file_path"
         ).fetchall()
 
     def fetch_ai_file_paths(self) -> list[str]:
+        return [row["file_path"] for row in self.fetch_ai_reset_rows()]
+
+    def fetch_ai_reset_rows(self) -> list[dict]:
         rows = self._execute(
-            "SELECT file_path FROM processed WHERE status IN ('done', 'scored', 'error') ORDER BY file_path"
+            "SELECT file_path, xmp_payload_json FROM processed "
+            "WHERE status IN ('done', 'scored', 'error') ORDER BY file_path"
         ).fetchall()
-        return [row["file_path"] for row in rows]
+        return [
+            {
+                "file_path": row["file_path"],
+                "xmp_payload": (
+                    None
+                    if row["xmp_payload_json"] is None
+                    else self._load_json_dict(row["xmp_payload_json"])
+                ),
+            }
+            for row in rows
+        ]
 
     def clear_ai_judgement(self) -> dict[str, int]:
         processed_count = self._execute("SELECT COUNT(*) FROM processed").fetchone()[0]
@@ -663,6 +841,26 @@ class SQLiteProcessedRepository:
             payload[f"score_{dim}"] = scores.get(dim)
         return payload
 
+    def _score_storage_metadata(self, file_path: str, metadata: dict) -> dict:
+        sanitized = _sanitize_score_metadata(metadata)
+        file_size, mtime_ns = _file_fingerprint(file_path)
+        return {
+            "score_metadata_json": json.dumps(sanitized, ensure_ascii=False),
+            "score_metadata_version": _SCORE_METADATA_VERSION,
+            "file_size": file_size,
+            "mtime_ns": mtime_ns,
+            "score_cache_key": self.score_cache_key,
+        }
+
+    @staticmethod
+    def _encode_xmp_payload(xmp_payload: dict | None) -> str | None:
+        if xmp_payload is None:
+            return None
+        expected_fields = {
+            key: xmp_payload[key] for key in _XMP_SCALAR_FIELDS if key in xmp_payload
+        }
+        return json.dumps(expected_fields, ensure_ascii=False)
+
     def replace_signals(self, file_path: str, signals: list[dict]) -> None:
         self._execute("DELETE FROM score_signals WHERE file_path=?", (file_path,))
         rows = []
@@ -691,9 +889,12 @@ class SQLiteProcessedRepository:
 
     @staticmethod
     def legacy_scores_to_signals(row: sqlite3.Row) -> list[dict]:
-        focus_source = [value for value in [row["score_sharpness"], row["score_clarity"]] if value is not None]
+        focus_source = [
+            value for value in [row["score_sharpness"], row["score_clarity"]] if value is not None
+        ]
         focus_integrity = round(sum(focus_source) / len(focus_source), 2) if focus_source else None
         signals: list[dict] = []
+
         def add(stage: str, signal_key: str, value: float | None, source: str) -> None:
             if value is None:
                 return
@@ -707,11 +908,18 @@ class SQLiteProcessedRepository:
                 }
             )
 
-        add("technical", "technical_quality", SQLiteProcessedRepository._average_known(
-            [row["score_exposure"], focus_integrity, row["score_clarity"], row["score_clarity"]]
-        ), "legacy")
+        add(
+            "technical",
+            "technical_quality",
+            SQLiteProcessedRepository._average_known(
+                [row["score_exposure"], focus_integrity, row["score_clarity"], row["score_clarity"]]
+            ),
+            "legacy",
+        )
         add("aggregate", "subject_focus", focus_integrity, "legacy")
-        add("screening", "screening_prior", row["score_clarity"] or row["score_sharpness"], "legacy")
+        add(
+            "screening", "screening_prior", row["score_clarity"] or row["score_sharpness"], "legacy"
+        )
         for public_dim, legacy_dim in AESTHETIC_SOURCE_MAP.items():
             add("aesthetic", public_dim, row[f"score_{legacy_dim}"], "legacy")
         return signals

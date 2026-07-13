@@ -7,27 +7,48 @@ on:
 
 permissions:
   contents: read
-  packages: write
+
+concurrency:
+  group: publish-intel-openvino-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  publish:
+  quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Test and lint in the pinned project runtime
+        run: |
+          docker run --rm \
+            -v "$PWD:/app" \
+            -w /app \
+            --entrypoint /bin/sh \
+            ghcr.io/astral-sh/uv:python3.14-trixie@sha256:12a46aa8066ea9ab1236ccaa6ad02086e375d3b70830d05797f123eedabb2294 \
+            -lc 'uv sync --frozen --group dev --extra intel-openvino && uv run ruff check . && uv run pytest -q'
+
+  publish:
+    if: github.ref == 'refs/heads/main'
+    needs: quality
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/metadata-action@v5
+      - uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
         id: meta
         with:
           images: ghcr.io/team-cyan/material-agent
           tags: |
-            type=raw,value=intel-openvino
             type=sha,prefix=intel-openvino-
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        id: build
         with:
           context: .
           file: Dockerfile.intel-openvino
@@ -40,3 +61,42 @@ jobs:
             BUILD_DATE=${{ github.event.repository.updated_at }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Smoke immutable image
+        env:
+          IMAGE: ghcr.io/team-cyan/material-agent@${{ steps.build.outputs.digest }}
+        run: |
+          docker pull "$IMAGE"
+          runtime_dir="${RUNNER_TEMP}/material-agent-runtime"
+          mkdir -p "$runtime_dir"
+          docker run --rm --entrypoint /bin/sh \
+            -v "$runtime_dir:/config" \
+            "$IMAGE" -c \
+            'mkdir -p /config/openvino-cache && \
+             touch /config/state.db /config/run.log /config/run.lock \
+               /config/openvino-cache/root-owned.blob && \
+             chmod 0600 /config/state.db /config/run.log /config/run.lock \
+               /config/openvino-cache/root-owned.blob'
+          docker run --rm \
+            -e PUID=12345 \
+            -e PGID=12345 \
+            -e MATERIAL_AGENT_WORK_DIR=/config \
+            -v "$runtime_dir:/config" \
+            "$IMAGE" material-agent --help >/dev/null
+          test "$(stat -c '%u:%g' "$runtime_dir")" = "12345:12345"
+          test "$(stat -c '%u:%g' "$runtime_dir/state.db")" = "12345:12345"
+          test "$(stat -c '%u:%g' "$runtime_dir/run.log")" = "12345:12345"
+          test "$(stat -c '%u:%g' "$runtime_dir/run.lock")" = "12345:12345"
+          test "$(stat -c '%u:%g' "$runtime_dir/openvino-cache/root-owned.blob")" = \
+            "12345:12345"
+          docker run --rm --entrypoint /bin/sh "$IMAGE" -c \
+            'test -r /app/config/config.yaml && material-agent --help >/dev/null && \
+             python -c "import cv2, importlib.metadata as m; names=[d.metadata[\"Name\"] for d in m.distributions() if d.metadata[\"Name\"].lower().replace(\"_\", \"-\") in {\"opencv-python\", \"opencv-python-headless\", \"opencv-contrib-python\"}]; assert names == [\"opencv-python\"], names; assert int(cv2.__version__.split(\".\")[0]) < 5"'
+          docker run --rm --entrypoint python "$IMAGE" -c \
+            'import asyncio, io; from PIL import Image; from material_agent.adapters.models.openvino_embedding import OpenVinoEmbeddingAdapter; b=io.BytesIO(); Image.new("RGB", (32, 32), "white").save(b, format="JPEG"); base={"model_path":"/opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx","processor_path":"/opt/material-agent/models/dinov3-vits16","fallback_device":"CPU"}; auto=OpenVinoEmbeddingAdapter({**base,"device":"AUTO:GPU,CPU","compiled_cache_dir":"/tmp/openvino-auto-cache"}); ar=asyncio.run(auto.embed_image(b.getvalue())); assert ar["dimensions"] > 0 and ar["requested_device"] == "AUTO:GPU,CPU" and "CPU" in ar["execution_devices"], ar; assert (not ar["fallback_used"] and ar["compiled_device"] == "AUTO:GPU,CPU") or (ar["fallback_used"] and ar["compiled_device"] == "CPU"), ar; fallback=OpenVinoEmbeddingAdapter({**base,"device":"GPU","compiled_cache_dir":"/tmp/openvino-gpu-fallback-cache"}); fr=asyncio.run(fallback.embed_image(b.getvalue())); assert fr["dimensions"] > 0 and fr["requested_device"] == "GPU" and fr["fallback_used"] and fr["compiled_device"] == "CPU" and "CPU" in fr["execution_devices"], fr'
+      - name: Promote verified image
+        env:
+          IMAGE: ghcr.io/team-cyan/material-agent@${{ steps.build.outputs.digest }}
+        run: |
+          docker buildx imagetools create \
+            --tag ghcr.io/team-cyan/material-agent:intel-openvino \
+            "$IMAGE"

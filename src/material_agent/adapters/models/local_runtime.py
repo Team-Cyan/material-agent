@@ -92,13 +92,63 @@ def _probe_openvino(payload: dict[str, Any]) -> dict[str, Any]:
     payload["openvino_version"] = version
     payload["available_devices"] = devices
     payload["accelerator_available"] = any(device != "CPU" for device in devices)
-    if "CPU" not in devices and not devices:
+    if not devices:
         return _with_failure(
             payload,
             code="device_missing",
             summary="openvino is installed but did not report any available devices.",
         )
+    requested_device = str(payload.get("device", "CPU"))
+    if not _openvino_request_is_available(requested_device, devices):
+        return _with_failure(
+            payload,
+            code="requested_device_missing",
+            summary=(
+                f"OpenVINO device {requested_device!r} is unavailable; "
+                f"visible devices: {devices!r}."
+            ),
+        )
+    fallback_device = str(payload.get("fallback_device", "")).strip()
+    if fallback_device and not _openvino_device_is_available(fallback_device, devices):
+        return _with_failure(
+            payload,
+            code="fallback_device_missing",
+            summary=(
+                f"OpenVINO fallback device {fallback_device!r} is unavailable; "
+                f"visible devices: {devices!r}."
+            ),
+        )
     return payload
+
+
+def _openvino_request_is_available(requested: str, available: list[str]) -> bool:
+    request = requested.strip().upper()
+    if not request:
+        return False
+    if ":" not in request:
+        if request in {"AUTO", "MULTI", "HETERO"}:
+            return bool(available)
+        return _openvino_device_is_available(request, available)
+
+    plugin, raw_candidates = request.split(":", 1)
+    candidates = [candidate.strip() for candidate in raw_candidates.split(",") if candidate.strip()]
+    if plugin == "AUTO":
+        return bool(candidates) and any(
+            _openvino_device_is_available(candidate, available) for candidate in candidates
+        )
+    if plugin in {"MULTI", "HETERO"}:
+        return bool(candidates) and all(
+            _openvino_device_is_available(candidate, available) for candidate in candidates
+        )
+    return _openvino_device_is_available(request, available)
+
+
+def _openvino_device_is_available(requested: str, available: list[str]) -> bool:
+    request = requested.strip().upper()
+    visible = [str(device).strip().upper() for device in available]
+    if "." in request:
+        return request in visible
+    return any(device == request or device.startswith(f"{request}.") for device in visible)
 
 
 def _with_failure(payload: dict[str, Any], *, code: str, summary: str) -> dict[str, Any]:

@@ -52,6 +52,7 @@ class JobFileStatus(StrEnum):
     SCORED = "scored"
     COMMENTED = "commented"
     WRITTEN = "written"
+    SIMULATED = "simulated"
     SKIPPED = "skipped"
     ERROR = "error"
 

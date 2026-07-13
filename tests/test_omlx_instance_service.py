@@ -1,6 +1,8 @@
 import json
 from argparse import Namespace
 
+import pytest
+
 from material_agent.app.omlx_instance_service import OMLXInstanceService
 
 
@@ -592,6 +594,45 @@ def test_omlx_instance_service_start_rejects_reachable_runtime_with_invalid_capa
         assert "Upgrade OMLX" in str(exc)
     else:  # pragma: no cover - red path
         raise AssertionError("expected RuntimeError for invalid reachable runtime")
+
+
+def test_omlx_instance_service_start_refuses_discovered_api_key_before_process_args(
+    tmp_path,
+    monkeypatch,
+):
+    cfg = _config()
+    cfg["omlx"]["api_key"] = ""
+    cfg["omlx"]["instance_root"] = str(tmp_path / "instance")
+    discovered_secret = "settings-file-secret"
+    home_settings = tmp_path / "settings.json"
+    home_settings.write_text(
+        json.dumps({"auth": {"api_key": discovered_secret}}),
+        encoding="utf-8",
+    )
+    service = OMLXInstanceService(home_settings_path=home_settings)
+    summary = {
+        "instance_root": str(tmp_path / "instance"),
+        "model_dir": str(tmp_path / "instance" / "models"),
+        "cache_dir": str(tmp_path / "instance" / "cache"),
+        "logs_dir": str(tmp_path / "instance" / "logs"),
+        "run_dir": str(tmp_path / "instance" / "run"),
+    }
+    monkeypatch.setattr(service, "setup", lambda _config: summary)
+    monkeypatch.setattr(
+        service,
+        "status",
+        lambda _config: {"reachable": False, "capability_valid": False},
+    )
+    monkeypatch.setattr(
+        "material_agent.app.omlx_instance_service.find_omlx_command_prefix",
+        lambda: pytest.fail("command discovery must not run with authenticated start"),
+    )
+
+    with pytest.raises(RuntimeError) as exc_info:
+        service.start(cfg)
+
+    assert "process arguments" in str(exc_info.value)
+    assert discovered_secret not in str(exc_info.value)
 
 
 def test_cmd_status_omlx_surfaces_capability_diagnostics(monkeypatch, capsys):

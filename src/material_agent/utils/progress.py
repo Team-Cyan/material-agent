@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 from abc import ABC, abstractmethod
 from collections import deque
@@ -113,6 +114,7 @@ class RichProgress(ProgressCallback):
 
         if log_path:
             handler = logging.FileHandler(log_path, encoding="utf-8")
+            os.chmod(log_path, 0o600)
             handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
             logger = logging.getLogger("material_agent")
             logger.setLevel(logging.DEBUG)

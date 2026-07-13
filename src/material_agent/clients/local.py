@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from io import BytesIO
 import hashlib
 
@@ -15,7 +16,6 @@ class AsyncLocalClient:
     def __init__(self, config: dict | None = None):
         self.config = config or {}
         self.output_language = self.config.get("output_language", "zh")
-        self.max_concurrent = self.config.get("max_concurrent", 1)
         self.inference = self.config.get("inference", {})
         self.runtime = self.inference.get("runtime", "cpu")
         self.semantic_config = self.config.get("semantic", {})
@@ -26,7 +26,10 @@ class AsyncLocalClient:
         self._quality = None
         self._embedding = None
         self._face = None
-        self._embedding_result_cache: dict[str, dict] = {}
+        self.embedding_result_cache_size = int(
+            self.embedding_config.get("result_cache_size", 256)
+        )
+        self._embedding_result_cache: OrderedDict[str, dict] = OrderedDict()
 
     async def score_image(self, jpeg_bytes: bytes) -> dict:
         image = Image.open(BytesIO(jpeg_bytes)).convert("RGB")
@@ -119,9 +122,7 @@ class AsyncLocalClient:
                 model_stack = list(result.get("_model_stack", []))
                 model_stack.append(embedding["model_name"])
                 result["_model_stack"] = model_stack
-                result["_runtime_components"].append(
-                    f"{embedding['runtime']}:{embedding['device']}"
-                )
+                result["_runtime_components"].append(_embedding_runtime_component(embedding))
                 result["_runtime"] = "+".join(result["_runtime_components"])
         if self.face_config.get("enabled", False):
             try:
@@ -144,13 +145,21 @@ class AsyncLocalClient:
         cache_key = hashlib.sha256(jpeg_bytes).hexdigest()
         cached = self._embedding_result_cache.get(cache_key)
         if cached is not None:
+            self._embedding_result_cache.move_to_end(cache_key)
             return {**cached, "vector": list(cached["vector"])}
         embedding = await self._embedding_scorer().embed_image(jpeg_bytes)
-        self._embedding_result_cache[cache_key] = {
-            **embedding,
-            "vector": list(embedding["vector"]),
-        }
+        if self.embedding_result_cache_size > 0:
+            self._embedding_result_cache[cache_key] = {
+                **embedding,
+                "vector": list(embedding["vector"]),
+            }
+            self._embedding_result_cache.move_to_end(cache_key)
+            while len(self._embedding_result_cache) > self.embedding_result_cache_size:
+                self._embedding_result_cache.popitem(last=False)
         return embedding
+
+    def clear_embedding_result_cache(self) -> None:
+        self._embedding_result_cache.clear()
 
     async def score_image_fast(self, jpeg_bytes: bytes) -> dict[str, float]:
         full = await self.score_image(jpeg_bytes)
@@ -198,6 +207,9 @@ class AsyncLocalClient:
                 "cache_dir": self.embedding_config.get(
                     "cache_dir", self.inference.get("model_cache_dir")
                 ),
+                "fallback_device": self.embedding_config.get(
+                    "fallback_device", self.inference.get("fallback_device", "CPU")
+                ),
             }
             if embedding_config.get("runtime", "transformers") == "openvino":
                 from ..adapters.models.openvino_embedding import OpenVinoEmbeddingAdapter
@@ -223,3 +235,14 @@ def _clamp01(value: float) -> float:
 
 def _clamp10(value: float) -> float:
     return max(0.0, min(10.0, float(value)))
+
+
+def _embedding_runtime_component(embedding: dict) -> str:
+    runtime = str(embedding.get("runtime", "unknown"))
+    execution_devices = embedding.get("execution_devices")
+    if isinstance(execution_devices, list):
+        actual = [str(device) for device in execution_devices if str(device).strip()]
+        device = ",".join(actual) if actual else "unknown"
+    else:
+        device = str(embedding.get("device", "unknown"))
+    return f"{runtime}:{device}"

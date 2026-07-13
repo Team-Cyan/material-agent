@@ -1,6 +1,15 @@
 from concurrent.futures import Future, ThreadPoolExecutor
+import hashlib
 
 from ..dto import JobFileStatus, JobStage, JobStatus
+
+
+class _ScorePreparationPool(ThreadPoolExecutor):
+    def __exit__(self, exc_type, exc_value, traceback):
+        if exc_type is not None and not issubclass(exc_type, Exception):
+            self.shutdown(wait=False, cancel_futures=True)
+            return False
+        return super().__exit__(exc_type, exc_value, traceback)
 
 
 class ReviewPhotosJob:
@@ -16,6 +25,7 @@ class ReviewPhotosJob:
         finalize_group=None,
         write_file=None,
         score_prefetch_window: int = 1,
+        write_outputs: bool = True,
     ):
         self.repository = repository
         self.event_sink = event_sink
@@ -32,7 +42,8 @@ class ReviewPhotosJob:
             )
         self.finalize_group = finalize_group or (lambda group_results, *, group_id: group_results)
         self.write_file = write_file or (lambda file_path, score_payload, *, rank, group_id, group_size: None)
-        self.score_prefetch_window = max(1, int(score_prefetch_window))
+        self.score_prefetch_window = min(32, max(1, int(score_prefetch_window)))
+        self.write_outputs = bool(write_outputs)
 
     def _emit(self, *, session_id: str, job_id: str, event_type: str, payload: dict, job_file_id: str | None = None):
         self.repository.append_event(
@@ -67,6 +78,7 @@ class ReviewPhotosJob:
         written_files: int,
         error_files: int,
         skipped_files: int,
+        simulated_files: int,
         job_id: str,
     ) -> dict:
         scored_files = sum(
@@ -78,6 +90,7 @@ class ReviewPhotosJob:
             "written_files": written_files,
             "error_files": error_files,
             "skipped_files": skipped_files,
+            "simulated_files": simulated_files,
             "scored_files": scored_files,
         }
 
@@ -97,6 +110,34 @@ class ReviewPhotosJob:
                 "boosted": False,
             }
         return job_file, payload
+
+    @staticmethod
+    def _group_id(group: list[str]) -> str:
+        members = "\0".join(sorted(str(file_path) for file_path in group)).encode("utf-8")
+        return f"group_{hashlib.sha256(members).hexdigest()[:16]}"
+
+    @staticmethod
+    def _refresh_cached_done_write_flags(
+        group_results: list[tuple[str, dict]],
+        *,
+        group_id: str,
+    ) -> None:
+        ranked = sorted(
+            group_results,
+            key=lambda item: float(item[1].get("score_total", 0.0)),
+            reverse=True,
+        )
+        group_size = len(ranked)
+        for rank, (_, payload) in enumerate(ranked, start=1):
+            if not payload.get("skip_write"):
+                continue
+            previous = payload.get("previous_group_info")
+            payload["skip_write"] = bool(
+                isinstance(previous, dict)
+                and previous.get("group_id") == group_id
+                and previous.get("group_rank") == rank
+                and previous.get("group_size") == group_size
+            )
 
     def _consume_group_scores(self, *, group: list[str], group_id: str, job_id: str, session_id: str):
         group_results: list[tuple[str, dict]] = []
@@ -130,7 +171,7 @@ class ReviewPhotosJob:
             pending_prepares[file_path] = executor.submit(self.prepare_score, file_path)
 
         max_workers = min(self.score_prefetch_window, len(group)) or 1
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        with _ScorePreparationPool(max_workers=max_workers) as executor:
             submit_index = 0
             for index, file_path in enumerate(group):
                 existing_job_file, resumable_payload = self._load_score_payload(job_id=job_id, file_path=file_path)
@@ -220,6 +261,7 @@ class ReviewPhotosJob:
         written_files = 0
         error_files = 0
         skipped_files = 0
+        simulated_files = 0
         self.repository.update_job(job_id, stage=JobStage.DISCOVER, status=JobStatus.RUNNING)
         self._emit(
             session_id=session_id,
@@ -231,9 +273,9 @@ class ReviewPhotosJob:
         self._update_stage(job_id, JobStage.GROUP, JobStatus.RUNNING, session_id=session_id)
         groups = self.group_files(file_paths)
 
-        for group_index, group in enumerate(groups, start=1):
+        for group in groups:
             self._update_stage(job_id, JobStage.SCORE, JobStatus.RUNNING, session_id=session_id)
-            group_id = f"group_{group_index:04d}"
+            group_id = self._group_id(group)
             (
                 group_results,
                 resumable_job_files,
@@ -262,8 +304,14 @@ class ReviewPhotosJob:
                     )
                 continue
 
+            self._refresh_cached_done_write_flags(group_results, group_id=group_id)
+
             self._update_stage(job_id, JobStage.COMMENT, JobStatus.RUNNING, session_id=session_id)
-            finalized_results = self.finalize_group(group_results, group_id=group_id)
+            finalized_results = (
+                group_results
+                if group_results and all(payload.get("skip_write") for _, payload in group_results)
+                else self.finalize_group(group_results, group_id=group_id)
+            )
             ranked_results = sorted(
                 finalized_results,
                 key=lambda item: float(item[1].get("score_total", 0.0)),
@@ -272,6 +320,33 @@ class ReviewPhotosJob:
             self._update_stage(job_id, JobStage.WRITE, JobStatus.RUNNING, session_id=session_id)
             for rank, (file_path, score_payload) in enumerate(ranked_results, start=1):
                 existing_job_file = resumable_job_files.get(file_path)
+                already_processed = bool(score_payload.get("skip_write")) or (
+                    existing_job_file is not None
+                    and existing_job_file.status is JobFileStatus.WRITTEN
+                )
+                if not self.write_outputs and already_processed:
+                    job_file_id = self.repository.upsert_job_file(
+                        job_id=job_id,
+                        file_path=file_path,
+                        status=JobFileStatus.SKIPPED,
+                        group_id=group_id,
+                        rank=rank,
+                        score_total=float(score_payload.get("score_total", 0.0)),
+                        scene=score_payload.get("scene"),
+                        scene_raw=score_payload.get("scene_raw"),
+                    )
+                    skipped_files += 1
+                    self._emit(
+                        session_id=session_id,
+                        job_id=job_id,
+                        job_file_id=job_file_id,
+                        event_type="job_file_skipped",
+                        payload={
+                            "file_path": file_path,
+                            "reason": "already_processed_dry_run",
+                        },
+                    )
+                    continue
                 if existing_job_file is not None and existing_job_file.status is JobFileStatus.WRITTEN:
                     job_file_id = self.repository.upsert_job_file(
                         job_id=job_id,
@@ -291,6 +366,58 @@ class ReviewPhotosJob:
                         event_type="job_file_skipped",
                         payload={"file_path": file_path, "reason": "already_written"},
                     )
+                    continue
+                if score_payload.get("skip_write"):
+                    job_file_id = self.repository.upsert_job_file(
+                        job_id=job_id,
+                        file_path=file_path,
+                        status=JobFileStatus.WRITTEN,
+                        group_id=group_id,
+                        rank=rank,
+                        score_total=float(score_payload.get("score_total", 0.0)),
+                        scene=score_payload.get("scene"),
+                        scene_raw=score_payload.get("scene_raw"),
+                    )
+                    skipped_files += 1
+                    self._emit(
+                        session_id=session_id,
+                        job_id=job_id,
+                        job_file_id=job_file_id,
+                        event_type="job_file_skipped",
+                        payload={"file_path": file_path, "reason": "already_processed"},
+                    )
+                    continue
+                if not self.write_outputs:
+                    self.write_file(
+                        file_path,
+                        score_payload,
+                        rank=rank,
+                        group_id=group_id,
+                        group_size=len(ranked_results),
+                    )
+                    job_file_id = self.repository.upsert_job_file(
+                        job_id=job_id,
+                        file_path=file_path,
+                        status=JobFileStatus.SIMULATED,
+                        group_id=group_id,
+                        rank=rank,
+                        score_total=float(score_payload.get("score_total", 0.0)),
+                        scene=score_payload.get("scene"),
+                        scene_raw=score_payload.get("scene_raw"),
+                    )
+                    self._emit(
+                        session_id=session_id,
+                        job_id=job_id,
+                        job_file_id=job_file_id,
+                        event_type="job_file_simulated",
+                        payload={
+                            "file_path": file_path,
+                            "score_total": float(score_payload.get("score_total", 0.0)),
+                            "rank": rank,
+                            "group_id": group_id,
+                        },
+                    )
+                    simulated_files += 1
                     continue
                 try:
                     self.write_file(
@@ -352,6 +479,7 @@ class ReviewPhotosJob:
             written_files=written_files,
             error_files=error_files,
             skipped_files=skipped_files,
+            simulated_files=simulated_files,
             job_id=job_id,
         )
         self._update_stage(job_id, JobStage.FINALIZE, final_status, session_id=session_id)

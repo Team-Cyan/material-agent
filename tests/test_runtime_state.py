@@ -1,4 +1,8 @@
+import json
 import sqlite3
+import stat
+
+import pytest
 
 from material_agent.adapters.state.sqlite_runtime import SQLiteRuntimeRepository
 from material_agent.app.dto import JobFileStatus, JobStage, JobStatus, JobType, SessionKind, SessionStatus
@@ -14,6 +18,120 @@ def test_runtime_repository_bootstraps_schema(tmp_path):
     assert {"sessions", "jobs", "job_files", "artifacts", "events"} <= names
     assert repo.conn.execute("PRAGMA journal_mode").fetchone()[0].lower() == "wal"
     assert repo.conn.execute("PRAGMA busy_timeout").fetchone()[0] == 30000
+    assert stat.S_IMODE(db_path.stat().st_mode) == 0o600
+
+
+def test_runtime_repository_redacts_nested_secrets_from_config_snapshot(tmp_path):
+    db_path = tmp_path / "runtime.db"
+    repo = SQLiteRuntimeRepository(db_path)
+
+    session_id = repo.create_session(
+        kind=SessionKind.CLI,
+        input_root="/tmp/photos",
+        config_snapshot={
+            "api_key": "top-secret",
+            "nested": {
+                "Authorization": "Bearer nested-secret",
+                "clientSecret": "camel-secret",
+                "max_tokens": 512,
+                "items": [{"refresh_token": "refresh-secret"}],
+            },
+        },
+        status=SessionStatus.OPEN,
+    )
+
+    raw_snapshot = repo.conn.execute(
+        "SELECT config_snapshot FROM sessions WHERE id = ?",
+        (session_id,),
+    ).fetchone()[0]
+    snapshot = json.loads(raw_snapshot)
+
+    assert "top-secret" not in raw_snapshot
+    assert "nested-secret" not in raw_snapshot
+    assert "camel-secret" not in raw_snapshot
+    assert "refresh-secret" not in raw_snapshot
+    assert snapshot["api_key"] == "[REDACTED]"
+    assert snapshot["nested"]["Authorization"] == "[REDACTED]"
+    assert snapshot["nested"]["clientSecret"] == "[REDACTED]"
+    assert snapshot["nested"]["max_tokens"] == 512
+
+
+def test_runtime_repository_get_job_result_returns_status_and_summary(tmp_path):
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    session_id = repo.create_session(
+        kind=SessionKind.CLI,
+        input_root="/tmp/photos",
+        config_snapshot={},
+        status=SessionStatus.OPEN,
+    )
+    job_id = repo.create_job(
+        session_id=session_id,
+        job_type=JobType.REVIEW_PHOTOS,
+        stage=JobStage.DISCOVER,
+        status=JobStatus.QUEUED,
+    )
+    repo.update_job(
+        job_id,
+        stage=JobStage.FINALIZE,
+        status=JobStatus.FINISHED_WITH_ERRORS,
+        summary={"error_files": 1},
+    )
+
+    assert repo.get_job_result(job_id) == {
+        "status": "finished_with_errors",
+        "summary": {"error_files": 1},
+    }
+    with pytest.raises(KeyError):
+        repo.get_job_result("missing")
+
+
+def test_runtime_repository_reconciles_abandoned_jobs_and_sessions(tmp_path):
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    session_id = repo.create_session(
+        kind=SessionKind.CLI,
+        input_root="/tmp/photos",
+        config_snapshot={},
+        status=SessionStatus.RUNNING,
+    )
+    job_id = repo.create_job(
+        session_id=session_id,
+        job_type=JobType.REVIEW_PHOTOS,
+        stage=JobStage.SCORE,
+        status=JobStatus.RUNNING,
+    )
+    paused_job_id = repo.create_job(
+        session_id=session_id,
+        job_type=JobType.REVIEW_PHOTOS,
+        stage=JobStage.SCORE,
+        status=JobStatus.PAUSED,
+    )
+
+    assert repo.reconcile_abandoned_runs() == {"sessions": 1, "jobs": 2}
+
+    session = repo.conn.execute(
+        "SELECT status, finished_at FROM sessions WHERE id = ?", (session_id,)
+    ).fetchone()
+    job = repo.conn.execute(
+        "SELECT stage, status, summary_json, finished_at FROM jobs WHERE id = ?", (job_id,)
+    ).fetchone()
+    event = repo.conn.execute(
+        "SELECT event_type, payload_json FROM events WHERE job_id = ?", (job_id,)
+    ).fetchone()
+    paused_job = repo.conn.execute(
+        "SELECT stage, status, finished_at FROM jobs WHERE id = ?", (paused_job_id,)
+    ).fetchone()
+    assert session["status"] == "cancelled"
+    assert session["finished_at"] is not None
+    assert tuple(job[:2]) == ("finalize", "cancelled")
+    assert job["finished_at"] is not None
+    assert json.loads(job["summary_json"])["cancellation_reason"] == (
+        "abandoned_before_current_run"
+    )
+    assert event["event_type"] == "job_reconciled_cancelled"
+    assert json.loads(event["payload_json"])["reason"] == "abandoned_before_current_run"
+    assert tuple(paused_job[:2]) == ("finalize", "cancelled")
+    assert paused_job["finished_at"] is not None
+    assert repo.reconcile_abandoned_runs() == {"sessions": 0, "jobs": 0}
 
 
 def test_runtime_repository_creates_and_updates_runtime_rows(tmp_path):

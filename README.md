@@ -24,9 +24,21 @@ The default config uses:
 - `inference.runtime: openvino`
 - `inference.device: AUTO:GPU,CPU`
 - runtime state in `$MATERIAL_AGENT_WORK_DIR/state.db` and operational logs in
-  `$MATERIAL_AGENT_WORK_DIR/run.log` when configured (the Docker images default
-  to `/app/.material-agent`); otherwise both live under `.material-agent/` in
-  the processed photo folder
+  `$MATERIAL_AGENT_WORK_DIR/run.log` when configured (the Intel OpenVINO image
+  defaults to `/config`); otherwise both live under `.material-agent/` in the
+  processed photo folder
+
+The Intel image ships with a working DINOv3 OpenVINO profile. It requests
+`AUTO:GPU,CPU`, records the actual OpenVINO execution device, and may compile on
+the configured CPU fallback when the requested accelerator is unavailable. No
+extra config bind mount is required for that profile; a config mounted at
+`$MATERIAL_AGENT_CONFIG` can still replace it deliberately.
+
+`run --dry-run` may create runtime session, job, event, and log records in the
+writable work directory. It does not write XMP/rating data and does not persist
+new processed score or `done` rows. Existing valid processed rows may be read to
+simulate an incremental run, and their runtime file status is reported as
+`skipped` rather than `written`.
 
 The local backend always retains deterministic JPEG-preview heuristics as its
 fallback. Optional learned blocks now provide MobileCLIP2 scene tags,
@@ -42,6 +54,7 @@ make run DIR=/path/to/photos
 make dry-run DIR=/path/to/photos
 make rescore DIR=/path/to/photos
 make reset-ai DIR=/path/to/photos
+make reset-ai DIR=/path/to/photos CLEAR_XMP=1
 make test
 make check
 ```
@@ -57,6 +70,8 @@ runtime state in appdata:
 
 ```bash
 docker run --rm --device /dev/dri \
+  -e PUID=99 \
+  -e PGID=100 \
   -e MATERIAL_AGENT_INPUT_DIR=/photos \
   -e MATERIAL_AGENT_WORK_DIR=/config \
   -e MATERIAL_AGENT_DRY_RUN=true \
@@ -67,7 +82,26 @@ docker run --rm --device /dev/dri \
 
 With this layout, the photo library is input only. SQLite state is
 `/config/state.db` and the file log is `/config/run.log`; both resolve to the
-appdata bind mount rather than the photo directory.
+appdata bind mount rather than the photo directory. Without the `/config` bind,
+those files live only in the container writable layer and disappear with a
+recreated one-shot container.
+
+The entrypoint starts as root only long enough to align the container account to
+`PUID`/`PGID`, attach the account to visible `/dev/dri` groups, and migrate a
+small allowlist of existing appdata runtime files. The scorer itself runs as the
+unprivileged `material-agent` user. The entrypoint rejects work directories that
+resolve to the source tree, `/`, or unsafe symlinks; it never changes ownership
+inside the photo mount.
+
+`reset-ai` removes database-owned AI state while preserving source-side XMP by
+default. Pass `--clear-xmp` (or `CLEAR_XMP=1` through Make) only for an explicit
+cleanup. Even then, scalar rating/instructions/description fields are removed
+only when they still equal the values previously written by this application;
+user changes are preserved.
+
+For stable deployments, pin the image by digest or by the immutable commit-SHA
+tag produced by the publish workflow. The mutable `intel-openvino` tag is
+promoted only after the built digest passes the container smoke gate.
 
 Isolated benchmark and OpenVINO bundle preparation:
 
@@ -113,8 +147,10 @@ Apple GPU acceleration should be native first. Docker's newer Model Runner can e
 ## Near-Term Work
 
 1. Calibrate the optional local blocks on a reviewed real-camera RAW set.
-2. Verify native OpenVINO with `/dev/dri` on the target Intel NAS.
-3. Run an isolated XMP/SQLite production pilot and approve promotion thresholds.
+2. Measure warm CPU/GPU parity, throughput, fallback rate, and device utilization
+   on the target Intel NAS; the bounded read-only GPU pilot is already complete.
+3. Run a separately authorized target-host isolated-XMP pilot and approve
+   promotion thresholds; keep the main photo mount read-only until then.
 4. Decide whether to retain or delete the remaining legacy teacher modules.
 5. Add a durable local label store after the initial fixture workflow stabilizes.
 

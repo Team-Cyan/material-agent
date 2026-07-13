@@ -36,10 +36,24 @@
   five-calibration/five-holdout Sony A7C II concert-burst evaluation
 - completed an isolated five-file XMP pilot with source hash verification and
   no writes to the original holdout directory
+- completed a whole-project correctness and deployment hardening pass covering
+  dry-run isolation, provenance-safe score reuse, stable incremental grouping,
+  cancellation/recovery, and one mutating controller per work directory
+- made AI reset provenance-safe: source XMP is preserved by default, explicit
+  cleanup removes machine tags, and user-modified scalar fields are retained
+- made score and embedding cache identity content-addressed across policy,
+  grouping, preview/preprocessing, model bundle assets, optional package
+  versions, and explicit semantic revision markers
+- shipped a non-root PUID/PGID Intel image contract with a baked DINOv3
+  OpenVINO profile, appdata-only runtime state, `/dev/dri` group handling, and
+  explicit AUTO-versus-manual-fallback provenance
+- hardened immutable image publication so quality checks and built-image smoke
+  tests pass before the mutable Intel tag is promoted
+- corrected the local benchmark to clear per-image result cache between
+  repetitions and recorded a replacement OpenVINO CPU synthetic report
 
 ## In Progress
 
-- finish the runtime-guardrail milestone and keep heuristic provenance explicit
 - expand the initial private concert-burst RAW gate with independent scenes,
   cameras, and lighting before production model promotion
 - keep MobileCLIP2 semantic scoring opt-in while scene prompts and confidence
@@ -55,10 +69,13 @@
 ## Next
 
 - calibrate a versioned score policy only after per-block benchmark reports exist
-- measure OpenVINO CPU/GPU parity, throughput, and target-host utilization on
-  the Intel iGPU host
-- run read-only and isolated-XMP production pilots before changing the default
-  learned scoring policy
+- measure warm OpenVINO CPU/GPU parity, steady-state throughput, fallback rate,
+  and target-host utilization on the Intel iGPU host; do not infer acceleration
+  from the existing tiny cold comparison
+- publish the hardened image, then repeat the bounded Unraid read-only pilot
+  with non-root UID/GID and appdata ownership checks
+- run a separately authorized target-host isolated-XMP pilot before changing
+  the default learned scoring policy; keep the primary photo share read-only
 
 ## Later
 

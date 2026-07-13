@@ -16,6 +16,46 @@ from ...app.dto import (
     SessionRecord,
     SessionStatus,
 )
+from ...utils.file_security import secure_sqlite_files
+
+
+_REDACTED_VALUE = "[REDACTED]"
+_SECRET_KEYS = {
+    "access_key",
+    "api_key",
+    "apikey",
+    "authorization",
+    "cookie",
+    "credential",
+    "credentials",
+    "password",
+    "private_key",
+    "secret",
+    "token",
+}
+
+
+def _is_secret_key(key: object) -> bool:
+    normalized = str(key).strip().lower().replace("-", "_")
+    compact = "".join(character for character in normalized if character.isalnum())
+    return normalized in _SECRET_KEYS or compact.endswith(
+        ("accesskey", "apikey", "credential", "credentials", "password", "privatekey", "secret", "token")
+    )
+
+
+def redact_secrets(value: Any) -> Any:
+    """Return a JSON-compatible copy with credential-like values removed."""
+
+    if isinstance(value, dict):
+        return {
+            key: _REDACTED_VALUE if _is_secret_key(key) else redact_secrets(item)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [redact_secrets(item) for item in value]
+    if isinstance(value, tuple):
+        return [redact_secrets(item) for item in value]
+    return value
 
 
 class SQLiteRuntimeRepository:
@@ -105,6 +145,7 @@ class SQLiteRuntimeRepository:
         self.conn.execute("PRAGMA journal_mode=WAL")
         self.conn.execute("PRAGMA busy_timeout=30000")
         self.conn.commit()
+        secure_sqlite_files(self.db_path)
 
     @staticmethod
     def _new_id() -> str:
@@ -121,10 +162,101 @@ class SQLiteRuntimeRepository:
         session_id = self._new_id()
         self.conn.execute(
             "INSERT INTO sessions (id, kind, input_root, config_snapshot, status) VALUES (?, ?, ?, ?, ?)",
-            (session_id, kind.value, input_root, json.dumps(config_snapshot, ensure_ascii=False), status.value),
+            (
+                session_id,
+                kind.value,
+                input_root,
+                json.dumps(redact_secrets(config_snapshot), ensure_ascii=False),
+                status.value,
+            ),
         )
         self.conn.commit()
         return session_id
+
+    def get_job_result(self, job_id: str) -> dict[str, Any]:
+        row = self.conn.execute(
+            "SELECT status, summary_json FROM jobs WHERE id = ?",
+            (job_id,),
+        ).fetchone()
+        if row is None:
+            raise KeyError(job_id)
+        return {
+            "status": row["status"],
+            "summary": json.loads(row["summary_json"] or "{}"),
+        }
+
+    def reconcile_abandoned_runs(self) -> dict[str, int]:
+        """Cancel non-terminal rows left behind before the run lock was acquired."""
+
+        active_session_statuses = (
+            SessionStatus.OPEN.value,
+            SessionStatus.RUNNING.value,
+        )
+        active_job_statuses = (
+            JobStatus.QUEUED.value,
+            JobStatus.RUNNING.value,
+            JobStatus.PAUSED.value,
+        )
+        session_rows = self.conn.execute(
+            "SELECT id FROM sessions WHERE status IN (?, ?)",
+            active_session_statuses,
+        ).fetchall()
+        job_rows = self.conn.execute(
+            """
+            SELECT jobs.id, jobs.session_id, jobs.summary_json
+            FROM jobs
+            JOIN sessions ON sessions.id = jobs.session_id
+            WHERE sessions.status IN (?, ?)
+              AND jobs.status IN (?, ?, ?)
+            """,
+            (*active_session_statuses, *active_job_statuses),
+        ).fetchall()
+
+        reason = "abandoned_before_current_run"
+        for row in job_rows:
+            summary = json.loads(row["summary_json"] or "{}")
+            summary["cancellation_reason"] = reason
+            self.conn.execute(
+                """
+                UPDATE jobs
+                SET stage = ?, status = ?, summary_json = ?, finished_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+                """,
+                (
+                    JobStage.FINALIZE.value,
+                    JobStatus.CANCELLED.value,
+                    json.dumps(summary, ensure_ascii=False),
+                    row["id"],
+                ),
+            )
+            self.conn.execute(
+                """
+                INSERT INTO events (id, session_id, job_id, event_type, payload_json)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    self._new_id(),
+                    row["session_id"],
+                    row["id"],
+                    "job_reconciled_cancelled",
+                    json.dumps({"reason": reason}, ensure_ascii=False),
+                ),
+            )
+
+        for row in session_rows:
+            self.conn.execute(
+                """
+                UPDATE sessions
+                SET status = ?, finished_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+                """,
+                (SessionStatus.CANCELLED.value, row["id"]),
+            )
+        self.conn.commit()
+        return {"sessions": len(session_rows), "jobs": len(job_rows)}
+
+    def close(self) -> None:
+        self.conn.close()
 
     def create_job(
         self,

@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-ARG AGENT_PYTHON_UV_BASE=ghcr.io/astral-sh/uv:python3.14-trixie
+ARG AGENT_PYTHON_UV_BASE=ghcr.io/astral-sh/uv:python3.14-trixie@sha256:12a46aa8066ea9ab1236ccaa6ad02086e375d3b70830d05797f123eedabb2294
 FROM ${AGENT_PYTHON_UV_BASE}
 
 ARG VERSION=0.4.0
@@ -17,8 +17,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_LINK_MODE=copy \
     UV_PROJECT_ENVIRONMENT=/usr/local \
+    PUID=1000 \
+    PGID=1000 \
     MATERIAL_AGENT_CONFIG=/app/config/config.yaml \
-    MATERIAL_AGENT_WORK_DIR=/app/.material-agent
+    MATERIAL_AGENT_WORK_DIR=/config
 
 WORKDIR /app
 
@@ -26,9 +28,12 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
+        findutils \
+        gosu \
         libimage-exiftool-perl \
         libgl1 \
         libglib2.0-0 \
+        passwd \
         ocl-icd-libopencl1 \
         libze1 \
     && mkdir -p /tmp/intel-gpu \
@@ -39,7 +44,19 @@ RUN apt-get update \
     && curl -fLO https://github.com/intel/compute-runtime/releases/download/26.22.38646.4/intel-opencl-icd_26.22.38646.4-0_amd64.deb \
     && curl -fLO https://github.com/intel/compute-runtime/releases/download/26.22.38646.4/libigdgmm12_22.10.0_amd64.deb \
     && curl -fLO https://github.com/intel/compute-runtime/releases/download/26.22.38646.4/libze-intel-gpu1_26.22.38646.4-0_amd64.deb \
+    && printf '%s  %s\n' \
+        '9e0975ac75015b431ebb2da81a802b9fd1e28a3c270313a97569cd1e6a6c6048' 'intel-igc-core-2_2.36.3+21719_amd64.deb' \
+        '350a52331e784bb7fb9ed42e993b5c44b7e6562fc74d2cf3102b29b6a576fa85' 'intel-igc-opencl-2_2.36.3+21719_amd64.deb' \
+        '25745841e66279c7ff1ff6c2d4da9ec911685c12e1c9c5609d99e4d54a364dc0' 'intel-ocloc_26.22.38646.4-0_amd64.deb' \
+        '6fdac2e8a2aacf844ebfd90521bf7102b3ebb44f69c1bced1a9785a7ce96a3c2' 'intel-opencl-icd_26.22.38646.4-0_amd64.deb' \
+        '6031a63d6e8a12ce61c14efc15f2c8e727061286e3820b8594e6d00615e04d54' 'libigdgmm12_22.10.0_amd64.deb' \
+        '8bef9f24e03f826f93c076081bda13c6ac3afbd9e42b9fb8f298fab652330e2f' 'libze-intel-gpu1_26.22.38646.4-0_amd64.deb' \
+        | sha256sum --check --strict - \
     && apt-get install -y --no-install-recommends ./*.deb \
+    && groupadd --gid 1000 material-agent \
+    && useradd --uid 1000 --gid material-agent --create-home \
+        --home-dir /home/material-agent --shell /usr/sbin/nologin material-agent \
+    && install -d -m 0755 -o material-agent -g material-agent /config \
     && rm -rf /tmp/intel-gpu /var/lib/apt/lists/*
 
 ARG DINOV3_REVISION=48988dfe73065df8d6f5ccc0edc7c8bcf307de41
@@ -49,25 +66,26 @@ RUN mkdir -p /opt/material-agent/models/dinov3-vits16/onnx \
     && curl -fL "https://huggingface.co/onnx-community/dinov3-vits16-pretrain-lvd1689m-ONNX/resolve/${DINOV3_REVISION}/onnx/model_quantized.onnx_data" \
         -o /opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx_data \
     && curl -fL "https://huggingface.co/onnx-community/dinov3-vits16-pretrain-lvd1689m-ONNX/resolve/${DINOV3_REVISION}/preprocessor_config.json" \
-        -o /opt/material-agent/models/dinov3-vits16/preprocessor_config.json
+        -o /opt/material-agent/models/dinov3-vits16/preprocessor_config.json \
+    && printf '%s  %s\n' \
+        '7686e8c849202c4fdd67d1cd336449c29bdddbcca535d765d3014f50d04d516d' '/opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx' \
+        '51572f7fc3c272eb574a70509ea1eeb7e674e5ca2cd96fec1632edb38983d529' '/opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx_data' \
+        '960c41d1f3a7778b936365769a2d90550b318a6c0a53a0296957adacfe5e0dd7' '/opt/material-agent/models/dinov3-vits16/preprocessor_config.json' \
+        | sha256sum --check --strict -
 
-COPY pyproject.toml uv.lock README.md /app/
+COPY pyproject.toml uv.lock /app/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen \
         --extra intel-openvino \
-        --extra local-models \
-        --extra quality-models \
-        --extra face-models \
         --no-dev --no-editable --no-install-project
 
+COPY README.md /app/README.md
+COPY docker/config.intel-openvino.yaml /app/config/config.yaml
 COPY src /app/src
 COPY docker /app/docker
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen \
         --extra intel-openvino \
-        --extra local-models \
-        --extra quality-models \
-        --extra face-models \
         --no-dev --no-editable \
     && chmod +x /app/docker/entrypoint.sh
 

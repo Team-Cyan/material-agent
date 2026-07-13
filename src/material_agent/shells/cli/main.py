@@ -1,4 +1,7 @@
 import argparse
+import sys
+
+from ...app.errors import RunCancelled
 
 def load_raw_config(path: str) -> dict:
     from ...commands.scoring import load_raw_config as _load_raw_config
@@ -88,6 +91,12 @@ def configure_run_parser(parser) -> None:
         dest="dry_run",
         help="Score files without XMP/processed writes; runtime job state is still recorded",
     )
+    parser.add_argument(
+        "--allow-empty",
+        action="store_true",
+        dest="allow_empty",
+        help="Allow a successful run when no configured photo files are discovered",
+    )
     parser.add_argument("--scorers")
     parser.add_argument(
         "--no-visual-merge",
@@ -98,15 +107,19 @@ def configure_run_parser(parser) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="material-agent: NAS-first local photo scorer")
+    parser = argparse.ArgumentParser(
+        description="material-agent: NAS-first local photo scorer",
+        allow_abbrev=False,
+    )
     sub = parser.add_subparsers(dest="command")
 
-    p_run = sub.add_parser("run", help="Score photos")
+    p_run = sub.add_parser("run", help="Score photos", allow_abbrev=False)
     configure_run_parser(p_run)
 
     p_benchmark = sub.add_parser(
         "benchmark-local",
         help="Run an isolated local heuristic benchmark from a fixture manifest",
+        allow_abbrev=False,
     )
     p_benchmark.add_argument("--manifest", required=True)
     p_benchmark.add_argument("--output-dir", required=True, dest="output_dir")
@@ -118,6 +131,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_prepare_openvino = sub.add_parser(
         "prepare-openvino-model",
         help="Materialize an ONNX external-data bundle for native OpenVINO loading",
+        allow_abbrev=False,
     )
     p_prepare_openvino.add_argument("--source-model", required=True, dest="source_model")
     p_prepare_openvino.add_argument(
@@ -135,27 +149,43 @@ def build_parser() -> argparse.ArgumentParser:
         dest="quality_reject_threshold",
     )
 
-    p_scan = sub.add_parser("scan-scenes", help="Show scene_raw distribution")
+    p_scan = sub.add_parser(
+        "scan-scenes", help="Show scene_raw distribution", allow_abbrev=False
+    )
     p_scan.add_argument("--dir", required=True)
 
-    p_suggest = sub.add_parser("suggest-scenes", help="Suggest scene remaps from scene_raw")
+    p_suggest = sub.add_parser(
+        "suggest-scenes",
+        help="Suggest scene remaps from scene_raw",
+        allow_abbrev=False,
+    )
     p_suggest.add_argument("--dir", required=True)
     p_suggest.add_argument("--limit", type=int, default=20)
     p_suggest.add_argument("--min-count", type=int, default=2, dest="min_count")
 
-    p_remap = sub.add_parser("remap-scenes", help="Remap scene_raw to scene")
+    p_remap = sub.add_parser(
+        "remap-scenes", help="Remap scene_raw to scene", allow_abbrev=False
+    )
     p_remap.add_argument("--dir", required=True)
     p_remap.add_argument("--from", required=True, dest="from_")
     p_remap.add_argument("--to", required=True)
 
-    p_rescore = sub.add_parser("rescore", help="Recalculate scores from stored dimensions")
+    p_rescore = sub.add_parser(
+        "rescore",
+        help="Recalculate scores from stored dimensions",
+        allow_abbrev=False,
+    )
     p_rescore.add_argument("--dir", required=True)
     p_rescore.add_argument("--config", default="config.yaml")
     p_rescore.add_argument(
         "--scene", nargs="+", metavar="SCENE", help="Only rescore files with these scene values"
     )
 
-    p_rewrite = sub.add_parser("rewrite-xmp", help="Force-rewrite all XMP sidecars from DB")
+    p_rewrite = sub.add_parser(
+        "rewrite-xmp",
+        help="Force-rewrite all XMP sidecars from DB",
+        allow_abbrev=False,
+    )
     p_rewrite.add_argument("--dir", required=True)
     p_rewrite.add_argument("--config", default="config.yaml")
     p_rewrite.add_argument("--dry-run", action="store_true", dest="dry_run")
@@ -163,6 +193,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_rewrite_commentary = sub.add_parser(
         "rewrite-commentary",
         help="Regenerate commentary from stored scores and optionally rewrite XMP descriptions",
+        allow_abbrev=False,
     )
     p_rewrite_commentary.add_argument("--dir", required=True)
     p_rewrite_commentary.add_argument("--config", default="config.yaml")
@@ -177,17 +208,27 @@ def build_parser() -> argparse.ArgumentParser:
     p_reset_ai = sub.add_parser(
         "reset-ai",
         help="Clear AI-derived scores/commentary state while preserving non-AI caches",
+        allow_abbrev=False,
     )
     p_reset_ai.add_argument("--dir", required=True)
     p_reset_ai.add_argument("--dry-run", action="store_true", dest="dry_run")
     p_reset_ai.add_argument(
-        "--keep-xmp",
+        "--clear-xmp",
         action="store_true",
-        dest="keep_xmp",
-        help="Only clear database AI state and keep existing XMP sidecars untouched",
+        dest="clear_xmp",
+        help="Also clear AI-managed XMP fields; existing XMP is preserved by default",
     )
+    p_reset_ai.add_argument(
+        "--keep-xmp",
+        action="store_false",
+        dest="clear_xmp",
+        help=argparse.SUPPRESS,
+    )
+    p_reset_ai.set_defaults(clear_xmp=False)
 
-    p_fix = sub.add_parser("fix-db", help="Repair data quality issues in the database")
+    p_fix = sub.add_parser(
+        "fix-db", help="Repair data quality issues in the database", allow_abbrev=False
+    )
     p_fix.add_argument("--dir", required=True)
     return parser
 
@@ -196,27 +237,36 @@ def main():
     parser = build_parser()
     args = parser.parse_args()
 
-    if args.command == "benchmark-local":
-        return cmd_benchmark_local(args)
-    if args.command == "prepare-openvino-model":
-        return cmd_prepare_openvino_model(args)
-    if args.command == "scan-scenes":
-        cmd_scan_scenes(args)
-    elif args.command == "suggest-scenes":
-        cmd_suggest_scenes(args)
-    elif args.command == "remap-scenes":
-        cmd_remap_scenes(args)
-    elif args.command == "rescore":
-        cmd_rescore(args, load_config(args.config))
-    elif args.command == "rewrite-xmp":
-        cmd_rewrite_xmp(args)
-    elif args.command == "rewrite-commentary":
-        cmd_rewrite_commentary(args)
-    elif args.command == "reset-ai":
-        cmd_reset_ai(args)
-    elif args.command == "fix-db":
-        cmd_fix_db(args)
-    elif args.command == "run":
-        cmd_run(args, load_raw_config(args.config))
-    else:
+    try:
+        if args.command == "benchmark-local":
+            return cmd_benchmark_local(args)
+        if args.command == "prepare-openvino-model":
+            return cmd_prepare_openvino_model(args)
+        if args.command == "scan-scenes":
+            return cmd_scan_scenes(args)
+        if args.command == "suggest-scenes":
+            return cmd_suggest_scenes(args)
+        if args.command == "remap-scenes":
+            return cmd_remap_scenes(args)
+        if args.command == "rescore":
+            return cmd_rescore(args, load_config(args.config))
+        if args.command == "rewrite-xmp":
+            return cmd_rewrite_xmp(args)
+        if args.command == "rewrite-commentary":
+            return cmd_rewrite_commentary(args)
+        if args.command == "reset-ai":
+            return cmd_reset_ai(args)
+        if args.command == "fix-db":
+            return cmd_fix_db(args)
+        if args.command == "run":
+            return cmd_run(args, load_raw_config(args.config))
         parser.print_help()
+        return 0
+    except RunCancelled as error:
+        print(f"Run cancelled: {error}", file=sys.stderr)
+        return 130
+    except KeyboardInterrupt:
+        print("Run cancelled by operator", file=sys.stderr)
+        return 130
+    except (OSError, ValueError) as error:
+        parser.error(str(error))

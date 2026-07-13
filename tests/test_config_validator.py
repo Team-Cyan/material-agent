@@ -1,7 +1,12 @@
 """Tests for config_validator.validate_config."""
 
 import pytest
-from material_agent.utils.config_validator import normalize_config, sync_omlx_model_selection, validate_config
+
+from material_agent.utils.config_validator import (
+    normalize_config,
+    sync_omlx_model_selection,
+    validate_config,
+)
 from material_agent.utils.constants import VISION_DIMS
 
 
@@ -25,6 +30,76 @@ def _minimal_config():
 
 def test_valid_config_passes():
     validate_config(_minimal_config())
+
+
+@pytest.mark.parametrize(
+    "config, expected",
+    [
+        (None, "root must be a mapping"),
+        ({"local": None}, "'local' must be a mapping"),
+        (
+            {"grouping": {"visual_similarity": None}},
+            "'grouping.visual_similarity' must be a mapping",
+        ),
+    ],
+)
+def test_validate_config_rejects_non_mapping_sections_cleanly(config, expected, capsys):
+    with pytest.raises(SystemExit) as exc_info:
+        validate_config(config)
+
+    assert exc_info.value.code == 1
+    assert expected in capsys.readouterr().out
+
+
+def test_normalize_config_rejects_null_mapping_section_cleanly():
+    with pytest.raises(ValueError, match="grouping.visual_similarity"):
+        normalize_config({"grouping": {"visual_similarity": None}})
+
+
+def test_normalize_config_canonicalizes_raw_extensions():
+    normalized = normalize_config(
+        {"raw_extensions": [".arw", " CR3 ", "arw"]}
+    )
+
+    assert normalized["raw_extensions"] == ["ARW", "CR3"]
+
+
+@pytest.mark.parametrize(
+    "raw_extensions",
+    [
+        None,
+        [],
+        ["ARW", "not-an-extension"],
+        [f"X{index}" for index in range(33)],
+    ],
+)
+def test_validate_config_rejects_invalid_raw_extensions(raw_extensions, capsys):
+    cfg = _minimal_config()
+    cfg["raw_extensions"] = raw_extensions
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert "raw_extensions" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("field", ["score_prefetch_window", "max_files"])
+@pytest.mark.parametrize("value", [0, 33, True])
+def test_validate_config_bounds_review_pipeline_fields(field, value, capsys):
+    cfg = _minimal_config()
+    cfg["review_pipeline"] = {field: value}
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert f"review_pipeline.{field}" in capsys.readouterr().out
+
+
+def test_validate_config_accepts_review_pipeline_upper_bounds():
+    cfg = _minimal_config()
+    cfg["review_pipeline"] = {"score_prefetch_window": 32, "max_files": 32}
+
+    validate_config(cfg)
 
 
 def test_normalize_config_defaults_commentary_enabled_true():
@@ -61,6 +136,7 @@ def test_normalize_config_defaults_screening_backend_to_musiq():
     normalized = normalize_config(cfg)
     assert normalized["screening"]["backend"] == "musiq"
     assert normalized["screening"]["musiq"]["metric"] == "musiq"
+    assert normalized["screening"]["musiq"]["helper_timeout_seconds"] == 120.0
 
 
 def test_normalize_config_defaults_inference_enforce_available_false():
@@ -305,6 +381,24 @@ def test_normalize_config_adds_local_semantic_defaults():
     }
 
 
+def test_normalize_config_bounds_local_embedding_result_cache():
+    normalized = normalize_config({"backend": "local"})
+
+    assert normalized["local"]["embedding"]["result_cache_size"] == 256
+
+
+def test_invalid_local_embedding_result_cache_size_exits(capsys):
+    cfg = _minimal_config()
+    cfg["backend"] = "local"
+    cfg["commentary_enabled"] = False
+    cfg["local"] = {"embedding": {"result_cache_size": 4097}}
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert "local.embedding.result_cache_size" in capsys.readouterr().out
+
+
 def test_invalid_local_semantic_confidence_exits(capsys):
     cfg = _minimal_config()
     cfg["backend"] = "local"
@@ -323,6 +417,20 @@ def test_invalid_screening_backend_exits(capsys):
     with pytest.raises(SystemExit):
         validate_config(cfg)
     assert "screening.backend" in capsys.readouterr().out
+
+
+def test_invalid_musiq_helper_timeout_exits(capsys):
+    cfg = _minimal_config()
+    cfg["screening"] = {
+        "enabled": True,
+        "backend": "musiq",
+        "musiq": {"helper_timeout_seconds": 0},
+    }
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert "helper_timeout_seconds" in capsys.readouterr().out
 
 
 def test_missing_omlx_section_exits(capsys):

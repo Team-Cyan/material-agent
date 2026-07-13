@@ -103,6 +103,11 @@ declared runtime package or provider is unavailable.
 
 Preflight is observability, not model execution. A passing OpenVINO preflight
 does not mean DINO, MobileCLIP, or IQA models are wired into the scoring path.
+Strict model execution separately records the requested device, compiled device,
+configured fallback, whether application-level fallback occurred, and the
+actual `EXECUTION_DEVICES` readback. If OpenVINO cannot provide that readback,
+the result is marked unknown rather than copying the requested device into an
+"actual" field.
 
 ## Semantic Vertical Slice
 
@@ -132,7 +137,19 @@ production photography.
 `OpenVinoEmbeddingAdapter` now loads a local ONNX bundle with native OpenVINO,
 compiles it with a persistent cache, performs inference, and records actual
 execution devices. `prepare-openvino-model` materializes Hugging Face ONNX
-external-data symlinks into a self-contained bundle and records its digest.
+external-data symlinks into a self-contained bundle. Bundle and compiled-cache
+identity cover the ONNX graph, every declared external-data file, processor
+assets, OpenVINO/runtime settings, and preprocessing revision. External-data
+paths that escape the model directory are rejected at runtime, so a normal
+Hugging Face symlink snapshot must be materialized before direct use.
+
+Device fallback has two valid forms:
+
+- OpenVINO may compile `AUTO:GPU,CPU` successfully and internally select CPU;
+  this is actual CPU execution but not application-level fallback.
+- If the requested compile target is unavailable, the adapter may compile the
+  explicit configured fallback such as `CPU`; this sets `fallback_used=true`
+  and records the original exception reason.
 
 Verified on OpenVINO 2026.2.1 CPU:
 
@@ -145,6 +162,15 @@ Verified on OpenVINO 2026.2.1 CPU:
   with the cache, while warm fixture inference stayed around 0.53 seconds;
 - actual execution device readback on the Apple verification host is `CPU`.
 
+The corrected synthetic CPU benchmark is
+`docs/operations/benchmarks/2026-07-13-openvino-dinov3-quantized-cpu-synthetic-v2/`.
+It clears the bounded per-image result cache before every repetition while
+retaining the persistent compiled-model cache. On the Apple CPU verification
+host it records 1.561 seconds for the first four-image run, a 0.530-second warm
+p50 for four real inferences, and 4.577 images/second across three repetitions.
+The older 2026-07-11 v1 report remains historical, but its 0.07-second warm p50
+was dominated by result-cache hits and must not be cited as inference speed.
+
 Target Intel GPU execution is now verified on the Unraid Linux NAS through a
 DockerMan-managed, read-only pilot. The container exposed `/dev/dri`, OpenVINO
 reported both `CPU` and `GPU`, and all ten bounded score payloads recorded
@@ -152,20 +178,30 @@ reported both `CPU` and `GPU`, and all ten bounded score payloads recorded
 appdata-backed runtime directory, mounted the photo library read-only, ran with
 dry-run enabled, and left both source-side XMP count and source-side runtime
 directory count at zero. This proves model execution on the target iGPU; it does
-not yet provide CPU/GPU parity or target-host utilization measurements.
+not yet provide warm CPU/GPU parity or target-host utilization measurements. A
+single cold full-pipeline comparison over the same ten-file bounded set recorded
+about 28 seconds on CPU (0.357 files/second) and 43 seconds on GPU (0.233
+files/second). GPU was slower in that cold, tiny sample; model initialization,
+container/cache temperature, and non-model pipeline work make it unsuitable as
+a steady-state accelerator conclusion.
 
-## First Intel Implementation
+## Current Intel Image Contract
 
-The first useful Intel pass should add:
+The maintained Intel image now provides:
 
-- `Dockerfile.cpu` from the shared Python 3.14 + uv base
-- `Dockerfile.intel-openvino` from the shared Python 3.14 + uv base
-- provider probe command or runtime preflight
-- ONNX model cache directory under `~/.material-agent/models`
-- one embedding scorer and one quality scorer behind the local backend
-- benchmark output that records device, provider, throughput, and fallback decisions
-- an explicit score payload marker such as `scoring_mode=heuristic|hybrid|model`
-  so runtime preflight is not mistaken for model-backed scoring
+- digest-pinned Python/uv base, checksum-pinned Intel userspace packages, and a
+  checksum-pinned bundled DINOv3 ONNX bundle;
+- a baked `backend: local` profile with DINOv3 OpenVINO embedding enabled,
+  `AUTO:GPU,CPU`, explicit CPU fallback, and compiled cache under `/config`;
+- a lean Intel dependency set without Torch, Transformers, OpenCLIP, PyIQA, or
+  MediaPipe, with unsupported screening disabled in the baked profile;
+- root startup limited to PUID/PGID alignment, `/dev/dri` supplementary groups,
+  and allowlisted appdata migration before `gosu` drops to an unprivileged user;
+- `/config/state.db`, `/config/run.log`, and `/config/openvino-cache` as the
+  writable appdata contract while `/photos` remains a read-only input mount;
+- immutable commit image publication followed by entrypoint, ownership,
+  dependency, bundled-model, AUTO-selection, and explicit fallback smoke tests;
+  the mutable `intel-openvino` tag is promoted only after those checks pass.
 
 ## Model Candidate Order
 

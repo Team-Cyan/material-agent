@@ -53,10 +53,10 @@ rescore:
 	$(RUN) rescore --dir $(DIR) $(if $(SCENE),--scene $(SCENE),)
 
 reset-ai:
-	$(RUN) reset-ai --dir $(DIR) $(if $(KEEP_XMP),--keep-xmp,)
+	$(RUN) reset-ai --dir $(DIR) $(if $(CLEAR_XMP),--clear-xmp,)
 
 reset-ai-dry-run:
-	$(RUN) reset-ai --dir $(DIR) --dry-run $(if $(KEEP_XMP),--keep-xmp,)
+	$(RUN) reset-ai --dir $(DIR) --dry-run $(if $(CLEAR_XMP),--clear-xmp,)
 
 fix-db:
 	$(RUN) fix-db --dir $(DIR)
