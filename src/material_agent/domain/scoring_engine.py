@@ -104,7 +104,7 @@ def decode_raw(file_path: str, preview_config: dict) -> RawFrame:
 def _embedded_preview_rgb(raw) -> np.ndarray | None:
     try:
         thumb = raw.extract_thumb()
-    except (rawpy.LibRawNoThumbnailError, rawpy.LibRawUnsupportedThumbnailError):
+    except rawpy.LibRawNoThumbnailError, rawpy.LibRawUnsupportedThumbnailError:
         return None
     if thumb.format is rawpy.ThumbFormat.JPEG:
         encoded = np.frombuffer(thumb.data, dtype=np.uint8)
@@ -152,13 +152,13 @@ def build_xmp_instructions(scores: dict[str, float], output_language: str = "zh"
     )
 
 
-def build_visible_breakdown_instructions(scores: dict[str, float], output_language: str = "zh") -> str:
+def build_visible_breakdown_instructions(
+    scores: dict[str, float], output_language: str = "zh"
+) -> str:
     ordered_dims = [dim for dim in VISIBLE_BREAKDOWN_DIMS if dim in scores]
     if not ordered_dims:
         ordered_dims = list(scores)
-    return " ".join(
-        f"{dim_label(dim, output_language)}:{scores[dim]:.1f}" for dim in ordered_dims
-    )
+    return " ".join(f"{dim_label(dim, output_language)}:{scores[dim]:.1f}" for dim in ordered_dims)
 
 
 def _build_rejected_bundle(
@@ -309,7 +309,7 @@ async def compute_scores(
                 continue
             try:
                 score = max(0.0, min(10.0, float(raw_scores.get(dim, 0))))
-            except (TypeError, ValueError):
+            except TypeError, ValueError:
                 score = 0.0
             results.append(
                 ScorerResult(
@@ -382,7 +382,9 @@ def _combine_scores(
     return round((pixel_total * pixel_weight + vision_total * vision_weight) / w_sum, 2)
 
 
-def _build_layered_signals(*, scores: dict[str, float], meta: dict, scene: str, config: dict) -> list[dict]:
+def _build_layered_signals(
+    *, scores: dict[str, float], meta: dict, scene: str, config: dict
+) -> list[dict]:
     focus_integrity = _mean_known([scores.get("sharpness"), scores.get("clarity")])
     clarity_proxy = scores.get("clarity", focus_integrity)
     focus_confidence = _focus_confidence(meta)
@@ -509,6 +511,7 @@ def _merge_backend_meta(meta: dict, raw_scores: dict) -> None:
         "_quality",
         "_embedding",
         "_face",
+        "_timing",
     ):
         value = raw_scores.get(key)
         if value is not None:

@@ -219,9 +219,9 @@ def _normalize_omlx_group(omlx: dict) -> dict:
         str(requests.get("prompt_preset", "default")).strip().lower() or "default"
     )
     requests["model_profile_mode"] = (
-        str(
-            requests.get("model_profile_mode", _OMLX_REQUESTS_DEFAULTS["model_profile_mode"])
-        ).strip().lower()
+        str(requests.get("model_profile_mode", _OMLX_REQUESTS_DEFAULTS["model_profile_mode"]))
+        .strip()
+        .lower()
         or _OMLX_REQUESTS_DEFAULTS["model_profile_mode"]
     )
     for key in _OMLX_REQUEST_BOOLEAN_FIELDS:
@@ -301,9 +301,7 @@ def normalize_config(cfg: dict) -> dict:
         isinstance(extension, str) for extension in raw_extensions
     ):
         normalized["raw_extensions"] = list(
-            dict.fromkeys(
-                extension.strip().lstrip(".").upper() for extension in raw_extensions
-            )
+            dict.fromkeys(extension.strip().lstrip(".").upper() for extension in raw_extensions)
         )
 
     commentary_enabled = normalized.get("commentary_enabled")
@@ -324,18 +322,14 @@ def normalize_config(cfg: dict) -> dict:
     local = normalized.setdefault("local", {})
     semantic = local.setdefault("semantic", {})
     semantic["enabled"] = _coerce_bool_like(semantic.get("enabled", False))
-    semantic["enforce_available"] = _coerce_bool_like(
-        semantic.get("enforce_available", False)
-    )
+    semantic["enforce_available"] = _coerce_bool_like(semantic.get("enforce_available", False))
     semantic.setdefault("model_name", "MobileCLIP2-S0")
     semantic.setdefault("pretrained", "dfndr2b")
     semantic.setdefault("device", "cpu")
     semantic.setdefault("min_confidence", 0.30)
     quality = local.setdefault("quality", {})
     quality["enabled"] = _coerce_bool_like(quality.get("enabled", False))
-    quality["enforce_available"] = _coerce_bool_like(
-        quality.get("enforce_available", False)
-    )
+    quality["enforce_available"] = _coerce_bool_like(quality.get("enforce_available", False))
     quality.setdefault("device", "cpu")
     quality.setdefault("policy_version", "quality-priors-v1")
     quality.setdefault(
@@ -385,9 +379,7 @@ def normalize_config(cfg: dict) -> dict:
     )
     embedding = local.setdefault("embedding", {})
     embedding["enabled"] = _coerce_bool_like(embedding.get("enabled", False))
-    embedding["enforce_available"] = _coerce_bool_like(
-        embedding.get("enforce_available", False)
-    )
+    embedding["enforce_available"] = _coerce_bool_like(embedding.get("enforce_available", False))
     embedding.setdefault("runtime", "transformers")
     embedding.setdefault("model_name", "facebook/dinov2-small")
     embedding.setdefault("device", "cpu")
@@ -395,6 +387,13 @@ def normalize_config(cfg: dict) -> dict:
     embedding.setdefault("processor_path", "")
     embedding.setdefault("compiled_cache_dir", "~/.material-agent/openvino-cache")
     embedding.setdefault("result_cache_size", 256)
+    embedding.setdefault("performance_hint", "THROUGHPUT")
+    embedding.setdefault("batch_size", 1)
+    embedding.setdefault("max_in_flight", 8)
+    embedding.setdefault("infer_requests", "auto")
+    embedding["allow_batch_fallback"] = _coerce_bool_like(
+        embedding.get("allow_batch_fallback", True)
+    )
     face = local.setdefault("face", {})
     face["enabled"] = _coerce_bool_like(face.get("enabled", False))
     face["enforce_available"] = _coerce_bool_like(face.get("enforce_available", False))
@@ -417,9 +416,7 @@ def normalize_config(cfg: dict) -> dict:
 
     grouping = normalized.setdefault("grouping", {})
     embedding_similarity = grouping.setdefault("embedding_similarity", {})
-    embedding_similarity["enabled"] = _coerce_bool_like(
-        embedding_similarity.get("enabled", False)
-    )
+    embedding_similarity["enabled"] = _coerce_bool_like(embedding_similarity.get("enabled", False))
     embedding_similarity.setdefault("threshold", 0.85)
 
     screening = normalized.setdefault("screening", {})
@@ -510,8 +507,7 @@ def validate_config(cfg: dict) -> None:
         errors.append(f"output_language must be 'zh' or 'en', got: {cfg.get('output_language')!r}")
     if not _is_valid_bool_like(cfg.get("commentary_enabled", False)):
         errors.append(
-            "commentary_enabled must be a boolean, "
-            f"got: {cfg.get('commentary_enabled')!r}"
+            f"commentary_enabled must be a boolean, got: {cfg.get('commentary_enabled')!r}"
         )
     raw_extensions = cfg.get("raw_extensions", ["ARW"])
     if not isinstance(raw_extensions, list):
@@ -519,9 +515,7 @@ def validate_config(cfg: dict) -> None:
     elif not raw_extensions:
         errors.append("raw_extensions must contain at least one extension")
     elif len(raw_extensions) > _MAX_CONFIGURED_EXTENSIONS:
-        errors.append(
-            f"raw_extensions must contain at most {_MAX_CONFIGURED_EXTENSIONS} entries"
-        )
+        errors.append(f"raw_extensions must contain at most {_MAX_CONFIGURED_EXTENSIONS} entries")
     else:
         for extension in raw_extensions:
             if (
@@ -537,13 +531,11 @@ def validate_config(cfg: dict) -> None:
     preview = cfg.get("preview", {})
     if "prefer_embedded" in preview and not _is_valid_bool_like(preview.get("prefer_embedded")):
         errors.append(
-            "preview.prefer_embedded must be a boolean, "
-            f"got: {preview.get('prefer_embedded')!r}"
+            f"preview.prefer_embedded must be a boolean, got: {preview.get('prefer_embedded')!r}"
         )
     if preview.get("fallback_decode", "half_size") not in {"half_size"}:
         errors.append(
-            "preview.fallback_decode must be 'half_size', "
-            f"got: {preview.get('fallback_decode')!r}"
+            f"preview.fallback_decode must be 'half_size', got: {preview.get('fallback_decode')!r}"
         )
     review_pipeline = cfg.get("review_pipeline", {})
     score_prefetch_window = review_pipeline.get("score_prefetch_window", 2)
@@ -575,9 +567,10 @@ def validate_config(cfg: dict) -> None:
             f"got: {embedding_similarity.get('enabled')!r}"
         )
     embedding_threshold = embedding_similarity.get("threshold", 0.85)
-    if not isinstance(embedding_threshold, int | float) or not -1.0 <= float(
-        embedding_threshold
-    ) <= 1.0:
+    if (
+        not isinstance(embedding_threshold, int | float)
+        or not -1.0 <= float(embedding_threshold) <= 1.0
+    ):
         errors.append(
             "grouping.embedding_similarity.threshold must be between -1 and 1, "
             f"got: {embedding_threshold!r}"
@@ -585,9 +578,7 @@ def validate_config(cfg: dict) -> None:
     if embedding_similarity.get("enabled", False) and not cfg.get("local", {}).get(
         "embedding", {}
     ).get("enabled", False):
-        errors.append(
-            "grouping.embedding_similarity requires local.embedding.enabled: true"
-        )
+        errors.append("grouping.embedding_similarity requires local.embedding.enabled: true")
     xmp = cfg.get("xmp", {})
     if xmp.get("write_mode", "sidecar") != "sidecar":
         errors.append(
@@ -596,8 +587,7 @@ def validate_config(cfg: dict) -> None:
         )
     if xmp.get("machine_tag_target", "identifier") not in {"identifier"}:
         errors.append(
-            "xmp.machine_tag_target must be 'identifier', "
-            f"got: {xmp.get('machine_tag_target')!r}"
+            f"xmp.machine_tag_target must be 'identifier', got: {xmp.get('machine_tag_target')!r}"
         )
 
     if backend == "local":
@@ -608,7 +598,7 @@ def validate_config(cfg: dict) -> None:
             )
         local = cfg.get("local", {})
         semantic = local.get("semantic", {})
-        for key in ("enabled", "enforce_available"):
+        for key in ("enabled", "enforce_available", "allow_batch_fallback"):
             if not _is_valid_bool_like(semantic.get(key, False)):
                 errors.append(f"local.semantic.{key} must be a boolean, got: {semantic.get(key)!r}")
         for key in ("model_name", "pretrained", "device"):
@@ -640,17 +630,11 @@ def validate_config(cfg: dict) -> None:
                 raw_min = spec.get("raw_min")
                 raw_max = spec.get("raw_max")
                 if not isinstance(raw_min, int | float) or not isinstance(raw_max, int | float):
-                    errors.append(
-                        f"local.quality.metrics.{name}.raw_min/raw_max must be numeric"
-                    )
+                    errors.append(f"local.quality.metrics.{name}.raw_min/raw_max must be numeric")
                 elif float(raw_max) <= float(raw_min):
-                    errors.append(
-                        f"local.quality.metrics.{name}.raw_max must exceed raw_min"
-                    )
+                    errors.append(f"local.quality.metrics.{name}.raw_max must exceed raw_min")
                 if not isinstance(spec.get("lower_better"), bool):
-                    errors.append(
-                        f"local.quality.metrics.{name}.lower_better must be a boolean"
-                    )
+                    errors.append(f"local.quality.metrics.{name}.lower_better must be a boolean")
                 if spec.get("role", "quality") not in {
                     "reject_prior",
                     "quality",
@@ -673,9 +657,7 @@ def validate_config(cfg: dict) -> None:
         for key in ("model_name", "device"):
             value = embedding.get(key)
             if not isinstance(value, str) or not value.strip():
-                errors.append(
-                    f"local.embedding.{key} must be a non-empty string, got: {value!r}"
-                )
+                errors.append(f"local.embedding.{key} must be a non-empty string, got: {value!r}")
         result_cache_size = embedding.get("result_cache_size", 256)
         if (
             not isinstance(result_cache_size, int)
@@ -686,13 +668,36 @@ def validate_config(cfg: dict) -> None:
                 "local.embedding.result_cache_size must be an integer between 0 and 4096, "
                 f"got: {result_cache_size!r}"
             )
+        performance_hint = embedding.get("performance_hint", "THROUGHPUT")
+        if performance_hint not in {"LATENCY", "THROUGHPUT", "CUMULATIVE_THROUGHPUT"}:
+            errors.append(
+                "local.embedding.performance_hint must be LATENCY, THROUGHPUT, or "
+                f"CUMULATIVE_THROUGHPUT, got: {performance_hint!r}"
+            )
+        for key in ("batch_size", "max_in_flight"):
+            value = embedding.get(key, 1)
+            if not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 64:
+                errors.append(
+                    f"local.embedding.{key} must be an integer between 1 and 64, got: {value!r}"
+                )
+        infer_requests = embedding.get("infer_requests", "auto")
+        if not (
+            infer_requests == "auto"
+            or (
+                isinstance(infer_requests, int)
+                and not isinstance(infer_requests, bool)
+                and 1 <= infer_requests <= 64
+            )
+        ):
+            errors.append(
+                "local.embedding.infer_requests must be 'auto' or an integer between "
+                f"1 and 64, got: {infer_requests!r}"
+            )
         if embedding.get("enabled", False) and embedding.get("runtime") == "openvino":
             for key in ("model_path", "processor_path", "compiled_cache_dir"):
                 value = embedding.get(key)
                 if not isinstance(value, str) or not value.strip():
-                    errors.append(
-                        f"local.embedding.{key} must be set for OpenVINO embedding"
-                    )
+                    errors.append(f"local.embedding.{key} must be set for OpenVINO embedding")
         face = local.get("face", {})
         for key in ("enabled", "enforce_available"):
             if not _is_valid_bool_like(face.get(key, False)):
@@ -700,8 +705,7 @@ def validate_config(cfg: dict) -> None:
         model_asset_path = face.get("model_asset_path")
         if not isinstance(model_asset_path, str) or not model_asset_path.strip():
             errors.append(
-                "local.face.model_asset_path must be a non-empty string, "
-                f"got: {model_asset_path!r}"
+                f"local.face.model_asset_path must be a non-empty string, got: {model_asset_path!r}"
             )
         num_faces = face.get("num_faces", 5)
         if not isinstance(num_faces, int) or num_faces < 1:
@@ -709,8 +713,7 @@ def validate_config(cfg: dict) -> None:
         confidence = face.get("min_detection_confidence", 0.5)
         if not isinstance(confidence, int | float) or not 0.0 <= float(confidence) <= 1.0:
             errors.append(
-                "local.face.min_detection_confidence must be between 0 and 1, "
-                f"got: {confidence!r}"
+                f"local.face.min_detection_confidence must be between 0 and 1, got: {confidence!r}"
             )
         inference = cfg.get("inference", {})
         runtime = inference.get("runtime", "openvino")
@@ -782,7 +785,9 @@ def validate_config(cfg: dict) -> None:
                 errors.append(f"omlx.requests.{field} must be a boolean, got: {value!r}")
         model_profiles = raw_omlx.get("model_profiles")
         if model_profiles is not None and not isinstance(model_profiles, dict):
-            errors.append("omlx.model_profiles must be an object mapping model ids to profile configs")
+            errors.append(
+                "omlx.model_profiles must be an object mapping model ids to profile configs"
+            )
         elif isinstance(model_profiles, dict):
             for model_name, profile in model_profiles.items():
                 if not isinstance(profile, dict):
@@ -808,8 +813,7 @@ def validate_config(cfg: dict) -> None:
             not isinstance(image_max_edge, int) or image_max_edge < 1
         ):
             errors.append(
-                "omlx.vision_image_max_edge must be an integer >= 1, "
-                f"got: {image_max_edge!r}"
+                f"omlx.vision_image_max_edge must be an integer >= 1, got: {image_max_edge!r}"
             )
         jpeg_quality = _raw_omlx_value(raw_omlx, "vision_jpeg_quality")
         if jpeg_quality is not None and (
@@ -837,8 +841,7 @@ def validate_config(cfg: dict) -> None:
                 or helper_timeout <= 0
             ):
                 errors.append(
-                    "screening.musiq.helper_timeout_seconds must be > 0, "
-                    f"got: {helper_timeout!r}"
+                    f"screening.musiq.helper_timeout_seconds must be > 0, got: {helper_timeout!r}"
                 )
 
     scene_profiles = cfg.get("scene_profiles", {})

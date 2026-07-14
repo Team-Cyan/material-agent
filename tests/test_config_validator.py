@@ -57,9 +57,7 @@ def test_normalize_config_rejects_null_mapping_section_cleanly():
 
 
 def test_normalize_config_canonicalizes_raw_extensions():
-    normalized = normalize_config(
-        {"raw_extensions": [".arw", " CR3 ", "arw"]}
-    )
+    normalized = normalize_config({"raw_extensions": [".arw", " CR3 ", "arw"]})
 
     assert normalized["raw_extensions"] == ["ARW", "CR3"]
 
@@ -144,6 +142,36 @@ def test_normalize_config_defaults_inference_enforce_available_false():
     assert normalized["inference"]["enforce_available"] is False
 
 
+def test_normalize_config_defaults_openvino_throughput_controls():
+    embedding = normalize_config({"backend": "local"})["local"]["embedding"]
+
+    assert embedding["performance_hint"] == "THROUGHPUT"
+    assert embedding["batch_size"] == 1
+    assert embedding["max_in_flight"] == 8
+    assert embedding["infer_requests"] == "auto"
+    assert embedding["allow_batch_fallback"] is True
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("batch_size", 0),
+        ("max_in_flight", 65),
+        ("infer_requests", 0),
+        ("infer_requests", "eight"),
+        ("performance_hint", "FAST"),
+    ],
+)
+def test_validate_config_rejects_invalid_openvino_throughput_controls(field, value, capsys):
+    cfg = normalize_config({"backend": "local"})
+    cfg["local"]["embedding"][field] = value
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert f"local.embedding.{field}" in capsys.readouterr().out
+
+
 def test_normalize_config_sets_omlx_runtime_request_admin_defaults():
     normalized = normalize_config({"backend": "omlx", "omlx": {}})
 
@@ -152,12 +180,18 @@ def test_normalize_config_sets_omlx_runtime_request_admin_defaults():
     assert normalized["omlx"]["runtime"]["require_xgrammar"] is False
     assert normalized["omlx"]["runtime"]["probe_on_run"] is True
     assert normalized["omlx"]["runtime"]["enforce_dedicated_instance"] is False
-    assert normalized["omlx"]["requests"]["fast_vision_schema"] == "material_agent.fast_screening_signals"
+    assert (
+        normalized["omlx"]["requests"]["fast_vision_schema"]
+        == "material_agent.fast_screening_signals"
+    )
     assert normalized["omlx"]["requests"]["vision_schema"] == "material_agent.full_score"
     assert (
-        normalized["omlx"]["requests"]["group_commentary_schema"] == "material_agent.group_commentary"
+        normalized["omlx"]["requests"]["group_commentary_schema"]
+        == "material_agent.group_commentary"
     )
-    assert normalized["omlx"]["requests"]["post_commentary_schema"] == "material_agent.post_commentary"
+    assert (
+        normalized["omlx"]["requests"]["post_commentary_schema"] == "material_agent.post_commentary"
+    )
     assert normalized["omlx"]["requests"]["contract_mode"] == "response_format_json_schema"
     assert normalized["omlx"]["requests"]["prompt_preset"] == "qwen3"
     assert normalized["omlx"]["requests"]["model_profile_mode"] == "auto"

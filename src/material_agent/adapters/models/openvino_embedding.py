@@ -3,6 +3,8 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import time
+import uuid
 from io import BytesIO
 from pathlib import Path, PurePosixPath
 from typing import Any, Protocol
@@ -33,20 +35,21 @@ class OpenVinoEmbeddingAdapter:
     ):
         self.config = config or {}
         self.model_path = str(Path(str(self.config.get("model_path", ""))).expanduser())
-        self.processor_path = str(
-            Path(str(self.config.get("processor_path", ""))).expanduser()
-        )
+        self.processor_path = str(Path(str(self.config.get("processor_path", ""))).expanduser())
         self.device = str(self.config.get("device", "AUTO:GPU,CPU"))
         self.fallback_device = str(self.config.get("fallback_device", "CPU")).strip()
         self.compiled_cache_dir = str(
             Path(
-                str(
-                    self.config.get(
-                        "compiled_cache_dir", "~/.material-agent/openvino-cache"
-                    )
-                )
+                str(self.config.get("compiled_cache_dir", "~/.material-agent/openvino-cache"))
             ).expanduser()
         )
+        self.performance_hint = (
+            str(self.config.get("performance_hint", "THROUGHPUT")).strip().upper()
+        )
+        self.batch_size = max(1, int(self.config.get("batch_size", 1)))
+        self.max_in_flight = max(1, int(self.config.get("max_in_flight", 8)))
+        self.infer_requests = self.config.get("infer_requests", "auto")
+        self.allow_batch_fallback = bool(self.config.get("allow_batch_fallback", True))
         bundle_assets = _model_bundle_assets(
             Path(self.model_path),
             Path(self.processor_path),
@@ -56,9 +59,17 @@ class OpenVinoEmbeddingAdapter:
         self._runtime = runtime
 
     async def embed_image(self, jpeg_bytes: bytes) -> dict[str, Any]:
-        return await asyncio.to_thread(self._embed_sync, jpeg_bytes)
+        return (await self.embed_images([jpeg_bytes]))[0]
+
+    async def embed_images(self, jpeg_images: list[bytes]) -> list[dict[str, Any]]:
+        if not jpeg_images:
+            return []
+        return await asyncio.to_thread(self._embed_many_sync, jpeg_images)
 
     def _embed_sync(self, jpeg_bytes: bytes) -> dict[str, Any]:
+        return self._embed_many_sync([jpeg_bytes])[0]
+
+    def _embed_many_sync(self, jpeg_images: list[bytes]) -> list[dict[str, Any]]:
         runtime = self._runtime
         if runtime is None:
             if not self.model_path:
@@ -71,22 +82,33 @@ class OpenVinoEmbeddingAdapter:
                 device=self.device,
                 fallback_device=self.fallback_device,
                 compiled_cache_dir=self.compiled_cache_dir,
+                performance_hint=self.performance_hint,
+                batch_size=self.batch_size,
+                max_in_flight=self.max_in_flight,
+                infer_requests=self.infer_requests,
+                allow_batch_fallback=self.allow_batch_fallback,
             )
             self._runtime = runtime
-        image = Image.open(BytesIO(jpeg_bytes)).convert("RGB")
-        vector = runtime.embed(image)
-        if not vector:
+        decode_started = time.perf_counter()
+        images = [Image.open(BytesIO(jpeg_bytes)).convert("RGB") for jpeg_bytes in jpeg_images]
+        image_decode_seconds = time.perf_counter() - decode_started
+        if hasattr(runtime, "embed_many"):
+            vectors = runtime.embed_many(images)
+        else:
+            vectors = [runtime.embed(image) for image in images]
+        if len(vectors) != len(images) or any(not vector for vector in vectors):
             raise RuntimeError("OpenVINO runtime returned an empty embedding")
         requested_device = str(getattr(runtime, "requested_device", self.device))
         compiled_device = str(getattr(runtime, "compiled_device", requested_device))
-        fallback_device = str(
-            getattr(runtime, "fallback_device", self.fallback_device)
-        )
+        fallback_device = str(getattr(runtime, "fallback_device", self.fallback_device))
         fallback_used = bool(getattr(runtime, "fallback_used", False))
         fallback_reason = getattr(runtime, "fallback_reason", None)
-        result = {
-            "vector": [float(value) for value in vector],
-            "dimensions": len(vector),
+        runtime_timing = dict(getattr(runtime, "last_run_timing", {}) or {})
+        timing = {
+            "image_decode_seconds": round(image_decode_seconds, 6),
+            **runtime_timing,
+        }
+        common = {
             "model_name": Path(self.model_path).name or "fixture-openvino-model",
             "model_version": "onnx-openvino",
             "runtime": "openvino",
@@ -98,14 +120,21 @@ class OpenVinoEmbeddingAdapter:
             "fallback_reason": str(fallback_reason) if fallback_reason else None,
             "execution_devices": list(runtime.execution_devices),
             "execution_device_readback": (
-                "unknown"
-                if getattr(runtime, "execution_device_readback_error", None)
-                else "actual"
+                "unknown" if getattr(runtime, "execution_device_readback_error", None) else "actual"
             ),
             "compiled_cache_dir": _portable_path(self.compiled_cache_dir),
             "model_digest": self.model_digest,
             "bundle_assets": list(self.bundle_assets),
             "openvino_version": getattr(runtime, "openvino_version", "unknown"),
+            "performance_hint": getattr(runtime, "performance_hint", self.performance_hint),
+            "batch_size_requested": self.batch_size,
+            "batch_size_actual": int(getattr(runtime, "batch_size", 1)),
+            "batch_fallback_used": bool(getattr(runtime, "batch_fallback_used", False)),
+            "batch_fallback_reason": getattr(runtime, "batch_fallback_reason", None),
+            "infer_requests": int(getattr(runtime, "infer_requests", 1)),
+            "optimal_infer_requests": getattr(runtime, "optimal_infer_requests", None),
+            "timing": timing,
+            "inference_run_id": uuid.uuid4().hex,
             "cache_identity": _cache_identity(
                 self.model_digest,
                 requested_device,
@@ -115,10 +144,15 @@ class OpenVinoEmbeddingAdapter:
             ),
         }
         if getattr(runtime, "execution_device_readback_error", None):
-            result["execution_device_readback_error"] = str(
-                runtime.execution_device_readback_error
-            )
-        return result
+            common["execution_device_readback_error"] = str(runtime.execution_device_readback_error)
+        return [
+            {
+                **common,
+                "vector": [float(value) for value in vector],
+                "dimensions": len(vector),
+            }
+            for vector in vectors
+        ]
 
 
 class _OpenVinoRuntime:
@@ -130,6 +164,11 @@ class _OpenVinoRuntime:
         device: str,
         fallback_device: str,
         compiled_cache_dir: str,
+        performance_hint: str = "THROUGHPUT",
+        batch_size: int = 1,
+        max_in_flight: int = 8,
+        infer_requests: str | int = "auto",
+        allow_batch_fallback: bool = True,
     ):
         model_file = Path(model_path)
         if not model_file.is_file():
@@ -150,47 +189,139 @@ class _OpenVinoRuntime:
         self.openvino_version = str(getattr(ov, "__version__", "unknown"))
         self.processor = _NumpyImageProcessor(processor_dir, np)
         self.core = ov.Core()
-        model = self.core.read_model(str(model_file))
+        self.ov = ov
         self.requested_device = device
         self.compiled_device = device
         self.fallback_device = fallback_device
         self.fallback_used = False
         self.fallback_reason = None
-        compile_config = {"CACHE_DIR": str(cache_dir)}
+        self.performance_hint = performance_hint
+        self.batch_size_requested = max(1, int(batch_size))
+        self.batch_size = self.batch_size_requested
+        self.batch_fallback_used = False
+        self.batch_fallback_reason = None
+        compile_config = {
+            "CACHE_DIR": str(cache_dir),
+            "PERFORMANCE_HINT": performance_hint,
+        }
+        compile_started = time.perf_counter()
         try:
-            self.compiled = self.core.compile_model(model, device, compile_config)
+            self.compiled = self._compile_model(model_file, device, compile_config, self.batch_size)
         except RuntimeError as error:
             available_devices = [str(value) for value in self.core.available_devices]
-            if not _should_compile_fallback(
+            if _should_compile_fallback(
                 requested_device=device,
                 fallback_device=fallback_device,
                 available_devices=available_devices,
                 error=error,
             ):
+                self.fallback_used = True
+                self.fallback_reason = f"{type(error).__name__}: {error}"
+                self.compiled_device = fallback_device
+                try:
+                    self.compiled = self._compile_model(
+                        model_file, fallback_device, compile_config, self.batch_size
+                    )
+                except RuntimeError as fallback_error:
+                    if self.batch_size <= 1 or not allow_batch_fallback:
+                        raise
+                    self._record_batch_fallback(fallback_error)
+                    self.compiled = self._compile_model(
+                        model_file, fallback_device, compile_config, 1
+                    )
+            elif self.batch_size > 1 and allow_batch_fallback:
+                self._record_batch_fallback(error)
+                self.compiled = self._compile_model(model_file, device, compile_config, 1)
+            else:
                 raise
-            self.fallback_used = True
-            self.fallback_reason = f"{type(error).__name__}: {error}"
-            self.compiled_device = fallback_device
-            self.compiled = self.core.compile_model(model, fallback_device, compile_config)
+        self.compile_seconds = time.perf_counter() - compile_started
         (
             self.execution_devices,
             self.execution_device_readback_error,
         ) = _read_execution_devices(self.compiled)
+        self.optimal_infer_requests, self.optimal_infer_requests_error = (
+            _read_optimal_infer_requests(self.compiled)
+        )
+        self.infer_requests = _resolve_infer_requests(
+            infer_requests,
+            optimal=self.optimal_infer_requests,
+            maximum=max_in_flight,
+        )
+
+    def _compile_model(self, model_file: Path, device: str, config: dict, batch_size: int):
+        model = self.core.read_model(str(model_file))
+        if batch_size > 1:
+            input_port = model.input(0)
+            input_shape = list(input_port.get_shape())
+            if not input_shape:
+                raise RuntimeError("OpenVINO embedding model input has no batch dimension")
+            input_shape[0] = batch_size
+            model.reshape({input_port.get_any_name(): input_shape})
+        return self.core.compile_model(model, device, config)
+
+    def _record_batch_fallback(self, error: RuntimeError) -> None:
+        self.batch_fallback_used = True
+        self.batch_fallback_reason = f"{type(error).__name__}: {error}"
+        self.batch_size = 1
 
     def embed(self, image: Image.Image) -> list[float]:
-        pixel_values = self.processor(image)
-        input_name = self.compiled.input(0).get_any_name()
-        outputs = self.compiled({input_name: pixel_values})
-        arrays = [self.np.asarray(value) for value in outputs.values()]
-        if not arrays:
+        return self.embed_many([image])[0]
+
+    def embed_many(self, images: list[Image.Image]) -> list[list[float]]:
+        if not images:
+            self.last_run_timing = {}
             return []
-        output = max(arrays, key=lambda value: value.ndim)
-        vector = output[:, 0, :] if output.ndim == 3 else output.reshape(output.shape[0], -1)
-        vector = vector[0].astype(self.np.float32, copy=False)
-        norm = float(self.np.linalg.norm(vector))
-        if norm > 0:
-            vector = vector / norm
-        return [float(value) for value in vector.tolist()]
+        preprocess_started = time.perf_counter()
+        tensors = [self.processor(image) for image in images]
+        preprocess_seconds = time.perf_counter() - preprocess_started
+        input_name = self.compiled.input(0).get_any_name()
+        batches = []
+        for start in range(0, len(tensors), self.batch_size):
+            members = tensors[start : start + self.batch_size]
+            valid_count = len(members)
+            while len(members) < self.batch_size:
+                members.append(members[-1])
+            batches.append((start, valid_count, self.np.concatenate(members, axis=0)))
+
+        output_batches: dict[int, tuple[int, Any]] = {}
+        queue = self.ov.AsyncInferQueue(self.compiled, self.infer_requests)
+
+        def _complete(request, userdata):
+            start, valid_count = userdata
+            arrays = [self.np.array(output.data, copy=True) for output in request.output_tensors]
+            output_batches[start] = (
+                valid_count,
+                max(arrays, key=lambda value: value.ndim),
+            )
+
+        queue.set_callback(_complete)
+        inference_started = time.perf_counter()
+        for start, valid_count, batch in batches:
+            queue.start_async({input_name: batch}, userdata=(start, valid_count))
+        queue.wait_all()
+        inference_seconds = time.perf_counter() - inference_started
+
+        postprocess_started = time.perf_counter()
+        vectors: list[list[float]] = []
+        for start, _, _ in batches:
+            valid_count, output = output_batches[start]
+            matrix = output[:, 0, :] if output.ndim == 3 else output.reshape(output.shape[0], -1)
+            for vector in matrix[:valid_count]:
+                vector = vector.astype(self.np.float32, copy=False)
+                norm = float(self.np.linalg.norm(vector))
+                if norm > 0:
+                    vector = vector / norm
+                vectors.append([float(value) for value in vector.tolist()])
+        postprocess_seconds = time.perf_counter() - postprocess_started
+        self.last_run_timing = {
+            "compile_seconds": round(self.compile_seconds, 6),
+            "preprocess_seconds": round(preprocess_seconds, 6),
+            "inference_seconds": round(inference_seconds, 6),
+            "postprocess_seconds": round(postprocess_seconds, 6),
+            "batch_count": len(batches),
+            "image_count": len(images),
+        }
+        return vectors
 
 
 class _NumpyImageProcessor:
@@ -233,7 +364,9 @@ class _NumpyImageProcessor:
                 dtype=self.np.float32,
             )
             if mean.shape != (3,) or std.shape != (3,) or self.np.any(std == 0):
-                raise RuntimeError("OpenVINO preprocessor mean/std must contain three non-zero values")
+                raise RuntimeError(
+                    "OpenVINO preprocessor mean/std must contain three non-zero values"
+                )
             array = (array - mean) / std
         data_format = str(self.config.get("data_format", "channels_first"))
         if data_format == "channels_first":
@@ -286,9 +419,7 @@ def _model_bundle_assets(
         for relative_path in _onnx_external_data_locations(model_path):
             external_path = model_path.parent / relative_path
             if not external_path.is_file():
-                raise ValueError(
-                    f"ONNX external data file does not exist: {external_path}"
-                )
+                raise ValueError(f"ONNX external data file does not exist: {external_path}")
             assets[f"external/{relative_path.as_posix()}"] = external_path
             excluded.add(external_path.resolve())
 
@@ -425,10 +556,7 @@ def _request_has_unavailable_device(requested: str, available: list[str]) -> boo
     visible = [str(device).strip().upper() for device in available]
     return any(
         candidate
-        and not any(
-            device == candidate or device.startswith(f"{candidate}.")
-            for device in visible
-        )
+        and not any(device == candidate or device.startswith(f"{candidate}.") for device in visible)
         for candidate in candidates
     )
 
@@ -441,6 +569,30 @@ def _read_execution_devices(compiled) -> tuple[list[str], str | None]:
         return devices, None
     except Exception as error:
         return ["unknown"], f"{type(error).__name__}: {error}"
+
+
+def _read_optimal_infer_requests(compiled) -> tuple[int | None, str | None]:
+    try:
+        value = int(compiled.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS"))
+    except (RuntimeError, TypeError, ValueError) as error:
+        return None, f"{type(error).__name__}: {error}"
+    if value < 1:
+        return None, "OPTIMAL_NUMBER_OF_INFER_REQUESTS returned a value below 1"
+    return value, None
+
+
+def _resolve_infer_requests(
+    requested: str | int,
+    *,
+    optimal: int | None,
+    maximum: int,
+) -> int:
+    cap = max(1, int(maximum))
+    if isinstance(requested, int) and not isinstance(requested, bool):
+        return min(cap, max(1, requested))
+    if str(requested).strip().lower() != "auto":
+        raise RuntimeError("OpenVINO infer_requests must be 'auto' or a positive integer")
+    return min(cap, optimal or 1)
 
 
 def _portable_path(value: str) -> str:

@@ -51,6 +51,10 @@
   tests pass before the mutable Intel tag is promoted
 - corrected the local benchmark to clear per-image result cache between
   repetitions and recorded a replacement OpenVINO CPU synthetic report
+- replaced one-image synchronous OpenVINO embedding with bounded review-window
+  priming, `AsyncInferQueue`, configurable batch 1/4/8 and request pools,
+  throughput hints, optimal-request readback, batch fallback provenance, and
+  RAW/heuristic/preprocess/inference/postprocess/compile stage timing
 
 ## In Progress
 
@@ -69,9 +73,9 @@
 ## Next
 
 - calibrate a versioned score policy only after per-block benchmark reports exist
-- measure warm OpenVINO CPU/GPU parity, steady-state throughput, fallback rate,
-  and target-host utilization on the Intel iGPU host; do not infer acceleration
-  from the existing tiny cold comparison
+- remeasure warm OpenVINO CPU/GPU parity, steady-state throughput, fallback
+  rate, and target-host utilization on the Intel iGPU host with the asynchronous
+  batch 1/4/8 matrix; select the deployment default from end-to-end results
 - publish the hardened image, then repeat the bounded Unraid read-only pilot
   with non-root UID/GID and appdata ownership checks
 - run a separately authorized target-host isolated-XMP pilot before changing

@@ -143,6 +143,32 @@ assets, OpenVINO/runtime settings, and preprocessing revision. External-data
 paths that escape the model directory are rejected at runtime, so a normal
 Hugging Face symlink snapshot must be materialized before direct use.
 
+The embedding path is throughput-aware rather than one-image synchronous:
+
+- `performance_hint` is passed to OpenVINO and defaults to `THROUGHPUT`;
+- `batch_size` reshapes the model batch dimension, pads only the final partial
+  batch, and reports any fallback to batch 1;
+- `AsyncInferQueue` runs the configured request pool while preserving input
+  order; `infer_requests: auto` reads
+  `OPTIMAL_NUMBER_OF_INFER_REQUESTS` and caps it with `max_in_flight`;
+- the review pipeline prepares a bounded window in parallel, primes all
+  embeddings in that window once, then reuses the ordinary result cache during
+  scoring. Screening-enabled runs skip priming so early rejection still avoids
+  unnecessary model work;
+- per-run provenance records requested/actual batch size, request count,
+  optimal-request readback, performance hint, and actual execution devices.
+
+The Intel image uses a 32-preview preparation window, batch 4, and up to eight
+in-flight requests. These are throughput controls, not semantic model settings,
+so changing them does not invalidate persisted embedding vectors.
+
+Stage timing separates RAW preview decode, local heuristic scoring, OpenVINO
+preprocessing, inference, postprocessing, and compile time. Review job summaries
+and `benchmark-local` reports aggregate a shared asynchronous inference run only
+once even though every image retains the same provenance. Stage sums can overlap
+because RAW preparation and inference requests are intentionally concurrent;
+use end-to-end elapsed time for throughput comparisons.
+
 Device fallback has two valid forms:
 
 - OpenVINO may compile `AUTO:GPU,CPU` successfully and internally select CPU;
@@ -192,7 +218,8 @@ The maintained Intel image now provides:
 - digest-pinned Python/uv base, checksum-pinned Intel userspace packages, and a
   checksum-pinned bundled DINOv3 ONNX bundle;
 - a baked `backend: local` profile with DINOv3 OpenVINO embedding enabled,
-  `AUTO:GPU,CPU`, explicit CPU fallback, and compiled cache under `/config`;
+  `AUTO:GPU,CPU`, explicit CPU fallback, throughput-mode async batching, and
+  compiled cache under `/config`;
 - a lean Intel dependency set without Torch, Transformers, OpenCLIP, PyIQA, or
   MediaPipe, with unsupported screening disabled in the baked profile;
 - root startup limited to PUID/PGID alignment, `/dev/dri` supplementary groups,

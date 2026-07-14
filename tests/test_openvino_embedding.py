@@ -142,12 +142,8 @@ def test_openvino_runtime_real_cpu_fallback(tmp_path):
     from onnx import TensorProto, helper
 
     model_path = tmp_path / "identity.onnx"
-    tensor_in = helper.make_tensor_value_info(
-        "pixel_values", TensorProto.FLOAT, [1, 3, 2, 2]
-    )
-    tensor_out = helper.make_tensor_value_info(
-        "embedding", TensorProto.FLOAT, [1, 3, 2, 2]
-    )
+    tensor_in = helper.make_tensor_value_info("pixel_values", TensorProto.FLOAT, [1, 3, 2, 2])
+    tensor_out = helper.make_tensor_value_info("embedding", TensorProto.FLOAT, [1, 3, 2, 2])
     graph = helper.make_graph(
         [helper.make_node("Identity", ["pixel_values"], ["embedding"])],
         "identity-embedding",
@@ -177,13 +173,21 @@ def test_openvino_runtime_real_cpu_fallback(tmp_path):
         device="AUTO:GPU,CPU",
         fallback_device="CPU",
         compiled_cache_dir=str(tmp_path / "cache"),
+        batch_size=4,
+        max_in_flight=8,
+        infer_requests=4,
     )
-    vector = runtime.embed(Image.new("RGB", (2, 2), (10, 20, 30)))
+    vectors = runtime.embed_many([Image.new("RGB", (2, 2), (value, 20, 30)) for value in range(5)])
 
-    assert len(vector) == 12
+    assert len(vectors) == 5
+    assert all(len(vector) == 12 for vector in vectors)
     assert runtime.fallback_used is True
     assert runtime.compiled_device == "CPU"
     assert runtime.execution_devices == ["CPU"]
+    assert runtime.batch_size == 4
+    assert runtime.infer_requests == 4
+    assert runtime.last_run_timing["batch_count"] == 2
+    assert runtime.last_run_timing["image_count"] == 5
 
 
 def test_openvino_execution_device_readback_failure_is_unknown():

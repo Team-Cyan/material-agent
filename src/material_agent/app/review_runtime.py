@@ -1,3 +1,5 @@
+import time
+
 from ..adapters.metadata.exiftool_xmp import ExifToolXMPWriter
 from ..adapters.progress import RichEventSink
 from ..app.job_executor import JobExecutor
@@ -57,9 +59,7 @@ def build_review_job_executor(
             embedding_enabled = bool(
                 config["grouping"].get("embedding_similarity", {}).get("enabled", False)
             )
-            model_key = (
-                build_local_embedding_cache_key(config) if embedding_enabled else ""
-            )
+            model_key = build_local_embedding_cache_key(config) if embedding_enabled else ""
             return Grouper(
                 config["grouping"],
                 embedding_loader=embedding_for_file,
@@ -89,19 +89,44 @@ def build_review_job_executor(
                 "previous_group_info": cached.get("group_info"),
                 "skip_write": cached.get("status") == "done",
             }
+        decode_started = time.perf_counter()
         frame = decode_raw(file_path, config["preview"])
         return {
             "file_path": file_path,
             "cached": False,
             "frame": frame,
+            "timing": {"raw_decode_seconds": round(time.perf_counter() - decode_started, 6)},
         }
+
+    def prime_prepared(prepared_items: list[dict]) -> None:
+        embedding = config.get("local", {}).get("embedding", {})
+        if (
+            not embedding.get("enabled", False)
+            or config.get("screening", {}).get("enabled", False)
+            or not hasattr(client, "embed_images")
+        ):
+            return
+        frames = [
+            prepared["frame"]
+            for prepared in prepared_items
+            if not prepared.get("cached") and prepared.get("frame") is not None
+        ]
+        if frames:
+            run_coro_sync(client.embed_images([frame.jpeg_bytes for frame in frames]))
 
     def score_prepared(prepared: dict) -> dict:
         if prepared.get("cached"):
-            return {key: value for key, value in prepared.items() if key not in {"file_path", "cached"}}
+            return {
+                key: value for key, value in prepared.items() if key not in {"file_path", "cached"}
+            }
         file_path = prepared["file_path"]
         frame = prepared["frame"]
+        score_started = time.perf_counter()
         bundle = run_coro_sync(compute_scores(frame, client, config, fast_screening=fast_screening))
+        timing = dict(bundle.meta.get("timing", {}))
+        timing.update(prepared.get("timing", {}))
+        timing["score_seconds"] = round(time.perf_counter() - score_started, 6)
+        bundle.meta["timing"] = timing
         if state is not None and not dry_run:
             state.mark_scored(
                 file_path,
@@ -133,13 +158,18 @@ def build_review_job_executor(
             "signals": bundle.signals,
         }
 
-    def finalize_group(group_results: list[tuple[str, dict]], *, group_id: str) -> list[tuple[str, dict]]:
+    def finalize_group(
+        group_results: list[tuple[str, dict]], *, group_id: str
+    ) -> list[tuple[str, dict]]:
         if not group_results:
             return group_results
 
         group_commentary = run_coro_sync(
             commentary.for_group(
-                [(file_path, float(payload.get("score_total", 0.0))) for file_path, payload in group_results],
+                [
+                    (file_path, float(payload.get("score_total", 0.0)))
+                    for file_path, payload in group_results
+                ],
                 [
                     {
                         **payload.get("scores", {}),
@@ -166,7 +196,9 @@ def build_review_job_executor(
             enabled=config.get("screening_policy", {}).get("top1_review_fallback", True),
         )
 
-    def write_file(file_path: str, score_payload: dict, *, rank: int, group_id: str, group_size: int) -> None:
+    def write_file(
+        file_path: str, score_payload: dict, *, rank: int, group_id: str, group_size: int
+    ) -> None:
         total_score = float(score_payload.get("score_total", 0.0))
         scores = score_payload.get("scores", {})
         meta = score_payload.get("meta", {})
@@ -273,6 +305,7 @@ def build_review_job_executor(
         event_sink=event_sink,
         group_files=group_files,
         prepare_score=prepare_score,
+        prime_prepared=prime_prepared,
         score_prepared=score_prepared,
         finalize_group=finalize_group,
         write_file=write_file,

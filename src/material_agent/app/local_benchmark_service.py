@@ -70,7 +70,9 @@ def load_benchmark_manifest(path: str | Path) -> tuple[dict[str, Any], list[Benc
                 manifest_path=relative_path,
                 group=group,
                 expected_scene=_optional_string(labels.get("scene")),
-                face_present=_optional_bool(labels.get("face_present"), f"items[{index}].labels.face_present"),
+                face_present=_optional_bool(
+                    labels.get("face_present"), f"items[{index}].labels.face_present"
+                ),
                 non_photo=bool(labels.get("non_photo", False)),
                 reject=_optional_bool(labels.get("reject"), f"items[{index}].labels.reject"),
             )
@@ -142,8 +144,7 @@ def run_local_benchmark(
     )
     manifest_digest = hashlib.sha256(Path(manifest_path).read_bytes()).hexdigest()
     report_items = [
-        {key: value for key, value in row.items() if key != "embedding_vector"}
-        for row in results
+        {key: value for key, value in row.items() if key != "embedding_vector"} for row in results
     ]
     report: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
@@ -166,6 +167,7 @@ def run_local_benchmark(
         },
         "metrics": {
             **metrics,
+            "timings": _benchmark_timing_metrics(results),
             "deterministic_scores": deterministic,
             "elapsed_seconds": round(elapsed, 6),
             "cold_run_seconds": round(durations[0], 6),
@@ -173,7 +175,9 @@ def run_local_benchmark(
                 round(statistics.median(durations[1:]), 6) if len(durations) > 1 else None
             ),
             "p50_run_seconds": round(statistics.median(durations), 6),
-            "images_per_second": round((len(items) * repeat_count) / elapsed, 4) if elapsed else None,
+            "images_per_second": round((len(items) * repeat_count) / elapsed, 4)
+            if elapsed
+            else None,
         },
         "items": report_items,
     }
@@ -184,14 +188,59 @@ def run_local_benchmark(
     return json_path, markdown_path, report
 
 
+def _benchmark_timing_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
+    raw_decode = sum(float(row.get("input_decode_seconds", 0.0)) for row in results)
+    heuristic = sum(
+        float((row.get("timing") or {}).get("local_heuristic_seconds", 0.0)) for row in results
+    )
+    embedding_totals = {
+        "preprocess_seconds": 0.0,
+        "inference_seconds": 0.0,
+        "postprocess_seconds": 0.0,
+        "compile_seconds": 0.0,
+    }
+    seen_runs: set[object] = set()
+    for row in results:
+        embedding = row.get("embedding")
+        if not isinstance(embedding, dict):
+            continue
+        run_id = embedding.get("inference_run_id")
+        if run_id is None or run_id in seen_runs:
+            continue
+        seen_runs.add(run_id)
+        timing = embedding.get("timing")
+        if not isinstance(timing, dict):
+            continue
+        for key in ("preprocess_seconds", "inference_seconds", "postprocess_seconds"):
+            embedding_totals[key] += float(timing.get(key, 0.0))
+        embedding_totals["compile_seconds"] = max(
+            embedding_totals["compile_seconds"],
+            float(timing.get("compile_seconds", 0.0)),
+        )
+    return {
+        "raw_decode_seconds": round(raw_decode, 6),
+        "local_heuristic_seconds": round(heuristic, 6),
+        "embedding_runs": len(seen_runs),
+        **{f"embedding_{key}": round(value, 6) for key, value in embedding_totals.items()},
+    }
+
+
 async def _score_items(
     client: AsyncLocalClient,
     items: list[BenchmarkItem],
     preview_config: dict[str, Any],
 ) -> list[dict[str, Any]]:
-    scored: list[dict[str, Any]] = []
+    loaded: list[tuple[BenchmarkItem, bytes, dict[str, Any], float]] = []
     for item in items:
+        decode_started = time.perf_counter()
         image_bytes, input_decode = _load_benchmark_image(item.path, preview_config)
+        decode_seconds = time.perf_counter() - decode_started
+        loaded.append((item, image_bytes, input_decode, decode_seconds))
+    if client.embedding_config.get("enabled", False):
+        await client.embed_images([image_bytes for _, image_bytes, _, _ in loaded])
+
+    scored: list[dict[str, Any]] = []
+    for item, image_bytes, input_decode, decode_seconds in loaded:
         payload = await client.score_image(image_bytes)
         dimensions = {dim: float(payload.get(dim, 5.0)) for dim in VISION_DIMS}
         total = statistics.fmean(dimensions.values())
@@ -201,6 +250,7 @@ async def _score_items(
                 "path": item.manifest_path,
                 "group": item.group,
                 "input_decode": input_decode,
+                "input_decode_seconds": round(decode_seconds, 6),
                 "score": round(total, 6),
                 "scene": payload.get("scene", "other"),
                 "scoring_mode": payload.get("_scoring_mode", "unknown"),
@@ -210,6 +260,7 @@ async def _score_items(
                 "semantic": payload.get("_semantic"),
                 "quality": payload.get("_quality"),
                 "embedding": payload.get("_embedding"),
+                "timing": payload.get("_timing"),
                 "embedding_vector": payload.get("_embedding_vector"),
                 "face": payload.get("_face"),
                 "dimensions": dimensions,
@@ -253,15 +304,16 @@ def _calculate_metrics(
 
     preferences = manifest.get("pairwise_preferences", [])
     pairwise_hits = sum(
-        score_by_id[str(row["preferred"])] > score_by_id[str(row["other"])]
-        for row in preferences
+        score_by_id[str(row["preferred"])] > score_by_id[str(row["other"])] for row in preferences
     )
     reject_labeled = [item for item in items if item.reject is not None]
     false_negatives = sum(
-        item.reject is True and score_by_id[item.item_id] >= reject_threshold for item in reject_labeled
+        item.reject is True and score_by_id[item.item_id] >= reject_threshold
+        for item in reject_labeled
     )
     true_rejects = sum(
-        item.reject is True and score_by_id[item.item_id] < reject_threshold for item in reject_labeled
+        item.reject is True and score_by_id[item.item_id] < reject_threshold
+        for item in reject_labeled
     )
     reject_positives = sum(item.reject is True for item in reject_labeled)
     scene_labeled = [item for item in items if item.expected_scene is not None]
@@ -283,13 +335,11 @@ def _calculate_metrics(
     reject_prior_scores = role_scores.get("reject_prior", {})
     if len(reject_prior_scores) == len(results):
         reject_prior_false_negatives = sum(
-            item.reject is True
-            and reject_prior_scores[item.item_id] >= quality_reject_threshold
+            item.reject is True and reject_prior_scores[item.item_id] >= quality_reject_threshold
             for item in reject_labeled
         )
         reject_prior_true_rejects = sum(
-            item.reject is True
-            and reject_prior_scores[item.item_id] < quality_reject_threshold
+            item.reject is True and reject_prior_scores[item.item_id] < quality_reject_threshold
             for item in reject_labeled
         )
         reject_prior_recall = _ratio(reject_prior_true_rejects, reject_positives)
@@ -329,9 +379,7 @@ def _calculate_metrics(
         "screenshot_photo_separation": screenshot_separation,
         "reject_prior_recall": reject_prior_recall,
         "reject_prior_false_negative_count": reject_prior_false_negatives,
-        "quality_pairwise_preference": _role_pairwise(
-            role_scores, "quality", preferences, results
-        ),
+        "quality_pairwise_preference": _role_pairwise(role_scores, "quality", preferences, results),
         "aesthetic_pairwise_preference": _role_pairwise(
             role_scores, "aesthetic", preferences, results
         ),
@@ -361,15 +409,11 @@ def _role_pairwise(
     scores = role_scores.get(role, {})
     if len(scores) != len(results):
         return None
-    hits = sum(
-        scores[str(row["preferred"])] > scores[str(row["other"])] for row in preferences
-    )
+    hits = sum(scores[str(row["preferred"])] > scores[str(row["other"])] for row in preferences)
     return _ratio(hits, len(preferences))
 
 
-def _embedding_metrics(
-    items: list[BenchmarkItem], results: list[dict[str, Any]]
-) -> dict[str, Any]:
+def _embedding_metrics(items: list[BenchmarkItem], results: list[dict[str, Any]]) -> dict[str, Any]:
     vectors = {
         row["id"]: row.get("embedding_vector")
         for row in results
@@ -381,18 +425,14 @@ def _embedding_metrics(
             "embedding_non_photo_photo_max_similarity": None,
         }
     eligible = [
-        item
-        for item in items
-        if sum(candidate.group == item.group for candidate in items) > 1
+        item for item in items if sum(candidate.group == item.group for candidate in items) > 1
     ]
     hits = 0
     for item in eligible:
         candidates = [candidate for candidate in items if candidate.item_id != item.item_id]
         nearest = max(
             candidates,
-            key=lambda candidate: _cosine(
-                vectors[item.item_id], vectors[candidate.item_id]
-            ),
+            key=lambda candidate: _cosine(vectors[item.item_id], vectors[candidate.item_id]),
         )
         hits += int(nearest.group == item.group)
     non_photo_ids = [item.item_id for item in items if item.non_photo]
@@ -448,7 +488,11 @@ def _optional_bool(value: Any, field: str) -> bool | None:
 def _render_markdown(report: dict[str, Any]) -> str:
     metrics = report["metrics"]
     mode = str(report["runtime"]["scoring_mode"])
-    title = "Local Heuristic Benchmark Report" if mode == "heuristic" else "Local Model Benchmark Report"
+    title = (
+        "Local Heuristic Benchmark Report"
+        if mode == "heuristic"
+        else "Local Model Benchmark Report"
+    )
     lines = [
         f"# {title}",
         "",
@@ -487,6 +531,12 @@ def _render_markdown(report: dict[str, Any]) -> str:
         lines.append(f"| `{key}` | {rendered} |")
     lines.extend(
         [
+            "",
+            "## Stage Timings",
+            "",
+            "| Stage | Seconds |",
+            "| --- | ---: |",
+            *[f"| `{key}` | {value} |" for key, value in metrics["timings"].items()],
             "",
             "## Item Scores",
             "",

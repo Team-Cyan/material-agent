@@ -23,6 +23,11 @@ local:
     processor_path: /opt/material-agent/models/dinov3-vits16
     compiled_cache_dir: /config/openvino-cache
     result_cache_size: 256
+    performance_hint: THROUGHPUT
+    batch_size: 4
+    max_in_flight: 8
+    infer_requests: 8
+    allow_batch_fallback: true
 
 inference:
   runtime: openvino
@@ -94,7 +99,9 @@ screening:
   backend: musiq
 
 review_pipeline:
-  score_prefetch_window: 2
+  # 32 prepared previews feed eight four-image infer requests without loading
+  # the full library into memory.
+  score_prefetch_window: 32
 
 xmp:
   write_mode: sidecar

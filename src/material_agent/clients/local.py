@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import OrderedDict
 from io import BytesIO
 import hashlib
+import time
 
 import numpy as np
 from PIL import Image
@@ -26,12 +27,11 @@ class AsyncLocalClient:
         self._quality = None
         self._embedding = None
         self._face = None
-        self.embedding_result_cache_size = int(
-            self.embedding_config.get("result_cache_size", 256)
-        )
+        self.embedding_result_cache_size = int(self.embedding_config.get("result_cache_size", 256))
         self._embedding_result_cache: OrderedDict[str, dict] = OrderedDict()
 
     async def score_image(self, jpeg_bytes: bytes) -> dict:
+        heuristic_started = time.perf_counter()
         image = Image.open(BytesIO(jpeg_bytes)).convert("RGB")
         rgb = np.asarray(image, dtype=np.float32) / 255.0
         gray = rgb.mean(axis=2)
@@ -70,6 +70,9 @@ class AsyncLocalClient:
             "_configured_runtime": self.runtime,
             **{dim: round(scores.get(dim, 5.0), 2) for dim in VISION_DIMS},
         }
+        result["_timing"] = {
+            "local_heuristic_seconds": round(time.perf_counter() - heuristic_started, 6)
+        }
         if self.semantic_config.get("enabled", False):
             try:
                 semantic = await self._semantic_classifier().classify_image(jpeg_bytes)
@@ -84,9 +87,7 @@ class AsyncLocalClient:
                 result["scene"] = semantic["scene"]
                 result["scene_raw"] = semantic["scene_raw"]
                 result["_scoring_mode"] = "hybrid"
-                result["_runtime_components"].append(
-                    f"{semantic['runtime']}:{semantic['device']}"
-                )
+                result["_runtime_components"].append(f"{semantic['runtime']}:{semantic['device']}")
                 result["_runtime"] = "+".join(result["_runtime_components"])
                 result["_model_stack"] = [semantic["model_name"]]
                 result["_semantic"] = {"status": "model", **semantic}
@@ -103,9 +104,7 @@ class AsyncLocalClient:
                 model_stack = list(result.get("_model_stack", []))
                 model_stack.extend(quality["model_names"])
                 result["_model_stack"] = model_stack
-                result["_runtime_components"].append(
-                    f"{quality['runtime']}:{quality['device']}"
-                )
+                result["_runtime_components"].append(f"{quality['runtime']}:{quality['device']}")
                 result["_runtime"] = "+".join(result["_runtime_components"])
         if self.embedding_config.get("enabled", False):
             try:
@@ -142,21 +141,46 @@ class AsyncLocalClient:
         return result
 
     async def embed_image(self, jpeg_bytes: bytes) -> dict:
-        cache_key = hashlib.sha256(jpeg_bytes).hexdigest()
-        cached = self._embedding_result_cache.get(cache_key)
-        if cached is not None:
-            self._embedding_result_cache.move_to_end(cache_key)
-            return {**cached, "vector": list(cached["vector"])}
-        embedding = await self._embedding_scorer().embed_image(jpeg_bytes)
-        if self.embedding_result_cache_size > 0:
-            self._embedding_result_cache[cache_key] = {
-                **embedding,
-                "vector": list(embedding["vector"]),
-            }
-            self._embedding_result_cache.move_to_end(cache_key)
-            while len(self._embedding_result_cache) > self.embedding_result_cache_size:
-                self._embedding_result_cache.popitem(last=False)
-        return embedding
+        return (await self.embed_images([jpeg_bytes]))[0]
+
+    async def embed_images(self, jpeg_images: list[bytes]) -> list[dict]:
+        if not jpeg_images:
+            return []
+        results: list[dict | None] = [None] * len(jpeg_images)
+        missing_indexes: dict[str, list[int]] = {}
+        missing_payloads: dict[str, bytes] = {}
+        for index, jpeg_bytes in enumerate(jpeg_images):
+            cache_key = hashlib.sha256(jpeg_bytes).hexdigest()
+            cached = self._embedding_result_cache.get(cache_key)
+            if cached is not None:
+                self._embedding_result_cache.move_to_end(cache_key)
+                results[index] = {**cached, "vector": list(cached["vector"])}
+                continue
+            missing_indexes.setdefault(cache_key, []).append(index)
+            missing_payloads.setdefault(cache_key, jpeg_bytes)
+
+        if missing_payloads:
+            scorer = self._embedding_scorer()
+            payloads = list(missing_payloads.values())
+            if hasattr(scorer, "embed_images"):
+                embeddings = await scorer.embed_images(payloads)
+            else:
+                embeddings = [await scorer.embed_image(payload) for payload in payloads]
+            if len(embeddings) != len(payloads):
+                raise RuntimeError("embedding adapter returned an unexpected result count")
+            for cache_key, embedding in zip(missing_payloads, embeddings, strict=True):
+                stored = {**embedding, "vector": list(embedding["vector"])}
+                if self.embedding_result_cache_size > 0:
+                    self._embedding_result_cache[cache_key] = stored
+                    self._embedding_result_cache.move_to_end(cache_key)
+                    while len(self._embedding_result_cache) > self.embedding_result_cache_size:
+                        self._embedding_result_cache.popitem(last=False)
+                for index in missing_indexes[cache_key]:
+                    results[index] = {**stored, "vector": list(stored["vector"])}
+
+        if any(result is None for result in results):
+            raise RuntimeError("embedding cache failed to resolve every input")
+        return [result for result in results if result is not None]
 
     def clear_embedding_result_cache(self) -> None:
         self._embedding_result_cache.clear()

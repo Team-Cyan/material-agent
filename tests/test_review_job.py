@@ -432,7 +432,9 @@ def test_review_job_resumes_written_and_scored_files_from_artifacts(tmp_path):
     ]
 
 
-def test_review_job_refreshes_rank_and_group_metadata_for_already_written_files_in_ranked_group(tmp_path):
+def test_review_job_refreshes_rank_and_group_metadata_for_already_written_files_in_ranked_group(
+    tmp_path,
+):
     repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
     session_service = SessionService(repo)
     job_service = JobService(repo)
@@ -550,7 +552,9 @@ def test_review_job_prefetches_prepare_stage_without_overlapping_score_stage(tmp
     def prepare_score(file_path):
         prepare_calls.append(file_path)
         if file_path.endswith("one.ARW"):
-            assert second_prepare_started.wait(timeout=1.0), "next file was not prefetched during prepare"
+            assert second_prepare_started.wait(timeout=1.0), (
+                "next file was not prefetched during prepare"
+            )
         else:
             second_prepare_started.set()
         return {"file_path": file_path}
@@ -586,3 +590,45 @@ def test_review_job_prefetches_prepare_stage_without_overlapping_score_stage(tmp
     assert result["status"] == "finished"
     assert prepare_calls == ["/tmp/photos/one.ARW", "/tmp/photos/two.ARW"]
     assert score_calls == ["/tmp/photos/one.ARW", "/tmp/photos/two.ARW"]
+
+
+def test_review_job_primes_prefetched_scores_in_bounded_batches(tmp_path):
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    session_service = SessionService(repo)
+    job_service = JobService(repo)
+    session_id = session_service.create_session(
+        kind=SessionKind.CLI,
+        input_root="/tmp/photos",
+        config_snapshot={"backend": "local"},
+    )
+    job_id = job_service.create_job(
+        session_id=session_id,
+        job_type=JobType.REVIEW_PHOTOS,
+        initial_stage=JobStage.DISCOVER,
+    )
+    files = [f"/tmp/photos/{index}.ARW" for index in range(5)]
+    prime_calls: list[list[str]] = []
+
+    review_job = ReviewPhotosJob(
+        repository=repo,
+        event_sink=_NullEventSink(),
+        group_files=lambda file_paths: [file_paths],
+        prepare_score=lambda file_path: {"file_path": file_path},
+        prime_prepared=lambda prepared: prime_calls.append(
+            [item["file_path"] for item in prepared]
+        ),
+        score_prepared=lambda prepared: {
+            "score_total": 7.0,
+            "scene": "other",
+            "scene_raw": "",
+        },
+        finalize_group=lambda group_results, *, group_id: group_results,
+        write_file=lambda file_path, score_payload, *, rank, group_id, group_size: None,
+        score_prefetch_window=4,
+        write_outputs=False,
+    )
+
+    result = JobExecutor(review_job).run(job_id, files)
+
+    assert result["status"] == "finished"
+    assert prime_calls == [files[:4], files[4:]]

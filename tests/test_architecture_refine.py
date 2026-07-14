@@ -116,6 +116,36 @@ def test_make_client_passes_inference_config_to_local_client():
     assert client.runtime == "cpu"
 
 
+def test_local_client_batches_missing_embeddings_and_reuses_cache():
+    class _BatchEmbedding:
+        def __init__(self):
+            self.calls = []
+
+        async def embed_images(self, payloads):
+            self.calls.append(list(payloads))
+            return [
+                {
+                    "vector": [float(index), 1.0],
+                    "model_name": "fixture",
+                    "runtime": "openvino",
+                    "device": "CPU",
+                }
+                for index, _ in enumerate(payloads)
+            ]
+
+    client = AsyncLocalClient({"embedding": {"enabled": True, "result_cache_size": 8}})
+    scorer = _BatchEmbedding()
+    client._embedding = scorer
+
+    first = asyncio.run(client.embed_images([b"one", b"two", b"one"]))
+    second = asyncio.run(client.embed_images([b"two", b"one"]))
+
+    assert len(scorer.calls) == 1
+    assert scorer.calls[0] == [b"one", b"two"]
+    assert [row["vector"] for row in first] == [[0.0, 1.0], [1.0, 1.0], [0.0, 1.0]]
+    assert [row["vector"] for row in second] == [[1.0, 1.0], [0.0, 1.0]]
+
+
 def test_make_client_supports_legacy_vision_backend():
     cfg = _base_config()
     cfg["vision_backend"] = "omlx"
@@ -167,7 +197,9 @@ def test_async_omlx_client_sends_bearer_token(monkeypatch):
     )
 
     asyncio.run(client.generate_text("hello", client.commentary_model))
-    asyncio.run(client._vision_raw(client.full_vision_model, "prompt", b"jpeg", enable_thinking=False))
+    asyncio.run(
+        client._vision_raw(client.full_vision_model, "prompt", b"jpeg", enable_thinking=False)
+    )
 
     assert len(requests) == 2
     assert requests[0]["headers"]["Authorization"] == "Bearer secret-token"
@@ -248,15 +280,7 @@ def test_async_omlx_full_request_schema_does_not_require_overall(monkeypatch):
             return None
 
         def json(self):
-            return {
-                "choices": [
-                    {
-                        "message": {
-                            "content": _omlx_full_score_content()
-                        }
-                    }
-                ]
-            }
+            return {"choices": [{"message": {"content": _omlx_full_score_content()}}]}
 
     class _FakeAsyncClient:
         def __init__(self, *args, **kwargs):
@@ -678,6 +702,7 @@ def test_async_omlx_logs_summary_without_base64(monkeypatch, caplog):
     )
 
     import logging
+
     with caplog.at_level(logging.DEBUG, logger="material_agent"):
         asyncio.run(client.score_image(b"jpeg-bytes"))
 
@@ -826,6 +851,7 @@ def test_async_omlx_score_image_raises_on_empty_structured_body_without_retry(mo
 
     with caplog.at_level(logging.WARNING, logger="material_agent"):
         import pytest
+
         with pytest.raises(ValueError, match="Empty or non-text OMLX structured response"):
             asyncio.run(client.score_image(b"jpeg"))
 
@@ -843,7 +869,10 @@ def test_async_omlx_score_image_raises_on_empty_structured_body_without_retry(mo
         "depth",
         "mood",
     ]
-    assert "empty structured body" not in "\n".join(record.message for record in caplog.records).lower()
+    assert (
+        "empty structured body"
+        not in "\n".join(record.message for record in caplog.records).lower()
+    )
 
 
 def test_async_omlx_fast_score_raises_on_invalid_structured_output(monkeypatch):
@@ -872,7 +901,9 @@ def test_async_omlx_fast_score_raises_on_invalid_structured_output(monkeypatch):
         async def post(self, url, json, headers=None):
             requests.append({"url": url, "json": json, "headers": headers})
             if len(requests) == 1:
-                return _FakeResponse("This is not a photograph and cannot be rated usefully in the requested format.")
+                return _FakeResponse(
+                    "This is not a photograph and cannot be rated usefully in the requested format."
+                )
             return _FakeResponse(
                 '{"scene":"people","scene_raw":"舞台上的人物","subject":7.0,"composition":6.0,'
                 '"lighting":5.0,"color":4.0,"clarity":3.0,"depth":2.0,"mood":1.0}'
@@ -1012,13 +1043,7 @@ def test_async_omlx_debug_logs_full_payload_without_base64(monkeypatch, caplog):
 
         def json(self):
             return {
-                "choices": [
-                    {
-                        "message": {
-                            "content": _omlx_full_score_content(composition=7.0)
-                        }
-                    }
-                ]
+                "choices": [{"message": {"content": _omlx_full_score_content(composition=7.0)}}]
             }
 
     class _FakeAsyncClient:
@@ -1048,6 +1073,7 @@ def test_async_omlx_debug_logs_full_payload_without_base64(monkeypatch, caplog):
     )
 
     import logging
+
     with caplog.at_level(logging.DEBUG, logger="material_agent"):
         asyncio.run(client.score_image(b"jpeg-bytes"))
 
@@ -1069,13 +1095,7 @@ def test_async_omlx_generate_text_accepts_text_part_lists(monkeypatch):
         def json(self):
             return {
                 "choices": [
-                    {
-                        "message": {
-                            "content": [
-                                {"type": "text", "text": "【组内问题】整体偏暗。"}
-                            ]
-                        }
-                    }
+                    {"message": {"content": [{"type": "text", "text": "【组内问题】整体偏暗。"}]}}
                 ]
             }
 
@@ -1200,14 +1220,19 @@ def test_async_omlx_generate_group_commentary_formats_structured_json(monkeypatc
 
     text = asyncio.run(client.generate_group_commentary("1. a.jpg total=7.0"))
 
-    assert text == "【组内问题】整体偏暗，舞台高光也有点硬。\n【拍摄建议】拍摄时补一点面光并避开最刺眼的灯位。"
+    assert (
+        text
+        == "【组内问题】整体偏暗，舞台高光也有点硬。\n【拍摄建议】拍摄时补一点面光并避开最刺眼的灯位。"
+    )
     structured_outputs = requests[0]["structured_outputs"]
     assert structured_outputs["json"]["required"] == ["group_issues", "shooting"]
     assert requests[0]["max_tokens"] == 256
     assert requests[0]["temperature"] == 0.0
 
 
-def test_async_omlx_generate_text_uses_structured_outputs_without_retry_fallback(monkeypatch, caplog):
+def test_async_omlx_generate_text_uses_structured_outputs_without_retry_fallback(
+    monkeypatch, caplog
+):
     requests = []
 
     class _FakeResponse:
@@ -1287,15 +1312,7 @@ def test_async_omlx_generate_text_rejects_wrapped_json_for_structured_requests(m
         def json(self):
             return {
                 "choices": [
-                    {
-                        "message": {
-                            "content": (
-                                "Thinking...\n"
-                                '{"post":"后期把阴影提一点。"}\n'
-                                "Done."
-                            )
-                        }
-                    }
+                    {"message": {"content": ('Thinking...\n{"post":"后期把阴影提一点。"}\nDone.')}}
                 ]
             }
 
@@ -1405,13 +1422,7 @@ def test_async_omlx_generate_post_commentary_formats_structured_json(monkeypatch
         def json(self):
             return {
                 "choices": [
-                    {
-                        "message": {
-                            "parsed": {
-                                "post": "后期把阴影提一点，再轻压红色饱和度。"
-                            }
-                        }
-                    }
+                    {"message": {"parsed": {"post": "后期把阴影提一点，再轻压红色饱和度。"}}}
                 ]
             }
 
@@ -1510,17 +1521,7 @@ def test_async_omlx_generate_post_commentary_rejects_placeholder_values(monkeypa
             return None
 
         def json(self):
-            return {
-                "choices": [
-                    {
-                        "message": {
-                            "parsed": {
-                                "post": "string"
-                            }
-                        }
-                    }
-                ]
-            }
+            return {"choices": [{"message": {"parsed": {"post": "string"}}}]}
 
     class _FakeAsyncClient:
         def __init__(self, *args, **kwargs):
@@ -1821,8 +1822,20 @@ def test_commentary_generator_refines_group_output_when_shooting_advice_is_gener
         gen.for_group(
             [("a.jpg", 6.0), ("b.jpg", 5.8)],
             [
-                {"_scene": "people", "_scene_raw": "舞台上的歌手", "clarity": 4.0, "depth": 5.1, "lighting": 6.2},
-                {"_scene": "people", "_scene_raw": "舞台上的歌手", "clarity": 4.3, "depth": 5.3, "lighting": 6.0},
+                {
+                    "_scene": "people",
+                    "_scene_raw": "舞台上的歌手",
+                    "clarity": 4.0,
+                    "depth": 5.1,
+                    "lighting": 6.2,
+                },
+                {
+                    "_scene": "people",
+                    "_scene_raw": "舞台上的歌手",
+                    "clarity": 4.3,
+                    "depth": 5.3,
+                    "lighting": 6.0,
+                },
             ],
         )
     )
@@ -1956,14 +1969,38 @@ def test_build_photo_commentary_context_includes_ranked_dims_and_breakdown():
 def test_regenerated_group_commentary_varies_by_scene_context():
     stage_text = regenerate_group_commentary(
         [
-            {"_scene": "people", "_scene_raw": "舞台上的歌手", "clarity": 4.0, "color": 5.0, "lighting": 6.2},
-            {"_scene": "people", "_scene_raw": "舞台上的表演者", "clarity": 4.3, "color": 5.2, "lighting": 6.0},
+            {
+                "_scene": "people",
+                "_scene_raw": "舞台上的歌手",
+                "clarity": 4.0,
+                "color": 5.0,
+                "lighting": 6.2,
+            },
+            {
+                "_scene": "people",
+                "_scene_raw": "舞台上的表演者",
+                "clarity": 4.3,
+                "color": 5.2,
+                "lighting": 6.0,
+            },
         ]
     )
     camp_text = regenerate_group_commentary(
         [
-            {"_scene": "landscape", "_scene_raw": "夜晚露营场景", "clarity": 4.0, "color": 5.0, "lighting": 6.2},
-            {"_scene": "landscape", "_scene_raw": "山间露营营地", "clarity": 4.3, "color": 5.2, "lighting": 6.0},
+            {
+                "_scene": "landscape",
+                "_scene_raw": "夜晚露营场景",
+                "clarity": 4.0,
+                "color": 5.0,
+                "lighting": 6.2,
+            },
+            {
+                "_scene": "landscape",
+                "_scene_raw": "山间露营营地",
+                "clarity": 4.3,
+                "color": 5.2,
+                "lighting": 6.0,
+            },
         ]
     )
 
@@ -2024,22 +2061,58 @@ def test_regenerated_post_commentary_can_stably_spread_wording_by_variant_key():
 def test_regenerated_group_commentary_can_stably_spread_wording_by_variant_key():
     first = regenerate_group_commentary(
         [
-            {"_scene": "people", "_scene_raw": "舞台上的歌手", "clarity": 4.0, "color": 5.0, "lighting": 6.2},
-            {"_scene": "people", "_scene_raw": "舞台上的表演者", "clarity": 4.3, "color": 5.2, "lighting": 6.0},
+            {
+                "_scene": "people",
+                "_scene_raw": "舞台上的歌手",
+                "clarity": 4.0,
+                "color": 5.0,
+                "lighting": 6.2,
+            },
+            {
+                "_scene": "people",
+                "_scene_raw": "舞台上的表演者",
+                "clarity": 4.3,
+                "color": 5.2,
+                "lighting": 6.0,
+            },
         ],
         variant_key="group-a",
     )
     second = regenerate_group_commentary(
         [
-            {"_scene": "people", "_scene_raw": "舞台上的歌手", "clarity": 4.0, "color": 5.0, "lighting": 6.2},
-            {"_scene": "people", "_scene_raw": "舞台上的表演者", "clarity": 4.3, "color": 5.2, "lighting": 6.0},
+            {
+                "_scene": "people",
+                "_scene_raw": "舞台上的歌手",
+                "clarity": 4.0,
+                "color": 5.0,
+                "lighting": 6.2,
+            },
+            {
+                "_scene": "people",
+                "_scene_raw": "舞台上的表演者",
+                "clarity": 4.3,
+                "color": 5.2,
+                "lighting": 6.0,
+            },
         ],
         variant_key="group-b",
     )
     repeat_first = regenerate_group_commentary(
         [
-            {"_scene": "people", "_scene_raw": "舞台上的歌手", "clarity": 4.0, "color": 5.0, "lighting": 6.2},
-            {"_scene": "people", "_scene_raw": "舞台上的表演者", "clarity": 4.3, "color": 5.2, "lighting": 6.0},
+            {
+                "_scene": "people",
+                "_scene_raw": "舞台上的歌手",
+                "clarity": 4.0,
+                "color": 5.0,
+                "lighting": 6.2,
+            },
+            {
+                "_scene": "people",
+                "_scene_raw": "舞台上的表演者",
+                "clarity": 4.3,
+                "color": 5.2,
+                "lighting": 6.0,
+            },
         ],
         variant_key="group-a",
     )
@@ -2090,6 +2163,7 @@ def test_async_omlx_logs_retry_warning_and_final_error(monkeypatch, caplog):
     monkeypatch.setattr(client, "_vision_raw", fake_vision_raw)
     with caplog.at_level(logging.WARNING, logger="material_agent"):
         import pytest
+
         with pytest.raises(ValueError, match="bad json"):
             asyncio.run(client.score_image(b"jpeg"))
 
@@ -2238,7 +2312,9 @@ def test_scoring_engine_fast_parse_failure_falls_back_to_full_model(caplog):
     assert bundle.status == "full"
     assert bundle.scene == "people"
     assert client.score_image_called is True
-    assert "Fast screening skipped after parse failure" in "\n".join(r.message for r in caplog.records)
+    assert "Fast screening skipped after parse failure" in "\n".join(
+        r.message for r in caplog.records
+    )
 
 
 def test_scoring_engine_logs_fast_rejection(caplog):
@@ -2349,6 +2425,7 @@ def test_scoring_engine_uses_scene_aware_exposure_in_final_total(monkeypatch):
 
 def test_parse_fast_score_rejects_numbered_list_reasoning():
     import pytest
+
     with pytest.raises(ValueError, match="No reliable fast score"):
         parse_fast_score("1. 构图一般\n2. 光线很差\n3. 整体质量较低")
 
@@ -2392,7 +2469,12 @@ def test_make_fast_screening_port_keeps_screening_module_unloaded_when_disabled(
         "grouping": {},
         "preview": {},
         "scoring": {},
-        "ollama": {"base_url": "http://127.0.0.1:11434", "vision_model": "vision", "commentary_model": "text", "timeout": 30},
+        "ollama": {
+            "base_url": "http://127.0.0.1:11434",
+            "vision_model": "vision",
+            "commentary_model": "text",
+            "timeout": 30,
+        },
     }
 
     assert "material_agent.adapters.screening" not in sys.modules

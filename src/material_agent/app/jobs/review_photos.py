@@ -12,6 +12,68 @@ class _ScorePreparationPool(ThreadPoolExecutor):
         return super().__exit__(exc_type, exc_value, traceback)
 
 
+def _aggregate_timings(repository, job_files: list[object]) -> dict:
+    totals = {
+        "raw_decode_seconds": 0.0,
+        "score_seconds": 0.0,
+        "local_heuristic_seconds": 0.0,
+        "embedding_preprocess_seconds": 0.0,
+        "embedding_inference_seconds": 0.0,
+        "embedding_postprocess_seconds": 0.0,
+        "embedding_compile_seconds": 0.0,
+    }
+    seen_inference_runs: set[object] = set()
+    found = False
+    for job_file in job_files:
+        payload = repository.get_artifact_metadata(
+            job_file_id=job_file.id,
+            kind="score_payload",
+        )
+        if not isinstance(payload, dict):
+            continue
+        meta = payload.get("meta")
+        if not isinstance(meta, dict):
+            continue
+        stage_timing = meta.get("timing")
+        if isinstance(stage_timing, dict):
+            for key in ("raw_decode_seconds", "score_seconds", "local_heuristic_seconds"):
+                value = stage_timing.get(key)
+                if isinstance(value, int | float):
+                    totals[key] += float(value)
+                    found = True
+        embedding = meta.get("embedding")
+        if not isinstance(embedding, dict):
+            continue
+        run_id = embedding.get("inference_run_id")
+        if run_id is None or run_id in seen_inference_runs:
+            continue
+        seen_inference_runs.add(run_id)
+        embedding_timing = embedding.get("timing")
+        if not isinstance(embedding_timing, dict):
+            continue
+        for source, target in (
+            ("preprocess_seconds", "embedding_preprocess_seconds"),
+            ("inference_seconds", "embedding_inference_seconds"),
+            ("postprocess_seconds", "embedding_postprocess_seconds"),
+        ):
+            value = embedding_timing.get(source)
+            if isinstance(value, int | float):
+                totals[target] += float(value)
+                found = True
+        compile_seconds = embedding_timing.get("compile_seconds")
+        if isinstance(compile_seconds, int | float):
+            totals["embedding_compile_seconds"] = max(
+                totals["embedding_compile_seconds"],
+                float(compile_seconds),
+            )
+            found = True
+    if not found:
+        return {}
+    return {key: round(value, 6) for key, value in totals.items()} | {
+        "embedding_runs": len(seen_inference_runs)
+    }
+
+
 class ReviewPhotosJob:
     def __init__(
         self,
@@ -20,6 +82,7 @@ class ReviewPhotosJob:
         event_sink,
         group_files=None,
         prepare_score=None,
+        prime_prepared=None,
         score_prepared=None,
         score_file=None,
         finalize_group=None,
@@ -41,11 +104,22 @@ class ReviewPhotosJob:
                 lambda prepared: {"score_total": 0.0, "scene": "other", "scene_raw": ""}
             )
         self.finalize_group = finalize_group or (lambda group_results, *, group_id: group_results)
-        self.write_file = write_file or (lambda file_path, score_payload, *, rank, group_id, group_size: None)
+        self.prime_prepared = prime_prepared
+        self.write_file = write_file or (
+            lambda file_path, score_payload, *, rank, group_id, group_size: None
+        )
         self.score_prefetch_window = min(32, max(1, int(score_prefetch_window)))
         self.write_outputs = bool(write_outputs)
 
-    def _emit(self, *, session_id: str, job_id: str, event_type: str, payload: dict, job_file_id: str | None = None):
+    def _emit(
+        self,
+        *,
+        session_id: str,
+        job_id: str,
+        event_type: str,
+        payload: dict,
+        job_file_id: str | None = None,
+    ):
         self.repository.append_event(
             session_id=session_id,
             job_id=job_id,
@@ -61,7 +135,9 @@ class ReviewPhotosJob:
             payload=payload,
         )
 
-    def _update_stage(self, job_id: str, stage: JobStage, status: JobStatus, *, session_id: str) -> None:
+    def _update_stage(
+        self, job_id: str, stage: JobStage, status: JobStatus, *, session_id: str
+    ) -> None:
         self.repository.update_job(job_id, stage=stage, status=status)
         self._emit(
             session_id=session_id,
@@ -81,10 +157,9 @@ class ReviewPhotosJob:
         simulated_files: int,
         job_id: str,
     ) -> dict:
-        scored_files = sum(
-            1 for job_file in self.repository.list_job_files(job_id) if job_file.score_total is not None
-        )
-        return {
+        job_files = self.repository.list_job_files(job_id)
+        scored_files = sum(1 for job_file in job_files if job_file.score_total is not None)
+        summary = {
             "status": status.value,
             "total_files": total_files,
             "written_files": written_files,
@@ -93,12 +168,18 @@ class ReviewPhotosJob:
             "simulated_files": simulated_files,
             "scored_files": scored_files,
         }
+        timings = _aggregate_timings(self.repository, job_files)
+        if timings:
+            summary["timings"] = timings
+        return summary
 
     def _load_score_payload(self, *, job_id: str, file_path: str):
         job_file = self.repository.get_job_file(job_id=job_id, file_path=file_path)
         if job_file is None:
             return None, None
-        payload = self.repository.get_artifact_metadata(job_file_id=job_file.id, kind="score_payload")
+        payload = self.repository.get_artifact_metadata(
+            job_file_id=job_file.id, kind="score_payload"
+        )
         if payload is None and job_file.score_total is not None:
             payload = {
                 "score_total": float(job_file.score_total),
@@ -139,11 +220,14 @@ class ReviewPhotosJob:
                 and previous.get("group_size") == group_size
             )
 
-    def _consume_group_scores(self, *, group: list[str], group_id: str, job_id: str, session_id: str):
+    def _consume_group_scores(
+        self, *, group: list[str], group_id: str, job_id: str, session_id: str
+    ):
         group_results: list[tuple[str, dict]] = []
         resumable_job_files: dict[str, object] = {}
         group_can_be_skipped = True
         pending_prepares: dict[str, Future] = {}
+        primed_files: set[str] = set()
         started_files: set[str] = set()
         file_indexes = {file_path: index for index, file_path in enumerate(group)}
         error_files = 0
@@ -174,13 +258,18 @@ class ReviewPhotosJob:
         with _ScorePreparationPool(max_workers=max_workers) as executor:
             submit_index = 0
             for index, file_path in enumerate(group):
-                existing_job_file, resumable_payload = self._load_score_payload(job_id=job_id, file_path=file_path)
+                existing_job_file, resumable_payload = self._load_score_payload(
+                    job_id=job_id, file_path=file_path
+                )
                 if existing_job_file is not None:
                     resumable_job_files[file_path] = existing_job_file
                     if existing_job_file.status is JobFileStatus.WRITTEN:
                         group_results.append((file_path, resumable_payload or {}))
                         continue
-                    if existing_job_file.status is JobFileStatus.SCORED and resumable_payload is not None:
+                    if (
+                        existing_job_file.status is JobFileStatus.SCORED
+                        and resumable_payload is not None
+                    ):
                         group_can_be_skipped = False
                         group_results.append((file_path, resumable_payload))
                         continue
@@ -201,12 +290,28 @@ class ReviewPhotosJob:
                         resumable_job_files[candidate] = candidate_job_file
                         if candidate_job_file.status is JobFileStatus.WRITTEN:
                             continue
-                        if candidate_job_file.status is JobFileStatus.SCORED and candidate_payload is not None:
+                        if (
+                            candidate_job_file.status is JobFileStatus.SCORED
+                            and candidate_payload is not None
+                        ):
                             continue
                     _submit_prepare(executor, candidate)
 
                 try:
                     prepared = pending_prepares.pop(file_path).result()
+                    if self.prime_prepared is not None and file_path not in primed_files:
+                        prime_batch = [prepared]
+                        prime_paths = [file_path]
+                        for pending_path, future in pending_prepares.items():
+                            if pending_path in primed_files:
+                                continue
+                            try:
+                                prime_batch.append(future.result())
+                            except Exception:
+                                continue
+                            prime_paths.append(pending_path)
+                        self.prime_prepared(prime_batch)
+                        primed_files.update(prime_paths)
                     score_payload = self.score_prepared(prepared)
                 except Exception as error:
                     job_file_id = self.repository.upsert_job_file(
@@ -253,7 +358,9 @@ class ReviewPhotosJob:
                     uri=f"memory://job-files/{job_file_id}/score-payload",
                     metadata=score_payload,
                 )
-                resumable_job_files[file_path] = self.repository.get_job_file(job_id=job_id, file_path=file_path)
+                resumable_job_files[file_path] = self.repository.get_job_file(
+                    job_id=job_id, file_path=file_path
+                )
         return group_results, resumable_job_files, group_can_be_skipped, error_files
 
     def run(self, job_id: str, file_paths: list[str]) -> dict:
@@ -347,14 +454,19 @@ class ReviewPhotosJob:
                         },
                     )
                     continue
-                if existing_job_file is not None and existing_job_file.status is JobFileStatus.WRITTEN:
+                if (
+                    existing_job_file is not None
+                    and existing_job_file.status is JobFileStatus.WRITTEN
+                ):
                     job_file_id = self.repository.upsert_job_file(
                         job_id=job_id,
                         file_path=file_path,
                         status=JobFileStatus.WRITTEN,
                         group_id=group_id,
                         rank=rank,
-                        score_total=float(score_payload.get("score_total", existing_job_file.score_total or 0.0)),
+                        score_total=float(
+                            score_payload.get("score_total", existing_job_file.score_total or 0.0)
+                        ),
                         scene=score_payload.get("scene", existing_job_file.scene),
                         scene_raw=score_payload.get("scene_raw", existing_job_file.scene_raw),
                     )

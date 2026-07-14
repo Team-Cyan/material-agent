@@ -16,6 +16,11 @@ _NON_SEMANTIC_EMBEDDING_SETTINGS = {
     "enabled",
     "enforce_available",
     "result_cache_size",
+    "performance_hint",
+    "batch_size",
+    "max_in_flight",
+    "infer_requests",
+    "allow_batch_fallback",
 }
 
 
