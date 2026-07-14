@@ -161,6 +161,10 @@ The embedding path is throughput-aware rather than one-image synchronous:
 The Intel image uses a 32-preview preparation window, batch 4, and up to eight
 in-flight requests. These are throughput controls, not semantic model settings,
 so changing them does not invalidate persisted embedding vectors.
+The preparation window remains capped at 32 to bound memory, while the separate
+read-only `review_pipeline.max_files` pilot limit accepts up to 4096 files so a
+throughput run can cover many windows without accidentally selecting the whole
+multi-terabyte library.
 
 Stage timing separates RAW preview decode, local heuristic scoring, OpenVINO
 preprocessing, inference, postprocessing, and compile time. Review job summaries

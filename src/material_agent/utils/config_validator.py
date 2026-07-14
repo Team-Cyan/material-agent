@@ -62,7 +62,7 @@ _OMLX_ADMIN_BOOLEAN_FIELDS = ("cache_enabled",)
 _OMLX_CONTRACT_MODES = {"structured_outputs", "response_format_json_schema"}
 _OMLX_MODEL_PROFILE_MODES = {"off", "auto"}
 _MAX_CONFIGURED_EXTENSIONS = 32
-_MAX_REVIEW_BATCH_SIZE = 32
+_MAX_REVIEW_FILE_LIMIT = 4096
 _MAX_SCORE_PREFETCH_WINDOW = 32
 _MAPPING_SECTION_PATHS = (
     ("legacy",),
@@ -553,11 +553,11 @@ def validate_config(cfg: dict) -> None:
     if max_files is not None and (
         not isinstance(max_files, int)
         or isinstance(max_files, bool)
-        or not 1 <= max_files <= _MAX_REVIEW_BATCH_SIZE
+        or not 1 <= max_files <= _MAX_REVIEW_FILE_LIMIT
     ):
         errors.append(
             "review_pipeline.max_files must be an integer between "
-            f"1 and {_MAX_REVIEW_BATCH_SIZE}, got: {max_files!r}"
+            f"1 and {_MAX_REVIEW_FILE_LIMIT}, got: {max_files!r}"
         )
     grouping = cfg.get("grouping", {})
     embedding_similarity = grouping.get("embedding_similarity", {})

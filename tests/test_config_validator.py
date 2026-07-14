@@ -81,8 +81,17 @@ def test_validate_config_rejects_invalid_raw_extensions(raw_extensions, capsys):
     assert "raw_extensions" in capsys.readouterr().out
 
 
-@pytest.mark.parametrize("field", ["score_prefetch_window", "max_files"])
-@pytest.mark.parametrize("value", [0, 33, True])
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("score_prefetch_window", 0),
+        ("score_prefetch_window", 33),
+        ("score_prefetch_window", True),
+        ("max_files", 0),
+        ("max_files", 4097),
+        ("max_files", True),
+    ],
+)
 def test_validate_config_bounds_review_pipeline_fields(field, value, capsys):
     cfg = _minimal_config()
     cfg["review_pipeline"] = {field: value}
@@ -95,7 +104,7 @@ def test_validate_config_bounds_review_pipeline_fields(field, value, capsys):
 
 def test_validate_config_accepts_review_pipeline_upper_bounds():
     cfg = _minimal_config()
-    cfg["review_pipeline"] = {"score_prefetch_window": 32, "max_files": 32}
+    cfg["review_pipeline"] = {"score_prefetch_window": 32, "max_files": 4096}
 
     validate_config(cfg)
 
