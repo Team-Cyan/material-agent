@@ -129,8 +129,10 @@ class OpenVinoEmbeddingAdapter:
             "performance_hint": getattr(runtime, "performance_hint", self.performance_hint),
             "batch_size_requested": self.batch_size,
             "batch_size_actual": int(getattr(runtime, "batch_size", 1)),
+            "batch_strategy": str(getattr(runtime, "batch_strategy", "single")),
             "batch_fallback_used": bool(getattr(runtime, "batch_fallback_used", False)),
             "batch_fallback_reason": getattr(runtime, "batch_fallback_reason", None),
+            "batch_reshape_error": getattr(runtime, "batch_reshape_error", None),
             "infer_requests": int(getattr(runtime, "infer_requests", 1)),
             "optimal_infer_requests": getattr(runtime, "optimal_infer_requests", None),
             "timing": timing,
@@ -198,6 +200,9 @@ class _OpenVinoRuntime:
         self.performance_hint = performance_hint
         self.batch_size_requested = max(1, int(batch_size))
         self.batch_size = self.batch_size_requested
+        self.input_batch_size = 1
+        self.batch_strategy = "single"
+        self.batch_reshape_error = None
         self.batch_fallback_used = False
         self.batch_fallback_reason = None
         compile_config = {
@@ -251,18 +256,35 @@ class _OpenVinoRuntime:
     def _compile_model(self, model_file: Path, device: str, config: dict, batch_size: int):
         model = self.core.read_model(str(model_file))
         if batch_size > 1:
-            input_port = model.input(0)
-            input_shape = list(input_port.get_shape())
-            if not input_shape:
-                raise RuntimeError("OpenVINO embedding model input has no batch dimension")
-            input_shape[0] = batch_size
-            model.reshape({input_port.get_any_name(): input_shape})
+            try:
+                input_port = model.input(0)
+                input_shape = list(input_port.get_shape())
+                if not input_shape:
+                    raise RuntimeError("OpenVINO embedding model input has no batch dimension")
+                input_shape[0] = batch_size
+                model.reshape({input_port.get_any_name(): input_shape})
+                compiled = self.core.compile_model(model, device, config)
+            except RuntimeError as reshape_error:
+                self.batch_reshape_error = f"{type(reshape_error).__name__}: {reshape_error}"
+                auto_batch_device = f"BATCH:{_auto_batch_target(device)}({batch_size})"
+                model = self.core.read_model(str(model_file))
+                compiled = self.core.compile_model(model, auto_batch_device, config)
+                self.batch_strategy = "auto_batch"
+                self.input_batch_size = 1
+                return compiled
+            self.batch_strategy = "reshape"
+            self.input_batch_size = batch_size
+            return compiled
+        self.batch_strategy = "single"
+        self.input_batch_size = 1
         return self.core.compile_model(model, device, config)
 
     def _record_batch_fallback(self, error: RuntimeError) -> None:
         self.batch_fallback_used = True
         self.batch_fallback_reason = f"{type(error).__name__}: {error}"
         self.batch_size = 1
+        self.input_batch_size = 1
+        self.batch_strategy = "single"
 
     def embed(self, image: Image.Image) -> list[float]:
         return self.embed_many([image])[0]
@@ -276,10 +298,10 @@ class _OpenVinoRuntime:
         preprocess_seconds = time.perf_counter() - preprocess_started
         input_name = self.compiled.input(0).get_any_name()
         batches = []
-        for start in range(0, len(tensors), self.batch_size):
-            members = tensors[start : start + self.batch_size]
+        for start in range(0, len(tensors), self.input_batch_size):
+            members = tensors[start : start + self.input_batch_size]
             valid_count = len(members)
-            while len(members) < self.batch_size:
+            while len(members) < self.input_batch_size:
                 members.append(members[-1])
             batches.append((start, valid_count, self.np.concatenate(members, axis=0)))
 
@@ -593,6 +615,21 @@ def _resolve_infer_requests(
     if str(requested).strip().lower() != "auto":
         raise RuntimeError("OpenVINO infer_requests must be 'auto' or a positive integer")
     return min(cap, optimal or 1)
+
+
+def _auto_batch_target(device: str) -> str:
+    requested = device.strip()
+    upper = requested.upper()
+    if upper.startswith(("AUTO:", "MULTI:")):
+        candidates = requested.split(":", 1)[1].split(",")
+        target = candidates[0].strip()
+        if target:
+            return target
+    if ":" in requested:
+        raise RuntimeError(
+            f"OpenVINO automatic batching does not support composite device {device!r}"
+        )
+    return requested
 
 
 def _portable_path(value: str) -> str:

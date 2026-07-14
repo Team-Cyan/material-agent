@@ -54,7 +54,8 @@
 - replaced one-image synchronous OpenVINO embedding with bounded review-window
   priming across original group boundaries, `AsyncInferQueue`, configurable
   batch 1/4/8 and request pools,
-  throughput hints, optimal-request readback, batch fallback provenance, and
+  fixed-reshape plus native auto-batch strategies, throughput hints,
+  optimal-request readback, batch fallback provenance, and
   RAW/heuristic/preprocess/inference/postprocess/compile stage timing
 
 ## In Progress

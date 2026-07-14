@@ -134,6 +134,70 @@ def test_openvino_runtime_falls_back_when_requested_gpu_is_unavailable(
     assert runtime.execution_devices == ["CPU"]
 
 
+def test_openvino_runtime_uses_auto_batch_when_model_reshape_is_unsupported(
+    monkeypatch,
+    tmp_path,
+):
+    model_path = tmp_path / "model.onnx"
+    model_path.write_bytes(b"fixture")
+    (tmp_path / "preprocessor_config.json").write_text(
+        json.dumps({"size": {"height": 2, "width": 2}}),
+        encoding="utf-8",
+    )
+    compile_devices = []
+
+    class _Input:
+        def get_shape(self):
+            return [1, 3, 2, 2]
+
+        def get_any_name(self):
+            return "pixel_values"
+
+    class _Model:
+        def input(self, _index):
+            return _Input()
+
+        def reshape(self, _shape):
+            raise RuntimeError("dynamic output shape")
+
+    class _Compiled:
+        def get_property(self, name):
+            return ["CPU"] if name == "EXECUTION_DEVICES" else 8
+
+    class _Core:
+        available_devices = ["CPU"]
+
+        def read_model(self, _path):
+            return _Model()
+
+        def compile_model(self, _model, device, _config):
+            compile_devices.append(device)
+            return _Compiled()
+
+    monkeypatch.setitem(
+        sys.modules,
+        "openvino",
+        SimpleNamespace(__version__="fixture-openvino", Core=_Core),
+    )
+
+    runtime = _OpenVinoRuntime(
+        model_path=str(model_path),
+        processor_path=str(tmp_path),
+        device="CPU",
+        fallback_device="CPU",
+        compiled_cache_dir=str(tmp_path / "cache"),
+        batch_size=4,
+        infer_requests=8,
+    )
+
+    assert compile_devices == ["BATCH:CPU(4)"]
+    assert runtime.batch_strategy == "auto_batch"
+    assert runtime.batch_size == 4
+    assert runtime.input_batch_size == 1
+    assert "dynamic output shape" in runtime.batch_reshape_error
+    assert runtime.batch_fallback_used is False
+
+
 def test_openvino_runtime_real_cpu_fallback(tmp_path):
     onnx = pytest.importorskip("onnx")
     ov = pytest.importorskip("openvino")

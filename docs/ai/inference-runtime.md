@@ -147,7 +147,10 @@ The embedding path is throughput-aware rather than one-image synchronous:
 
 - `performance_hint` is passed to OpenVINO and defaults to `THROUGHPUT`;
 - `batch_size` reshapes the model batch dimension, pads only the final partial
-  batch, and reports any fallback to batch 1;
+  batch when the graph supports reshape. If an export has fixed internal
+  shapes, the adapter uses OpenVINO's native `BATCH:<device>(N)` plugin to
+  combine batch-1 asynchronous requests. Only failure of both strategies falls
+  back to batch 1, and provenance reports `reshape`, `auto_batch`, or `single`;
 - `AsyncInferQueue` runs the configured request pool while preserving input
   order; `infer_requests: auto` reads
   `OPTIMAL_NUMBER_OF_INFER_REQUESTS` and caps it with `max_in_flight`;
