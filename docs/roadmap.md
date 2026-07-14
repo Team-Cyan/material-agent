@@ -52,7 +52,8 @@
 - corrected the local benchmark to clear per-image result cache between
   repetitions and recorded a replacement OpenVINO CPU synthetic report
 - replaced one-image synchronous OpenVINO embedding with bounded review-window
-  priming, `AsyncInferQueue`, configurable batch 1/4/8 and request pools,
+  priming across original group boundaries, `AsyncInferQueue`, configurable
+  batch 1/4/8 and request pools,
   throughput hints, optimal-request readback, batch fallback provenance, and
   RAW/heuristic/preprocess/inference/postprocess/compile stage timing
 

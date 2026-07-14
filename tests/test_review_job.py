@@ -612,7 +612,7 @@ def test_review_job_primes_prefetched_scores_in_bounded_batches(tmp_path):
     review_job = ReviewPhotosJob(
         repository=repo,
         event_sink=_NullEventSink(),
-        group_files=lambda file_paths: [file_paths],
+        group_files=lambda file_paths: [[file_path] for file_path in file_paths],
         prepare_score=lambda file_path: {"file_path": file_path},
         prime_prepared=lambda prepared: prime_calls.append(
             [item["file_path"] for item in prepared]

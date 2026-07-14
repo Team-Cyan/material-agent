@@ -152,9 +152,11 @@ The embedding path is throughput-aware rather than one-image synchronous:
   order; `infer_requests: auto` reads
   `OPTIMAL_NUMBER_OF_INFER_REQUESTS` and caps it with `max_in_flight`;
 - the review pipeline prepares a bounded window in parallel, primes all
-  embeddings in that window once, then reuses the ordinary result cache during
-  scoring. Screening-enabled runs skip priming so early rejection still avoids
-  unnecessary model work;
+  embeddings in that window once across original group boundaries, then reuses
+  the ordinary result cache during scoring. Score artifacts are collected first
+  and the existing group commentary/ranking/write phase follows, so grouping
+  semantics and resumability remain unchanged. Screening-enabled runs skip
+  priming so early rejection still avoids unnecessary model work;
 - per-run provenance records requested/actual batch size, request count,
   optimal-request readback, performance hint, and actual execution devices.
 

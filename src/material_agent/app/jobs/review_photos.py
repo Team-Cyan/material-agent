@@ -221,11 +221,22 @@ class ReviewPhotosJob:
             )
 
     def _consume_group_scores(
-        self, *, group: list[str], group_id: str, job_id: str, session_id: str
+        self,
+        *,
+        group: list[str],
+        group_id: str | None,
+        job_id: str,
+        session_id: str,
+        group_ids: dict[str, str] | None = None,
     ):
         group_results: list[tuple[str, dict]] = []
         resumable_job_files: dict[str, object] = {}
-        group_can_be_skipped = True
+        resolved_group_ids = group_ids or {
+            file_path: str(group_id) for file_path in group
+        }
+        group_can_be_skipped = {
+            resolved_group_ids[file_path]: True for file_path in group
+        }
         pending_prepares: dict[str, Future] = {}
         primed_files: set[str] = set()
         started_files: set[str] = set()
@@ -239,7 +250,7 @@ class ReviewPhotosJob:
                 job_id=job_id,
                 file_path=file_path,
                 status=JobFileStatus.PENDING,
-                group_id=group_id,
+                group_id=resolved_group_ids[file_path],
             )
             self._emit(
                 session_id=session_id,
@@ -270,11 +281,11 @@ class ReviewPhotosJob:
                         existing_job_file.status is JobFileStatus.SCORED
                         and resumable_payload is not None
                     ):
-                        group_can_be_skipped = False
+                        group_can_be_skipped[resolved_group_ids[file_path]] = False
                         group_results.append((file_path, resumable_payload))
                         continue
 
-                group_can_be_skipped = False
+                group_can_be_skipped[resolved_group_ids[file_path]] = False
                 if file_path not in pending_prepares:
                     _submit_prepare(executor, file_path)
                 while submit_index < len(group) and len(pending_prepares) < max_workers:
@@ -318,7 +329,7 @@ class ReviewPhotosJob:
                         job_id=job_id,
                         file_path=file_path,
                         status=JobFileStatus.ERROR,
-                        group_id=group_id,
+                        group_id=resolved_group_ids[file_path],
                         error_message=str(error),
                     )
                     self._emit(
@@ -336,7 +347,7 @@ class ReviewPhotosJob:
                     job_id=job_id,
                     file_path=file_path,
                     status=JobFileStatus.SCORED,
-                    group_id=group_id,
+                    group_id=resolved_group_ids[file_path],
                     score_total=float(score_payload.get("score_total", 0.0)),
                     scene=score_payload.get("scene"),
                     scene_raw=score_payload.get("scene_raw"),
@@ -380,23 +391,37 @@ class ReviewPhotosJob:
         self._update_stage(job_id, JobStage.GROUP, JobStatus.RUNNING, session_id=session_id)
         groups = self.group_files(file_paths)
 
-        for group in groups:
-            self._update_stage(job_id, JobStage.SCORE, JobStatus.RUNNING, session_id=session_id)
-            group_id = self._group_id(group)
-            (
-                group_results,
-                resumable_job_files,
-                group_can_be_skipped,
-                group_error_files,
-            ) = self._consume_group_scores(
-                group=group,
-                group_id=group_id,
-                job_id=job_id,
-                session_id=session_id,
-            )
-            error_files += group_error_files
+        group_ids = {
+            file_path: self._group_id(group)
+            for group in groups
+            for file_path in group
+        }
+        scoring_order = [file_path for group in groups for file_path in group]
+        self._update_stage(job_id, JobStage.SCORE, JobStatus.RUNNING, session_id=session_id)
+        (
+            all_group_results,
+            resumable_job_files,
+            group_can_be_skipped,
+            score_error_files,
+        ) = self._consume_group_scores(
+            group=scoring_order,
+            group_id=None,
+            group_ids=group_ids,
+            job_id=job_id,
+            session_id=session_id,
+        )
+        error_files += score_error_files
+        score_payloads = dict(all_group_results)
 
-            if group_can_be_skipped:
+        for group in groups:
+            group_id = self._group_id(group)
+            group_results = [
+                (file_path, score_payloads[file_path])
+                for file_path in group
+                if file_path in score_payloads
+            ]
+
+            if group_can_be_skipped.get(group_id, True):
                 for file_path, _ in group_results:
                     job_file = resumable_job_files.get(file_path)
                     if job_file is None:
