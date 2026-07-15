@@ -12,6 +12,7 @@ loads lazily and must preserve the service-free heuristic fallback.
 - `src/material_agent/adapters/models/pyiqa_quality.py`
 - `src/material_agent/adapters/models/dinov2_embedding.py`
 - `src/material_agent/adapters/models/openvino_embedding.py`
+- `src/material_agent/adapters/models/openvino_ssd_detection.py`
 - `src/material_agent/adapters/models/mediapipe_face.py`
 - `src/material_agent/app/openvino_model_service.py`
 
@@ -20,7 +21,10 @@ loads lazily and must preserve the service-free heuristic fallback.
 - semantic: MobileCLIP2-S0 through OpenCLIP;
 - reject priors: BRISQUE and NIQE through PyIQA;
 - quality: MUSIQ through PyIQA;
-- aesthetic: NIMA and CLIPIQA+ through PyIQA;
+- object detection: SSD MobileNet V1 COCO through native OpenVINO;
+- face and eye localization: YuNet INT8 through OpenCV DNN;
+- aesthetic: bundled NIMA MobileNet through native OpenVINO, with optional NIMA
+  and CLIPIQA+ experiments through PyIQA;
 - embeddings: DINOv2-small through Transformers or a native OpenVINO ONNX
   adapter;
 - face structure: MediaPipe Face Landmarker.
@@ -38,6 +42,9 @@ loads lazily and must preserve the service-free heuristic fallback.
 - Embedding vectors are used transiently and are not written into benchmark
   reports or ordinary score metadata.
 - Face presence does not enable portrait penalties by itself.
+- Detection precedes subject-focus measurement. If no confident object or face
+  is found, spectral-residual saliency supplies a deterministic ROI without an
+  additional learned model.
 
 ## OpenVINO Model Bundles
 

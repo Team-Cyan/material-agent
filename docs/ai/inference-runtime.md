@@ -135,6 +135,34 @@ production photography.
 
 ## Native OpenVINO Vertical Slice
 
+### Lightweight object and focus pipeline
+
+The Intel image bundles the FP32 ONNX Model Zoo SSD MobileNet V1 opset-12 graph
+for COCO object localization and the OpenCV YuNet INT8 graph for face and five-
+point landmark localization. SSD is resized to 320x320 and runs through native
+OpenVINO; YuNet runs through OpenCV DNN. This path adds neither YOLO nor CLIP,
+and keeps Torch, TensorFlow, MediaPipe, and OpenCV contrib out of the image.
+Both model repository revisions and their SHA-256 digests are pinned in the
+Dockerfile.
+
+The scoring order is deliberate:
+
+1. exposure and whole-frame Laplacian sharpness run on CPU; only catastrophic
+   blur can stop the pipeline before model inference;
+2. SSD selects a primary subject using confidence, area, center position, and a
+   person/animal preference;
+3. focus is measured again in that subject ROI; detected faces promote the
+   measurement to two eye ROIs;
+4. images without a confident detection use a NumPy/OpenCV spectral-residual
+   saliency ROI rather than failing or scoring the whole frame as the subject.
+
+Artifacts retain detected objects, normalized boxes, face landmarks, subject
+selection, model SHA-256 digests, requested/compiled/execution devices,
+fallback details, compiled-cache identity, and per-stage timing. The retained
+focus grayscale preview is bounded to a 2048-pixel edge; it is more precise than
+the normal 1024 scoring preview but is not represented as a full-resolution RAW
+crop.
+
 ### Learned aesthetic scoring
 
 The default Intel image bundles NIMA MobileNet aesthetic scoring rather than a
@@ -250,12 +278,11 @@ errors. The durable report is
 
 The maintained Intel image now provides:
 
-- digest-pinned Python/uv base, checksum-pinned Intel userspace packages, and a
-  checksum-pinned bundled NIMA TFLite model;
-- a baked `backend: local` profile with NIMA learned aesthetic scoring enabled,
-  initial `CPU`, explicit CPU fallback, throughput-mode async inference, and
-  compiled cache under `/config`; the final device default follows the target
-  NIMA CPU/GPU benchmark;
+- digest-pinned Python/uv base, checksum-pinned Intel userspace packages, and
+  checksum-pinned bundled NIMA, SSD MobileNet, and YuNet model assets;
+- a baked `backend: local` profile with SSD/YuNet detection, subject/eye focus,
+  and NIMA learned aesthetic scoring enabled on `CPU`, explicit CPU fallback,
+  throughput-mode async NIMA inference, and compiled cache under `/config`;
 - a lean Intel dependency set without Torch, Transformers, OpenCLIP, PyIQA, or
   MediaPipe, with unsupported screening disabled in the baked profile;
 - root startup limited to PUID/PGID alignment, `/dev/dri` supplementary groups,

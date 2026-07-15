@@ -21,6 +21,9 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 - prefer camera-embedded JPEG/thumbnail data before falling back to RAW
   half-size postprocess
 - run local pixel scorers
+- reject only catastrophic whole-frame blur before learned inference
+- measure authoritative subject focus after object detection, with eye ROIs for
+  detected faces and spectral-residual saliency as a model-free fallback
 - optionally run fast screening
 - call the backend client for vision dimensions
 - merge pixel and vision scores into one `ScoreBundle`
@@ -57,8 +60,10 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 - score bundle shape must remain compatible with runtime persistence and rewrite flows
 - rejection paths must still emit enough information for downstream summary and persistence
 - scene-aware exposure rescoring happens after the backend returns scene context
-- preview-derived focus signals must be identified as preview proxies when a
-  high-resolution ROI pass has not run
+- subject and eye focus use the retained 2048-edge grayscale preview and record
+  the ROI source, confidence, bounding box, and Laplacian measurements
+- whole-frame sharpness is an early catastrophic-blur guard, not a substitute
+  for subject focus
 
 ## Typical Safe Changes
 
@@ -95,7 +100,6 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 - The config contract is powerful but implicit; many scoring changes require careful reading of config normalization and constants.
 - The current VLM path is useful for structured scene/dimension scoring and explanation, but future culling improvements should be benchmarked as ranking work rather than assuming a larger VLM is the best main scorer.
 - Any learned scorer experiment should compare against the current `MUSIQ + VLM` path with group top-1 and pairwise preference metrics before replacing production scoring.
-- Focus integrity is currently a preview-proxy signal. It is suitable for obvious
-  blur rejection, but not for confirming eye focus on 30MP+ RAW captures. A
-  future candidate-only ROI pass should run after cheap group ranking and record
-  its own high-confidence focus signal.
+- Subject and eye focus are still measured from a bounded embedded preview, not
+  a full-resolution RAW crop. The recorded provenance must remain explicit; a
+  future ambiguous-candidate pass may add true sensor-resolution ROI decoding.

@@ -22,11 +22,13 @@ class AsyncLocalClient:
         self.semantic_config = self.config.get("semantic", {})
         self.quality_config = self.config.get("quality", {})
         self.aesthetic_config = self.config.get("aesthetic", {})
+        self.detection_config = self.config.get("detection", {})
         self.embedding_config = self.config.get("embedding", {})
         self.face_config = self.config.get("face", {})
         self._semantic = None
         self._quality = None
         self._aesthetic = None
+        self._detection = None
         self._embedding = None
         self._face = None
         self.embedding_result_cache_size = int(self.embedding_config.get("result_cache_size", 256))
@@ -77,6 +79,22 @@ class AsyncLocalClient:
         result["_timing"] = {
             "local_heuristic_seconds": round(time.perf_counter() - heuristic_started, 6)
         }
+        if self.detection_config.get("enabled", False):
+            try:
+                detection = await self._object_detector().detect_objects(jpeg_bytes)
+            except Exception as error:
+                if self.detection_config.get("enforce_available", False):
+                    raise
+                result["_detection"] = {"status": "fallback", "error": str(error)}
+            else:
+                result["_detection"] = {"status": "model", **detection}
+                if detection.get("scene") and detection["scene"] != "other":
+                    result["scene"] = detection["scene"]
+                    result["scene_raw"] = f"object:{detection['scene']}"
+                result["_scoring_mode"] = "hybrid"
+                result["_model_stack"] = [detection["model_name"]]
+                result["_runtime_components"].append(_model_runtime_component(detection))
+                result["_runtime"] = "+".join(result["_runtime_components"])
         if self.semantic_config.get("enabled", False):
             try:
                 semantic = await self._semantic_classifier().classify_image(jpeg_bytes)
@@ -93,7 +111,9 @@ class AsyncLocalClient:
                 result["_scoring_mode"] = "hybrid"
                 result["_runtime_components"].append(f"{semantic['runtime']}:{semantic['device']}")
                 result["_runtime"] = "+".join(result["_runtime_components"])
-                result["_model_stack"] = [semantic["model_name"]]
+                model_stack = list(result.get("_model_stack", []))
+                model_stack.append(semantic["model_name"])
+                result["_model_stack"] = model_stack
                 result["_semantic"] = {"status": "model", **semantic}
         if self.quality_config.get("enabled", False):
             try:
@@ -284,6 +304,21 @@ class AsyncLocalClient:
 
             self._quality = PyIqaQualityAdapter(self.quality_config)
         return self._quality
+
+    def _object_detector(self):
+        if self._detection is None:
+            from ..adapters.models.openvino_ssd_detection import (
+                OpenVinoSsdObjectDetectorAdapter,
+            )
+
+            detection_config = {
+                **self.detection_config,
+                "fallback_device": self.detection_config.get(
+                    "fallback_device", self.inference.get("fallback_device", "CPU")
+                ),
+            }
+            self._detection = OpenVinoSsdObjectDetectorAdapter(detection_config)
+        return self._detection
 
     def _aesthetic_scorer(self):
         if self._aesthetic is None:

@@ -13,6 +13,10 @@ class SemanticClassifierPort(Protocol):
     async def classify_image(self, jpeg_bytes: bytes) -> dict: ...
 
 
+class ObjectDetectionPort(Protocol):
+    async def detect_objects(self, jpeg_bytes: bytes) -> dict: ...
+
+
 class QualityScoringPort(Protocol):
     async def score_quality(self, jpeg_bytes: bytes) -> dict: ...
 

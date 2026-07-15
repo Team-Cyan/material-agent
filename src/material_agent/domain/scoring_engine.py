@@ -11,6 +11,7 @@ from ..scorers.aggregator import Aggregator
 from ..scorers.base import ScorerResult
 from ..scorers.exposure import ExposureScorer
 from ..scorers.sharpness import SharpnessScorer
+from .subject_focus import analyze_subject_focus
 from ..utils.constants import (
     ALL_ABBR,
     ALL_DIMS,
@@ -32,6 +33,7 @@ class RawFrame:
     original_size: tuple[int, int] | None = None
     preview_size: tuple[int, int] | None = None
     focus_assessment: str = "preview_proxy"
+    focus_gray: object | None = None
 
 
 @dataclass
@@ -76,6 +78,17 @@ def decode_raw(file_path: str, preview_config: dict) -> RawFrame:
             preview_rgb = raw.postprocess(use_camera_wb=True, output_bps=8, half_size=True)
             preview_source = "raw_postprocess"
 
+    focus_max_size = int(preview_config.get("focus_max_size", 2048))
+    focus_h, focus_w = preview_rgb.shape[:2]
+    focus_scale = min(focus_max_size / max(focus_h, focus_w), 1.0)
+    focus_rgb = preview_rgb
+    if focus_scale < 1.0:
+        focus_rgb = cv2.resize(
+            preview_rgb,
+            (max(1, int(focus_w * focus_scale)), max(1, int(focus_h * focus_scale))),
+            interpolation=cv2.INTER_AREA,
+        )
+    focus_gray = cv2.cvtColor(focus_rgb, cv2.COLOR_RGB2GRAY)
     max_size = int(preview_config["max_size"])
     h, w = preview_rgb.shape[:2]
     scale = min(max_size / max(h, w), 1.0)
@@ -97,7 +110,8 @@ def decode_raw(file_path: str, preview_config: dict) -> RawFrame:
         preview_source=preview_source,
         original_size=original_size,
         preview_size=(preview_w, preview_h),
-        focus_assessment="preview_proxy",
+        focus_assessment="subject_roi_preview",
+        focus_gray=focus_gray,
     )
 
 
@@ -209,6 +223,7 @@ async def compute_scores(
     results: list[ScorerResult] = []
     meta: dict = _build_frame_meta(frame, config)
     exposure_scorer = None
+    global_sharpness_score = None
 
     exp_cfg = config["scorers"]["exposure"]
     if exp_cfg["enabled"]:
@@ -222,12 +237,40 @@ async def compute_scores(
         r = SharpnessScorer(sharp_cfg).score_image(frame.gray)
         results.append(r)
         meta.update(r.metadata)
+        global_sharpness_score = r.score
 
     pixel_results = [r for r in results if r.name not in VISION_DIMS]
     pixel_total = Aggregator.aggregate(pixel_results)
     screening_cfg = config.get("screening", {})
     screening_enabled = screening_cfg.get("enabled", False)
     scores = {r.name: r.score for r in results}
+
+    focus_config = config.get("focus_integrity", {})
+    global_guard_threshold = float(focus_config.get("global_blur_reject_below", 0.25))
+    if (
+        focus_config.get("enabled", True)
+        and focus_config.get("mode") == "subject_roi"
+        and global_sharpness_score is not None
+        and global_sharpness_score < global_guard_threshold
+    ):
+        meta["subject_focus"] = {
+            "mode": "global_guard",
+            "score": global_sharpness_score,
+            "global_blur_score": global_sharpness_score,
+            "subject_focus_score": None,
+            "eye_focus_score": None,
+            "source": "global_blur_guard",
+            "confidence": 1.0,
+            "global_blur_guard_failed": True,
+        }
+        return _build_rejected_bundle(
+            status="catastrophic_blur_rejected",
+            total=pixel_total,
+            scores=scores,
+            meta=meta,
+            config=config,
+            reason="global_catastrophic_blur",
+        )
 
     tier1_threshold = screening_cfg.get("tier1_threshold", 0.5)
     tier2_threshold = screening_cfg.get("tier2_threshold", 0.25)
@@ -320,6 +363,17 @@ async def compute_scores(
                     min_score=config["scorers"].get(dim, {}).get("min_score", 0.0),
                 )
             )
+        subject_roi_enabled = focus_config.get("mode") == "subject_roi"
+        if focus_config.get("enabled", True) and (
+            frame.focus_gray is not None or subject_roi_enabled
+        ):
+            focus_gray = frame.focus_gray if frame.focus_gray is not None else frame.gray
+            meta["subject_focus"] = analyze_subject_focus(
+                focus_gray,
+                detection=meta.get("detection"),
+                focus_config=focus_config,
+                sharpness_config=sharp_cfg,
+            )
     else:
         scene = "other"
         scene_raw = ""
@@ -385,16 +439,31 @@ def _combine_scores(
 def _build_layered_signals(
     *, scores: dict[str, float], meta: dict, scene: str, config: dict
 ) -> list[dict]:
-    focus_integrity = _mean_known([scores.get("sharpness"), scores.get("clarity")])
+    subject_focus_meta = meta.get("subject_focus")
+    measured_subject_focus = (
+        subject_focus_meta.get("score") if isinstance(subject_focus_meta, dict) else None
+    )
+    focus_integrity = (
+        float(measured_subject_focus)
+        if measured_subject_focus is not None
+        else _mean_known([scores.get("sharpness"), scores.get("clarity")])
+    )
     clarity_proxy = scores.get("clarity", focus_integrity)
-    focus_confidence = _focus_confidence(meta)
+    focus_confidence = (
+        float(subject_focus_meta.get("confidence", 0.0))
+        if isinstance(subject_focus_meta, dict)
+        else _focus_confidence(meta)
+    )
     subject_focus = focus_integrity if focus_integrity is not None else scores.get("subject")
-    focus_source = "preview_proxy" if meta.get("focus_assessment") == "preview_proxy" else "cpu"
+    focus_source = (
+        str(subject_focus_meta.get("source"))
+        if isinstance(subject_focus_meta, dict)
+        else ("preview_proxy" if meta.get("focus_assessment") == "preview_proxy" else "cpu")
+    )
     technical_quality = _mean_known(
         [
             scores.get("exposure"),
             focus_integrity,
-            clarity_proxy,
             clarity_proxy,
         ]
     )
@@ -453,15 +522,26 @@ def _build_layered_signals(
         },
     ]
     if scene == "people" and config.get("portrait_face_eye", {}).get("enabled", False):
-        portrait_signal = _estimate_portrait_face_eye_usability(scores)
+        portrait_signal = (
+            subject_focus_meta.get("eye_focus_score")
+            if isinstance(subject_focus_meta, dict)
+            else None
+        )
+        if portrait_signal is None:
+            portrait_signal = _estimate_portrait_face_eye_usability(scores)
         if portrait_signal is not None:
             signals.append(
                 {
                     "stage": "technical",
                     "signal_key": "portrait_face_eye_usability",
                     "value": portrait_signal,
-                    "confidence": min(0.4, focus_confidence),
-                    "source": "preview_proxy",
+                    "confidence": focus_confidence,
+                    "source": (
+                        "eye_roi"
+                        if isinstance(subject_focus_meta, dict)
+                        and subject_focus_meta.get("eye_focus_score") is not None
+                        else "preview_proxy"
+                    ),
                 }
             )
     for public_dim, source_dim in AESTHETIC_SOURCE_MAP.items():
@@ -507,7 +587,7 @@ def _build_frame_meta(frame: RawFrame, config: dict) -> dict:
         warning_ratio = float(
             config.get("focus_integrity", {}).get("downscale_warning_ratio", 3.0) or 3.0
         )
-        if downscale_ratio >= warning_ratio:
+        if downscale_ratio >= warning_ratio and frame.focus_gray is None:
             meta["focus_review_required"] = True
             meta["focus_review_reason"] = "high_resolution_roi_not_run"
     return meta
@@ -521,6 +601,7 @@ def _merge_backend_meta(meta: dict, raw_scores: dict) -> None:
         "_configured_runtime",
         "_model_stack",
         "_semantic",
+        "_detection",
         "_quality",
         "_aesthetic",
         "_embedding",

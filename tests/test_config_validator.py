@@ -668,11 +668,21 @@ def test_normalize_config_sets_layered_decision_defaults():
     normalized = normalize_config(_minimal_config())
 
     assert normalized["focus_integrity"]["enabled"] is True
-    assert normalized["focus_integrity"]["mode"] == "preview_proxy"
-    assert normalized["focus_integrity"]["high_resolution_roi"] is False
+    assert normalized["focus_integrity"]["mode"] == "subject_roi"
+    assert normalized["focus_integrity"]["high_resolution_roi"] is True
     assert normalized["portrait_face_eye"]["enabled"] is False
     assert normalized["decision_policy"]["keep_threshold"] == 7.5
     assert normalized["decision_policy"]["review_threshold"] == 5.5
+
+
+def test_normalize_config_sets_lightweight_detection_defaults():
+    normalized = normalize_config(_minimal_config())
+
+    assert normalized["local"]["detection"]["enabled"] is False
+    assert normalized["local"]["detection"]["runtime"] == "openvino"
+    assert normalized["local"]["detection"]["model_name"] == "ssd-mobilenet-v1-12"
+    assert normalized["local"]["detection"]["input_size"] == 320
+    assert normalized["preview"]["focus_max_size"] == 2048
 
 
 def test_normalize_config_sets_preview_and_xmp_defaults():

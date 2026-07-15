@@ -67,6 +67,7 @@ _MAX_SCORE_PREFETCH_WINDOW = 32
 _MAPPING_SECTION_PATHS = (
     ("legacy",),
     ("local",),
+    ("local", "detection"),
     ("local", "semantic"),
     ("local", "quality"),
     ("local", "quality", "metrics"),
@@ -328,6 +329,21 @@ def normalize_config(cfg: dict) -> dict:
     semantic.setdefault("pretrained", "dfndr2b")
     semantic.setdefault("device", "cpu")
     semantic.setdefault("min_confidence", 0.30)
+    detection = local.setdefault("detection", {})
+    detection["enabled"] = _coerce_bool_like(detection.get("enabled", False))
+    detection["enforce_available"] = _coerce_bool_like(detection.get("enforce_available", False))
+    detection.setdefault("runtime", "openvino")
+    detection.setdefault("model_name", "ssd-mobilenet-v1-12")
+    detection.setdefault("model_version", "onnxmodelzoo-opset12")
+    detection.setdefault("device", "CPU")
+    detection.setdefault("fallback_device", "CPU")
+    detection.setdefault("model_path", "")
+    detection.setdefault("face_model_path", "")
+    detection.setdefault("compiled_cache_dir", "~/.material-agent/openvino-cache")
+    detection.setdefault("input_size", 320)
+    detection.setdefault("score_threshold", 0.30)
+    detection.setdefault("max_results", 10)
+    detection.setdefault("face_score_threshold", 0.60)
     quality = local.setdefault("quality", {})
     quality["enabled"] = _coerce_bool_like(quality.get("enabled", False))
     quality["enforce_available"] = _coerce_bool_like(quality.get("enforce_available", False))
@@ -427,6 +443,7 @@ def normalize_config(cfg: dict) -> dict:
     preview = normalized.setdefault("preview", {})
     preview.setdefault("prefer_embedded", True)
     preview.setdefault("fallback_decode", "half_size")
+    preview.setdefault("focus_max_size", 2048)
     preview["prefer_embedded"] = _coerce_bool_like(preview.get("prefer_embedded", True))
 
     grouping = normalized.setdefault("grouping", {})
@@ -459,9 +476,12 @@ def normalize_config(cfg: dict) -> dict:
 
     normalized["focus_integrity"] = copy.deepcopy(normalized.get("focus_integrity", {}))
     normalized["focus_integrity"].setdefault("enabled", True)
-    normalized["focus_integrity"].setdefault("mode", "preview_proxy")
-    normalized["focus_integrity"].setdefault("high_resolution_roi", False)
+    normalized["focus_integrity"].setdefault("mode", "subject_roi")
+    normalized["focus_integrity"].setdefault("high_resolution_roi", True)
     normalized["focus_integrity"].setdefault("downscale_warning_ratio", 3.0)
+    normalized["focus_integrity"].setdefault("roi_expand_ratio", 0.12)
+    normalized["focus_integrity"].setdefault("eye_roi_ratio", 0.16)
+    normalized["focus_integrity"].setdefault("global_blur_reject_below", 0.25)
 
     normalized["portrait_face_eye"] = copy.deepcopy(normalized.get("portrait_face_eye", {}))
     normalized["portrait_face_eye"].setdefault("enabled", False)
@@ -552,6 +572,43 @@ def validate_config(cfg: dict) -> None:
         errors.append(
             f"preview.fallback_decode must be 'half_size', got: {preview.get('fallback_decode')!r}"
         )
+    for key in ("max_size", "focus_max_size"):
+        value = preview.get(key)
+        if value is not None and (
+            not isinstance(value, int) or isinstance(value, bool) or not 64 <= value <= 8192
+        ):
+            errors.append(
+                f"preview.{key} must be an integer between 64 and 8192, got: {value!r}"
+            )
+    focus_integrity = cfg.get("focus_integrity", {})
+    for key in ("enabled", "high_resolution_roi"):
+        if not _is_valid_bool_like(focus_integrity.get(key, False)):
+            errors.append(
+                f"focus_integrity.{key} must be a boolean, got: {focus_integrity.get(key)!r}"
+            )
+    if focus_integrity.get("mode") not in {"preview_proxy", "subject_roi"}:
+        errors.append(
+            "focus_integrity.mode must be 'preview_proxy' or 'subject_roi', "
+            f"got: {focus_integrity.get('mode')!r}"
+        )
+    for key in ("roi_expand_ratio", "eye_roi_ratio"):
+        value = focus_integrity.get(key)
+        if not isinstance(value, int | float) or not 0.0 <= float(value) <= 1.0:
+            errors.append(
+                f"focus_integrity.{key} must be a number between 0 and 1, got: {value!r}"
+            )
+    blur_threshold = focus_integrity.get("global_blur_reject_below")
+    if not isinstance(blur_threshold, int | float) or not 0.0 <= float(blur_threshold) <= 10.0:
+        errors.append(
+            "focus_integrity.global_blur_reject_below must be a number between 0 and 10, "
+            f"got: {blur_threshold!r}"
+        )
+    portrait_face_eye = cfg.get("portrait_face_eye", {})
+    if not _is_valid_bool_like(portrait_face_eye.get("enabled", False)):
+        errors.append(
+            "portrait_face_eye.enabled must be a boolean, "
+            f"got: {portrait_face_eye.get('enabled')!r}"
+        )
     review_pipeline = cfg.get("review_pipeline", {})
     score_prefetch_window = review_pipeline.get("score_prefetch_window", 2)
     if (
@@ -626,6 +683,42 @@ def validate_config(cfg: dict) -> None:
                 "local.semantic.min_confidence must be a number between 0 and 1, "
                 f"got: {min_confidence!r}"
             )
+        detection = local.get("detection", {})
+        for key in ("enabled", "enforce_available"):
+            if not _is_valid_bool_like(detection.get(key, False)):
+                errors.append(
+                    f"local.detection.{key} must be a boolean, got: {detection.get(key)!r}"
+                )
+        if detection.get("runtime", "openvino") != "openvino":
+            errors.append(
+                f"local.detection.runtime must be 'openvino', got: {detection.get('runtime')!r}"
+            )
+        for key in ("model_name", "model_version", "device", "fallback_device"):
+            value = detection.get(key)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f"local.detection.{key} must be a non-empty string, got: {value!r}")
+        for key in ("score_threshold", "face_score_threshold"):
+            value = detection.get(key)
+            if not isinstance(value, int | float) or not 0.0 <= float(value) <= 1.0:
+                errors.append(
+                    f"local.detection.{key} must be a number between 0 and 1, got: {value!r}"
+                )
+        for key, minimum, maximum in (("input_size", 224, 1024), ("max_results", 1, 100)):
+            value = detection.get(key)
+            if (
+                not isinstance(value, int)
+                or isinstance(value, bool)
+                or not minimum <= value <= maximum
+            ):
+                errors.append(
+                    f"local.detection.{key} must be an integer between {minimum} and {maximum}, "
+                    f"got: {value!r}"
+                )
+        if detection.get("enabled", False):
+            for key in ("model_path", "compiled_cache_dir"):
+                value = detection.get(key)
+                if not isinstance(value, str) or not value.strip():
+                    errors.append(f"local.detection.{key} must be set when detection is enabled")
         quality = local.get("quality", {})
         for key in ("enabled", "enforce_available"):
             if not _is_valid_bool_like(quality.get(key, False)):

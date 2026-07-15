@@ -43,34 +43,42 @@ def _aggregate_timings(repository, job_files: list[object]) -> dict:
                 if isinstance(value, int | float):
                     totals[key] += float(value)
                     found = True
-        kind = "aesthetic" if isinstance(meta.get("aesthetic"), dict) else "embedding"
-        model = meta.get(kind)
-        if not isinstance(model, dict):
-            continue
-        run_id = model.get("inference_run_id")
-        if run_id is None or run_id in seen_inference_runs:
-            continue
-        seen_inference_runs.add(run_id)
-        run_kinds.add(kind)
-        seen_runs_by_kind.setdefault(kind, set()).add(run_id)
-        model_timing = model.get("timing")
-        if not isinstance(model_timing, dict):
-            continue
-        for source in ("preprocess_seconds", "inference_seconds", "postprocess_seconds"):
-            value = model_timing.get(source)
+        subject_focus = meta.get("subject_focus")
+        if isinstance(subject_focus, dict):
+            value = subject_focus.get("timing_seconds")
             if isinstance(value, int | float):
-                totals[f"model_{source}"] += float(value)
-                category_key = f"{kind}_{source}"
-                totals[category_key] = totals.get(category_key, 0.0) + float(value)
+                totals["subject_focus_seconds"] = totals.get("subject_focus_seconds", 0.0) + float(
+                    value
+                )
                 found = True
-        compile_seconds = model_timing.get("compile_seconds")
-        if isinstance(compile_seconds, int | float):
-            totals["model_compile_seconds"] = max(
-                totals["model_compile_seconds"], float(compile_seconds)
-            )
-            category_key = f"{kind}_compile_seconds"
-            totals[category_key] = max(totals.get(category_key, 0.0), float(compile_seconds))
-            found = True
+        for kind in ("detection", "aesthetic", "embedding"):
+            model = meta.get(kind)
+            if not isinstance(model, dict):
+                continue
+            run_id = model.get("inference_run_id")
+            if run_id is None or run_id in seen_inference_runs:
+                continue
+            seen_inference_runs.add(run_id)
+            run_kinds.add(kind)
+            seen_runs_by_kind.setdefault(kind, set()).add(run_id)
+            model_timing = model.get("timing")
+            if not isinstance(model_timing, dict):
+                continue
+            for source in ("preprocess_seconds", "inference_seconds", "postprocess_seconds"):
+                value = model_timing.get(source)
+                if isinstance(value, int | float):
+                    totals[f"model_{source}"] += float(value)
+                    category_key = f"{kind}_{source}"
+                    totals[category_key] = totals.get(category_key, 0.0) + float(value)
+                    found = True
+            compile_seconds = model_timing.get("compile_seconds")
+            if isinstance(compile_seconds, int | float):
+                totals["model_compile_seconds"] = max(
+                    totals["model_compile_seconds"], float(compile_seconds)
+                )
+                category_key = f"{kind}_compile_seconds"
+                totals[category_key] = max(totals.get(category_key, 0.0), float(compile_seconds))
+                found = True
     if not found:
         return {}
     result = {key: round(value, 6) for key, value in totals.items()}

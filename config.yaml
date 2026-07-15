@@ -127,15 +127,21 @@ preview:
   prefer_embedded: true
   fallback_decode: half_size
   max_size: 1024
+  # Keep a larger grayscale proxy for subject/eye focus without retaining a
+  # full RAW demosaic in memory.
+  focus_max_size: 2048
   jpeg_quality: 85
 
 focus_integrity:
   enabled: true
-  # Current focus scoring is a preview proxy. High-resolution ROI focus should
-  # be enabled only after a dedicated candidate pass is wired.
-  mode: preview_proxy
-  high_resolution_roi: false
+  # Global focus only guards catastrophic blur. The authoritative score is
+  # measured again in the detected subject/eye ROI, with saliency fallback.
+  mode: subject_roi
+  high_resolution_roi: true
   downscale_warning_ratio: 3.0
+  roi_expand_ratio: 0.12
+  eye_roi_ratio: 0.16
+  global_blur_reject_below: 0.25
 
 portrait_face_eye:
   # Disabled by default until a face/eye ROI model is wired into the pipeline.

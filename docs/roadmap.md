@@ -64,6 +64,10 @@
   OpenVINO CPU/GPU execution provenance, batched review-window priming, and
   direct ownership of the layered policy's aesthetic total; disabled the
   unused default DINO execution while keeping embedding grouping opt-in
+- added a lightweight target-first focus path: OpenVINO SSD MobileNet V1 object
+  detection, OpenCV YuNet face/eye landmarks, a catastrophic global-blur guard,
+  subject/eye ROI focus scoring, and spectral-residual saliency fallback without
+  YOLO, CLIP, Torch, TensorFlow, or MediaPipe in the Intel image
 
 ## In Progress
 
@@ -93,8 +97,8 @@
 
 ## Later
 
-- add a candidate-only high-resolution ROI focus pass for group top-N or
-  ambiguous images, then promote `portrait_face_eye` from experimental config
+- optionally add true sensor-resolution RAW ROI decoding for ambiguous
+  candidates; the current subject/eye pass uses a bounded 2048-edge preview
 - remove copied OMLX/Ollama modules after the remaining deprecation inventory
   and teacher-tool retention decision
 - use the old VLM as optional teacher data for a small ranking/regression head

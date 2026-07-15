@@ -67,6 +67,21 @@ RUN mkdir -p /opt/material-agent/models/nima \
         'a5051a0fcced735682735e3e0fd58ee54c83ed664282a003f52235b3dbcb9320' '/opt/material-agent/models/nima/nima_aesthetic_fp16.tflite' \
         | sha256sum --check --strict -
 
+# SSD MobileNet V1 provides compact COCO object localization without a YOLO,
+# CLIP, Torch, or TensorFlow runtime. YuNet adds face and eye landmarks used by
+# the subject-focus pass. Both assets are checksum-pinned for reproducibility.
+ARG SSD_MOBILENET_REVISION=019281f3fcb151a90e491f3b2f0273f9f31bd6be
+ARG YUNET_REVISION=3cc26e7f1014a5ee5d74a42acee58bafc9d0a310
+RUN mkdir -p /opt/material-agent/models/detection \
+    && curl -fL "https://huggingface.co/onnxmodelzoo/ssd_mobilenet_v1_12/resolve/${SSD_MOBILENET_REVISION}/ssd_mobilenet_v1_12.onnx" \
+        -o /opt/material-agent/models/detection/ssd_mobilenet_v1_12.onnx \
+    && curl -fL "https://huggingface.co/opencv/face_detection_yunet/resolve/${YUNET_REVISION}/face_detection_yunet_2023mar_int8.onnx" \
+        -o /opt/material-agent/models/detection/face_detection_yunet_2023mar_int8.onnx \
+    && printf '%s  %s\n' \
+        'b8fba5e404077d4048d27fcd1667e85e27e192eb9bf51e696c46a3acd7d21058' '/opt/material-agent/models/detection/ssd_mobilenet_v1_12.onnx' \
+        '321aa5a6afabf7ecc46a3d06bfab2b579dc96eb5c3be7edd365fa04502ad9294' '/opt/material-agent/models/detection/face_detection_yunet_2023mar_int8.onnx' \
+        | sha256sum --check --strict -
+
 COPY pyproject.toml uv.lock /app/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen \

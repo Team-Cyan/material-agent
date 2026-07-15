@@ -12,6 +12,21 @@ legacy:
   enabled: false
 
 local:
+  detection:
+    enabled: true
+    enforce_available: true
+    runtime: openvino
+    model_name: ssd-mobilenet-v1-12
+    model_version: onnxmodelzoo-opset12
+    device: CPU
+    fallback_device: CPU
+    model_path: /opt/material-agent/models/detection/ssd_mobilenet_v1_12.onnx
+    face_model_path: /opt/material-agent/models/detection/face_detection_yunet_2023mar_int8.onnx
+    compiled_cache_dir: /config/openvino-cache
+    input_size: 320
+    score_threshold: 0.30
+    max_results: 10
+    face_score_threshold: 0.60
   aesthetic:
     enabled: true
     enforce_available: true
@@ -72,7 +87,22 @@ preview:
   prefer_embedded: true
   fallback_decode: half_size
   max_size: 1024
+  focus_max_size: 2048
   jpeg_quality: 85
+
+focus_integrity:
+  enabled: true
+  mode: subject_roi
+  high_resolution_roi: true
+  downscale_warning_ratio: 3.0
+  roi_expand_ratio: 0.12
+  eye_roi_ratio: 0.16
+  global_blur_reject_below: 0.25
+
+portrait_face_eye:
+  enabled: true
+  min_face_ratio: 0.08
+  review_penalty: 0.8
 
 scorers:
   exposure:
