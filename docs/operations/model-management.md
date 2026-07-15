@@ -59,9 +59,10 @@ material-agent models --registry-dir /config/models serve \
 ```
 
 The maintained Unraid deployment uses a separate service container listening on
-`127.0.0.1:8765`, sharing only the appdata model registry with the scorer. This
-keeps the API off the LAN by default and avoids granting it access to the photo
-share. Any non-loopback listener requires a bearer token.
+`127.0.0.1:8766`, because `seed-agent` already owns host port 8765. It shares
+only the appdata model registry with the scorer. This keeps the API off the LAN
+by default and avoids granting it access to the photo share. Any non-loopback
+listener requires a bearer token.
 
 Catalog inclusion is not based on file format alone. For example, the upstream
 SSD MobileNet V1 INT8 ONNX candidate is checksum-addressable but OpenVINO
