@@ -24,7 +24,7 @@ local:
     compiled_cache_dir: /config/openvino-cache
     result_cache_size: 256
     performance_hint: THROUGHPUT
-    batch_size: 1
+    batch_size: 4
     max_in_flight: 8
     infer_requests: auto
   embedding:

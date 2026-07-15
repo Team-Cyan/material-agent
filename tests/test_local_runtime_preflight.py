@@ -55,6 +55,24 @@ def test_probe_local_runtime_cpu_runtime_is_valid():
     assert payload["runtime"] == "cpu"
     assert payload["available_devices"] == ["CPU"]
     assert payload["heuristic_scoring_active"] is True
+    assert payload["learned_aesthetic_active"] is False
+
+
+def test_probe_local_runtime_reports_learned_aesthetic_model():
+    payload = probe_local_runtime(
+        {
+            "local": {
+                "aesthetic": {
+                    "enabled": True,
+                    "model_name": "nima-aesthetic-mobilenet",
+                }
+            },
+            "inference": {"runtime": "cpu"},
+        }
+    )
+
+    assert payload["learned_aesthetic_active"] is True
+    assert payload["aesthetic_model_name"] == "nima-aesthetic-mobilenet"
 
 
 def test_probe_local_runtime_parses_string_enforce_available_false():

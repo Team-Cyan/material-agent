@@ -9,11 +9,15 @@ def probe_local_runtime(config: dict[str, Any]) -> dict[str, Any]:
     """Report local runtime package/device state without changing score policy."""
 
     inference = config.get("inference", {}) if isinstance(config.get("inference"), dict) else {}
+    local = config.get("local", {}) if isinstance(config.get("local"), dict) else {}
+    aesthetic = local.get("aesthetic", {}) if isinstance(local.get("aesthetic"), dict) else {}
     runtime = str(inference.get("runtime", "cpu")).lower()
     device = str(inference.get("device", "CPU"))
     fallback_device = str(inference.get("fallback_device", "CPU"))
     provider_tags = _as_list(inference.get("provider_tags", []))
-    model_cache_dir = str(Path(str(inference.get("model_cache_dir", "~/.material-agent/models"))).expanduser())
+    model_cache_dir = str(
+        Path(str(inference.get("model_cache_dir", "~/.material-agent/models"))).expanduser()
+    )
     enforce_available = _as_bool(inference.get("enforce_available", False))
 
     payload: dict[str, Any] = {
@@ -26,6 +30,8 @@ def probe_local_runtime(config: dict[str, Any]) -> dict[str, Any]:
         "model_cache_dir_exists": Path(model_cache_dir).exists(),
         "enforce_available": enforce_available,
         "heuristic_scoring_active": True,
+        "learned_aesthetic_active": _as_bool(aesthetic.get("enabled", False)),
+        "aesthetic_model_name": aesthetic.get("model_name"),
         "capability_valid": True,
         "capability_failure": None,
         "available_devices": [],
@@ -63,7 +69,9 @@ def _probe_onnxruntime(payload: dict[str, Any]) -> dict[str, Any]:
         return _with_failure(payload, code="probe_error", summary=str(error))
 
     payload["available_providers"] = providers
-    payload["accelerator_available"] = any(provider != "CPUExecutionProvider" for provider in providers)
+    payload["accelerator_available"] = any(
+        provider != "CPUExecutionProvider" for provider in providers
+    )
     if "CPUExecutionProvider" not in providers:
         return _with_failure(
             payload,

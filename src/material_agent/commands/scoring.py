@@ -119,12 +119,8 @@ def build_score_cache_key(config: dict) -> str:
     distributions.update(_enabled_model_distributions(config))
     payload = {
         "pipeline_revision": _SCORE_PIPELINE_CACHE_REVISION,
-        "runtime_versions": {
-            name: _distribution_version(name) for name in sorted(distributions)
-        },
-        "config": redact_secrets(
-            {key: config.get(key) for key in _SCORE_CACHE_CONFIG_KEYS}
-        ),
+        "runtime_versions": {name: _distribution_version(name) for name in sorted(distributions)},
+        "config": redact_secrets({key: config.get(key) for key in _SCORE_CACHE_CONFIG_KEYS}),
     }
     embedding = config.get("local", {}).get("embedding", {})
     if (
@@ -246,7 +242,9 @@ def _sync_shared_omlx_models_if_needed(config: dict) -> None:
         print(f"Restarted shared oMLX runtime with active models: {active_models}")
         if summary.get("inactive_models"):
             inactive_models = ", ".join(summary.get("inactive_models", []))
-            print(f"Inactive shared desktop models remain installed but unpinned: {inactive_models}")
+            print(
+                f"Inactive shared desktop models remain installed but unpinned: {inactive_models}"
+            )
 
 
 def _build_review_job_executor(
@@ -320,7 +318,9 @@ def _build_runtime_probe_preflight_hook(
             guidance = summary.get("failure_guidance") or (
                 "Review the OMLX runtime configuration and restart the dedicated instance."
             )
-            summary_text = failure.get("summary") or "OMLX capability requirements are not satisfied."
+            summary_text = (
+                failure.get("summary") or "OMLX capability requirements are not satisfied."
+            )
             code = failure.get("code")
             message = "OMLX runtime probe failed"
             if code:
@@ -328,7 +328,9 @@ def _build_runtime_probe_preflight_hook(
             message += f": {summary_text} {guidance}"
             raise RuntimeError(message)
         except Exception as error:
-            if isinstance(error, RuntimeError) and str(error).startswith("OMLX runtime probe failed"):
+            if isinstance(error, RuntimeError) and str(error).startswith(
+                "OMLX runtime probe failed"
+            ):
                 raise
             payload = {
                 "backend": config.get("backend"),
@@ -374,6 +376,9 @@ def _build_local_runtime_preflight_hook(
                     config.get("inference", {}).get("enforce_available", False)
                 ),
                 "heuristic_scoring_active": True,
+                "learned_aesthetic_active": bool(
+                    config.get("local", {}).get("aesthetic", {}).get("enabled", False)
+                ),
                 "capability_valid": False,
                 "capability_failure": {"code": "probe_error", "summary": str(error)},
             }
@@ -416,7 +421,11 @@ def cmd_rescore(args, config):
     if not db_path.exists():
         print(f"Error: no database found at {db_path}")
         return 1
-    scene_keys = [scene_key_from_display(scene) for scene in args.scene] if getattr(args, "scene", None) else None
+    scene_keys = (
+        [scene_key_from_display(scene) for scene in args.scene]
+        if getattr(args, "scene", None)
+        else None
+    )
     with exclusive_run_lock(db_path.parent / "run.lock"):
         with SQLiteProcessedRepository(args.dir) as repository:
             updated = RescoreService(repository).run(

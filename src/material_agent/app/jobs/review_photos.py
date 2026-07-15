@@ -17,12 +17,14 @@ def _aggregate_timings(repository, job_files: list[object]) -> dict:
         "raw_decode_seconds": 0.0,
         "score_seconds": 0.0,
         "local_heuristic_seconds": 0.0,
-        "embedding_preprocess_seconds": 0.0,
-        "embedding_inference_seconds": 0.0,
-        "embedding_postprocess_seconds": 0.0,
-        "embedding_compile_seconds": 0.0,
+        "model_preprocess_seconds": 0.0,
+        "model_inference_seconds": 0.0,
+        "model_postprocess_seconds": 0.0,
+        "model_compile_seconds": 0.0,
     }
     seen_inference_runs: set[object] = set()
+    run_kinds: set[str] = set()
+    seen_runs_by_kind: dict[str, set[object]] = {}
     found = False
     for job_file in job_files:
         payload = repository.get_artifact_metadata(
@@ -41,37 +43,41 @@ def _aggregate_timings(repository, job_files: list[object]) -> dict:
                 if isinstance(value, int | float):
                     totals[key] += float(value)
                     found = True
-        embedding = meta.get("embedding")
-        if not isinstance(embedding, dict):
+        kind = "aesthetic" if isinstance(meta.get("aesthetic"), dict) else "embedding"
+        model = meta.get(kind)
+        if not isinstance(model, dict):
             continue
-        run_id = embedding.get("inference_run_id")
+        run_id = model.get("inference_run_id")
         if run_id is None or run_id in seen_inference_runs:
             continue
         seen_inference_runs.add(run_id)
-        embedding_timing = embedding.get("timing")
-        if not isinstance(embedding_timing, dict):
+        run_kinds.add(kind)
+        seen_runs_by_kind.setdefault(kind, set()).add(run_id)
+        model_timing = model.get("timing")
+        if not isinstance(model_timing, dict):
             continue
-        for source, target in (
-            ("preprocess_seconds", "embedding_preprocess_seconds"),
-            ("inference_seconds", "embedding_inference_seconds"),
-            ("postprocess_seconds", "embedding_postprocess_seconds"),
-        ):
-            value = embedding_timing.get(source)
+        for source in ("preprocess_seconds", "inference_seconds", "postprocess_seconds"):
+            value = model_timing.get(source)
             if isinstance(value, int | float):
-                totals[target] += float(value)
+                totals[f"model_{source}"] += float(value)
+                category_key = f"{kind}_{source}"
+                totals[category_key] = totals.get(category_key, 0.0) + float(value)
                 found = True
-        compile_seconds = embedding_timing.get("compile_seconds")
+        compile_seconds = model_timing.get("compile_seconds")
         if isinstance(compile_seconds, int | float):
-            totals["embedding_compile_seconds"] = max(
-                totals["embedding_compile_seconds"],
-                float(compile_seconds),
+            totals["model_compile_seconds"] = max(
+                totals["model_compile_seconds"], float(compile_seconds)
             )
+            category_key = f"{kind}_compile_seconds"
+            totals[category_key] = max(totals.get(category_key, 0.0), float(compile_seconds))
             found = True
     if not found:
         return {}
-    return {key: round(value, 6) for key, value in totals.items()} | {
-        "embedding_runs": len(seen_inference_runs)
-    }
+    result = {key: round(value, 6) for key, value in totals.items()}
+    result["model_runs"] = len(seen_inference_runs)
+    for kind in run_kinds:
+        result[f"{kind}_runs"] = len(seen_runs_by_kind[kind])
+    return result
 
 
 class ReviewPhotosJob:
@@ -231,12 +237,8 @@ class ReviewPhotosJob:
     ):
         group_results: list[tuple[str, dict]] = []
         resumable_job_files: dict[str, object] = {}
-        resolved_group_ids = group_ids or {
-            file_path: str(group_id) for file_path in group
-        }
-        group_can_be_skipped = {
-            resolved_group_ids[file_path]: True for file_path in group
-        }
+        resolved_group_ids = group_ids or {file_path: str(group_id) for file_path in group}
+        group_can_be_skipped = {resolved_group_ids[file_path]: True for file_path in group}
         pending_prepares: dict[str, Future] = {}
         primed_files: set[str] = set()
         started_files: set[str] = set()
@@ -391,11 +393,7 @@ class ReviewPhotosJob:
         self._update_stage(job_id, JobStage.GROUP, JobStatus.RUNNING, session_id=session_id)
         groups = self.group_files(file_paths)
 
-        group_ids = {
-            file_path: self._group_id(group)
-            for group in groups
-            for file_path in group
-        }
+        group_ids = {file_path: self._group_id(group) for group in groups for file_path in group}
         scoring_order = [file_path for group in groups for file_path in group]
         self._update_stage(job_id, JobStage.SCORE, JobStatus.RUNNING, session_id=session_id)
         (

@@ -9,6 +9,7 @@ from material_agent.adapters.models.openvino_nima_aesthetic import (
     OpenVinoNimaAestheticAdapter,
 )
 from material_agent.clients.local import AsyncLocalClient
+from material_agent.app.jobs.review_photos import _aggregate_timings
 from material_agent.domain.layered_decision import summarize_signals
 
 
@@ -104,3 +105,36 @@ def test_learned_aesthetic_score_owns_aesthetic_total():
 
     assert summary.visible_breakdown["aesthetic_model_score"] == 7.0
     assert summary.total_score == 7.5
+
+
+def test_review_job_aggregates_aesthetic_model_timings_once_per_batch():
+    class JobFile:
+        def __init__(self, item_id):
+            self.id = item_id
+
+    class Repository:
+        def get_artifact_metadata(self, *, job_file_id, kind):
+            assert kind == "score_payload"
+            return {
+                "meta": {
+                    "timing": {"raw_decode_seconds": 0.1},
+                    "aesthetic": {
+                        "inference_run_id": "shared-window",
+                        "timing": {
+                            "preprocess_seconds": 0.2,
+                            "inference_seconds": 0.3,
+                            "postprocess_seconds": 0.01,
+                            "compile_seconds": 0.4,
+                        },
+                    },
+                }
+            }
+
+    result = _aggregate_timings(Repository(), [JobFile(1), JobFile(2)])
+
+    assert result["raw_decode_seconds"] == 0.2
+    assert result["model_inference_seconds"] == 0.3
+    assert result["aesthetic_inference_seconds"] == 0.3
+    assert result["model_compile_seconds"] == 0.4
+    assert result["model_runs"] == 1
+    assert result["aesthetic_runs"] == 1
