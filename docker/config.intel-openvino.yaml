@@ -156,8 +156,7 @@ screening:
   backend: musiq
 
 review_pipeline:
-  # 32 prepared previews feed eight four-image infer requests without loading
-  # the full library into memory.
+  # Keep preview preparation bounded while CPU batch-1 requests run concurrently.
   score_prefetch_window: 32
 
 xmp:

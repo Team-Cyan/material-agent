@@ -58,6 +58,17 @@ material-agent models --registry-dir /config/models serve \
   --host 0.0.0.0 --port 8765 --token-file /run/secrets/material-agent-model-api
 ```
 
+The maintained Unraid deployment uses a separate service container listening on
+`127.0.0.1:8765`, sharing only the appdata model registry with the scorer. This
+keeps the API off the LAN by default and avoids granting it access to the photo
+share. Any non-loopback listener requires a bearer token.
+
+Catalog inclusion is not based on file format alone. For example, the upstream
+SSD MobileNet V1 INT8 ONNX candidate is checksum-addressable but OpenVINO
+2026.2.1 rejects its `QLinearConv` conversion because the channel scale shape is
+incompatible. It is intentionally not in the built-in catalog; a model must pass
+the concrete adapter/runtime load path before it can be offered as selectable.
+
 A bearer token is mandatory outside localhost. Endpoints:
 
 - `GET /health`
