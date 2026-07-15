@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 
 from ..clients.protocol import BackendClient
 from ..domain.layered_decision import summarize_signals
+from ..domain.aesthetic_calibration import calibrate_aesthetic_score
 from ..ports.model_ports import FastScreeningPort
 from ..scorers.aggregator import Aggregator
 from ..scorers.base import ScorerResult
@@ -342,6 +343,15 @@ async def compute_scores(
         _merge_backend_meta(meta, raw_scores)
         scene = raw_scores.get("scene", "other")
         scene_raw = raw_scores.get("scene_raw", "")
+        aesthetic = meta.get("aesthetic")
+        if isinstance(aesthetic, dict) and aesthetic.get("status") == "model":
+            calibration = calibrate_aesthetic_score(
+                float(aesthetic["score"]),
+                scene=scene,
+                detection=meta.get("detection"),
+                config=config.get("local", {}).get("aesthetic", {}).get("calibration", {}),
+            )
+            meta["aesthetic_calibration"] = calibration
         if exposure_scorer is not None:
             exposure_result = exposure_scorer.score_image(frame.gray, scene=scene)
             results = [r for r in results if r.name != "exposure"]
@@ -556,15 +566,35 @@ def _build_layered_signals(
         )
     aesthetic = meta.get("aesthetic")
     if isinstance(aesthetic, dict) and aesthetic.get("status") == "model":
+        calibration = meta.get("aesthetic_calibration", {})
+        raw_score = aesthetic.get("score")
+        effective_score = calibration.get("effective_score", raw_score)
         signals.append(
             {
                 "stage": "aesthetic",
-                "signal_key": "overall_aesthetic",
-                "value": aesthetic.get("score"),
+                "signal_key": "overall_aesthetic_raw",
+                "value": raw_score,
                 "confidence": 1.0,
                 "source": "learned_model",
                 "model_name": aesthetic.get("model_name"),
                 "model_version": aesthetic.get("model_version"),
+            }
+        )
+        signals.append(
+            {
+                "stage": "aesthetic",
+                "signal_key": "overall_aesthetic",
+                "value": effective_score,
+                "confidence": 1.0,
+                "source": (
+                    "target_calibration" if calibration.get("applied") else "learned_model"
+                ),
+                "model_name": aesthetic.get("model_name"),
+                "model_version": (
+                    calibration.get("policy_version")
+                    if calibration.get("applied")
+                    else aesthetic.get("model_version")
+                ),
             }
         )
     return [signal for signal in signals if signal.get("value") is not None]

@@ -68,6 +68,9 @@
   detection, OpenCV YuNet face/eye landmarks, a catastrophic global-blur guard,
   subject/eye ROI focus scoring, and spectral-residual saliency fallback without
   YOLO, CLIP, Torch, TensorFlow, or MediaPipe in the Intel image
+- added versioned target/scene NIMA calibration with human-label affine fitting,
+  minimum-label no-op safeguards, detector-confidence blending, raw/effective
+  score provenance, and scene-safe rescore support
 
 ## In Progress
 
@@ -77,6 +80,8 @@
   are calibrated on broader real-photo coverage
 - validate the learned NIMA aesthetic policy against broader real photography;
   non-photo rejection remains a separate technical/screening responsibility
+- collect independent human aesthetic labels per target and holdout split before
+  promoting any non-identity target calibration profile
 - integrate benchmarked embeddings into grouping without duplicating model
   inference or persisting raw vectors in ordinary score artifacts
 - keep XMP sidecar and SQLite persistence compatible with Lightroom-style RAW
@@ -107,6 +112,8 @@
 - add native Apple Silicon install profile using CoreML, MLX, or MPS
 - evaluate Docker Model Runner as an optional Apple host-service bridge
 - add a local label store for keep/review/reject and pairwise group preferences
+- compare whole-frame NIMA against subject-crop fusion only after target labels
+  can support an independent holdout ablation
 - train a small ranking/regression head on frozen embeddings only after enough
   reviewed labels exist
 

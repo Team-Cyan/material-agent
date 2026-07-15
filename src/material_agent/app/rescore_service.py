@@ -2,6 +2,7 @@ import json
 
 from ..adapters.state.processed_sqlite import SQLiteProcessedRepository
 from ..domain.layered_decision import apply_group_review_fallback, summarize_signals
+from ..domain.aesthetic_calibration import calibrate_signals_for_rescore
 
 
 class RescoreService:
@@ -15,6 +16,7 @@ class RescoreService:
         scene_weights: dict,
         scoring_config: dict,
         scorers_config: dict,
+        aesthetic_calibration: dict | None = None,
     ) -> int:
         config = {
             "scene_profiles": scene_weights or {},
@@ -46,6 +48,10 @@ class RescoreService:
             file_signals = signals_by_file.get(row["file_path"]) or self.repository.legacy_scores_to_signals(row)
             if not file_signals:
                 continue
+
+            file_signals = calibrate_signals_for_rescore(
+                file_signals, scene=scene, config=aesthetic_calibration
+            )
 
             summary = summarize_signals(file_signals, scene=scene, config=config)
             summaries_by_group.setdefault(row["group_id"] or row["file_path"], []).append(

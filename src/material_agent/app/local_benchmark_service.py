@@ -14,6 +14,7 @@ from typing import Any
 import yaml
 
 from ..clients.local import AsyncLocalClient
+from ..domain.aesthetic_calibration import calibrate_aesthetic_score
 from ..domain.scoring_engine import decode_raw
 from ..utils.constants import VISION_DIMS
 
@@ -247,11 +248,21 @@ async def _score_items(
         payload = await client.score_image(image_bytes)
         dimensions = {dim: float(payload.get(dim, 5.0)) for dim in VISION_DIMS}
         aesthetic = payload.get("_aesthetic")
-        total = (
-            float(aesthetic["score"])
-            if isinstance(aesthetic, dict)
+        aesthetic_calibration = None
+        if (
+            isinstance(aesthetic, dict)
             and aesthetic.get("status") == "model"
             and aesthetic.get("score") is not None
+        ):
+            aesthetic_calibration = calibrate_aesthetic_score(
+                float(aesthetic["score"]),
+                scene=payload.get("scene", "other"),
+                detection=payload.get("_detection"),
+                config=client.aesthetic_config.get("calibration", {}),
+            )
+        total = (
+            float(aesthetic_calibration["effective_score"])
+            if aesthetic_calibration is not None
             else statistics.fmean(dimensions.values())
         )
         scored.append(
@@ -270,6 +281,7 @@ async def _score_items(
                 "semantic": payload.get("_semantic"),
                 "quality": payload.get("_quality"),
                 "aesthetic": aesthetic,
+                "aesthetic_calibration": aesthetic_calibration,
                 "embedding": payload.get("_embedding"),
                 "timing": payload.get("_timing"),
                 "embedding_vector": payload.get("_embedding_vector"),
@@ -337,10 +349,14 @@ def _calculate_metrics(
     role_scores: dict[str, dict[str, float]] = {}
     for row in results:
         quality = row.get("quality")
-        if not isinstance(quality, dict) or quality.get("status") != "model":
-            continue
-        for role, value in quality.get("aggregates", {}).items():
-            role_scores.setdefault(str(role), {})[row["id"]] = float(value)
+        if isinstance(quality, dict) and quality.get("status") == "model":
+            for role, value in quality.get("aggregates", {}).items():
+                role_scores.setdefault(str(role), {})[row["id"]] = float(value)
+        aesthetic_calibration = row.get("aesthetic_calibration")
+        if isinstance(aesthetic_calibration, dict):
+            effective = aesthetic_calibration.get("effective_score")
+            if effective is not None:
+                role_scores.setdefault("aesthetic", {})[row["id"]] = float(effective)
     reject_prior_recall = None
     reject_prior_false_negatives = None
     reject_prior_scores = role_scores.get("reject_prior", {})

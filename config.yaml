@@ -78,6 +78,23 @@ local:
         raw_min: 0.0
         raw_max: 1.0
         weight: 0.5
+  aesthetic:
+    enabled: false
+    enforce_available: false
+    runtime: openvino
+    model_name: nima-aesthetic-mobilenet
+    model_version: litert-community-15308061
+    device: CPU
+    model_path: ""
+    compiled_cache_dir: "~/.material-agent/openvino-cache"
+    # Target profiles must be fitted from human ratings. With no fitted
+    # profiles this layer is an explicit no-op and preserves the raw NIMA score.
+    calibration:
+      enabled: true
+      policy_version: target-affine-v1
+      minimum_label_count: 20
+      pivot: 5.5
+      profiles: {}
   embedding:
     enabled: false
     enforce_available: false

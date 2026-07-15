@@ -81,6 +81,14 @@ def cmd_prepare_openvino_model(args):
     return _cmd_prepare_openvino_model(args)
 
 
+def cmd_fit_aesthetic_calibration(args):
+    from ...commands.benchmark import (
+        cmd_fit_aesthetic_calibration as _cmd_fit_aesthetic_calibration,
+    )
+
+    return _cmd_fit_aesthetic_calibration(args)
+
+
 def configure_run_parser(parser) -> None:
     parser.add_argument("input_dir", help="Directory containing RAW files")
     parser.add_argument("--config", default="config.yaml")
@@ -138,6 +146,24 @@ def build_parser() -> argparse.ArgumentParser:
         "--source-processor", required=True, dest="source_processor"
     )
     p_prepare_openvino.add_argument("--output-dir", required=True, dest="output_dir")
+    p_fit_calibration = sub.add_parser(
+        "fit-aesthetic-calibration",
+        help="Fit target-specific NIMA calibration profiles from human labels",
+        allow_abbrev=False,
+    )
+    p_fit_calibration.add_argument("--labels", required=True)
+    p_fit_calibration.add_argument("--output", required=True)
+    p_fit_calibration.add_argument("--report")
+    p_fit_calibration.add_argument(
+        "--minimum-label-count", type=int, default=20, dest="minimum_label_count"
+    )
+    p_fit_calibration.add_argument(
+        "--minimum-raw-span", type=float, default=1.0, dest="minimum_raw_span"
+    )
+    p_fit_calibration.add_argument("--pivot", type=float, default=5.5)
+    p_fit_calibration.add_argument(
+        "--policy-version", default="target-affine-v1", dest="policy_version"
+    )
     p_benchmark.add_argument("--repeat-count", type=int, default=2, dest="repeat_count")
     p_benchmark.add_argument(
         "--reject-threshold", type=float, default=4.0, dest="reject_threshold"
@@ -242,6 +268,8 @@ def main():
             return cmd_benchmark_local(args)
         if args.command == "prepare-openvino-model":
             return cmd_prepare_openvino_model(args)
+        if args.command == "fit-aesthetic-calibration":
+            return cmd_fit_aesthetic_calibration(args)
         if args.command == "scan-scenes":
             return cmd_scan_scenes(args)
         if args.command == "suggest-scenes":

@@ -685,6 +685,44 @@ def test_normalize_config_sets_lightweight_detection_defaults():
     assert normalized["preview"]["focus_max_size"] == 2048
 
 
+def test_normalize_config_sets_safe_aesthetic_calibration_defaults():
+    normalized = normalize_config(_minimal_config())
+
+    calibration = normalized["local"]["aesthetic"]["calibration"]
+    assert calibration == {
+        "enabled": False,
+        "policy_version": "target-affine-v1",
+        "minimum_label_count": 20,
+        "pivot": 5.5,
+        "profiles": {},
+    }
+
+
+def test_invalid_aesthetic_calibration_profile_exits(capsys):
+    cfg = _minimal_config()
+    cfg["backend"] = "local"
+    cfg["local"] = {
+        "aesthetic": {
+            "calibration": {
+                "enabled": True,
+                "minimum_label_count": 1,
+                "profiles": {
+                    "person": {"scale": 0.0, "offset": 8.0, "label_count": -1}
+                },
+            }
+        }
+    }
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    output = capsys.readouterr().out
+    assert "minimum_label_count" in output
+    assert "profiles.person.scale" in output
+    assert "profiles.person.offset" in output
+    assert "profiles.person.label_count" in output
+
+
 def test_normalize_config_sets_preview_and_xmp_defaults():
     normalized = normalize_config(_minimal_config())
 

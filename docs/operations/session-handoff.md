@@ -63,3 +63,12 @@ findings, repair plan, and verification boundary.
   the calibration burst and is not a distribution-independent validation set;
 - decide whether the legacy teacher harness remains or copied modules can be
   deleted.
+
+## Target Aesthetic Calibration Boundary
+
+The runtime now supports label-backed exact-object/scene NIMA calibration and
+persists raw plus effective scores. No non-identity production profile has been
+fitted because the available five-file calibration/holdout sets and existing
+`mj:score` XMP values are generated evidence, not human aesthetic ground truth.
+Use `docs/operations/aesthetic-target-calibration.md` to collect and fit real
+labels before promotion. Subject-crop NIMA remains an evidence-gated ablation.

@@ -42,6 +42,12 @@ local:
     batch_size: 4
     max_in_flight: 8
     infer_requests: auto
+    calibration:
+      enabled: true
+      policy_version: target-affine-v1
+      minimum_label_count: 20
+      pivot: 5.5
+      profiles: {}
   embedding:
     enabled: false
     enforce_available: false

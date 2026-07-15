@@ -72,6 +72,8 @@ _MAPPING_SECTION_PATHS = (
     ("local", "quality"),
     ("local", "quality", "metrics"),
     ("local", "aesthetic"),
+    ("local", "aesthetic", "calibration"),
+    ("local", "aesthetic", "calibration", "profiles"),
     ("local", "embedding"),
     ("local", "face"),
     ("inference",),
@@ -408,6 +410,12 @@ def normalize_config(cfg: dict) -> dict:
     aesthetic.setdefault("batch_size", 1)
     aesthetic.setdefault("max_in_flight", 8)
     aesthetic.setdefault("infer_requests", "auto")
+    calibration = aesthetic.setdefault("calibration", {})
+    calibration["enabled"] = _coerce_bool_like(calibration.get("enabled", False))
+    calibration.setdefault("policy_version", "target-affine-v1")
+    calibration.setdefault("minimum_label_count", 20)
+    calibration.setdefault("pivot", 5.5)
+    calibration.setdefault("profiles", {})
     embedding = local.setdefault("embedding", {})
     embedding["enabled"] = _coerce_bool_like(embedding.get("enabled", False))
     embedding["enforce_available"] = _coerce_bool_like(embedding.get("enforce_available", False))
@@ -805,6 +813,64 @@ def validate_config(cfg: dict) -> None:
                 value = aesthetic.get(key)
                 if not isinstance(value, str) or not value.strip():
                     errors.append(f"local.aesthetic.{key} must be set when aesthetic is enabled")
+        calibration = aesthetic.get("calibration", {})
+        if not _is_valid_bool_like(calibration.get("enabled", False)):
+            errors.append(
+                "local.aesthetic.calibration.enabled must be a boolean, "
+                f"got: {calibration.get('enabled')!r}"
+            )
+        policy_version = calibration.get("policy_version", "target-affine-v1")
+        if not isinstance(policy_version, str) or not policy_version.strip():
+            errors.append(
+                "local.aesthetic.calibration.policy_version must be a non-empty string"
+            )
+        minimum_label_count = calibration.get("minimum_label_count", 20)
+        if (
+            not isinstance(minimum_label_count, int)
+            or isinstance(minimum_label_count, bool)
+            or not 2 <= minimum_label_count <= 100000
+        ):
+            errors.append(
+                "local.aesthetic.calibration.minimum_label_count must be an integer "
+                f"between 2 and 100000, got: {minimum_label_count!r}"
+            )
+        pivot = calibration.get("pivot", 5.5)
+        if not isinstance(pivot, int | float) or isinstance(pivot, bool) or not 1 <= pivot <= 10:
+            errors.append(
+                "local.aesthetic.calibration.pivot must be between 1 and 10, "
+                f"got: {pivot!r}"
+            )
+        profiles = calibration.get("profiles", {})
+        if isinstance(profiles, dict):
+            for name, profile in profiles.items():
+                prefix = f"local.aesthetic.calibration.profiles.{name}"
+                if not isinstance(name, str) or not name.strip():
+                    errors.append("local.aesthetic.calibration profile names must be non-empty")
+                    continue
+                if not isinstance(profile, dict):
+                    errors.append(f"{prefix} must be a mapping")
+                    continue
+                scale = profile.get("scale", 1.0)
+                offset = profile.get("offset", 0.0)
+                label_count = profile.get("label_count", 0)
+                if (
+                    not isinstance(scale, int | float)
+                    or isinstance(scale, bool)
+                    or not 0.25 <= scale <= 4.0
+                ):
+                    errors.append(f"{prefix}.scale must be between 0.25 and 4.0")
+                if (
+                    not isinstance(offset, int | float)
+                    or isinstance(offset, bool)
+                    or not -5.0 <= offset <= 5.0
+                ):
+                    errors.append(f"{prefix}.offset must be between -5.0 and 5.0")
+                if (
+                    not isinstance(label_count, int)
+                    or isinstance(label_count, bool)
+                    or label_count < 0
+                ):
+                    errors.append(f"{prefix}.label_count must be a non-negative integer")
         embedding = local.get("embedding", {})
         for key in ("enabled", "enforce_available"):
             if not _is_valid_bool_like(embedding.get(key, False)):

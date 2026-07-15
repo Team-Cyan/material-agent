@@ -258,6 +258,12 @@ def test_score_cache_key_tracks_score_grouping_and_terminal_output_inputs():
     scoring_change["scorers"]["exposure"]["weight"] += 0.01
     assert build_score_cache_key(scoring_change) != baseline
 
+    calibration_change = copy.deepcopy(config)
+    calibration_change["local"]["aesthetic"]["calibration"]["profiles"] = {
+        "people": {"scale": 1.0, "offset": 0.5, "label_count": 20}
+    }
+    assert build_score_cache_key(calibration_change) != baseline
+
     scene_change = copy.deepcopy(config)
     scene_change["scene_weights"]["default"]["composition"] += 0.01
     assert build_score_cache_key(scene_change) != baseline

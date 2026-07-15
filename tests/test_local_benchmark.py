@@ -12,6 +12,7 @@ from material_agent.app.local_benchmark_service import (
     run_local_benchmark,
 )
 from material_agent.clients.local import AsyncLocalClient
+from material_agent.commands.benchmark import cmd_fit_aesthetic_calibration
 from material_agent.shells.cli.main import build_parser
 
 
@@ -139,6 +140,57 @@ def test_cli_exposes_benchmark_local_command():
     assert args.quality_reject_threshold == 5.0
 
 
+def test_cli_exposes_fit_aesthetic_calibration_command():
+    parser = build_parser()
+
+    args = parser.parse_args(
+        [
+            "fit-aesthetic-calibration",
+            "--labels",
+            "labels.yaml",
+            "--output",
+            "calibration.yaml",
+        ]
+    )
+
+    assert args.command == "fit-aesthetic-calibration"
+    assert args.minimum_label_count == 20
+    assert args.minimum_raw_span == 1.0
+    assert args.policy_version == "target-affine-v1"
+
+
+def test_fit_aesthetic_calibration_command_writes_yaml_and_report(tmp_path):
+    labels = tmp_path / "labels.yaml"
+    labels.write_text(
+        yaml.safe_dump(
+            {
+                "items": [
+                    {"target": "person", "raw_score": 4.0, "human_score": 5.0},
+                    {"target": "person", "raw_score": 7.0, "human_score": 8.0},
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    output = tmp_path / "calibration.yaml"
+    report = tmp_path / "report.json"
+    args = SimpleNamespace(
+        labels=str(labels),
+        output=str(output),
+        report=str(report),
+        minimum_label_count=2,
+        minimum_raw_span=1.0,
+        pivot=5.5,
+        policy_version="fixture-v1",
+    )
+
+    assert cmd_fit_aesthetic_calibration(args) == 0
+    fitted = yaml.safe_load(output.read_text(encoding="utf-8"))
+    metrics = json.loads(report.read_text(encoding="utf-8"))
+    assert fitted["profiles"]["person"]["label_count"] == 2
+    assert metrics["fitted_profiles"] == 1
+
+
 def test_benchmark_warm_repeat_clears_embedding_results_but_reuses_adapter(
     monkeypatch,
     tmp_path,
@@ -179,6 +231,57 @@ def test_benchmark_warm_repeat_clears_embedding_results_but_reuses_adapter(
 
     assert adapter.calls == 6
     assert report["metrics"]["deterministic_scores"] is True
+
+
+def test_benchmark_pairwise_aesthetic_metric_uses_effective_nima_scores(
+    monkeypatch, tmp_path
+):
+    manifest_path = _write_manifest(tmp_path)
+    client = AsyncLocalClient(
+        {
+            "aesthetic": {
+                "enabled": True,
+                "result_cache_size": 16,
+                "calibration": {
+                    "enabled": True,
+                    "minimum_label_count": 2,
+                    "profiles": {
+                        "default": {"scale": 1.0, "offset": 0.5, "label_count": 3}
+                    },
+                },
+            }
+        }
+    )
+
+    class _AestheticAdapter:
+        async def score_images(self, payloads):
+            scores = [8.0, 6.0, 2.0]
+            return [
+                {
+                    "score": scores[index],
+                    "distribution": [0.1] * 10,
+                    "model_name": "fixture-nima",
+                    "model_version": "fixture-v1",
+                    "runtime": "fixture",
+                }
+                for index, _payload in enumerate(payloads)
+            ]
+
+    client._aesthetic = _AestheticAdapter()
+    monkeypatch.setattr(
+        "material_agent.app.local_benchmark_service.AsyncLocalClient", lambda _config: client
+    )
+
+    _, _, report = run_local_benchmark(
+        manifest_path,
+        tmp_path / "reports",
+        repeat_count=1,
+        client_config=client.config,
+    )
+
+    metric = report["metrics"]["aesthetic_pairwise_preference"]
+    assert metric == {"numerator": 2, "total": 2, "rate": 1.0}
+    assert report["items"][0]["aesthetic_calibration"]["effective_score"] == 8.5
 
 
 def test_run_local_benchmark_decodes_raw_preview(monkeypatch, tmp_path):

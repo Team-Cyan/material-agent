@@ -2347,6 +2347,53 @@ def test_scoring_engine_full_path_builds_instructions():
     assert "exp:" in bundle.instructions
 
 
+def test_scoring_engine_persists_raw_and_target_calibrated_nima_scores():
+    cfg = _base_config()
+    cfg["local"] = {
+        "aesthetic": {
+            "calibration": {
+                "enabled": True,
+                "policy_version": "portrait-v1",
+                "minimum_label_count": 3,
+                "pivot": 5.5,
+                "profiles": {
+                    "person": {"scale": 1.0, "offset": 1.0, "label_count": 10}
+                },
+            }
+        }
+    }
+
+    class _AestheticClient(_ScreeningClient):
+        async def score_image(self, jpeg_bytes: bytes) -> dict:
+            payload = await super().score_image(jpeg_bytes)
+            payload["_aesthetic"] = {
+                "status": "model",
+                "score": 6.0,
+                "model_name": "nima",
+                "model_version": "raw-v1",
+            }
+            payload["_detection"] = {
+                "status": "model",
+                "primary_subject": {"label": "person", "confidence": 0.8},
+            }
+            return payload
+
+    frame = RawFrame(
+        pixels=np.full((8, 8), 32000, dtype=np.uint16),
+        jpeg_bytes=b"jpeg",
+        gray=np.array([[0, 255] * 4, [255, 0] * 4] * 4, dtype=np.uint8),
+    )
+    bundle = asyncio.run(compute_scores(frame, _AestheticClient(), cfg))
+
+    assert bundle.meta["aesthetic_calibration"]["raw_score"] == 6.0
+    assert bundle.meta["aesthetic_calibration"]["effective_score"] == 6.8
+    signal_map = {signal["signal_key"]: signal for signal in bundle.signals}
+    assert signal_map["overall_aesthetic_raw"]["value"] == 6.0
+    assert signal_map["overall_aesthetic"]["value"] == 6.8
+    assert signal_map["overall_aesthetic"]["source"] == "target_calibration"
+    assert bundle.visible_breakdown["aesthetic_model_score"] == 6.8
+
+
 def test_scoring_engine_final_total_is_owned_by_local_layered_summary():
     cfg = _base_config()
 

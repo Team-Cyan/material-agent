@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import yaml
 
+from ..app.aesthetic_calibration_service import fit_aesthetic_calibration
 from ..app.local_benchmark_service import run_local_benchmark
 from ..app.openvino_model_service import materialize_openvino_bundle
 from ..utils.config_validator import normalize_config, validate_config
@@ -46,3 +50,29 @@ def cmd_prepare_openvino_model(args) -> int:
     print(f"OpenVINO bundle: {result['bundle_path']}")
     print(f"Model digest: {result['model_digest']}")
     return 0
+
+
+def cmd_fit_aesthetic_calibration(args) -> int:
+    with open(args.labels, encoding="utf-8") as labels_file:
+        payload = yaml.safe_load(labels_file)
+    calibration, report = fit_aesthetic_calibration(
+        payload,
+        minimum_label_count=args.minimum_label_count,
+        minimum_raw_span=args.minimum_raw_span,
+        pivot=args.pivot,
+        policy_version=args.policy_version,
+    )
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        yaml.safe_dump(calibration, sort_keys=False, allow_unicode=True), encoding="utf-8"
+    )
+    if args.report:
+        report_path = Path(args.report)
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+    print(f"Calibration YAML: {output_path}")
+    print(f"Labels: {report['total_labels']}; fitted profiles: {report['fitted_profiles']}")
+    return 0 if report["fitted_profiles"] > 0 else 2

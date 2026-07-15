@@ -437,6 +437,9 @@ def cmd_rescore(args, config):
                     "screening_policy": config.get("screening_policy", {}),
                 },
                 scorers_config=config.get("scorers", {}),
+                aesthetic_calibration=(
+                    config.get("local", {}).get("aesthetic", {}).get("calibration", {})
+                ),
             )
     print(f"Rejudged {updated} files.")
     return 0

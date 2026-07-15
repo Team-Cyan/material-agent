@@ -182,9 +182,20 @@ remain separate from aesthetic preference. Every result records the full
 distribution, model digest/version, requested and actual device, fallback,
 batch/request settings, cache identity, and stage timing.
 
+NIMA remains a general whole-frame aesthetic predictor. Optional
+`local.aesthetic.calibration` keeps the raw score and applies a versioned,
+human-label-fitted affine profile in exact-object, scene, then default order.
+Object adjustments are blended by detector confidence. Profiles below the
+configured label threshold are a no-op, so generated XMP or model decisions
+cannot silently masquerade as preference tuning. Fresh runs persist raw and
+effective signals plus calibration provenance; rescore can reapply scene-level
+profiles from the raw signal. See
+`docs/operations/aesthetic-target-calibration.md`.
+
 The client primes one NIMA batch for each prepared review window and reuses the
 bounded content-addressed result cache during per-image scoring. The isolated
-benchmark reports NIMA's score rather than the mean of heuristic dimensions.
+benchmark reports NIMA's effective score rather than the mean of heuristic
+dimensions and includes raw/calibration provenance when configured.
 The production profile disables DINO embeddings because embedding grouping is
 still opt-in and those vectors do not affect the score.
 
