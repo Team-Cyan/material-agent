@@ -46,6 +46,7 @@ local:
       enabled: true
       policy_version: target-affine-v1
       minimum_label_count: 20
+      minimum_target_confidence: 0.60
       pivot: 5.5
       profiles: {}
   embedding:

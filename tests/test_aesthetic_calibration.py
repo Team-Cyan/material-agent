@@ -21,15 +21,15 @@ def test_exact_target_profile_precedes_scene_and_blends_detection_confidence():
     result = calibrate_aesthetic_score(
         6.0,
         scene="people",
-        detection={"primary_subject": {"label": "person", "confidence": 0.5}},
+        detection={"primary_subject": {"label": "person", "confidence": 0.8}},
         config=_config(
             person={"scale": 1.0, "offset": 2.0, "label_count": 10},
             people={"scale": 1.0, "offset": -2.0, "label_count": 10},
         ),
     )
     assert result["profile"] == "person"
-    assert result["blend"] == 0.5
-    assert result["effective_score"] == 7.0
+    assert result["blend"] == 0.8
+    assert result["effective_score"] == 7.6
     assert result["applied"] is True
 
 
@@ -57,6 +57,24 @@ def test_undertrained_exact_profile_falls_back_to_trained_scene_profile():
     )
     assert result["profile"] == "people"
     assert result["blend"] == 1.0
+    assert result["effective_score"] == 7.0
+
+
+def test_low_confidence_target_cannot_select_exact_profile():
+    result = calibrate_aesthetic_score(
+        6.0,
+        scene="people",
+        detection={"primary_subject": {"label": "tv", "confidence": 0.4}},
+        config={
+            **_config(
+                tv={"scale": 1.0, "offset": -2.0, "label_count": 10},
+                people={"scale": 1.0, "offset": 1.0, "label_count": 10},
+            ),
+            "minimum_target_confidence": 0.6,
+        },
+    )
+    assert result["target"] == "tv"
+    assert result["profile"] == "people"
     assert result["effective_score"] == 7.0
 
 

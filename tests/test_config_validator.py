@@ -693,6 +693,7 @@ def test_normalize_config_sets_safe_aesthetic_calibration_defaults():
         "enabled": False,
         "policy_version": "target-affine-v1",
         "minimum_label_count": 20,
+        "minimum_target_confidence": 0.6,
         "pivot": 5.5,
         "profiles": {},
     }

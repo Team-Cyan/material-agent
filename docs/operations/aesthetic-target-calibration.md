@@ -13,8 +13,10 @@ The runtime profile order is:
 2. normalized scene, such as `people` or `animals`;
 3. `default`.
 
-An exact-object adjustment is blended by detection confidence. An undertrained
-exact profile falls back to a trained scene/default profile. If no profile has
+An exact-object adjustment requires `minimum_target_confidence` (default 0.60)
+and is then blended by detection confidence. Lower-confidence detections cannot
+select an exact profile and fall back to scene/default. An undertrained exact
+profile also falls back to a trained scene/default profile. If no profile has
 `minimum_label_count` labels, calibration is an explicit no-op.
 
 ## Label File

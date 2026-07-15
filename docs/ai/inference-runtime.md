@@ -185,7 +185,8 @@ batch/request settings, cache identity, and stage timing.
 NIMA remains a general whole-frame aesthetic predictor. Optional
 `local.aesthetic.calibration` keeps the raw score and applies a versioned,
 human-label-fitted affine profile in exact-object, scene, then default order.
-Object adjustments are blended by detector confidence. Profiles below the
+Object profiles require a separate calibration confidence gate before their
+adjustments are blended by detector confidence. Profiles below the
 configured label threshold are a no-op, so generated XMP or model decisions
 cannot silently masquerade as preference tuning. Fresh runs persist raw and
 effective signals plus calibration provenance; rescore can reapply scene-level

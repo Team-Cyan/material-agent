@@ -414,6 +414,7 @@ def normalize_config(cfg: dict) -> dict:
     calibration["enabled"] = _coerce_bool_like(calibration.get("enabled", False))
     calibration.setdefault("policy_version", "target-affine-v1")
     calibration.setdefault("minimum_label_count", 20)
+    calibration.setdefault("minimum_target_confidence", 0.6)
     calibration.setdefault("pivot", 5.5)
     calibration.setdefault("profiles", {})
     embedding = local.setdefault("embedding", {})
@@ -833,6 +834,16 @@ def validate_config(cfg: dict) -> None:
             errors.append(
                 "local.aesthetic.calibration.minimum_label_count must be an integer "
                 f"between 2 and 100000, got: {minimum_label_count!r}"
+            )
+        minimum_target_confidence = calibration.get("minimum_target_confidence", 0.6)
+        if (
+            not isinstance(minimum_target_confidence, int | float)
+            or isinstance(minimum_target_confidence, bool)
+            or not 0.0 <= minimum_target_confidence <= 1.0
+        ):
+            errors.append(
+                "local.aesthetic.calibration.minimum_target_confidence must be between "
+                f"0 and 1, got: {minimum_target_confidence!r}"
             )
         pivot = calibration.get("pivot", 5.5)
         if not isinstance(pivot, int | float) or isinstance(pivot, bool) or not 1 <= pivot <= 10:

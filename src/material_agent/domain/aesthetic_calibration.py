@@ -21,6 +21,7 @@ def calibrate_aesthetic_score(
     raw = _clamp(float(raw_score))
     policy_version = str(calibration.get("policy_version", "target-affine-v1"))
     minimum_label_count = int(calibration.get("minimum_label_count", 20))
+    minimum_target_confidence = float(calibration.get("minimum_target_confidence", 0.6))
     pivot = float(calibration.get("pivot", 5.5))
     profiles = calibration.get("profiles", {})
     if not isinstance(profiles, dict):
@@ -33,8 +34,12 @@ def calibrate_aesthetic_score(
         if isinstance(primary, dict)
         else 0.0
     )
+    candidate_keys = []
+    if target and confidence >= minimum_target_confidence:
+        candidate_keys.append(target)
+    candidate_keys.extend((scene, "default"))
     profile_candidates = [
-        key for key in (target, scene, "default") if key and isinstance(profiles.get(key), dict)
+        key for key in candidate_keys if key and isinstance(profiles.get(key), dict)
     ]
     profile_key = next(
         (
@@ -51,6 +56,7 @@ def calibrate_aesthetic_score(
         "scene": scene,
         "target": target or None,
         "target_confidence": round(confidence, 4) if target else None,
+        "minimum_target_confidence": minimum_target_confidence,
         "profile": profile_key,
         "applied": False,
     }
