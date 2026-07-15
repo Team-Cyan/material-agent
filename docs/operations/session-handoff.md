@@ -46,20 +46,19 @@ findings, repair plan, and verification boundary.
 - `/mnt/user/material/photos` was mounted read-only, dry-run wrote zero XMP files
   and zero source-side `.material-agent` directories, and SQLite/logs stayed in
   the `/config` appdata bind;
-- a single cold ten-file end-to-end comparison measured about 28 seconds on CPU
-  and 43 seconds on GPU. This is not warm parity or utilization evidence;
+- the hardened 128-RAW cold/warm matrix measured CPU at 6.737 warm
+  files/second and `GPU.0` at 0.496 across batch 1/4/8; actual batch 4/8 and
+  zero fallback were recorded, but did not improve either device;
+- the winning CPU batch-1 profile processed 512 RAW files in 88 seconds with
+  512 embeddings, zero errors, zero XMP writes, and appdata-only DB/log/cache;
 - the hardened Intel image now bakes the DINOv3 profile, drops scoring to the
   PUID/PGID account, migrates only allowlisted appdata files, and tests both
   OpenVINO AUTO selection and explicit CPU fallback before tag promotion.
 
 ## Recommended Next Task
 
-- after immutable-image CI passes, redeploy that exact digest to the controlled
-  Unraid container and repeat the ten-file read-only/dry-run audit, including
-  non-root UID/GID, appdata ownership/modes, actual device provenance, and zero
-  source writes;
-- run warm CPU/GPU parity plus target-host utilization measurement, then perform
-  target-host isolated XMP validation only with separate operator approval;
+- add utilization sampling when another model or GPU path is evaluated, then
+  perform target-host isolated XMP validation only with separate approval;
 - collect broader labelled real scenes; the current holdout is interleaved with
   the calibration burst and is not a distribution-independent validation set;
 - decide whether the legacy teacher harness remains or copied modules can be

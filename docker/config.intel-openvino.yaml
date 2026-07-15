@@ -17,21 +17,21 @@ local:
     enforce_available: true
     runtime: openvino
     model_name: dinov3-vits16-quantized
-    device: "AUTO:GPU,CPU"
+    device: CPU
     fallback_device: CPU
     model_path: /opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx
     processor_path: /opt/material-agent/models/dinov3-vits16
     compiled_cache_dir: /config/openvino-cache
     result_cache_size: 256
     performance_hint: THROUGHPUT
-    batch_size: 4
+    batch_size: 1
     max_in_flight: 8
     infer_requests: 8
     allow_batch_fallback: true
 
 inference:
   runtime: openvino
-  device: "AUTO:GPU,CPU"
+  device: CPU
   fallback_device: CPU
   model_cache_dir: /opt/material-agent/models
   provider_tags: [intel-openvino, cpu]

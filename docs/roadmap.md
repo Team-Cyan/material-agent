@@ -57,6 +57,9 @@
   fixed-reshape plus native auto-batch strategies, throughput hints,
   optimal-request readback, batch fallback provenance, and
   RAW/heuristic/preprocess/inference/postprocess/compile stage timing
+- completed the target Unraid 128-RAW CPU/GPU batch 1/4/8 cold/warm matrix and
+  a 512-RAW sustained run; selected CPU batch 1 with eight asynchronous requests
+  because it delivered 6.737 warm files/second versus 0.496 on `GPU.0`
 
 ## In Progress
 
@@ -75,9 +78,9 @@
 ## Next
 
 - calibrate a versioned score policy only after per-block benchmark reports exist
-- remeasure warm OpenVINO CPU/GPU parity, steady-state throughput, fallback
-  rate, and target-host utilization on the Intel iGPU host with the asynchronous
-  batch 1/4/8 matrix; select the deployment default from end-to-end results
+- add optional target-host utilization sampling to future model benchmarks;
+  CPU/GPU parity, steady-state throughput, fallback provenance, and the
+  deployment default are now resolved for the bundled DINOv3 model
 - publish the hardened image, then repeat the bounded Unraid read-only pilot
   with non-root UID/GID and appdata ownership checks
 - run a separately authorized target-host isolated-XMP pilot before changing

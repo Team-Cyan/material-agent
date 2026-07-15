@@ -161,7 +161,7 @@ def test_repo_default_backend_uses_local_openvino_profile():
     assert cfg["backend"] == "local"
     assert cfg["commentary_enabled"] is False
     assert cfg["inference"]["runtime"] == "openvino"
-    assert cfg["inference"]["device"] == "AUTO:GPU,CPU"
+    assert cfg["inference"]["device"] == "CPU"
     assert cfg["inference"]["fallback_device"] == "CPU"
     assert cfg["inference"]["provider_tags"] == ["intel-openvino", "cpu"]
     assert cfg["inference"]["enforce_available"] is False

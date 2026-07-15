@@ -3,8 +3,8 @@
 #
 # Design target:
 #   - no Ollama or OMLX service dependency in the default path
-#   - Intel iGPU first through OpenVINO / ONNX Runtime provider work
-#   - CPU fallback must remain valid for any NAS
+#   - Intel OpenVINO first, with the benchmarked CPU path as the safe default
+#   - GPU remains explicit opt-in until a target-host model benchmark wins
 # ---------------------------------------------------------------------------
 backend: local
 output_language: zh
@@ -97,11 +97,10 @@ local:
     min_detection_confidence: 0.5
 
 inference:
-  # First implementation target: Intel CPU + integrated/discrete GPU through
-  # OpenVINO. Later tags can add CUDA, MIGraphX, and native Apple providers
-  # without changing the scoring pipeline contract.
+  # The i7-11700T target benchmark selected CPU over its integrated GPU for the
+  # bundled DINOv3 graph. Other devices remain explicit deployment overrides.
   runtime: openvino
-  device: "AUTO:GPU,CPU"
+  device: CPU
   fallback_device: "CPU"
   model_cache_dir: "~/.material-agent/models"
   provider_tags: [intel-openvino, cpu]

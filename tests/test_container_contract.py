@@ -382,13 +382,13 @@ def test_intel_image_baked_config_runs_bundled_openvino_embedding():
     assert embedding["enabled"] is True
     assert embedding["enforce_available"] is True
     assert embedding["runtime"] == "openvino"
-    assert embedding["device"] == "AUTO:GPU,CPU"
+    assert embedding["device"] == "CPU"
     assert embedding["fallback_device"] == "CPU"
     assert embedding["model_path"].startswith("/opt/material-agent/models/")
     assert embedding["processor_path"].startswith("/opt/material-agent/models/")
     assert embedding["compiled_cache_dir"] == "/config/openvino-cache"
     assert config["inference"]["runtime"] == "openvino"
-    assert config["inference"]["device"] == "AUTO:GPU,CPU"
+    assert config["inference"]["device"] == "CPU"
     assert config["screening"]["enabled"] is False
 
 

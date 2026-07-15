@@ -40,7 +40,8 @@ Adapters own vendor-specific setup. The review pipeline should not import OpenVI
    - First accelerated implementation.
    - Target Intel CPU, integrated GPU, discrete GPU, and NPU through OpenVINO.
    - Use native OpenVINO on Python 3.14; `onnxruntime-openvino` does not yet publish `cp314` wheels.
-   - Default device: `AUTO:GPU,CPU`.
+   - Default device: `CPU` after the target i7-11700T throughput matrix.
+     `AUTO:GPU,CPU` and explicit `GPU` remain supported overrides.
    - Docker should mount `/dev/dri` on Linux hosts.
 
 3. `nvidia-cuda`
@@ -163,8 +164,10 @@ The embedding path is throughput-aware rather than one-image synchronous:
 - per-run provenance records requested/actual batch size, request count,
   optimal-request readback, performance hint, and actual execution devices.
 
-The Intel image uses a 32-preview preparation window, batch 4, and up to eight
-in-flight requests. These are throughput controls, not semantic model settings,
+The Intel image uses a 32-preview preparation window, batch 1, and up to eight
+in-flight requests. This target-specific default avoids the dynamic-shape
+auto-batch path because batch 4/8 did not improve throughput on the i7-11700T.
+These are throughput controls, not semantic model settings,
 so changing them does not invalidate persisted embedding vectors.
 The preparation window remains capped at 32 to bound memory, while the separate
 read-only `review_pipeline.max_files` pilot limit accepts up to 4096 files so a
@@ -206,19 +209,17 @@ p50 for four real inferences, and 4.577 images/second across three repetitions.
 The older 2026-07-11 v1 report remains historical, but its 0.07-second warm p50
 was dominated by result-cache hits and must not be cited as inference speed.
 
-Target Intel GPU execution is now verified on the Unraid Linux NAS through a
-DockerMan-managed, read-only pilot. The container exposed `/dev/dri`, OpenVINO
-reported both `CPU` and `GPU`, and all ten bounded score payloads recorded
-`runtime=openvino` with actual execution device `GPU.0`. The pilot used a fresh
-appdata-backed runtime directory, mounted the photo library read-only, ran with
-dry-run enabled, and left both source-side XMP count and source-side runtime
-directory count at zero. This proves model execution on the target iGPU; it does
-not yet provide warm CPU/GPU parity or target-host utilization measurements. A
-single cold full-pipeline comparison over the same ten-file bounded set recorded
-about 28 seconds on CPU (0.357 files/second) and 43 seconds on GPU (0.233
-files/second). GPU was slower in that cold, tiny sample; model initialization,
-container/cache temperature, and non-model pipeline work make it unsuitable as
-a steady-state accelerator conclusion.
+Target Intel GPU execution and steady-state parity are verified on the Unraid
+Linux NAS through DockerMan-managed, read-only pilots. The fixed 128-RAW matrix
+tested CPU and `GPU.0` at batch 1/4/8, with eight asynchronous requests and
+`THROUGHPUT`. CPU warm throughput was 6.737 files/second for every batch size;
+GPU warm throughput was 0.496 files/second for every batch size. GPU embedding
+inference took about 242.4 seconds versus 2.8-2.9 seconds on CPU. OpenVINO native
+auto-batch did report actual batch 4/8 with no fallback, so the result is not a
+device-selection failure. The winning CPU batch-1 profile then processed 512
+RAW files in 88 seconds (5.818 files/second), with 512 model embeddings and no
+errors. The durable report is
+`docs/operations/benchmarks/2026-07-15-unraid-openvino-cpu-gpu-matrix.md`.
 
 ## Current Intel Image Contract
 
@@ -227,7 +228,8 @@ The maintained Intel image now provides:
 - digest-pinned Python/uv base, checksum-pinned Intel userspace packages, and a
   checksum-pinned bundled DINOv3 ONNX bundle;
 - a baked `backend: local` profile with DINOv3 OpenVINO embedding enabled,
-  `AUTO:GPU,CPU`, explicit CPU fallback, throughput-mode async batching, and
+  benchmark-selected `CPU`, explicit CPU fallback, throughput-mode async
+  inference, and
   compiled cache under `/config`;
 - a lean Intel dependency set without Torch, Transformers, OpenCLIP, PyIQA, or
   MediaPipe, with unsupported screening disabled in the baked profile;
