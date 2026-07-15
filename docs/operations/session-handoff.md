@@ -57,21 +57,30 @@ findings, repair plan, and verification boundary.
 
 ## Recommended Next Task
 
-- deploy the Web operator image on Unraid with `/mnt/user/material/photos`
-  read-only and all runtime state under appdata;
-- index the complete share and start the first whole-library dry-run validation;
-- use the Web library/detail views to review real-scene coverage and outliers;
+- monitor the active whole-library dry-run task
+  `e4163931b297403db74f7fc74275b3a5` to completion and retain its final
+  scene, target, score, timing, and error coverage report;
+- use the Web library/detail views to review real-scene coverage and outliers
+  after the complete share finishes;
 - keep XMP promotion and personal target calibration deferred until separately
   authorized data and labels are available.
 
 ## Web Operations Snapshot
 
+- the Web operator is deployed on Unraid as immutable image
+  `ghcr.io/team-cyan/material-agent:intel-openvino-2ff8768` at port `8776`;
+- the generation-based index currently contains 39,165 files from
+  `/mnt/user/material/photos`, and the first whole-share dry-run is active;
 - `material-agent web` serves configuration, task, model, library, thumbnail,
   score payload, and log APIs plus the bundled responsive operator UI;
 - non-loopback listeners require a bearer-token file;
 - Web tasks are hard-coded to `--dry-run`, and the photo root is only used for
   scanning and thumbnail decode;
 - `library_index` and complete dry-run score artifacts live in `/config/state.db`;
+- a post-deployment one-file run verified DB-only proposed rating, machine tags,
+  instructions, description, grouping metadata, SSD target detection, YuNet
+  face/eye focus, and generic NIMA output; `/photos` remained read-only with
+  zero source XMP files and zero source-side state directories;
 - configuration updates are validated before atomic replacement and preserve
   redacted secret values;
 - the module guide is `docs/ai/modules/web-operations.md`.
