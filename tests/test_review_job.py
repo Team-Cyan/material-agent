@@ -632,3 +632,46 @@ def test_review_job_primes_prefetched_scores_in_bounded_batches(tmp_path):
 
     assert result["status"] == "finished"
     assert prime_calls == [files[:4], files[4:]]
+
+
+def test_dry_run_repersist_score_payload_after_output_preview_is_added(tmp_path):
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    session_id = SessionService(repo).create_session(
+        kind=SessionKind.CLI,
+        input_root="/tmp/photos",
+        config_snapshot={"backend": "local"},
+    )
+    job_id = JobService(repo).create_job(
+        session_id=session_id,
+        job_type=JobType.REVIEW_PHOTOS,
+        initial_stage=JobStage.DISCOVER,
+    )
+    file_path = "/tmp/photos/one.ARW"
+
+    def add_output_preview(_file_path, score_payload, **_kwargs):
+        score_payload["output_preview"] = {
+            "subject_tags": ["pj:decision=keep"],
+            "description": "preview only",
+        }
+
+    review_job = ReviewPhotosJob(
+        repository=repo,
+        event_sink=_NullEventSink(),
+        group_files=lambda files: [files],
+        score_file=lambda _file_path: {
+            "score_total": 7.0,
+            "scene": "people",
+            "scene_raw": "",
+        },
+        write_file=add_output_preview,
+        write_outputs=False,
+    )
+
+    JobExecutor(review_job).run(job_id, [file_path])
+
+    job_file = repo.get_job_file(job_id=job_id, file_path=file_path)
+    payload = repo.get_artifact_metadata(job_file_id=job_file.id, kind="score_payload")
+    assert payload["output_preview"] == {
+        "subject_tags": ["pj:decision=keep"],
+        "description": "preview only",
+    }

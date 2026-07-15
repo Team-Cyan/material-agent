@@ -86,6 +86,9 @@
   checksum-pinned model lifecycle, full-library indexing, dry-run task control,
   logs, thumbnail browsing, filtering, and complete score/tag/description
   payload inspection without source-library writes
+- persisted DB-only `output_preview` fields after group ranking so dry-run
+  library details include the exact proposed rating, machine tags,
+  instructions, description, and group metadata without invoking an XMP write
 - added a generation-based full-library index in the appdata runtime database;
   validation is no longer structurally limited to the earlier 128/512-file
   performance samples

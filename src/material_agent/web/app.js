@@ -57,9 +57,10 @@ async function loadLibrary(){
 function pick(payload,path,fallback='—'){let value=payload;for(const key of path.split('.'))value=value?.[key];return value??fallback}
 async function showDetail(id){
   try{
-    const item=await api(`/api/library/${id}`),score=item.score||{};
+    const item=await api(`/api/library/${id}`),score=item.score||{},output=score.output_preview||{};
     const fields=[['总分',item.score_total],['场景',item.scene],['决策',score.decision],['星级',score.star_rating],['主体',pick(score,'meta.subject_focus.primary_target.label')],['主体对焦',pick(score,'meta.subject_focus.score')],['曝光',pick(score,'meta.dimensions.exposure')],['清晰度',pick(score,'meta.dimensions.sharpness')],['NIMA',pick(score,'meta.aesthetic.raw_score')]];
-    $('#detail-content').innerHTML=`<p class="eyebrow">${escapeHtml(item.relative_path)}</p><div class="detail-hero"><div><img id="detail-image" alt=""><p class="muted">${escapeHtml(item.file_path)}</p></div><div><div class="detail-score">${fmt(item.score_total,2)}</div><div class="detail-grid">${fields.map(([label,value])=>`<div class="detail-field"><small>${label}</small>${escapeHtml(value)}</div>`).join('')}</div><h3>完整评分字段</h3><pre>${escapeHtml(JSON.stringify(score,null,2))}</pre></div></div>`;
+    const tags=Array.isArray(output.subject_tags)?output.subject_tags:[];
+    $('#detail-content').innerHTML=`<p class="eyebrow">${escapeHtml(item.relative_path)}</p><div class="detail-hero"><div><img id="detail-image" alt=""><p class="muted">${escapeHtml(item.file_path)}</p></div><div><div class="detail-score">${fmt(item.score_total,2)}</div><div class="detail-grid">${fields.map(([label,value])=>`<div class="detail-field"><small>${label}</small>${escapeHtml(value)}</div>`).join('')}</div><h3>输出预览（仅 DB）</h3><div class="tag-list">${tags.map(tag=>`<span>${escapeHtml(tag)}</span>`).join('')||'<span>暂无 tag</span>'}</div><p class="description-preview">${escapeHtml(output.description||'暂无描述')}</p><pre>${escapeHtml(output.instructions||'暂无 instructions')}</pre><h3>完整评分字段</h3><pre>${escapeHtml(JSON.stringify(score,null,2))}</pre></div></div>`;
     $('#detail-dialog').showModal();authImage(`/api/library/${id}/thumbnail`,$('#detail-image'));
   }catch(error){toast(error.message)}
 }

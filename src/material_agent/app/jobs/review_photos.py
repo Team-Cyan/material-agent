@@ -473,6 +473,13 @@ class ReviewPhotosJob:
                         scene=score_payload.get("scene"),
                         scene_raw=score_payload.get("scene_raw"),
                     )
+                    self.repository.upsert_artifact(
+                        job_id=job_id,
+                        job_file_id=job_file_id,
+                        kind="score_payload",
+                        uri=f"memory://job-files/{job_file_id}/score-payload",
+                        metadata=score_payload,
+                    )
                     skipped_files += 1
                     self._emit(
                         session_id=session_id,
@@ -548,6 +555,13 @@ class ReviewPhotosJob:
                         scene=score_payload.get("scene"),
                         scene_raw=score_payload.get("scene_raw"),
                     )
+                    self.repository.upsert_artifact(
+                        job_id=job_id,
+                        job_file_id=job_file_id,
+                        kind="score_payload",
+                        uri=f"memory://job-files/{job_file_id}/score-payload",
+                        metadata=score_payload,
+                    )
                     self._emit(
                         session_id=session_id,
                         job_id=job_id,
@@ -600,6 +614,13 @@ class ReviewPhotosJob:
                     score_total=float(score_payload.get("score_total", 0.0)),
                     scene=score_payload.get("scene"),
                     scene_raw=score_payload.get("scene_raw"),
+                )
+                self.repository.upsert_artifact(
+                    job_id=job_id,
+                    job_file_id=job_file_id,
+                    kind="score_payload",
+                    uri=f"memory://job-files/{job_file_id}/score-payload",
+                    metadata=score_payload,
                 )
                 self._emit(
                     session_id=session_id,

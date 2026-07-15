@@ -211,13 +211,6 @@ def build_review_job_executor(
         visible_breakdown = score_payload.get("visible_breakdown", {})
         star = writer.score_to_stars(total_score)
 
-        if dry_run:
-            print(
-                f"[dry-run] {file_path}: rating={star}, score={total_score:.1f}, "
-                f"scene={scene}, rank={rank}/{group_size}"
-            )
-            return
-
         commentary_context = build_photo_commentary_context(
             instructions,
             scores=scores,
@@ -259,6 +252,23 @@ def build_review_job_executor(
             decision=decision,
         )
         subject_tags.append(f"pj:scene={scene_label(scene, output_language)}")
+
+        score_payload["output_preview"] = {
+            "rating": star,
+            "subject_tags": subject_tags,
+            "instructions": xmp_instructions,
+            "description": description,
+            "group_id": group_id,
+            "group_rank": rank,
+            "group_size": group_size,
+        }
+
+        if dry_run:
+            print(
+                f"[dry-run] {file_path}: rating={star}, score={total_score:.1f}, "
+                f"scene={scene}, rank={rank}/{group_size}"
+            )
+            return
 
         writer.write(
             file_path,

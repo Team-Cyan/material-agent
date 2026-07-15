@@ -1,0 +1,21 @@
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 10px 0;
+}
+
+.tag-list span {
+  background: #2a3018;
+  color: var(--accent);
+  border-radius: 99px;
+  padding: 6px 9px;
+  font-size: 11px;
+}
+
+.description-preview {
+  border-left: 2px solid var(--accent);
+  padding-left: 12px;
+  color: #d9d8d2;
+  line-height: 1.6;
+}

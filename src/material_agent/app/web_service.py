@@ -595,7 +595,7 @@ class MaterialWebHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:  # noqa: N802
         split = urlsplit(self.path)
         path = split.path
-        if path in {"/", "/index.html", "/app.js", "/styles.css"}:
+        if path in {"/", "/index.html", "/app.js", "/styles.css", "/output-preview.css"}:
             self._static("index.html" if path in {"/", "/index.html"} else path.lstrip("/"))
             return
         if not self._authorized():

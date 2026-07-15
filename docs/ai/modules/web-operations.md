@@ -37,6 +37,9 @@ The library index is stored in `library_index` inside the runtime database. It
 keeps paths, sizes, modification times, and a scan generation. Scores are read
 from the latest `jobs`/`job_files`/`artifacts(kind=score_payload)` record, so
 dry-run results remain inspectable without marking source files processed.
+After group ranking, the score artifact is updated with `output_preview`, which
+contains the rating, machine tags, instructions, description, and group fields
+that would be sent to the metadata writer. This preview is DB-only in dry-run.
 
 ## Safe Editing Guidance
 
