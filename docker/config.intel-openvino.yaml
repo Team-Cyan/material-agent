@@ -74,6 +74,10 @@ inference:
   provider_tags: [intel-openvino, cpu]
   enforce_available: true
 
+model_management:
+  selection_enabled: true
+  registry_dir: ${MATERIAL_AGENT_WORK_DIR}/models
+
 grouping:
   enabled: true
   time_gap_seconds: 30

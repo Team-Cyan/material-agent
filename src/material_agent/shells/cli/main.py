@@ -89,6 +89,24 @@ def cmd_fit_aesthetic_calibration(args):
     return _cmd_fit_aesthetic_calibration(args)
 
 
+def cmd_models(args):
+    from ...commands.models import cmd_models as _cmd_models
+
+    return _cmd_models(args)
+
+
+def cmd_aesthetic_labels(args):
+    from ...commands.aesthetic_labels import cmd_aesthetic_labels as _cmd_aesthetic_labels
+
+    return _cmd_aesthetic_labels(args)
+
+
+def cmd_benchmark_nima_device(args):
+    from ...commands.nima_benchmark import cmd_benchmark_nima_device as _command
+
+    return _command(args)
+
+
 def configure_run_parser(parser) -> None:
     parser.add_argument("input_dir", help="Directory containing RAW files")
     parser.add_argument("--config", default="config.yaml")
@@ -163,6 +181,62 @@ def build_parser() -> argparse.ArgumentParser:
     p_fit_calibration.add_argument("--pivot", type=float, default=5.5)
     p_fit_calibration.add_argument(
         "--policy-version", default="target-affine-v1", dest="policy_version"
+    )
+    p_models = sub.add_parser(
+        "models",
+        help="List, install, select, delete, or serve managed local models",
+        allow_abbrev=False,
+    )
+    p_models.add_argument(
+        "--registry-dir",
+        default="~/.material-agent/models",
+        dest="registry_dir",
+    )
+    p_models.add_argument(
+        "--catalog",
+        help="Optional operator-managed JSON catalog of adapter-compatible models",
+    )
+    models_sub = p_models.add_subparsers(dest="models_command", required=True)
+    models_sub.add_parser("list", allow_abbrev=False)
+    for action in ("install", "select"):
+        child = models_sub.add_parser(action, allow_abbrev=False)
+        child.add_argument("model_id")
+    p_models_delete = models_sub.add_parser("delete", allow_abbrev=False)
+    p_models_delete.add_argument("model_id")
+    p_models_delete.add_argument("--force", action="store_true")
+    p_models_serve = models_sub.add_parser("serve", allow_abbrev=False)
+    p_models_serve.add_argument("--host", default="127.0.0.1")
+    p_models_serve.add_argument("--port", type=int, default=8765)
+    p_models_serve.add_argument("--token-file", dest="token_file")
+    p_labels = sub.add_parser(
+        "aesthetic-labels",
+        help="Import, export, and inspect the local human-aesthetic label store",
+        allow_abbrev=False,
+    )
+    p_labels.add_argument("--database", required=True)
+    labels_sub = p_labels.add_subparsers(dest="labels_command", required=True)
+    p_labels_import = labels_sub.add_parser("import", allow_abbrev=False)
+    p_labels_import.add_argument("--input", required=True)
+    p_labels_import.add_argument(
+        "--holdout-percent", type=int, default=20, dest="holdout_percent"
+    )
+    p_labels_export = labels_sub.add_parser("export", allow_abbrev=False)
+    p_labels_export.add_argument("--output", required=True)
+    p_labels_export.add_argument("--split", choices=("train", "holdout"))
+    labels_sub.add_parser("stats", allow_abbrev=False)
+    p_nima_benchmark = sub.add_parser(
+        "benchmark-nima-device",
+        help="Benchmark the bundled NIMA graph across OpenVINO devices and batches",
+        allow_abbrev=False,
+    )
+    p_nima_benchmark.add_argument("--input-dir", required=True, dest="input_dir")
+    p_nima_benchmark.add_argument("--model-path", required=True, dest="model_path")
+    p_nima_benchmark.add_argument("--output-dir", required=True, dest="output_dir")
+    p_nima_benchmark.add_argument("--devices", default="CPU,GPU.0")
+    p_nima_benchmark.add_argument("--batch-sizes", default="1,4,8", dest="batch_sizes")
+    p_nima_benchmark.add_argument("--max-files", type=int, default=128, dest="max_files")
+    p_nima_benchmark.add_argument(
+        "--warm-repetitions", type=int, default=5, dest="warm_repetitions"
     )
     p_benchmark.add_argument("--repeat-count", type=int, default=2, dest="repeat_count")
     p_benchmark.add_argument(
@@ -270,6 +344,12 @@ def main():
             return cmd_prepare_openvino_model(args)
         if args.command == "fit-aesthetic-calibration":
             return cmd_fit_aesthetic_calibration(args)
+        if args.command == "models":
+            return cmd_models(args)
+        if args.command == "aesthetic-labels":
+            return cmd_aesthetic_labels(args)
+        if args.command == "benchmark-nima-device":
+            return cmd_benchmark_nima_device(args)
         if args.command == "scan-scenes":
             return cmd_scan_scenes(args)
         if args.command == "suggest-scenes":

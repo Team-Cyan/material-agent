@@ -114,7 +114,21 @@ uv run material-agent prepare-openvino-model \
   --source-model /path/to/model.onnx \
   --source-processor /path/to/processor \
   --output-dir ~/.material-agent/models/model-name
+
+uv run material-agent models --registry-dir ~/.material-agent/models list
+
+uv run material-agent benchmark-nima-device \
+  --input-dir /path/to/raws \
+  --model-path /path/to/nima_aesthetic_fp16.tflite \
+  --output-dir .local/nima-device-benchmark \
+  --devices CPU,GPU.0 --batch-sizes 1,4,8
 ```
+
+Managed downloads belong in the persistent work/appdata model registry, not the
+container writable layer. The optional token-protected model API and the local
+aesthetic label store are documented in
+`docs/operations/model-management.md` and
+`docs/operations/aesthetic-label-store.md`.
 
 ## Dependency Model
 
@@ -147,12 +161,13 @@ Apple GPU acceleration should be native first. Docker's newer Model Runner can e
 ## Near-Term Work
 
 1. Calibrate the optional local blocks on a reviewed real-camera RAW set.
-2. Measure warm CPU/GPU parity, throughput, fallback rate, and device utilization
-   on the target Intel NAS; the bounded read-only GPU pilot is already complete.
+2. Measure NIMA-specific warm CPU/GPU parity and utilization on the target Intel
+   NAS; the existing DINO matrix is not NIMA evidence.
 3. Run a separately authorized target-host isolated-XMP pilot and approve
    promotion thresholds; keep the main photo mount read-only until then.
 4. Decide whether to retain or delete the remaining legacy teacher modules.
-5. Add a durable local label store after the initial fixture workflow stabilizes.
+5. Collect real human labels later; the durable empty label-store infrastructure
+   is already available.
 
 ## External Requirements
 

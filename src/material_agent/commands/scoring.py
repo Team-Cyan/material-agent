@@ -15,6 +15,7 @@ from ..app.rescore_service import RescoreService
 from ..app.review_runtime import build_review_job_executor as _shared_build_review_job_executor
 from ..app.review_service import ReviewRunService
 from ..app.local_embedding_identity import build_local_embedding_cache_key
+from ..app.model_catalog_service import apply_model_selections
 from ..io.scanner import scan_arw_files
 from ..utils.config_validator import normalize_config, validate_config
 from ..utils.constants import scene_key_from_display
@@ -68,8 +69,9 @@ def load_raw_config(path: str) -> dict:
 
 def load_config(path: str) -> dict:
     raw_config = load_raw_config(path)
-    validate_config(raw_config)
-    return normalize_config(raw_config)
+    config = apply_model_selections(normalize_config(raw_config))
+    validate_config(config)
+    return config
 
 
 def _check_exiftool_version(min_version=(12, 0)):
@@ -170,6 +172,7 @@ def _enabled_model_distributions(config: dict) -> set[str]:
 
 
 def cmd_run(args, config):
+    config = apply_model_selections(normalize_config(config))
     validate_config(config)
     config = apply_run_overrides(config, args)
     input_dir = _validated_input_directory(args.input_dir)

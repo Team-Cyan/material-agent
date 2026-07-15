@@ -15,6 +15,8 @@ loads lazily and must preserve the service-free heuristic fallback.
 - `src/material_agent/adapters/models/openvino_ssd_detection.py`
 - `src/material_agent/adapters/models/mediapipe_face.py`
 - `src/material_agent/app/openvino_model_service.py`
+- `src/material_agent/app/model_catalog_service.py`
+- `src/material_agent/app/model_api.py`
 
 ## Model Blocks
 
@@ -62,6 +64,14 @@ uv run material-agent prepare-openvino-model \
 The generated `bundle.json` records a digest covering the ONNX graph and its
 external data. OpenVINO cache identity also includes the requested device and
 OpenVINO version.
+
+## Managed Model Registry
+
+The managed registry separates immutable image assets from appdata-installed
+assets. Only checksum-pinned catalog entries with an implemented adapter may be
+installed or selected. Active model deletion is rejected unless the caller
+explicitly forces deletion, and bundled files are never removed. See
+`docs/operations/model-management.md`.
 
 ## Verified Limitations
 

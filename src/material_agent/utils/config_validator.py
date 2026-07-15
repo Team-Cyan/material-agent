@@ -77,6 +77,7 @@ _MAPPING_SECTION_PATHS = (
     ("local", "embedding"),
     ("local", "face"),
     ("inference",),
+    ("model_management",),
     ("preview",),
     ("grouping",),
     ("grouping", "visual_similarity"),
@@ -449,6 +450,13 @@ def normalize_config(cfg: dict) -> dict:
     inference.setdefault("provider_tags", ["intel-openvino", "cpu"])
     inference["enforce_available"] = _coerce_bool_like(inference.get("enforce_available", False))
 
+    model_management = normalized.setdefault("model_management", {})
+    model_management["selection_enabled"] = _coerce_bool_like(
+        model_management.get("selection_enabled", False)
+    )
+    model_management.setdefault("registry_dir", "~/.material-agent/models")
+    model_management.setdefault("catalog_path", "")
+
     preview = normalized.setdefault("preview", {})
     preview.setdefault("prefer_embedded", True)
     preview.setdefault("fallback_decode", "half_size")
@@ -572,6 +580,24 @@ def validate_config(cfg: dict) -> None:
                     "raw_extensions entries must be 1-16 alphanumeric characters, "
                     f"got: {extension!r}"
                 )
+    model_management = cfg.get("model_management", {})
+    if not _is_valid_bool_like(model_management.get("selection_enabled", False)):
+        errors.append(
+            "model_management.selection_enabled must be a boolean, "
+            f"got: {model_management.get('selection_enabled')!r}"
+        )
+    registry_dir = model_management.get("registry_dir")
+    if not isinstance(registry_dir, str) or not registry_dir.strip():
+        errors.append(
+            "model_management.registry_dir must be a non-empty string, "
+            f"got: {registry_dir!r}"
+        )
+    catalog_path = model_management.get("catalog_path", "")
+    if not isinstance(catalog_path, str):
+        errors.append(
+            "model_management.catalog_path must be a string, "
+            f"got: {catalog_path!r}"
+        )
     preview = cfg.get("preview", {})
     if "prefer_embedded" in preview and not _is_valid_bool_like(preview.get("prefer_embedded")):
         errors.append(

@@ -255,6 +255,14 @@ if [ "$(id -u)" = "0" ]; then
     fi
     find "$cache_dir" -xdev -exec chown -h "$puid:$pgid" {} +
   fi
+  for managed_dir in "$work_dir/models" "$work_dir/labels"; do
+    if [ -L "$managed_dir" ]; then
+      echo "Managed runtime directory must not be a symbolic link: $managed_dir" >&2
+      exit 64
+    fi
+    mkdir -p "$managed_dir"
+    find "$managed_dir" -xdev -exec chown -h "$puid:$pgid" {} +
+  done
   export HOME=/home/material-agent USER="$app_user" LOGNAME="$app_user"
 fi
 
