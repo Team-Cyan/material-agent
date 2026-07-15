@@ -75,3 +75,16 @@ def test_nima_device_benchmark_keeps_device_failure_in_report(tmp_path, monkeypa
     )
     assert report["selected"] is None
     assert report["profiles"][0]["error"] == "device unavailable"
+
+
+def test_parse_intel_gpu_top_busy_collects_engine_samples():
+    payload = """[
+      {"engines":{"Render/3D/0":{"busy":42.5},"Video/0":{"busy":3.0}}},
+      {"engines":{"Render/3D/0":{"busy":55.0}}}
+    ]"""
+    assert module._parse_intel_gpu_top_busy(payload) == [42.5, 3.0, 55.0]
+
+
+def test_parse_intel_gpu_top_busy_accepts_interrupted_array():
+    payload = '[{"engines":{"Render/3D/0":{"busy":12.0}}},'
+    assert module._parse_intel_gpu_top_busy(payload) == [12.0]

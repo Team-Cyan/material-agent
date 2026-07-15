@@ -30,6 +30,7 @@ RUN apt-get update \
         curl \
         findutils \
         gosu \
+        intel-gpu-tools \
         libimage-exiftool-perl \
         libgl1 \
         libglib2.0-0 \

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import json
+import signal
 import shutil
 import statistics
+import subprocess
 import threading
 import time
 from datetime import UTC, datetime
@@ -191,8 +193,10 @@ class _UtilizationSampler:
         self._stop = threading.Event()
         self._samples: list[dict[str, float | None]] = []
         self._thread: threading.Thread | None = None
+        self._intel_gpu_top = _IntelGpuTopSampler()
 
     def start(self) -> None:
+        self._intel_gpu_top.start()
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
 
@@ -203,13 +207,19 @@ class _UtilizationSampler:
         cpu = [row["process_cpu_percent"] for row in self._samples]
         gpu = [row["gpu_busy_percent"] for row in self._samples if row["gpu_busy_percent"] is not None]
         rss = [row["rss_mib"] for row in self._samples]
+        tool = self._intel_gpu_top.stop()
+        if not gpu:
+            gpu = tool["busy_percent"]
         return {
             "samples": len(self._samples),
             "process_cpu_percent_mean": round(statistics.mean(cpu), 3) if cpu else None,
             "process_cpu_percent_peak": round(max(cpu), 3) if cpu else None,
             "gpu_busy_percent_mean": round(statistics.mean(gpu), 3) if gpu else None,
             "gpu_busy_percent_peak": round(max(gpu), 3) if gpu else None,
-            "gpu_busy_source": str(_gpu_busy_path()) if _gpu_busy_path() else None,
+            "gpu_busy_source": (
+                str(_gpu_busy_path()) if _gpu_busy_path() else tool["source"]
+            ),
+            "gpu_busy_error": tool["error"],
             "rss_mib_peak": round(max(rss), 3) if rss else None,
         }
 
@@ -257,6 +267,71 @@ def _rss_mib() -> float:
     return 0.0
 
 
+class _IntelGpuTopSampler:
+    def __init__(self) -> None:
+        self.process: subprocess.Popen[str] | None = None
+
+    def start(self) -> None:
+        executable = shutil.which("intel_gpu_top")
+        if not executable:
+            return
+        try:
+            self.process = subprocess.Popen(
+                [executable, "-J", "-s", "100", "-o", "-"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+        except OSError:
+            self.process = None
+
+    def stop(self) -> dict[str, Any]:
+        if self.process is None:
+            return {"busy_percent": [], "source": None, "error": "intel_gpu_top unavailable"}
+        try:
+            self.process.send_signal(signal.SIGINT)
+            stdout, stderr = self.process.communicate(timeout=3.0)
+        except subprocess.TimeoutExpired:
+            self.process.kill()
+            stdout, stderr = self.process.communicate(timeout=1.0)
+        values = _parse_intel_gpu_top_busy(stdout)
+        error = stderr.strip() or None
+        if not values and not error:
+            error = "intel_gpu_top returned no engine busy samples"
+        return {"busy_percent": values, "source": "intel_gpu_top" if values else None, "error": error}
+
+
+def _parse_intel_gpu_top_busy(payload: str) -> list[float]:
+    text = payload.strip()
+    if not text:
+        return []
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError:
+        if text.startswith("[") and not text.endswith("]"):
+            try:
+                parsed = json.loads(text.rstrip().rstrip(",") + "]")
+            except json.JSONDecodeError:
+                return []
+        else:
+            return []
+    samples = parsed if isinstance(parsed, list) else [parsed]
+    values: list[float] = []
+    for sample in samples:
+        if not isinstance(sample, dict):
+            continue
+        engines = sample.get("engines", {})
+        if not isinstance(engines, dict):
+            continue
+        for engine in engines.values():
+            if not isinstance(engine, dict):
+                continue
+            busy = engine.get("busy")
+            if isinstance(busy, int | float) and not isinstance(busy, bool):
+                values.append(float(busy))
+    return values
+
+
 def _merge_utilization(rows: list[dict[str, Any]]) -> dict[str, Any]:
     keys = (
         "process_cpu_percent_mean",
@@ -272,6 +347,9 @@ def _merge_utilization(rows: list[dict[str, Any]]) -> dict[str, Any]:
     merged["samples"] = sum(int(row.get("samples", 0)) for row in rows)
     merged["gpu_busy_source"] = next(
         (row.get("gpu_busy_source") for row in rows if row.get("gpu_busy_source")), None
+    )
+    merged["gpu_busy_errors"] = sorted(
+        {str(row["gpu_busy_error"]) for row in rows if row.get("gpu_busy_error")}
     )
     return merged
 
