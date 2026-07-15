@@ -200,16 +200,23 @@ class WebLibraryRepository:
                     SUM(CASE WHEN score_total IS NOT NULL THEN 1 ELSE 0 END) AS with_score,
                     SUM(CASE WHEN status='error' THEN 1 ELSE 0 END) AS errors,
                     AVG(score_total) AS average_score
-                FROM latest_scores
-                """
+                FROM latest_scores ls
+                JOIN library_index li ON li.file_path=ls.file_path
+                WHERE li.root_path=?
+                """,
+                (str(self.input_root),),
             ).fetchone()
             scenes = connection.execute(
                 self._latest_scores_cte()
                 + """
                 SELECT COALESCE(scene, 'unscored') AS scene, COUNT(*) AS count
-                FROM latest_scores GROUP BY COALESCE(scene, 'unscored')
+                FROM latest_scores ls
+                JOIN library_index li ON li.file_path=ls.file_path
+                WHERE li.root_path=?
+                GROUP BY COALESCE(scene, 'unscored')
                 ORDER BY count DESC, scene ASC LIMIT 20
-                """
+                """,
+                (str(self.input_root),),
             ).fetchall()
         return {
             "indexed": int(indexed),
