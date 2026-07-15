@@ -407,5 +407,6 @@ def test_publish_workflow_gates_mutable_tag_on_quality_and_smoke():
     assert "uv sync --frozen --group dev --extra intel-openvino" in content
     assert 'ar["requested_device"] == "AUTO:GPU,CPU"' in content
     assert 'not ar["fallback_used"]' in content
+    assert 'ar["fallback_used"] and ar["compiled_device"] == "CPU"' in content
     assert 'fr["requested_device"] == "GPU"' in content
     assert 'fr["fallback_used"]' in content
