@@ -57,11 +57,24 @@ findings, repair plan, and verification boundary.
 
 ## Recommended Next Task
 
-- perform target-host isolated XMP validation only with separate approval;
-- collect broader labelled real scenes; the current holdout is interleaved with
-  the calibration burst and is not a distribution-independent validation set;
-- decide whether the legacy teacher harness remains or copied modules can be
-  deleted.
+- deploy the Web operator image on Unraid with `/mnt/user/material/photos`
+  read-only and all runtime state under appdata;
+- index the complete share and start the first whole-library dry-run validation;
+- use the Web library/detail views to review real-scene coverage and outliers;
+- keep XMP promotion and personal target calibration deferred until separately
+  authorized data and labels are available.
+
+## Web Operations Snapshot
+
+- `material-agent web` serves configuration, task, model, library, thumbnail,
+  score payload, and log APIs plus the bundled responsive operator UI;
+- non-loopback listeners require a bearer-token file;
+- Web tasks are hard-coded to `--dry-run`, and the photo root is only used for
+  scanning and thumbnail decode;
+- `library_index` and complete dry-run score artifacts live in `/config/state.db`;
+- configuration updates are validated before atomic replacement and preserve
+  redacted secret values;
+- the module guide is `docs/ai/modules/web-operations.md`.
 
 ## NIMA Device And Operations Snapshot
 

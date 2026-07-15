@@ -107,6 +107,12 @@ def cmd_benchmark_nima_device(args):
     return _command(args)
 
 
+def cmd_web(args):
+    from ...commands.web import cmd_web as _cmd_web
+
+    return _cmd_web(args)
+
+
 def configure_run_parser(parser) -> None:
     parser.add_argument("input_dir", help="Directory containing RAW files")
     parser.add_argument("--config", default="config.yaml")
@@ -238,6 +244,23 @@ def build_parser() -> argparse.ArgumentParser:
     p_nima_benchmark.add_argument(
         "--warm-repetitions", type=int, default=5, dest="warm_repetitions"
     )
+    p_web = sub.add_parser(
+        "web",
+        help="Serve the local material library and task management Web UI",
+        allow_abbrev=False,
+    )
+    p_web.add_argument("--host", default="127.0.0.1")
+    p_web.add_argument("--port", type=int, default=8776)
+    p_web.add_argument("--input-dir", required=True, dest="input_dir")
+    p_web.add_argument("--config", default="config.yaml")
+    p_web.add_argument("--work-dir", required=True, dest="work_dir")
+    p_web.add_argument(
+        "--registry-dir",
+        default="~/.material-agent/models",
+        dest="registry_dir",
+    )
+    p_web.add_argument("--catalog")
+    p_web.add_argument("--token-file", dest="token_file")
     p_benchmark.add_argument("--repeat-count", type=int, default=2, dest="repeat_count")
     p_benchmark.add_argument(
         "--reject-threshold", type=float, default=4.0, dest="reject_threshold"
@@ -350,6 +373,8 @@ def main():
             return cmd_aesthetic_labels(args)
         if args.command == "benchmark-nima-device":
             return cmd_benchmark_nima_device(args)
+        if args.command == "web":
+            return cmd_web(args)
         if args.command == "scan-scenes":
             return cmd_scan_scenes(args)
         if args.command == "suggest-scenes":

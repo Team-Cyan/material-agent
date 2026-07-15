@@ -65,6 +65,21 @@ Direct CLI:
 uv run material-agent run /path/to/photos --config config.yaml
 ```
 
+Built-in management UI:
+
+```bash
+uv run material-agent web \
+  --input-dir /path/to/photos \
+  --config config.yaml \
+  --work-dir /path/to/appdata \
+  --registry-dir /path/to/appdata/models
+```
+
+The Web UI manages parameters, checksum-pinned models, dry-run tasks, logs,
+and full-library score browsing. Web-triggered tasks never write XMP or ratings;
+their complete score payloads stay in the appdata runtime database. A bearer
+token file is mandatory when binding the UI beyond localhost.
+
 For a read-only Docker pilot, mount the source library read-only and keep all
 runtime state in appdata:
 

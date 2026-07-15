@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>material-agent</Name>
+  <Repository>ghcr.io/team-cyan/material-agent:intel-openvino</Repository>
+  <Registry>https://ghcr.io/team-cyan/material-agent</Registry>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/Team-Cyan/material-agent/issues</Support>
+  <Project>https://github.com/Team-Cyan/material-agent</Project>
+  <TemplateURL>https://raw.githubusercontent.com/Team-Cyan/material-agent/main/deploy/unraid/material-agent.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/Team-Cyan/material-agent/main/assets/material-agent-icon.png</Icon>
+  <WebUI>http://[IP]:[PORT:8776]</WebUI>
+  <Overview>Read-only photo analysis, target-aware focus, NIMA scoring, model management, and full-library score browsing.</Overview>
+  <Category>Tools:MediaApp</Category>
+  <ExtraParams>--restart=unless-stopped</ExtraParams>
+  <PostArgs>web --host 0.0.0.0 --port 8776 --input-dir /photos --config /config/runtime-config/config.yaml --work-dir /config --registry-dir /config/models --token-file /config/runtime-secrets/tmdb.api-key</PostArgs>
+  <CPUset/>
+  <DateInstalled>0</DateInstalled>
+  <Requires>The photo library must remain read-only. Store runtime state, configuration, and the bearer-token file under appdata. Pin a tested image digest for production.</Requires>
+  <Config Name="Web UI" Target="8776" Default="8776" Mode="tcp" Description="Authenticated material-agent management UI." Type="Port" Display="always" Required="true" Mask="false">8776</Config>
+  <Config Name="Photo Library (read-only)" Target="/photos" Default="/mnt/user/material/photos" Mode="ro" Description="Source photo library; never mounted read-write." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/material/photos</Config>
+  <Config Name="Runtime State" Target="/config" Default="/mnt/user/appdata/material-agent/runtime/.material-agent" Mode="rw" Description="SQLite, logs, thumbnails, task state, OpenVINO cache, and managed models." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/material-agent/runtime/.material-agent</Config>
+  <Config Name="Runtime Config" Target="/config/runtime-config" Default="/mnt/user/appdata/material-agent/runtime/config" Mode="rw" Description="Web-editable validated runtime configuration directory." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/material-agent/runtime/config</Config>
+  <Config Name="Runtime Secrets" Target="/config/runtime-secrets" Default="/mnt/user/appdata/material-agent/runtime/local/secrets" Mode="rw" Description="Private token directory; the UI reads tmdb.api-key as its bearer token in this compatibility template." Type="Path" Display="advanced" Required="true" Mask="true">/mnt/user/appdata/material-agent/runtime/local/secrets</Config>
+  <Config Name="Work Directory" Target="MATERIAL_AGENT_WORK_DIR" Default="/config" Mode="" Description="All mutable operational state stays in appdata." Type="Variable" Display="advanced" Required="true" Mask="false">/config</Config>
+  <Config Name="Input Directory" Target="MATERIAL_AGENT_INPUT_DIR" Default="/photos" Mode="" Description="Read-only source root." Type="Variable" Display="advanced" Required="true" Mask="false">/photos</Config>
+  <Config Name="User ID" Target="PUID" Default="99" Mode="" Description="Run as Unraid nobody." Type="Variable" Display="advanced" Required="true" Mask="false">99</Config>
+  <Config Name="Group ID" Target="PGID" Default="100" Mode="" Description="Run as Unraid users." Type="Variable" Display="advanced" Required="true" Mask="false">100</Config>
+</Container>

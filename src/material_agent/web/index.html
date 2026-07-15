@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>material-agent</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard"><span class="brand-mark">M</span><span>material-agent</span></a>
+      <nav id="navigation">
+        <button class="nav-item active" data-view="dashboard">概览</button>
+        <button class="nav-item" data-view="library">素材库</button>
+        <button class="nav-item" data-view="tasks">任务</button>
+        <button class="nav-item" data-view="settings">参数</button>
+        <button class="nav-item" data-view="models">模型</button>
+      </nav>
+      <div class="sidebar-note"><i id="health-dot"></i><span id="health-text">正在连接</span></div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div><p class="eyebrow">LOCAL PHOTO INTELLIGENCE</p><h1 id="view-title">运行概览</h1></div>
+        <button class="secondary" id="token-button">访问令牌</button>
+      </header>
+
+      <section class="view active" id="view-dashboard">
+        <div class="metric-grid" id="metrics"></div>
+        <div class="two-column">
+          <article class="panel">
+            <div class="panel-head"><div><p class="eyebrow">LIBRARY</p><h2>素材库索引</h2></div><button id="index-button">扫描全库</button></div>
+            <p class="muted">扫描只读取文件名、大小和修改时间；不会修改照片、XMP 或 rating。</p>
+            <div class="scene-bars" id="scene-bars"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><div><p class="eyebrow">DRY-RUN</p><h2>启动评分</h2></div><span class="safe-pill">只写内部 DB</span></div>
+            <form id="task-form" class="stack">
+              <label>文件数量 <input name="max_files" placeholder="留空即全量"></label>
+              <label class="check"><input type="checkbox" name="reprocess">重新处理已有运行记录</label>
+              <label class="check"><input type="checkbox" name="no_visual_merge">跳过视觉相似合并</label>
+              <button type="submit">启动 dry-run 评分</button>
+            </form>
+          </article>
+        </div>
+        <article class="panel"><div class="panel-head"><div><p class="eyebrow">RECENT</p><h2>最近任务</h2></div><button class="secondary" data-go="tasks">查看全部</button></div><div id="recent-tasks"></div></article>
+      </section>
+
+      <section class="view" id="view-library">
+        <div class="toolbar">
+          <input id="library-search" placeholder="搜索路径或文件名">
+          <select id="library-scored"><option value="">全部状态</option><option value="yes">已评分</option><option value="no">未评分</option></select>
+          <select id="library-order"><option value="path">按路径</option><option value="score_desc">分数从高到低</option><option value="score_asc">分数从低到高</option><option value="newest">最新素材</option></select>
+          <button id="library-refresh">刷新</button>
+        </div>
+        <div class="library-meta" id="library-meta"></div>
+        <div class="photo-grid" id="photo-grid"></div>
+        <div class="pagination"><button class="secondary" id="page-prev">上一页</button><span id="page-label"></span><button class="secondary" id="page-next">下一页</button></div>
+      </section>
+
+      <section class="view" id="view-tasks">
+        <article class="panel"><div class="panel-head"><div><p class="eyebrow">PROCESS</p><h2>Web 调度任务</h2></div></div><div id="task-list"></div></article>
+        <article class="panel"><div class="panel-head"><div><p class="eyebrow">LOG</p><h2>任务日志</h2></div></div><pre id="task-log">选择任务查看日志</pre></article>
+      </section>
+
+      <section class="view" id="view-settings">
+        <article class="panel wide"><div class="panel-head"><div><p class="eyebrow">CONFIG</p><h2>完整运行参数</h2></div><button id="config-save">验证并保存</button></div><p class="muted">这里编辑的是容器内部配置。敏感值显示为 [REDACTED]，保存时会保留原值。</p><textarea id="config-editor" spellcheck="false"></textarea><div id="config-status" class="status-line"></div></article>
+      </section>
+
+      <section class="view" id="view-models"><div class="model-grid" id="model-grid"></div></section>
+    </main>
+  </div>
+
+  <dialog id="detail-dialog"><button class="dialog-close" id="detail-close">关闭</button><div id="detail-content"></div></dialog>
+  <dialog id="token-dialog"><form method="dialog" id="token-form"><h2>访问令牌</h2><p class="muted">令牌仅保存在当前浏览器会话。</p><input id="token-input" type="password" autocomplete="current-password" placeholder="Bearer token"><div class="dialog-actions"><button value="cancel" class="secondary">取消</button><button value="default">保存并连接</button></div></form></dialog>
+  <div id="toast" role="status"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

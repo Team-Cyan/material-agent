@@ -255,7 +255,13 @@ if [ "$(id -u)" = "0" ]; then
     fi
     find "$cache_dir" -xdev -exec chown -h "$puid:$pgid" {} +
   fi
-  for managed_dir in "$work_dir/models" "$work_dir/labels"; do
+  for managed_dir in \
+    "$work_dir/models" \
+    "$work_dir/labels" \
+    "$work_dir/web" \
+    "$work_dir/runtime-config" \
+    "$work_dir/runtime-secrets"
+  do
     if [ -L "$managed_dir" ]; then
       echo "Managed runtime directory must not be a symbolic link: $managed_dir" >&2
       exit 64

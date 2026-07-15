@@ -82,11 +82,19 @@
   batch 1 as the production default because neither device had a stable material
   throughput advantage while GPU startup and memory costs were substantially
   higher
+- added the built-in bearer-protected Web operator surface for configuration,
+  checksum-pinned model lifecycle, full-library indexing, dry-run task control,
+  logs, thumbnail browsing, filtering, and complete score/tag/description
+  payload inspection without source-library writes
+- added a generation-based full-library index in the appdata runtime database;
+  validation is no longer structurally limited to the earlier 128/512-file
+  performance samples
 
 ## In Progress
 
-- expand the initial private concert-burst RAW gate with independent scenes,
-  cameras, and lighting before production model promotion
+- run the first whole-share read-only Unraid validation over the indexed photo
+  archive, retain resumable runtime evidence, and report scene/target/error/
+  score coverage separately from the earlier bounded speed benchmarks
 - keep MobileCLIP2 semantic scoring opt-in while scene prompts and confidence
   are calibrated on broader real-photo coverage
 - validate the learned NIMA aesthetic policy against broader real photography;
@@ -102,10 +110,11 @@
 
 ## Next
 
-- publish the hardened image, then repeat the bounded Unraid read-only pilot
-  with non-root UID/GID and appdata ownership checks
-- run a separately authorized target-host isolated-XMP pilot before changing
-  the default learned scoring policy; keep the primary photo share read-only
+- review the whole-share outliers and assemble an independent human-reviewed
+  acceptance slice across cameras, scenes, and lighting; generic AVA NIMA is
+  accepted for phase one, while personal target calibration remains deferred
+- integrate the already benchmarked embedding signal into grouping without
+  duplicating inference or persisting raw vectors in ordinary score artifacts
 
 ## Later
 
@@ -124,6 +133,11 @@
   can support an independent holdout ablation
 - train a small ranking/regression head on frozen embeddings only after enough
   reviewed labels exist
+
+Hardware-specific CUDA, ROCm/MIGraphX, and native Apple profiles may be
+implemented and CI-smoked without target devices, but cannot be marked
+production-verified until matching hardware is available. XMP promotion also
+remains separately authorized and is not part of Web-triggered tasks.
 
 ## Deferred Or Not In Scope
 
