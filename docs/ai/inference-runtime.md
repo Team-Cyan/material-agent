@@ -200,6 +200,18 @@ dimensions and includes raw/calibration provenance when configured.
 The production profile disables DINO embeddings because embedding grouping is
 still opt-in and those vectors do not affect the score.
 
+The target-host NIMA matrix is separate from the earlier DINO embedding matrix.
+On 128 read-only RAW files, repeated CPU and `GPU.0` batch 1/4/8 runs confirmed
+the requested execution device with no fallback. The best warm profiles were
+within a few percent and the winner changed between repetitions, while GPU cold
+compile/startup took roughly 4 seconds at batch 1 versus under 2 seconds on CPU
+and GPU peak RSS was roughly 1.3-1.6 GiB versus 0.8-1.0 GiB on CPU. Production
+therefore uses CPU batch 1: the target does not show a stable GPU advantage that
+justifies `/dev/dri`, GPU-specific operations, or a split CPU/GPU pipeline.
+`intel_gpu_top` PMU collection is available only in the isolated benchmark and
+uses benchmark-only `CAP_PERFMON`; the production container has no such
+capability.
+
 `OpenVinoEmbeddingAdapter` now loads a local ONNX bundle with native OpenVINO,
 compiles it with a persistent cache, performs inference, and records actual
 execution devices. `prepare-openvino-model` materializes Hugging Face ONNX

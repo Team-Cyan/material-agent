@@ -71,6 +71,17 @@
 - added versioned target/scene NIMA calibration with human-label affine fitting,
   minimum-label no-op safeguards, detector-confidence blending, raw/effective
   score provenance, and scene-safe rescore support
+- added checksum-pinned model catalog operations, appdata-backed install/select/
+  delete state, CLI plus authenticated HTTP management endpoints, and immutable
+  bundled-model protection
+- added an appdata-only human aesthetic label store with idempotent import,
+  deterministic train/holdout splits, export, and coverage statistics without
+  creating synthetic preference labels
+- completed the target Unraid NIMA CPU/GPU batch 1/4/8 matrix on 128 read-only
+  RAW files, verified actual `GPU.0` execution and no fallback, and retained CPU
+  batch 1 as the production default because neither device had a stable material
+  throughput advantage while GPU startup and memory costs were substantially
+  higher
 
 ## In Progress
 
@@ -81,7 +92,8 @@
 - validate the learned NIMA aesthetic policy against broader real photography;
   non-photo rejection remains a separate technical/screening responsibility
 - collect independent human aesthetic labels per target and holdout split before
-  promoting any non-identity target calibration profile
+  promoting any non-identity target calibration profile; deferred at the user's
+  request until they are available to provide genuine preference labels
 - integrate benchmarked embeddings into grouping without duplicating model
   inference or persisting raw vectors in ordinary score artifacts
 - keep XMP sidecar and SQLite persistence compatible with Lightroom-style RAW
@@ -90,11 +102,6 @@
 
 ## Next
 
-- benchmark the same NIMA graph on target Intel CPU and `GPU.0`, then publish
-  the faster verified production profile
-- add optional target-host utilization sampling to future model benchmarks;
-  the earlier DINO matrix remains embedding-only evidence and must not be used
-  to decide the NIMA aesthetic device default
 - publish the hardened image, then repeat the bounded Unraid read-only pilot
   with non-root UID/GID and appdata ownership checks
 - run a separately authorized target-host isolated-XMP pilot before changing
@@ -111,7 +118,8 @@
 - investigate AMD MIGraphX image tag on supported ROCm hardware
 - add native Apple Silicon install profile using CoreML, MLX, or MPS
 - evaluate Docker Model Runner as an optional Apple host-service bridge
-- add a local label store for keep/review/reject and pairwise group preferences
+- extend the local label store to keep/review/reject and pairwise group
+  preferences when a real review workflow is available
 - compare whole-frame NIMA against subject-crop fusion only after target labels
   can support an independent holdout ablation
 - train a small ranking/regression head on frozen embeddings only after enough

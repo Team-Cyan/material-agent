@@ -387,6 +387,13 @@ def test_intel_image_baked_config_runs_bundled_openvino_aesthetic_model():
     assert config["screening"]["enabled"] is False
 
 
+def test_intel_gpu_top_requires_both_file_and_runtime_perfmon_capability():
+    content = (ROOT / "Dockerfile.intel-openvino").read_text(encoding="utf-8")
+
+    assert "libcap2-bin" in content
+    assert "setcap cap_perfmon=ep /usr/bin/intel_gpu_top" in content
+
+
 def test_publish_workflow_gates_mutable_tag_on_quality_and_smoke():
     content = (ROOT / ".github" / "workflows" / "publish-intel-openvino.yml").read_text(
         encoding="utf-8"

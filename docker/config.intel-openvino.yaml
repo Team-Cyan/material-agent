@@ -39,7 +39,8 @@ local:
     compiled_cache_dir: /config/openvino-cache
     result_cache_size: 256
     performance_hint: THROUGHPUT
-    batch_size: 4
+    # Target i7-11700T NIMA matrix: CPU batch 1 was the fastest warm profile.
+    batch_size: 1
     max_in_flight: 8
     infer_requests: auto
     calibration:

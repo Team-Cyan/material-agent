@@ -31,6 +31,7 @@ RUN apt-get update \
         findutils \
         gosu \
         intel-gpu-tools \
+        libcap2-bin \
         libimage-exiftool-perl \
         libgl1 \
         libglib2.0-0 \
@@ -58,6 +59,7 @@ RUN apt-get update \
     && useradd --uid 1000 --gid material-agent --create-home \
         --home-dir /home/material-agent --shell /usr/sbin/nologin material-agent \
     && install -d -m 0755 -o material-agent -g material-agent /config \
+    && setcap cap_perfmon=ep /usr/bin/intel_gpu_top \
     && rm -rf /tmp/intel-gpu /var/lib/apt/lists/*
 
 ARG NIMA_REVISION=15308061b353e9ef1de4c9d33b8f0fab0a7e350e

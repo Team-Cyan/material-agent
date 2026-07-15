@@ -57,12 +57,29 @@ findings, repair plan, and verification boundary.
 
 ## Recommended Next Task
 
-- add utilization sampling when another model or GPU path is evaluated, then
-  perform target-host isolated XMP validation only with separate approval;
+- perform target-host isolated XMP validation only with separate approval;
 - collect broader labelled real scenes; the current holdout is interleaved with
   the calibration burst and is not a distribution-independent validation set;
 - decide whether the legacy teacher harness remains or copied modules can be
   deleted.
+
+## NIMA Device And Operations Snapshot
+
+- the same bundled NIMA graph was benchmarked on the target Unraid i7-11700T at
+  CPU and `GPU.0`, batch 1/4/8, with 128 RAW files and repeated warm passes;
+- OpenVINO execution-device readback confirmed both CPU and `GPU.0` profiles
+  with zero application fallback; a benchmark-only `PERFMON` capability was
+  required for Intel PMU sampling and is not part of the production profile;
+- run-to-run variation was larger than the small CPU/GPU warm-throughput gap,
+  while GPU cold start and peak RSS were materially higher, so production stays
+  on the simpler CPU batch-1 profile without `/dev/dri`;
+- model artifacts can now be listed, installed, selected, and deleted through
+  the CLI or a bearer-protected HTTP service. Bundled immutable assets are never
+  physically removed, while downloaded assets live under `/config/models`;
+- human aesthetic labels live under an appdata SQLite store with train/holdout
+  splits. No personal target calibration was fitted because no genuine labels
+  were supplied; this is intentionally deferred rather than replaced with
+  generated labels.
 
 ## Target Aesthetic Calibration Boundary
 
