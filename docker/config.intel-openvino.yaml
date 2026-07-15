@@ -1,6 +1,6 @@
 # Baked runtime profile for the Intel OpenVINO image. A bind-mounted config at
 # MATERIAL_AGENT_CONFIG may replace it, but the published image needs no bind
-# to execute the bundled DINOv3 model through OpenVINO.
+# to execute the bundled NIMA aesthetic model through OpenVINO.
 backend: local
 output_language: zh
 log_level: info
@@ -12,9 +12,24 @@ legacy:
   enabled: false
 
 local:
-  embedding:
+  aesthetic:
     enabled: true
     enforce_available: true
+    runtime: openvino
+    model_name: nima-aesthetic-mobilenet
+    model_version: litert-community-15308061
+    device: CPU
+    fallback_device: CPU
+    model_path: /opt/material-agent/models/nima/nima_aesthetic_fp16.tflite
+    compiled_cache_dir: /config/openvino-cache
+    result_cache_size: 256
+    performance_hint: THROUGHPUT
+    batch_size: 1
+    max_in_flight: 8
+    infer_requests: auto
+  embedding:
+    enabled: false
+    enforce_available: false
     runtime: openvino
     model_name: dinov3-vits16-quantized
     device: CPU
@@ -44,8 +59,8 @@ grouping:
     enabled: true
     hash_threshold: 10
     max_merge_gap_minutes: 10
-  # The model still runs for every scored image. Persisted embedding-based
-  # group merging remains opt-in until its threshold is camera-calibrated.
+  # Embedding-based grouping remains opt-in and its DINO model is not bundled
+  # in the default aesthetic-scoring image.
   embedding_similarity:
     enabled: false
     threshold: 0.85

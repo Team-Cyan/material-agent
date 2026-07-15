@@ -60,6 +60,10 @@
 - completed the target Unraid 128-RAW CPU/GPU batch 1/4/8 cold/warm matrix and
   a 512-RAW sustained run; selected CPU batch 1 with eight asynchronous requests
   because it delivered 6.737 warm files/second versus 0.496 on `GPU.0`
+- implemented a real learned aesthetic path with pinned NIMA MobileNet/AVA,
+  OpenVINO CPU/GPU execution provenance, batched review-window priming, and
+  direct ownership of the layered policy's aesthetic total; disabled the
+  unused default DINO execution while keeping embedding grouping opt-in
 
 ## In Progress
 
@@ -67,8 +71,8 @@
   cameras, and lighting before production model promotion
 - keep MobileCLIP2 semantic scoring opt-in while scene prompts and confidence
   are calibrated on broader real-photo coverage
-- keep quality/aesthetic signals out of default fusion after the maintained UI
-  fixture exposed a non-photo false positive
+- validate the learned NIMA aesthetic policy against broader real photography;
+  non-photo rejection remains a separate technical/screening responsibility
 - integrate benchmarked embeddings into grouping without duplicating model
   inference or persisting raw vectors in ordinary score artifacts
 - keep XMP sidecar and SQLite persistence compatible with Lightroom-style RAW
@@ -77,10 +81,11 @@
 
 ## Next
 
-- calibrate a versioned score policy only after per-block benchmark reports exist
+- benchmark the same NIMA graph on target Intel CPU and `GPU.0`, then publish
+  the faster verified production profile
 - add optional target-host utilization sampling to future model benchmarks;
-  CPU/GPU parity, steady-state throughput, fallback provenance, and the
-  deployment default are now resolved for the bundled DINOv3 model
+  the earlier DINO matrix remains embedding-only evidence and must not be used
+  to decide the NIMA aesthetic device default
 - publish the hardened image, then repeat the bounded Unraid read-only pilot
   with non-root UID/GID and appdata ownership checks
 - run a separately authorized target-host isolated-XMP pilot before changing

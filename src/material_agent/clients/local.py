@@ -21,14 +21,18 @@ class AsyncLocalClient:
         self.runtime = self.inference.get("runtime", "cpu")
         self.semantic_config = self.config.get("semantic", {})
         self.quality_config = self.config.get("quality", {})
+        self.aesthetic_config = self.config.get("aesthetic", {})
         self.embedding_config = self.config.get("embedding", {})
         self.face_config = self.config.get("face", {})
         self._semantic = None
         self._quality = None
+        self._aesthetic = None
         self._embedding = None
         self._face = None
         self.embedding_result_cache_size = int(self.embedding_config.get("result_cache_size", 256))
         self._embedding_result_cache: OrderedDict[str, dict] = OrderedDict()
+        self.aesthetic_result_cache_size = int(self.aesthetic_config.get("result_cache_size", 256))
+        self._aesthetic_result_cache: OrderedDict[str, dict] = OrderedDict()
 
     async def score_image(self, jpeg_bytes: bytes) -> dict:
         heuristic_started = time.perf_counter()
@@ -106,6 +110,22 @@ class AsyncLocalClient:
                 result["_model_stack"] = model_stack
                 result["_runtime_components"].append(f"{quality['runtime']}:{quality['device']}")
                 result["_runtime"] = "+".join(result["_runtime_components"])
+        if self.aesthetic_config.get("enabled", False):
+            try:
+                aesthetic = await self.score_aesthetic(jpeg_bytes)
+            except Exception as error:
+                if self.aesthetic_config.get("enforce_available", False):
+                    raise
+                result["_aesthetic"] = {"status": "fallback", "error": str(error)}
+            else:
+                result["_aesthetic"] = {"status": "model", **aesthetic}
+                result["aesthetic_score"] = round(float(aesthetic["score"]), 2)
+                result["_scoring_mode"] = "hybrid"
+                model_stack = list(result.get("_model_stack", []))
+                model_stack.append(aesthetic["model_name"])
+                result["_model_stack"] = model_stack
+                result["_runtime_components"].append(_model_runtime_component(aesthetic))
+                result["_runtime"] = "+".join(result["_runtime_components"])
         if self.embedding_config.get("enabled", False):
             try:
                 embedding = await self.embed_image(jpeg_bytes)
@@ -182,8 +202,49 @@ class AsyncLocalClient:
             raise RuntimeError("embedding cache failed to resolve every input")
         return [result for result in results if result is not None]
 
+    async def score_aesthetic(self, jpeg_bytes: bytes) -> dict:
+        return (await self.score_aesthetics([jpeg_bytes]))[0]
+
+    async def score_aesthetics(self, jpeg_images: list[bytes]) -> list[dict]:
+        if not jpeg_images:
+            return []
+        results: list[dict | None] = [None] * len(jpeg_images)
+        missing_indexes: dict[str, list[int]] = {}
+        missing_payloads: dict[str, bytes] = {}
+        for index, jpeg_bytes in enumerate(jpeg_images):
+            cache_key = hashlib.sha256(jpeg_bytes).hexdigest()
+            cached = self._aesthetic_result_cache.get(cache_key)
+            if cached is not None:
+                self._aesthetic_result_cache.move_to_end(cache_key)
+                results[index] = {**cached, "distribution": list(cached["distribution"])}
+                continue
+            missing_indexes.setdefault(cache_key, []).append(index)
+            missing_payloads.setdefault(cache_key, jpeg_bytes)
+
+        if missing_payloads:
+            scorer = self._aesthetic_scorer()
+            payloads = list(missing_payloads.values())
+            predictions = await scorer.score_images(payloads)
+            if len(predictions) != len(payloads):
+                raise RuntimeError("aesthetic adapter returned an unexpected result count")
+            for cache_key, prediction in zip(missing_payloads, predictions, strict=True):
+                stored = {**prediction, "distribution": list(prediction["distribution"])}
+                if self.aesthetic_result_cache_size > 0:
+                    self._aesthetic_result_cache[cache_key] = stored
+                    self._aesthetic_result_cache.move_to_end(cache_key)
+                    while len(self._aesthetic_result_cache) > self.aesthetic_result_cache_size:
+                        self._aesthetic_result_cache.popitem(last=False)
+                for index in missing_indexes[cache_key]:
+                    results[index] = {**stored, "distribution": list(stored["distribution"])}
+        if any(result is None for result in results):
+            raise RuntimeError("aesthetic cache failed to resolve every input")
+        return [result for result in results if result is not None]
+
     def clear_embedding_result_cache(self) -> None:
         self._embedding_result_cache.clear()
+
+    def clear_aesthetic_result_cache(self) -> None:
+        self._aesthetic_result_cache.clear()
 
     async def score_image_fast(self, jpeg_bytes: bytes) -> dict[str, float]:
         full = await self.score_image(jpeg_bytes)
@@ -224,6 +285,19 @@ class AsyncLocalClient:
             self._quality = PyIqaQualityAdapter(self.quality_config)
         return self._quality
 
+    def _aesthetic_scorer(self):
+        if self._aesthetic is None:
+            from ..adapters.models.openvino_nima_aesthetic import OpenVinoNimaAestheticAdapter
+
+            aesthetic_config = {
+                **self.aesthetic_config,
+                "fallback_device": self.aesthetic_config.get(
+                    "fallback_device", self.inference.get("fallback_device", "CPU")
+                ),
+            }
+            self._aesthetic = OpenVinoNimaAestheticAdapter(aesthetic_config)
+        return self._aesthetic
+
     def _embedding_scorer(self):
         if self._embedding is None:
             embedding_config = {
@@ -261,12 +335,16 @@ def _clamp10(value: float) -> float:
     return max(0.0, min(10.0, float(value)))
 
 
-def _embedding_runtime_component(embedding: dict) -> str:
-    runtime = str(embedding.get("runtime", "unknown"))
-    execution_devices = embedding.get("execution_devices")
+def _model_runtime_component(model_result: dict) -> str:
+    runtime = str(model_result.get("runtime", "unknown"))
+    execution_devices = model_result.get("execution_devices")
     if isinstance(execution_devices, list):
         actual = [str(device) for device in execution_devices if str(device).strip()]
         device = ",".join(actual) if actual else "unknown"
     else:
-        device = str(embedding.get("device", "unknown"))
+        device = str(model_result.get("device", "unknown"))
     return f"{runtime}:{device}"
+
+
+def _embedding_runtime_component(embedding: dict) -> str:
+    return _model_runtime_component(embedding)

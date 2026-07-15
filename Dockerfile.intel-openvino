@@ -59,18 +59,12 @@ RUN apt-get update \
     && install -d -m 0755 -o material-agent -g material-agent /config \
     && rm -rf /tmp/intel-gpu /var/lib/apt/lists/*
 
-ARG DINOV3_REVISION=48988dfe73065df8d6f5ccc0edc7c8bcf307de41
-RUN mkdir -p /opt/material-agent/models/dinov3-vits16/onnx \
-    && curl -fL "https://huggingface.co/onnx-community/dinov3-vits16-pretrain-lvd1689m-ONNX/resolve/${DINOV3_REVISION}/onnx/model_quantized.onnx" \
-        -o /opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx \
-    && curl -fL "https://huggingface.co/onnx-community/dinov3-vits16-pretrain-lvd1689m-ONNX/resolve/${DINOV3_REVISION}/onnx/model_quantized.onnx_data" \
-        -o /opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx_data \
-    && curl -fL "https://huggingface.co/onnx-community/dinov3-vits16-pretrain-lvd1689m-ONNX/resolve/${DINOV3_REVISION}/preprocessor_config.json" \
-        -o /opt/material-agent/models/dinov3-vits16/preprocessor_config.json \
+ARG NIMA_REVISION=15308061b353e9ef1de4c9d33b8f0fab0a7e350e
+RUN mkdir -p /opt/material-agent/models/nima \
+    && curl -fL "https://huggingface.co/litert-community/NIMA-LiteRT/resolve/${NIMA_REVISION}/nima_aesthetic_fp16.tflite" \
+        -o /opt/material-agent/models/nima/nima_aesthetic_fp16.tflite \
     && printf '%s  %s\n' \
-        '7686e8c849202c4fdd67d1cd336449c29bdddbcca535d765d3014f50d04d516d' '/opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx' \
-        '51572f7fc3c272eb574a70509ea1eeb7e674e5ca2cd96fec1632edb38983d529' '/opt/material-agent/models/dinov3-vits16/onnx/model_quantized.onnx_data' \
-        '960c41d1f3a7778b936365769a2d90550b318a6c0a53a0296957adacfe5e0dd7' '/opt/material-agent/models/dinov3-vits16/preprocessor_config.json' \
+        'a5051a0fcced735682735e3e0fd58ee54c83ed664282a003f52235b3dbcb9320' '/opt/material-agent/models/nima/nima_aesthetic_fp16.tflite' \
         | sha256sum --check --strict -
 
 COPY pyproject.toml uv.lock /app/

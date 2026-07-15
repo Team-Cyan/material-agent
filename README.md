@@ -28,11 +28,11 @@ The default config uses:
   defaults to `/config`); otherwise both live under `.material-agent/` in the
   processed photo folder
 
-The Intel image ships with a working DINOv3 OpenVINO profile. It requests
-`AUTO:GPU,CPU`, records the actual OpenVINO execution device, and may compile on
-the configured CPU fallback when the requested accelerator is unavailable. No
-extra config bind mount is required for that profile; a config mounted at
-`$MATERIAL_AGENT_CONFIG` can still replace it deliberately.
+The Intel image ships with a learned NIMA MobileNet aesthetic scorer through
+OpenVINO. The baked profile currently requests `CPU`, records the requested and
+actual OpenVINO execution device, and supports an explicit GPU override with
+CPU fallback. No extra config bind mount is required for that profile; a config
+mounted at `$MATERIAL_AGENT_CONFIG` can still replace it deliberately.
 
 `run --dry-run` may create runtime session, job, event, and log records in the
 writable work directory. It does not write XMP/rating data and does not persist
@@ -41,10 +41,10 @@ simulate an incremental run, and their runtime file status is reported as
 `skipped` rather than `written`.
 
 The local backend always retains deterministic JPEG-preview heuristics as its
-fallback. Optional learned blocks now provide MobileCLIP2 scene tags,
-BRISQUE/NIQE/MUSIQ/NIMA/CLIPIQA+ signals, DINO embeddings, and MediaPipe face
-structure. They remain disabled in the default config until broader real-camera
-calibration approves production promotion.
+fallback. The Intel profile enables NIMA as the learned aesthetic input to final
+score fusion. Optional MobileCLIP2 scene tags, BRISQUE/NIQE/MUSIQ/CLIPIQA+
+signals, DINO embeddings, and MediaPipe face structure remain disabled until
+broader real-camera calibration approves them.
 
 ## Commands
 

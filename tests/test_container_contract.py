@@ -209,9 +209,7 @@ def test_root_entrypoint_finds_run_input_after_options_for_source_protection(tmp
         ("material-agent", "run", "--"),
     ],
 )
-def test_root_entrypoint_rejects_malformed_run_options_before_chown(
-    tmp_path, command_args
-):
+def test_root_entrypoint_rejects_malformed_run_options_before_chown(tmp_path, command_args):
     result, command_log = _run_root_entrypoint(
         tmp_path,
         work_dir=tmp_path / "photos" / ".material-agent",
@@ -260,9 +258,7 @@ def test_root_entrypoint_protects_explicit_maintenance_target(tmp_path, command_
         ("material-agent", "reset-ai", "--di", "/photos"),
     ],
 )
-def test_root_entrypoint_rejects_malformed_maintenance_target_before_chown(
-    tmp_path, command_args
-):
+def test_root_entrypoint_rejects_malformed_maintenance_target_before_chown(tmp_path, command_args):
     result, command_log = _run_root_entrypoint(
         tmp_path,
         input_dir="/photos",
@@ -283,9 +279,7 @@ def test_root_entrypoint_rejects_malformed_maintenance_target_before_chown(
         ("material-agent", "run", "--help", "/other-photos"),
     ],
 )
-def test_root_entrypoint_help_does_not_bypass_explicit_target_protection(
-    tmp_path, command_args
-):
+def test_root_entrypoint_help_does_not_bypass_explicit_target_protection(tmp_path, command_args):
     target = tmp_path / "other-photos"
     rewritten_args = tuple(
         str(target) if value == "/other-photos" else value.replace("/other-photos", str(target))
@@ -373,20 +367,21 @@ def test_dockerfiles_bundle_config_and_keep_dependency_layer_stable():
         assert "useradd --uid 1000" in content
 
 
-def test_intel_image_baked_config_runs_bundled_openvino_embedding():
+def test_intel_image_baked_config_runs_bundled_openvino_aesthetic_model():
     from material_agent.commands.scoring import load_config
 
     config = load_config(str(ROOT / "docker" / "config.intel-openvino.yaml"))
+    aesthetic = config["local"]["aesthetic"]
     embedding = config["local"]["embedding"]
 
-    assert embedding["enabled"] is True
-    assert embedding["enforce_available"] is True
-    assert embedding["runtime"] == "openvino"
-    assert embedding["device"] == "CPU"
-    assert embedding["fallback_device"] == "CPU"
-    assert embedding["model_path"].startswith("/opt/material-agent/models/")
-    assert embedding["processor_path"].startswith("/opt/material-agent/models/")
-    assert embedding["compiled_cache_dir"] == "/config/openvino-cache"
+    assert aesthetic["enabled"] is True
+    assert aesthetic["enforce_available"] is True
+    assert aesthetic["runtime"] == "openvino"
+    assert aesthetic["device"] == "CPU"
+    assert aesthetic["fallback_device"] == "CPU"
+    assert aesthetic["model_path"].endswith("nima_aesthetic_fp16.tflite")
+    assert aesthetic["compiled_cache_dir"] == "/config/openvino-cache"
+    assert embedding["enabled"] is False
     assert config["inference"]["runtime"] == "openvino"
     assert config["inference"]["device"] == "CPU"
     assert config["screening"]["enabled"] is False

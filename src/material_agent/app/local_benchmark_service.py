@@ -126,6 +126,7 @@ def run_local_benchmark(
     durations: list[float] = []
     for _ in range(repeat_count):
         client.clear_embedding_result_cache()
+        client.clear_aesthetic_result_cache()
         repetition_started = time.perf_counter()
         repetitions.append(
             asyncio.run(_score_items(client, items, effective_client_config["preview"]))
@@ -193,7 +194,7 @@ def _benchmark_timing_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
     heuristic = sum(
         float((row.get("timing") or {}).get("local_heuristic_seconds", 0.0)) for row in results
     )
-    embedding_totals = {
+    model_totals = {
         "preprocess_seconds": 0.0,
         "inference_seconds": 0.0,
         "postprocess_seconds": 0.0,
@@ -201,27 +202,27 @@ def _benchmark_timing_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
     }
     seen_runs: set[object] = set()
     for row in results:
-        embedding = row.get("embedding")
-        if not isinstance(embedding, dict):
+        model = row.get("aesthetic") or row.get("embedding")
+        if not isinstance(model, dict):
             continue
-        run_id = embedding.get("inference_run_id")
+        run_id = model.get("inference_run_id")
         if run_id is None or run_id in seen_runs:
             continue
         seen_runs.add(run_id)
-        timing = embedding.get("timing")
+        timing = model.get("timing")
         if not isinstance(timing, dict):
             continue
         for key in ("preprocess_seconds", "inference_seconds", "postprocess_seconds"):
-            embedding_totals[key] += float(timing.get(key, 0.0))
-        embedding_totals["compile_seconds"] = max(
-            embedding_totals["compile_seconds"],
+            model_totals[key] += float(timing.get(key, 0.0))
+        model_totals["compile_seconds"] = max(
+            model_totals["compile_seconds"],
             float(timing.get("compile_seconds", 0.0)),
         )
     return {
         "raw_decode_seconds": round(raw_decode, 6),
         "local_heuristic_seconds": round(heuristic, 6),
-        "embedding_runs": len(seen_runs),
-        **{f"embedding_{key}": round(value, 6) for key, value in embedding_totals.items()},
+        "model_runs": len(seen_runs),
+        **{f"model_{key}": round(value, 6) for key, value in model_totals.items()},
     }
 
 
@@ -238,12 +239,21 @@ async def _score_items(
         loaded.append((item, image_bytes, input_decode, decode_seconds))
     if client.embedding_config.get("enabled", False):
         await client.embed_images([image_bytes for _, image_bytes, _, _ in loaded])
+    if client.aesthetic_config.get("enabled", False):
+        await client.score_aesthetics([image_bytes for _, image_bytes, _, _ in loaded])
 
     scored: list[dict[str, Any]] = []
     for item, image_bytes, input_decode, decode_seconds in loaded:
         payload = await client.score_image(image_bytes)
         dimensions = {dim: float(payload.get(dim, 5.0)) for dim in VISION_DIMS}
-        total = statistics.fmean(dimensions.values())
+        aesthetic = payload.get("_aesthetic")
+        total = (
+            float(aesthetic["score"])
+            if isinstance(aesthetic, dict)
+            and aesthetic.get("status") == "model"
+            and aesthetic.get("score") is not None
+            else statistics.fmean(dimensions.values())
+        )
         scored.append(
             {
                 "id": item.item_id,
@@ -259,6 +269,7 @@ async def _score_items(
                 "model_stack": payload.get("_model_stack", []),
                 "semantic": payload.get("_semantic"),
                 "quality": payload.get("_quality"),
+                "aesthetic": aesthetic,
                 "embedding": payload.get("_embedding"),
                 "timing": payload.get("_timing"),
                 "embedding_vector": payload.get("_embedding_vector"),

@@ -103,7 +103,7 @@ run on CPU-only hosts without optional OpenVINO packages. Set
 declared runtime package or provider is unavailable.
 
 Preflight is observability, not model execution. A passing OpenVINO preflight
-does not mean DINO, MobileCLIP, or IQA models are wired into the scoring path.
+does not by itself mean a configured model is wired into the scoring path.
 Strict model execution separately records the requested device, compiled device,
 configured fallback, whether application-level fallback occurred, and the
 actual `EXECUTION_DEVICES` readback. If OpenVINO cannot provide that readback,
@@ -134,6 +134,31 @@ regression evidence, not enough coverage to enable the model by default for
 production photography.
 
 ## Native OpenVINO Vertical Slice
+
+### Learned aesthetic scoring
+
+The default Intel image bundles NIMA MobileNet aesthetic scoring rather than a
+general-purpose DINO embedding. The graph is the Apache-2.0
+`litert-community/NIMA-LiteRT` FP16 TFLite export pinned at revision
+`15308061b353e9ef1de4c9d33b8f0fab0a7e350e`; the image build verifies SHA-256
+`a5051a0fcced735682735e3e0fd58ee54c83ed664282a003f52235b3dbcb9320`.
+It predicts the ten AVA rating buckets and exposes their 1-10 expected value.
+
+`local.aesthetic.enabled` is a real fusion input, not metadata-only
+observability. When a learned result is available,
+`aesthetic.overall_aesthetic` owns the layered policy's `aesthetic_total`.
+The older heuristic composition, lighting, color, depth, mood, and subject
+signals remain visible for diagnostics and provide the fallback only when the
+model is unavailable. Technical quality, subject focus, and screening policy
+remain separate from aesthetic preference. Every result records the full
+distribution, model digest/version, requested and actual device, fallback,
+batch/request settings, cache identity, and stage timing.
+
+The client primes one NIMA batch for each prepared review window and reuses the
+bounded content-addressed result cache during per-image scoring. The isolated
+benchmark reports NIMA's score rather than the mean of heuristic dimensions.
+The production profile disables DINO embeddings because embedding grouping is
+still opt-in and those vectors do not affect the score.
 
 `OpenVinoEmbeddingAdapter` now loads a local ONNX bundle with native OpenVINO,
 compiles it with a persistent cache, performs inference, and records actual
@@ -226,11 +251,11 @@ errors. The durable report is
 The maintained Intel image now provides:
 
 - digest-pinned Python/uv base, checksum-pinned Intel userspace packages, and a
-  checksum-pinned bundled DINOv3 ONNX bundle;
-- a baked `backend: local` profile with DINOv3 OpenVINO embedding enabled,
-  benchmark-selected `CPU`, explicit CPU fallback, throughput-mode async
-  inference, and
-  compiled cache under `/config`;
+  checksum-pinned bundled NIMA TFLite model;
+- a baked `backend: local` profile with NIMA learned aesthetic scoring enabled,
+  initial `CPU`, explicit CPU fallback, throughput-mode async inference, and
+  compiled cache under `/config`; the final device default follows the target
+  NIMA CPU/GPU benchmark;
 - a lean Intel dependency set without Torch, Transformers, OpenCLIP, PyIQA, or
   MediaPipe, with unsupported screening disabled in the baked profile;
 - root startup limited to PUID/PGID alignment, `/dev/dri` supplementary groups,

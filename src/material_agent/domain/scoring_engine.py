@@ -474,6 +474,19 @@ def _build_layered_signals(
                 "source": "vision",
             }
         )
+    aesthetic = meta.get("aesthetic")
+    if isinstance(aesthetic, dict) and aesthetic.get("status") == "model":
+        signals.append(
+            {
+                "stage": "aesthetic",
+                "signal_key": "overall_aesthetic",
+                "value": aesthetic.get("score"),
+                "confidence": 1.0,
+                "source": "learned_model",
+                "model_name": aesthetic.get("model_name"),
+                "model_version": aesthetic.get("model_version"),
+            }
+        )
     return [signal for signal in signals if signal.get("value") is not None]
 
 
@@ -509,6 +522,7 @@ def _merge_backend_meta(meta: dict, raw_scores: dict) -> None:
         "_model_stack",
         "_semantic",
         "_quality",
+        "_aesthetic",
         "_embedding",
         "_face",
         "_timing",

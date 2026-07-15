@@ -66,12 +66,22 @@ def summarize_signals(signals: list[dict], *, scene: str, config: dict) -> Layer
     )
     aesthetic_scores = {dim: signal_map.get(("aesthetic", dim), 0.0) for dim in AESTHETIC_DIMS}
     available_aesthetic_dims = [
-        dim for dim in AESTHETIC_DIMS if signal_map.get(("aesthetic", dim)) is not None and aesthetic_weights.get(dim, 0.0) > 0
+        dim
+        for dim in AESTHETIC_DIMS
+        if signal_map.get(("aesthetic", dim)) is not None and aesthetic_weights.get(dim, 0.0) > 0
     ]
-    if available_aesthetic_dims:
-        available_weight_sum = sum(aesthetic_weights.get(dim, 0.0) for dim in available_aesthetic_dims)
+    learned_aesthetic = signal_map.get(("aesthetic", "overall_aesthetic"))
+    if learned_aesthetic is not None:
+        aesthetic_total = round(float(learned_aesthetic), 2)
+    elif available_aesthetic_dims:
+        available_weight_sum = sum(
+            aesthetic_weights.get(dim, 0.0) for dim in available_aesthetic_dims
+        )
         aesthetic_total = round(
-            sum(aesthetic_scores[dim] * aesthetic_weights.get(dim, 0.0) for dim in available_aesthetic_dims)
+            sum(
+                aesthetic_scores[dim] * aesthetic_weights.get(dim, 0.0)
+                for dim in available_aesthetic_dims
+            )
             / available_weight_sum,
             2,
         )
@@ -90,7 +100,9 @@ def summarize_signals(signals: list[dict], *, scene: str, config: dict) -> Layer
         technical_quality=technical_quality,
         subject_focus=subject_focus,
         aesthetic_scores=aesthetic_scores,
-        available_aesthetic_dims=available_aesthetic_dims,
+        available_aesthetic_dims=(
+            [] if learned_aesthetic is not None else available_aesthetic_dims
+        ),
     )
     total_score = round(max(0.0, min(10.0, base_score - weakness_penalty)), 2)
 
@@ -120,6 +132,7 @@ def summarize_signals(signals: list[dict], *, scene: str, config: dict) -> Layer
     visible_breakdown = {
         "technical_quality": technical_quality,
         "subject_focus": subject_focus,
+        "aesthetic_model_score": aesthetic_total,
         "composition": aesthetic_scores["composition"],
         "lighting": aesthetic_scores["lighting"],
         "color": aesthetic_scores["color"],
@@ -137,12 +150,17 @@ def summarize_signals(signals: list[dict], *, scene: str, config: dict) -> Layer
     )
 
 
-def apply_group_review_fallback(results: list[tuple[str, dict]], *, enabled: bool = True) -> list[tuple[str, dict]]:
+def apply_group_review_fallback(
+    results: list[tuple[str, dict]], *, enabled: bool = True
+) -> list[tuple[str, dict]]:
     if not enabled or not results:
         return results
     if any(payload.get("decision") == "keep" for _, payload in results):
         return results
-    if any(payload.get("decision") == "reject" and payload.get("decision_reasons") for _, payload in results):
+    if any(
+        payload.get("decision") == "reject" and payload.get("decision_reasons")
+        for _, payload in results
+    ):
         return results
 
     ranked = sorted(

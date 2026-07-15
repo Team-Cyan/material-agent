@@ -99,19 +99,18 @@ def build_review_job_executor(
         }
 
     def prime_prepared(prepared_items: list[dict]) -> None:
+        aesthetic = config.get("local", {}).get("aesthetic", {})
         embedding = config.get("local", {}).get("embedding", {})
-        if (
-            not embedding.get("enabled", False)
-            or config.get("screening", {}).get("enabled", False)
-            or not hasattr(client, "embed_images")
-        ):
+        if config.get("screening", {}).get("enabled", False):
             return
         frames = [
             prepared["frame"]
             for prepared in prepared_items
             if not prepared.get("cached") and prepared.get("frame") is not None
         ]
-        if frames:
+        if frames and aesthetic.get("enabled", False) and hasattr(client, "score_aesthetics"):
+            run_coro_sync(client.score_aesthetics([frame.jpeg_bytes for frame in frames]))
+        if frames and embedding.get("enabled", False) and hasattr(client, "embed_images"):
             run_coro_sync(client.embed_images([frame.jpeg_bytes for frame in frames]))
 
     def score_prepared(prepared: dict) -> dict:

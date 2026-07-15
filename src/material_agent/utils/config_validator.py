@@ -70,6 +70,7 @@ _MAPPING_SECTION_PATHS = (
     ("local", "semantic"),
     ("local", "quality"),
     ("local", "quality", "metrics"),
+    ("local", "aesthetic"),
     ("local", "embedding"),
     ("local", "face"),
     ("inference",),
@@ -377,6 +378,20 @@ def normalize_config(cfg: dict) -> dict:
             },
         },
     )
+    aesthetic = local.setdefault("aesthetic", {})
+    aesthetic["enabled"] = _coerce_bool_like(aesthetic.get("enabled", False))
+    aesthetic["enforce_available"] = _coerce_bool_like(aesthetic.get("enforce_available", False))
+    aesthetic.setdefault("runtime", "openvino")
+    aesthetic.setdefault("model_name", "nima-aesthetic-mobilenet")
+    aesthetic.setdefault("model_version", "litert-community-15308061")
+    aesthetic.setdefault("device", "CPU")
+    aesthetic.setdefault("model_path", "")
+    aesthetic.setdefault("compiled_cache_dir", "~/.material-agent/openvino-cache")
+    aesthetic.setdefault("result_cache_size", 256)
+    aesthetic.setdefault("performance_hint", "THROUGHPUT")
+    aesthetic.setdefault("batch_size", 1)
+    aesthetic.setdefault("max_in_flight", 8)
+    aesthetic.setdefault("infer_requests", "auto")
     embedding = local.setdefault("embedding", {})
     embedding["enabled"] = _coerce_bool_like(embedding.get("enabled", False))
     embedding["enforce_available"] = _coerce_bool_like(embedding.get("enforce_available", False))
@@ -643,6 +658,60 @@ def validate_config(cfg: dict) -> None:
                     errors.append(
                         f"local.quality.metrics.{name}.role must be reject_prior, quality, or aesthetic"
                     )
+        aesthetic = local.get("aesthetic", {})
+        for key in ("enabled", "enforce_available"):
+            if not _is_valid_bool_like(aesthetic.get(key, False)):
+                errors.append(
+                    f"local.aesthetic.{key} must be a boolean, got: {aesthetic.get(key)!r}"
+                )
+        if aesthetic.get("runtime", "openvino") != "openvino":
+            errors.append(
+                f"local.aesthetic.runtime must be 'openvino', got: {aesthetic.get('runtime')!r}"
+            )
+        for key in ("model_name", "model_version", "device"):
+            value = aesthetic.get(key)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f"local.aesthetic.{key} must be a non-empty string, got: {value!r}")
+        result_cache_size = aesthetic.get("result_cache_size", 256)
+        if (
+            not isinstance(result_cache_size, int)
+            or isinstance(result_cache_size, bool)
+            or not 0 <= result_cache_size <= 4096
+        ):
+            errors.append(
+                "local.aesthetic.result_cache_size must be an integer between 0 and 4096, "
+                f"got: {result_cache_size!r}"
+            )
+        performance_hint = aesthetic.get("performance_hint", "THROUGHPUT")
+        if performance_hint not in {"LATENCY", "THROUGHPUT", "CUMULATIVE_THROUGHPUT"}:
+            errors.append(
+                "local.aesthetic.performance_hint must be LATENCY, THROUGHPUT, or "
+                f"CUMULATIVE_THROUGHPUT, got: {performance_hint!r}"
+            )
+        for key in ("batch_size", "max_in_flight"):
+            value = aesthetic.get(key, 1)
+            if not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 64:
+                errors.append(
+                    f"local.aesthetic.{key} must be an integer between 1 and 64, got: {value!r}"
+                )
+        infer_requests = aesthetic.get("infer_requests", "auto")
+        if not (
+            infer_requests == "auto"
+            or (
+                isinstance(infer_requests, int)
+                and not isinstance(infer_requests, bool)
+                and 1 <= infer_requests <= 64
+            )
+        ):
+            errors.append(
+                "local.aesthetic.infer_requests must be 'auto' or an integer between "
+                f"1 and 64, got: {infer_requests!r}"
+            )
+        if aesthetic.get("enabled", False):
+            for key in ("model_path", "compiled_cache_dir"):
+                value = aesthetic.get(key)
+                if not isinstance(value, str) or not value.strip():
+                    errors.append(f"local.aesthetic.{key} must be set when aesthetic is enabled")
         embedding = local.get("embedding", {})
         for key in ("enabled", "enforce_available"):
             if not _is_valid_bool_like(embedding.get(key, False)):
