@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">material-agent icon</title>
+  <desc id="desc">A compact cyan, green, and blue reviewed photo material mark for material-agent.</desc>
+  <defs>
+    <linearGradient id="material-agent-gradient" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22c55e"/>
+      <stop offset="0.38" stop-color="#2dd4bf"/>
+      <stop offset="0.72" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#material-agent-gradient)"/>
+  <path d="M104 58h48c5.5 0 10 4.5 10 10v4h10c14.4 0 26 11.6 26 26v74c0 14.4-11.6 26-26 26H84c-14.4 0-26-11.6-26-26V98c0-14.4 11.6-26 26-26h10v-4c0-5.5 4.5-10 10-10Z" fill="#08111f"/>
+  <path d="M82 96h92c5.5 0 10 4.5 10 10v58l-38-42-24 28-17-18-23 27v-53c0-5.5 4.5-10 10-10Z" fill="#dffcf7"/>
+  <circle cx="105" cy="118" r="12" fill="#08111f"/>
+  <path d="m150 112 8 8 17-20" fill="none" stroke="#08111f" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -8,7 +8,7 @@
   <Support>https://github.com/Team-Cyan/material-agent/issues</Support>
   <Project>https://github.com/Team-Cyan/material-agent</Project>
   <TemplateURL>https://raw.githubusercontent.com/Team-Cyan/material-agent/main/deploy/unraid/material-agent.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/Team-Cyan/material-agent/main/assets/material-agent-icon.png</Icon>
+  <Icon>https://raw.githubusercontent.com/Team-Cyan/material-agent/main/assets/material-agent-icon-transparent.png</Icon>
   <WebUI>http://[IP]:[PORT:8776]</WebUI>
   <Overview>Read-only photo analysis, target-aware focus, NIMA scoring, model management, and full-library score browsing.</Overview>
   <Category>Tools:MediaApp</Category>

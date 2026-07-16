@@ -39,7 +39,9 @@ For most tasks, read:
 3. `docs/ai/architecture/module-boundaries.md`
 4. `docs/ai/inference-runtime.md` for hardware, model runtime, or Docker work
 5. `docs/ai/model-selection.md` for local scoring, embedding, and model choice work
-6. The smallest relevant file under `docs/ai/modules/`
+6. `docs/ai/icon-design.md` for the current icon geometry, palette, export, and
+   validation standard
+7. The smallest relevant file under `docs/ai/modules/`
 
 Do not start by reading every historical OMLX plan copied from `material-judge`.
 
