@@ -92,32 +92,31 @@
 - added a generation-based full-library index in the appdata runtime database;
   validation is no longer structurally limited to the earlier 128/512-file
   performance samples
+- integrated opt-in embedding similarity into adjacent-group merging with a
+  content-addressed dedicated vector cache, pHash-first evaluation, shared
+  client result reuse, and no raw vectors in ordinary score artifacts
+- completed MobileCLIP2 as an optional semantic profile and retained the
+  lightweight SSD/YuNet/NIMA Intel stack as the production default; broader
+  prompt promotion is evidence-gated rather than an unfinished runtime feature
+- completed the staged local-runtime migration and retained legacy OMLX/Ollama
+  only behind the explicit teacher/compatibility gate
+- replaced per-file SQLite commits and per-singleton stage churn with bounded
+  transaction batching, indexed artifact aggregation, and commentary-disabled
+  coroutine elision for whole-library result persistence
+- completed the post-fix 40,620-file Unraid dry-run in 5,683 seconds
+  (7.148 files/second): task exit code 0, 40,620 scored, zero errors, zero
+  source XMP/state writes, DB/log state under `/config`, and `/photos` read-only
+- normalized the 1,455 Mac-imported ARWs from private `0700/gid20` metadata to
+  `users` group-readable access using the checksum-verified import receipt;
+  non-root rawpy decoding and the subsequent full-library run both passed
 
 ## In Progress
 
-- run the first whole-share read-only Unraid validation over the indexed photo
-  archive, retain resumable runtime evidence, and report scene/target/error/
-  score coverage separately from the earlier bounded speed benchmarks
-- keep MobileCLIP2 semantic scoring opt-in while scene prompts and confidence
-  are calibrated on broader real-photo coverage
-- validate the learned NIMA aesthetic policy against broader real photography;
-  non-photo rejection remains a separate technical/screening responsibility
-- collect independent human aesthetic labels per target and holdout split before
-  promoting any non-identity target calibration profile; deferred at the user's
-  request until they are available to provide genuine preference labels
-- integrate benchmarked embeddings into grouping without duplicating model
-  inference or persisting raw vectors in ordinary score artifacts
-- keep XMP sidecar and SQLite persistence compatible with Lightroom-style RAW
-  workflows while avoiding direct proprietary RAW mutation
-- follow `docs/operations/2026-07-01-local-runtime-migration-plan.md` for the staged local-runtime migration
+- none outside the explicitly deferred human-review and XMP promotion gates
 
 ## Next
 
-- review the whole-share outliers and assemble an independent human-reviewed
-  acceptance slice across cameras, scenes, and lighting; generic AVA NIMA is
-  accepted for phase one, while personal target calibration remains deferred
-- integrate the already benchmarked embedding signal into grouping without
-  duplicating inference or persisting raw vectors in ordinary score artifacts
+- none outside the explicitly deferred human-review and XMP promotion gates
 
 ## Later
 
@@ -144,6 +143,11 @@ remains separately authorized and is not part of Web-triggered tasks.
 
 ## Deferred Or Not In Scope
 
+- collect independent human aesthetic labels, review whole-share outliers, and
+  fit non-identity target calibration profiles; generic AVA NIMA is accepted
+  for phase one at the user's direction
+- promote XMP writes on the primary Unraid library; Web tasks remain dry-run
+  and the photo mount remains read-only until separately authorized
 - making Ollama or OMLX a required dependency again
 - building one giant Docker image that includes every vendor runtime
 - training a full visual backbone from scratch

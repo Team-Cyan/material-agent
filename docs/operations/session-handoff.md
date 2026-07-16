@@ -17,10 +17,10 @@
 
 ## Current Focus
 
-The local runtime refinement and whole-project hardening pass are implemented
-through benchmarked optional model blocks, native OpenVINO inference,
-provenance-safe resumability, stable incremental grouping, non-root Intel
-deployment, and legacy backend quarantine. See
+The local runtime refinement, whole-project hardening, Web operations surface,
+and first complete 40,620-file target-host validation are implemented. The
+remaining gates are deliberately limited to human preference labels/personal
+calibration and separately authorized XMP promotion. See
 `docs/operations/2026-07-11-refine-plan-completion-audit.md` for the
 original requirement-by-requirement status and
 `docs/operations/2026-07-13-whole-project-review-fixes.md` for the latest
@@ -57,20 +57,17 @@ findings, repair plan, and verification boundary.
 
 ## Recommended Next Task
 
-- monitor the active whole-library dry-run task
-  `e4163931b297403db74f7fc74275b3a5` to completion and retain its final
-  scene, target, score, timing, and error coverage report;
-- use the Web library/detail views to review real-scene coverage and outliers
-  after the complete share finishes;
-- keep XMP promotion and personal target calibration deferred until separately
-  authorized data and labels are available.
+- no engineering blocker remains outside the user-deferred human preference
+  review/personal calibration and primary-library XMP promotion gates;
+- use the Web library/detail views for optional human outlier review when the
+  user is ready to provide real preference evidence.
 
 ## Web Operations Snapshot
 
 - the Web operator is deployed on Unraid as immutable image
-  `ghcr.io/team-cyan/material-agent:intel-openvino-2ff8768` at port `8776`;
-- the generation-based index currently contains 39,165 files from
-  `/mnt/user/material/photos`, and the first whole-share dry-run is active;
+  `ghcr.io/team-cyan/material-agent:intel-openvino-fab2c84` at port `8776`;
+- the generation-based index contains 40,620 files from
+  `/mnt/user/material/photos`, all with current score records and zero errors;
 - `material-agent web` serves configuration, task, model, library, thumbnail,
   score payload, and log APIs plus the bundled responsive operator UI;
 - non-loopback listeners require a bearer-token file;
@@ -84,6 +81,27 @@ findings, repair plan, and verification boundary.
 - configuration updates are validated before atomic replacement and preserve
   redacted secret values;
 - the module guide is `docs/ai/modules/web-operations.md`.
+
+## Full-Library Closure Snapshot
+
+- task `8be6f3270f1d495289b3465e68609965` and job
+  `7a01c08bff4441c7abcd014107f3e5cc` finished successfully on 2026-07-16;
+- 40,620/40,620 files scored, zero errors, zero writes, and 40,620 simulated
+  dry-run outputs were persisted in the appdata runtime DB;
+- end-to-end elapsed time was 5,683 seconds: 7.148 files/second and 0.14
+  seconds/file;
+- scenes were people 21,250, other 16,964, animals 1,724, detail 551, and
+  sports 131; the most common detected target was person at 19,920;
+- NIMA executed on actual OpenVINO CPU with no application fallback, 1,197
+  inference runs, and the checksum-pinned model digest; personal target
+  calibration remained an intentional no-op because no human profile exists;
+- `/photos` remained read-only, source XMP and source state-directory counts
+  remained zero, and `/config/state.db` plus `/config/run.log` remained in
+  appdata;
+- the first post-import run exposed 1,455 unreadable files because rsync had
+  preserved Mac `0700/gid20` metadata. The bounded import receipt was used to
+  set `gid=users` plus group-read access for exactly those files; a non-root
+  rawpy probe and the complete rerun proved the repair.
 
 ## NIMA Device And Operations Snapshot
 
