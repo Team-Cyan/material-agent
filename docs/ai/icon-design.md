@@ -14,12 +14,23 @@ agent icon family standard.
 
 ## Canonical Assets
 
-- Editable source: `assets/material-agent-icon.svg`
-- Published runtime asset: `assets/material-agent-icon-transparent.png`
-- Secondary PNG copies must be rendered from the same SVG source.
+- Editable source: `docs/assets/icon.svg`
+- Published runtime asset: `docs/assets/icon.png`
+
+These are the only tracked icon files. Do not add a second PNG, repository-icon
+copy, favicon copy, or another editable source.
 
 The SVG is the source of truth. Do not regenerate the center mark with an image
 model or edit a PNG as the canonical source.
+
+## Reference Contract
+
+- Public URL:
+  `https://raw.githubusercontent.com/Team-Cyan/material-agent/main/docs/assets/icon.png`
+- DockerMan template: `deploy/unraid/material-agent.xml`
+
+All runtime and deployment consumers reference the transparent PNG. The SVG is
+never used as the DockerMan icon URL.
 
 ## Shared Canvas And Background
 

@@ -54,5 +54,7 @@ docs/*
 !docs/operations/**
 !docs/ai/
 !docs/ai/**
+!docs/assets/
+!docs/assets/**
 !docs/superpowers/
 !docs/superpowers/**
