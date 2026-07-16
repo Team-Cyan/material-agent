@@ -49,7 +49,15 @@ model_management:
 Selections are read at process startup. A running scoring job does not hot-swap
 models.
 
-## HTTP API
+## Built-In Web API
+
+The maintained Unraid deployment uses the model-management endpoints built into
+the primary `material-agent web` process. Do not deploy a second model API
+container for this topology. The primary container already owns the same
+appdata-backed model registry and exposes model list, install, select, and delete
+operations through its Web UI.
+
+## Optional Headless HTTP API
 
 The API is an explicit command, not part of the one-shot scorer process:
 
@@ -58,11 +66,9 @@ material-agent models --registry-dir /config/models serve \
   --host 0.0.0.0 --port 8765 --token-file /run/secrets/material-agent-model-api
 ```
 
-The maintained Unraid deployment uses a separate service container listening on
-`127.0.0.1:8766`, because `seed-agent` already owns host port 8765. It shares
-only the appdata model registry with the scorer. This keeps the API off the LAN
-by default and avoids granting it access to the photo share. Any non-loopback
-listener requires a bearer token.
+The standalone command is retained only for headless integrations that do not
+run the built-in Web operator. It is not part of the maintained Unraid
+deployment. Any non-loopback listener requires a bearer token.
 
 Catalog inclusion is not based on file format alone. For example, the upstream
 SSD MobileNet V1 INT8 ONNX candidate is checksum-addressable but OpenVINO

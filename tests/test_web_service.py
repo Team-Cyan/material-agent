@@ -6,7 +6,6 @@ import urllib.request
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pytest
 import yaml
 
 from material_agent.app.web_service import (
@@ -131,14 +130,13 @@ def test_web_tasks_are_always_dry_run_and_can_remove_sample_limit(tmp_path, monk
     task_config = yaml.safe_load(Path(task["config_path"]).read_text(encoding="utf-8"))
     assert "max_files" not in task_config["review_pipeline"]
 
-def test_web_api_requires_token_but_static_shell_remains_loadable(tmp_path):
+def test_web_api_is_available_without_token_on_trusted_lan(tmp_path):
     server = MaterialWebServer(
         ("127.0.0.1", 0),
         library=MagicMock(),
         tasks=MagicMock(),
         model_service=MagicMock(),
         config_path=tmp_path / "config.yaml",
-        token="secret",
         thumbnail_dir=tmp_path / "thumbs",
     )
     thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -146,13 +144,9 @@ def test_web_api_requires_token_but_static_shell_remains_loadable(tmp_path):
     base = f"http://127.0.0.1:{server.server_port}"
     try:
         assert b"material-agent" in urllib.request.urlopen(base + "/").read()
-        with pytest.raises(urllib.error.HTTPError) as error:
-            urllib.request.urlopen(base + "/health")
-        assert error.value.code == 401
-        request = urllib.request.Request(
-            base + "/health", headers={"Authorization": "Bearer secret"}
-        )
-        assert json.loads(urllib.request.urlopen(request).read()) == {"status": "ok"}
+        assert json.loads(urllib.request.urlopen(base + "/health").read()) == {
+            "status": "ok"
+        }
     finally:
         server.shutdown()
         server.server_close()

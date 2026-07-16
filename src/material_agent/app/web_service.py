@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import hmac
 import json
 import os
 import shutil
@@ -575,7 +574,6 @@ class MaterialWebServer(ThreadingHTTPServer):
         tasks: WebTaskManager,
         model_service: ModelCatalogService,
         config_path: Path,
-        token: str | None,
         thumbnail_dir: Path,
     ):
         super().__init__(address, MaterialWebHandler)
@@ -583,7 +581,6 @@ class MaterialWebServer(ThreadingHTTPServer):
         self.tasks = tasks
         self.model_service = model_service
         self.config_path = config_path
-        self.api_token = token
         self.thumbnail_dir = thumbnail_dir
         self.thumbnail_dir.mkdir(parents=True, exist_ok=True)
 
@@ -597,8 +594,6 @@ class MaterialWebHandler(BaseHTTPRequestHandler):
         path = split.path
         if path in {"/", "/index.html", "/app.js", "/styles.css", "/output-preview.css"}:
             self._static("index.html" if path in {"/", "/index.html"} else path.lstrip("/"))
-            return
-        if not self._authorized():
             return
         if path == "/health":
             self._json(HTTPStatus.OK, {"status": "ok"})
@@ -642,8 +637,6 @@ class MaterialWebHandler(BaseHTTPRequestHandler):
             self._json(HTTPStatus.NOT_FOUND, {"error": "not_found"})
 
     def do_PUT(self) -> None:  # noqa: N802
-        if not self._authorized():
-            return
         if urlsplit(self.path).path != "/api/config":
             self._json(HTTPStatus.NOT_FOUND, {"error": "not_found"})
             return
@@ -668,8 +661,6 @@ class MaterialWebHandler(BaseHTTPRequestHandler):
         self._json(HTTPStatus.OK, self._read_config())
 
     def do_POST(self) -> None:  # noqa: N802
-        if not self._authorized():
-            return
         path = urlsplit(self.path).path
         try:
             if path == "/api/library/index":
@@ -709,8 +700,6 @@ class MaterialWebHandler(BaseHTTPRequestHandler):
         self._json(HTTPStatus.OK, result)
 
     def do_DELETE(self) -> None:  # noqa: N802
-        if not self._authorized():
-            return
         split = urlsplit(self.path)
         parts = split.path.strip("/").split("/")
         if len(parts) != 3 or parts[:2] != ["api", "models"]:
@@ -793,20 +782,6 @@ class MaterialWebHandler(BaseHTTPRequestHandler):
             raise ValueError("request body must be a JSON object")
         return value
 
-    def _authorized(self) -> bool:
-        token = self.server.api_token
-        if not token:
-            return True
-        expected = f"Bearer {token}"
-        if hmac.compare_digest(self.headers.get("Authorization", ""), expected):
-            return True
-        self._json(
-            HTTPStatus.UNAUTHORIZED,
-            {"error": "unauthorized"},
-            extra_headers={"WWW-Authenticate": "Bearer"},
-        )
-        return False
-
     def _security_headers(self) -> None:
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("X-Frame-Options", "DENY")
@@ -835,7 +810,6 @@ def serve_web(
     *,
     host: str,
     port: int,
-    token: str | None,
     input_root: str | Path,
     config_path: str | Path,
     work_dir: str | Path,
@@ -843,8 +817,6 @@ def serve_web(
     catalog_path: str | Path | None = None,
     executable: str = "material-agent",
 ) -> None:
-    if host not in {"127.0.0.1", "::1", "localhost"} and not token:
-        raise ValueError("a bearer token is required when Web UI listens beyond localhost")
     work_path = Path(work_dir).resolve()
     library = WebLibraryRepository(work_path / "state.db", input_root)
     tasks = WebTaskManager(
@@ -861,7 +833,6 @@ def serve_web(
         tasks=tasks,
         model_service=model_service,
         config_path=Path(config_path).resolve(),
-        token=token,
         thumbnail_dir=work_path / "web" / "thumbnails",
     )
     try:

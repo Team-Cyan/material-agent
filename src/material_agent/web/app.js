@@ -1,4 +1,4 @@
-const state={token:sessionStorage.getItem('material-agent-token')||'',page:1,pages:1,items:[],overview:null};
+const state={page:1,pages:1,items:[],overview:null};
 const $=(selector)=>document.querySelector(selector);
 const escapeHtml=(value)=>String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const fmt=(value,digits=1)=>value===null||value===undefined?'—':Number(value).toFixed(digits);
@@ -6,16 +6,14 @@ const toast=(message)=>{const node=$('#toast');node.textContent=message;node.cla
 
 async function api(path,options={}){
   const headers={'Content-Type':'application/json',...(options.headers||{})};
-  if(state.token)headers.Authorization=`Bearer ${state.token}`;
   const response=await fetch(path,{...options,headers});
-  if(response.status===401){$('#token-dialog').showModal();throw new Error('需要访问令牌')}
   const payload=await response.json().catch(()=>({error:response.statusText}));
   if(!response.ok)throw new Error(payload.error||response.statusText);
   return payload;
 }
 
 async function authImage(url,img){
-  try{const headers={};if(state.token)headers.Authorization=`Bearer ${state.token}`;const response=await fetch(url,{headers});if(!response.ok)throw new Error();const blob=await response.blob();img.src=URL.createObjectURL(blob)}catch{img.replaceWith(Object.assign(document.createElement('span'),{textContent:'无预览'}))}
+  try{const response=await fetch(url);if(!response.ok)throw new Error();const blob=await response.blob();img.src=URL.createObjectURL(blob)}catch{img.replaceWith(Object.assign(document.createElement('span'),{textContent:'无预览'}))}
 }
 
 function showView(name){
@@ -90,7 +88,6 @@ $('#index-button').addEventListener('click',async()=>{try{$('#index-button').dis
 $('#task-form').addEventListener('submit',async event=>{event.preventDefault();const form=new FormData(event.target);try{const data=await api('/api/tasks',{method:'POST',body:JSON.stringify({max_files:form.get('max_files'),reprocess:form.has('reprocess'),no_visual_merge:form.has('no_visual_merge')})});toast(`任务 ${data.id.slice(0,8)} 已启动`);loadOverview()}catch(error){toast(error.message)}});
 $('#library-refresh').addEventListener('click',()=>{state.page=1;loadLibrary()});$('#library-search').addEventListener('keydown',event=>{if(event.key==='Enter'){state.page=1;loadLibrary()}});$('#library-scored').addEventListener('change',()=>{state.page=1;loadLibrary()});$('#library-order').addEventListener('change',()=>{state.page=1;loadLibrary()});
 $('#page-prev').addEventListener('click',()=>{if(state.page>1){state.page--;loadLibrary()}});$('#page-next').addEventListener('click',()=>{if(state.page<state.pages){state.page++;loadLibrary()}});
-$('#config-save').addEventListener('click',saveConfig);$('#detail-close').addEventListener('click',()=>$('#detail-dialog').close());$('#token-button').addEventListener('click',()=>{$('#token-input').value=state.token;$('#token-dialog').showModal()});
-$('#token-form').addEventListener('submit',event=>{event.preventDefault();state.token=$('#token-input').value.trim();sessionStorage.setItem('material-agent-token',state.token);$('#token-dialog').close();loadOverview()});
+$('#config-save').addEventListener('click',saveConfig);$('#detail-close').addEventListener('click',()=>$('#detail-dialog').close());
 
 const initial=location.hash.slice(1)||'dashboard';showView(['dashboard','library','tasks','settings','models'].includes(initial)?initial:'dashboard');loadOverview();setInterval(()=>{if($('#view-dashboard').classList.contains('active'))loadOverview()},10000);

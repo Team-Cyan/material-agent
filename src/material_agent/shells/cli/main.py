@@ -260,7 +260,6 @@ def build_parser() -> argparse.ArgumentParser:
         dest="registry_dir",
     )
     p_web.add_argument("--catalog")
-    p_web.add_argument("--token-file", dest="token_file")
     p_benchmark.add_argument("--repeat-count", type=int, default=2, dest="repeat_count")
     p_benchmark.add_argument(
         "--reject-threshold", type=float, default=4.0, dest="reject_threshold"

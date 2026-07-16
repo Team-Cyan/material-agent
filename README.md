@@ -77,8 +77,9 @@ uv run material-agent web \
 
 The Web UI manages parameters, checksum-pinned models, dry-run tasks, logs,
 and full-library score browsing. Web-triggered tasks never write XMP or ratings;
-their complete score payloads stay in the appdata runtime database. A bearer
-token file is mandatory when binding the UI beyond localhost.
+their complete score payloads stay in the appdata runtime database. The Web UI
+has no application-level authentication and is intended only for localhost or a
+trusted LAN; do not publish its port to the Internet.
 
 For a read-only Docker pilot, mount the source library read-only and keep all
 runtime state in appdata:

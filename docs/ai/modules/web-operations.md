@@ -43,8 +43,9 @@ that would be sent to the metadata writer. This preview is DB-only in dry-run.
 
 ## Safe Editing Guidance
 
-- Keep API routes bearer-protected when listening beyond loopback.
-- Keep the static shell public so it can present the token prompt.
+- Treat the Web service as a trusted-LAN operator surface. It intentionally has
+  no application-level authentication, so port `8776` must not be published to
+  the Internet or an untrusted VLAN.
 - Preserve redacted secret values when a configuration is round-tripped.
 - Validate a temporary YAML file with `load_config` before atomically replacing
   the active configuration, and keep the `.web.bak` backup.
@@ -61,19 +62,18 @@ material-agent web \
   --input-dir /photos \
   --config /app/config/config.yaml \
   --work-dir /config \
-  --registry-dir /config/models \
-  --token-file /run/secrets/material-agent-web-token
+  --registry-dir /config/models
 ```
 
-Listening on a non-loopback address without a token is rejected.
+The maintained Unraid deployment listens on the trusted LAN without a token.
 
 ## Verification
 
 - `uv run pytest -q tests/test_web_service.py`
 - `uv run pytest -q`
 - `uv run ruff check .`
-- verify unauthorized `/health` returns 401 and authorized `/health` returns
-  `{"status":"ok"}`;
+- verify unauthenticated `/health` returns `{"status":"ok"}` from the trusted
+  LAN;
 - inspect container mounts and confirm `/photos` is `ro` while `/config` is the
   only mutable runtime-state mount;
 - compare source XMP and `.material-agent` counts before and after a task.

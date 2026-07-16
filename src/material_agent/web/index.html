@@ -25,7 +25,7 @@
     <main>
       <header class="topbar">
         <div><p class="eyebrow">LOCAL PHOTO INTELLIGENCE</p><h1 id="view-title">运行概览</h1></div>
-        <button class="secondary" id="token-button">访问令牌</button>
+        <span class="safe-pill">可信局域网</span>
       </header>
 
       <section class="view active" id="view-dashboard">
@@ -75,7 +75,6 @@
   </div>
 
   <dialog id="detail-dialog"><button class="dialog-close" id="detail-close">关闭</button><div id="detail-content"></div></dialog>
-  <dialog id="token-dialog"><form method="dialog" id="token-form"><h2>访问令牌</h2><p class="muted">令牌仅保存在当前浏览器会话。</p><input id="token-input" type="password" autocomplete="current-password" placeholder="Bearer token"><div class="dialog-actions"><button value="cancel" class="secondary">取消</button><button value="default">保存并连接</button></div></form></dialog>
   <div id="toast" role="status"></div>
   <script src="/app.js"></script>
 </body>
