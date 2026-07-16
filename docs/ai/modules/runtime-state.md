@@ -68,6 +68,11 @@ It uses one runtime database path but models two different concerns:
   snapshots recursively redact credentials and tokens
 - startup reconciliation converts abandoned open/running sessions and
   queued/running/paused jobs into a durable cancelled terminal state
+- review jobs coalesce chatty runtime commits into bounded batches, while
+  non-job repository calls retain immediate commit semantics
+- artifact lookups must keep indexes for both `(job_file_id, kind)` and
+  `(job_id, kind)`; final timing aggregation reads one job-wide artifact batch
+  instead of issuing one unindexed query per file
 - when `MATERIAL_AGENT_WORK_DIR` is set, both repositories and logs stay in that
   directory; Docker deployments should bind `/config` to appdata and never put
   the main DB in the read-only photo source

@@ -1,10 +1,12 @@
+import json
+import threading
+
 from material_agent.adapters.state.sqlite_runtime import SQLiteRuntimeRepository
 from material_agent.app.dto import JobFileStatus, JobStage, JobType, SessionKind
 from material_agent.app.job_executor import JobExecutor
 from material_agent.app.job_service import JobService
 from material_agent.app.jobs.review_photos import ReviewPhotosJob
 from material_agent.app.session_service import SessionService
-import threading
 
 
 class _NullEventSink:
@@ -675,3 +677,38 @@ def test_dry_run_repersist_score_payload_after_output_preview_is_added(tmp_path)
         "subject_tags": ["pj:decision=keep"],
         "description": "preview only",
     }
+
+
+def test_singleton_pipeline_can_emit_one_write_stage_for_the_whole_run(tmp_path):
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    session_id = SessionService(repo).create_session(
+        kind=SessionKind.CLI,
+        input_root="/tmp/photos",
+        config_snapshot={"backend": "local"},
+    )
+    job_id = JobService(repo).create_job(
+        session_id=session_id,
+        job_type=JobType.REVIEW_PHOTOS,
+        initial_stage=JobStage.DISCOVER,
+    )
+    files = [f"/tmp/photos/{index}.ARW" for index in range(3)]
+    review_job = ReviewPhotosJob(
+        repository=repo,
+        event_sink=_NullEventSink(),
+        group_files=lambda paths: [[path] for path in paths],
+        score_file=lambda _path: {"score_total": 7.0, "scene": "other", "scene_raw": ""},
+        write_outputs=False,
+        per_group_stage_events=False,
+    )
+
+    JobExecutor(review_job).run(job_id, files)
+
+    stages = [
+        json.loads(row[0])["stage"]
+        for row in repo.conn.execute(
+            "SELECT payload_json FROM events "
+            "WHERE job_id = ? AND event_type = 'job_stage_changed' ORDER BY rowid",
+            (job_id,),
+        ).fetchall()
+    ]
+    assert stages == ["group", "score", "comment", "write", "finalize"]

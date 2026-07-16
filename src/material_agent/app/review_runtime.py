@@ -36,9 +36,10 @@ def build_review_job_executor(
     output_language = config.get("output_language", "zh")
     client = make_client(config)
     fast_screening = make_fast_screening_port(config)
+    commentary_enabled = bool(config.get("commentary_enabled", False))
     commentary = CommentaryGenerator(
         client=client,
-        enabled=config.get("commentary_enabled", False),
+        enabled=commentary_enabled,
         output_language=output_language,
     )
     writer = ExifToolXMPWriter(config.get("xmp", {}))
@@ -163,23 +164,25 @@ def build_review_job_executor(
         if not group_results:
             return group_results
 
-        group_commentary = run_coro_sync(
-            commentary.for_group(
-                [
-                    (file_path, float(payload.get("score_total", 0.0)))
-                    for file_path, payload in group_results
-                ],
-                [
-                    {
-                        **payload.get("scores", {}),
-                        "_scene": payload.get("scene", "other"),
-                        "_scene_raw": payload.get("scene_raw", ""),
-                        "_decision": payload.get("decision"),
-                    }
-                    for _, payload in group_results
-                ],
+        group_commentary = ""
+        if commentary_enabled:
+            group_commentary = run_coro_sync(
+                commentary.for_group(
+                    [
+                        (file_path, float(payload.get("score_total", 0.0)))
+                        for file_path, payload in group_results
+                    ],
+                    [
+                        {
+                            **payload.get("scores", {}),
+                            "_scene": payload.get("scene", "other"),
+                            "_scene_raw": payload.get("scene_raw", ""),
+                            "_decision": payload.get("decision"),
+                        }
+                        for _, payload in group_results
+                    ],
+                )
             )
-        )
         results_with_commentary = [
             (
                 file_path,
@@ -220,20 +223,22 @@ def build_review_job_executor(
             visible_breakdown=visible_breakdown,
             output_language=output_language,
         )
-        post_commentary = run_coro_sync(
-            commentary.for_photo(
-                commentary_context,
-                group_commentary,
-                scores,
-                scene=scene,
-                scene_raw=scene_raw,
-                decision=decision,
-                rank=rank,
-                group_size=group_size,
-                variant_key=file_path,
-                visible_breakdown=visible_breakdown,
+        post_commentary = ""
+        if commentary_enabled:
+            post_commentary = run_coro_sync(
+                commentary.for_photo(
+                    commentary_context,
+                    group_commentary,
+                    scores,
+                    scene=scene,
+                    scene_raw=scene_raw,
+                    decision=decision,
+                    rank=rank,
+                    group_size=group_size,
+                    variant_key=file_path,
+                    visible_breakdown=visible_breakdown,
+                )
             )
-        )
         description = (
             f"{rank_description(rank, group_size, output_language)}\n\n"
             f"{group_commentary}\n\n{post_commentary}"
@@ -320,5 +325,8 @@ def build_review_job_executor(
         write_file=write_file,
         score_prefetch_window=config.get("review_pipeline", {}).get("score_prefetch_window", 1),
         write_outputs=not dry_run,
+        per_group_stage_events=bool(
+            commentary_enabled or config.get("grouping", {}).get("enabled", False)
+        ),
     )
     return JobExecutor(review_job)

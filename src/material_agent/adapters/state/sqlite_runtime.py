@@ -1,6 +1,7 @@
 import json
 import sqlite3
 import uuid
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -64,7 +65,38 @@ class SQLiteRuntimeRepository:
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(self.db_path)
         self.conn.row_factory = sqlite3.Row
+        self._batch_commit_every: int | None = None
+        self._pending_logical_commits = 0
         self._bootstrap()
+
+    def _commit(self) -> None:
+        if self._batch_commit_every is None:
+            self.conn.commit()
+            return
+        self._pending_logical_commits += 1
+        if self._pending_logical_commits >= self._batch_commit_every:
+            self.conn.commit()
+            self._pending_logical_commits = 0
+
+    @contextmanager
+    def batched_commits(self, commit_every: int = 2048):
+        """Coalesce chatty runtime writes while preserving bounded recovery."""
+
+        if self._batch_commit_every is not None:
+            yield
+            return
+        self._batch_commit_every = max(1, int(commit_every))
+        self._pending_logical_commits = 0
+        try:
+            yield
+        except BaseException:
+            self.conn.rollback()
+            raise
+        else:
+            self.conn.commit()
+        finally:
+            self._batch_commit_every = None
+            self._pending_logical_commits = 0
 
     @staticmethod
     def _is_terminal_session_status(status: str) -> bool:
@@ -140,11 +172,15 @@ class SQLiteRuntimeRepository:
                 payload_json TEXT NOT NULL,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE INDEX IF NOT EXISTS idx_artifacts_job_file_kind
+                ON artifacts(job_file_id, kind);
+            CREATE INDEX IF NOT EXISTS idx_artifacts_job_kind
+                ON artifacts(job_id, kind);
             """
         )
         self.conn.execute("PRAGMA journal_mode=WAL")
         self.conn.execute("PRAGMA busy_timeout=30000")
-        self.conn.commit()
+        self._commit()
         secure_sqlite_files(self.db_path)
 
     @staticmethod
@@ -170,7 +206,7 @@ class SQLiteRuntimeRepository:
                 status.value,
             ),
         )
-        self.conn.commit()
+        self._commit()
         return session_id
 
     def get_job_result(self, job_id: str) -> dict[str, Any]:
@@ -252,7 +288,7 @@ class SQLiteRuntimeRepository:
                 """,
                 (SessionStatus.CANCELLED.value, row["id"]),
             )
-        self.conn.commit()
+        self._commit()
         return {"sessions": len(session_rows), "jobs": len(job_rows)}
 
     def close(self) -> None:
@@ -271,7 +307,7 @@ class SQLiteRuntimeRepository:
             "INSERT INTO jobs (id, session_id, type, stage, status, summary_json) VALUES (?, ?, ?, ?, ?, ?)",
             (job_id, session_id, job_type.value, stage.value, status.value, json.dumps({}, ensure_ascii=False)),
         )
-        self.conn.commit()
+        self._commit()
         return job_id
 
     def update_session(self, session_id: str, *, status: SessionStatus) -> None:
@@ -284,7 +320,7 @@ class SQLiteRuntimeRepository:
             f"UPDATE sessions SET status = ?, finished_at = {next_finished_at} WHERE id = ?",
             (next_status, session_id),
         )
-        self.conn.commit()
+        self._commit()
 
     def update_job(
         self,
@@ -305,7 +341,7 @@ class SQLiteRuntimeRepository:
             f"UPDATE jobs SET stage = ?, status = ?, summary_json = ?, finished_at = {next_finished_at} WHERE id = ?",
             (next_stage, next_status, next_summary, job_id),
         )
-        self.conn.commit()
+        self._commit()
 
     def upsert_job_file(
         self,
@@ -369,7 +405,7 @@ class SQLiteRuntimeRepository:
                     job_file_id,
                 ),
             )
-        self.conn.commit()
+        self._commit()
         return job_file_id
 
     def append_event(
@@ -386,7 +422,7 @@ class SQLiteRuntimeRepository:
             "INSERT INTO events (id, session_id, job_id, job_file_id, event_type, payload_json) VALUES (?, ?, ?, ?, ?, ?)",
             (event_id, session_id, job_id, job_file_id, event_type, json.dumps(payload, ensure_ascii=False)),
         )
-        self.conn.commit()
+        self._commit()
         return event_id
 
     def get_job_session_id(self, job_id: str) -> str:
@@ -466,7 +502,7 @@ class SQLiteRuntimeRepository:
                     artifact_id,
                 ),
             )
-        self.conn.commit()
+        self._commit()
         return artifact_id
 
     def get_artifact_metadata(self, *, job_file_id: str, kind: str) -> dict[str, Any] | None:
@@ -483,6 +519,18 @@ class SQLiteRuntimeRepository:
         if row is None:
             return None
         return json.loads(row["metadata_json"] or "{}")
+
+    def list_artifact_metadata(self, *, job_id: str, kind: str) -> list[dict[str, Any]]:
+        rows = self.conn.execute(
+            """
+            SELECT metadata_json
+            FROM artifacts
+            WHERE job_id = ? AND kind = ?
+            ORDER BY rowid ASC
+            """,
+            (job_id, kind),
+        ).fetchall()
+        return [json.loads(row["metadata_json"] or "{}") for row in rows]
 
     def list_sessions(self) -> list[SessionRecord]:
         rows = self.conn.execute(

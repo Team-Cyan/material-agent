@@ -18,7 +18,64 @@ def test_runtime_repository_bootstraps_schema(tmp_path):
     assert {"sessions", "jobs", "job_files", "artifacts", "events"} <= names
     assert repo.conn.execute("PRAGMA journal_mode").fetchone()[0].lower() == "wal"
     assert repo.conn.execute("PRAGMA busy_timeout").fetchone()[0] == 30000
+    indexes = {
+        row[0]
+        for row in repo.conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='index'"
+        ).fetchall()
+    }
+    assert "idx_artifacts_job_file_kind" in indexes
+    assert "idx_artifacts_job_kind" in indexes
     assert stat.S_IMODE(db_path.stat().st_mode) == 0o600
+
+
+def test_runtime_repository_batches_logical_commits_with_bounded_visibility(tmp_path):
+    db_path = tmp_path / "runtime.db"
+    repo = SQLiteRuntimeRepository(db_path)
+    observer = sqlite3.connect(db_path)
+
+    with repo.batched_commits(commit_every=10):
+        repo.create_session(
+            kind=SessionKind.CLI,
+            input_root="/tmp/photos",
+            config_snapshot={},
+            status=SessionStatus.OPEN,
+        )
+        assert observer.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 0
+
+    assert observer.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 1
+
+
+def test_runtime_repository_lists_job_artifacts_in_one_query(tmp_path):
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    session_id = repo.create_session(
+        kind=SessionKind.CLI,
+        input_root="/tmp/photos",
+        config_snapshot={},
+        status=SessionStatus.OPEN,
+    )
+    job_id = repo.create_job(
+        session_id=session_id,
+        job_type=JobType.REVIEW_PHOTOS,
+        stage=JobStage.SCORE,
+        status=JobStatus.RUNNING,
+    )
+    job_file_id = repo.upsert_job_file(
+        job_id=job_id,
+        file_path="/tmp/photos/a.ARW",
+        status=JobFileStatus.SCORED,
+    )
+    repo.upsert_artifact(
+        job_id=job_id,
+        job_file_id=job_file_id,
+        kind="score_payload",
+        uri="memory://score/a",
+        metadata={"score_total": 7.5},
+    )
+
+    assert repo.list_artifact_metadata(job_id=job_id, kind="score_payload") == [
+        {"score_total": 7.5}
+    ]
 
 
 def test_runtime_repository_redacts_nested_secrets_from_config_snapshot(tmp_path):

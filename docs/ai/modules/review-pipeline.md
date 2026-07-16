@@ -78,6 +78,10 @@ Runtime file states distinguish real writes from simulations and cache reuse:
   be refreshed when membership or rank changes
 - dry-run may persist runtime observability but must not create processed score,
   `done`, XMP, or rating output
+- commentary-disabled singleton runs emit each batch stage once and must not
+  construct per-file async commentary wrappers
+- runtime persistence is committed in bounded batches; cancellation may roll
+  back only the current batch, while previously committed batches stay resumable
 - one work directory has one mutating controller at a time; `run` and mutating
   maintenance commands share the same exclusive lock
 - startup reconciles abandoned open/running/paused runtime records before a new

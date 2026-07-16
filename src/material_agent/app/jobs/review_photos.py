@@ -12,7 +12,12 @@ class _ScorePreparationPool(ThreadPoolExecutor):
         return super().__exit__(exc_type, exc_value, traceback)
 
 
-def _aggregate_timings(repository, job_files: list[object]) -> dict:
+def _aggregate_timings(
+    repository,
+    job_files: list[object],
+    *,
+    job_id: str | None = None,
+) -> dict:
     totals = {
         "raw_decode_seconds": 0.0,
         "score_seconds": 0.0,
@@ -26,11 +31,18 @@ def _aggregate_timings(repository, job_files: list[object]) -> dict:
     run_kinds: set[str] = set()
     seen_runs_by_kind: dict[str, set[object]] = {}
     found = False
-    for job_file in job_files:
-        payload = repository.get_artifact_metadata(
-            job_file_id=job_file.id,
-            kind="score_payload",
-        )
+    list_metadata = getattr(repository, "list_artifact_metadata", None)
+    if callable(list_metadata) and job_id is not None:
+        payloads = list_metadata(job_id=job_id, kind="score_payload")
+    else:
+        payloads = [
+            repository.get_artifact_metadata(
+                job_file_id=job_file.id,
+                kind="score_payload",
+            )
+            for job_file in job_files
+        ]
+    for payload in payloads:
         if not isinstance(payload, dict):
             continue
         meta = payload.get("meta")
@@ -103,6 +115,7 @@ class ReviewPhotosJob:
         write_file=None,
         score_prefetch_window: int = 1,
         write_outputs: bool = True,
+        per_group_stage_events: bool = True,
     ):
         self.repository = repository
         self.event_sink = event_sink
@@ -124,6 +137,7 @@ class ReviewPhotosJob:
         )
         self.score_prefetch_window = min(32, max(1, int(score_prefetch_window)))
         self.write_outputs = bool(write_outputs)
+        self.per_group_stage_events = bool(per_group_stage_events)
 
     def _emit(
         self,
@@ -182,7 +196,7 @@ class ReviewPhotosJob:
             "simulated_files": simulated_files,
             "scored_files": scored_files,
         }
-        timings = _aggregate_timings(self.repository, job_files)
+        timings = _aggregate_timings(self.repository, job_files, job_id=job_id)
         if timings:
             summary["timings"] = timings
         return summary
@@ -419,6 +433,10 @@ class ReviewPhotosJob:
         error_files += score_error_files
         score_payloads = dict(all_group_results)
 
+        if not self.per_group_stage_events:
+            self._update_stage(job_id, JobStage.COMMENT, JobStatus.RUNNING, session_id=session_id)
+            self._update_stage(job_id, JobStage.WRITE, JobStatus.RUNNING, session_id=session_id)
+
         for group in groups:
             group_id = self._group_id(group)
             group_results = [
@@ -444,7 +462,13 @@ class ReviewPhotosJob:
 
             self._refresh_cached_done_write_flags(group_results, group_id=group_id)
 
-            self._update_stage(job_id, JobStage.COMMENT, JobStatus.RUNNING, session_id=session_id)
+            if self.per_group_stage_events:
+                self._update_stage(
+                    job_id,
+                    JobStage.COMMENT,
+                    JobStatus.RUNNING,
+                    session_id=session_id,
+                )
             finalized_results = (
                 group_results
                 if group_results and all(payload.get("skip_write") for _, payload in group_results)
@@ -455,7 +479,13 @@ class ReviewPhotosJob:
                 key=lambda item: float(item[1].get("score_total", 0.0)),
                 reverse=True,
             )
-            self._update_stage(job_id, JobStage.WRITE, JobStatus.RUNNING, session_id=session_id)
+            if self.per_group_stage_events:
+                self._update_stage(
+                    job_id,
+                    JobStage.WRITE,
+                    JobStatus.RUNNING,
+                    session_id=session_id,
+                )
             for rank, (file_path, score_payload) in enumerate(ranked_results, start=1):
                 existing_job_file = resumable_job_files.get(file_path)
                 already_processed = bool(score_payload.get("skip_write")) or (

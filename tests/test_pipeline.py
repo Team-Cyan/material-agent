@@ -305,6 +305,18 @@ def test_review_runtime_builder_passes_fast_screening_signals_through_pipeline(m
 def test_review_runtime_dry_run_does_not_pollute_processed_cache(monkeypatch):
     from material_agent.app.review_runtime import build_review_job_executor
 
+    class _DisabledCommentary:
+        enabled = False
+
+        def __init__(self, *args, **kwargs):
+            pass
+
+        async def for_group(self, *args, **kwargs):
+            raise AssertionError("disabled group commentary must not be scheduled")
+
+        async def for_photo(self, *args, **kwargs):
+            raise AssertionError("disabled photo commentary must not be scheduled")
+
     with tempfile.TemporaryDirectory() as d:
         cfg = _config(d)
         repo = SQLiteRuntimeRepository(":memory:")
@@ -338,6 +350,10 @@ def test_review_runtime_dry_run_does_not_pollute_processed_cache(monkeypatch):
         monkeypatch.setattr("material_agent.app.review_runtime.make_client", lambda config: object())
         monkeypatch.setattr("material_agent.app.review_runtime.decode_raw", lambda *_args: object())
         monkeypatch.setattr("material_agent.app.review_runtime.compute_scores", fake_compute_scores)
+        monkeypatch.setattr(
+            "material_agent.app.review_runtime.CommentaryGenerator",
+            _DisabledCommentary,
+        )
 
         summary = build_review_job_executor(
             repository=repo,
