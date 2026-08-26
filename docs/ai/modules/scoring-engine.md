@@ -59,6 +59,9 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 - output scores should stay bounded to expected numeric ranges
 - score bundle shape must remain compatible with runtime persistence and rewrite flows
 - rejection paths must still emit enough information for downstream summary and persistence
+- RAW previews remain RGB for grayscale analysis, but must be converted to BGR
+  before OpenCV JPEG encoding so downstream PIL/model consumers receive the
+  original RGB colors
 - scene-aware exposure rescoring happens after the backend returns scene context
 - subject and eye focus use the retained 2048-edge grayscale preview and record
   the ROI source, confidence, bounding box, and Laplacian measurements

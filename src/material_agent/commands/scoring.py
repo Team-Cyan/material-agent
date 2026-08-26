@@ -8,6 +8,10 @@ from pathlib import Path
 
 import yaml
 
+from ..adapters.models.openvino_embedding import (
+    _digest_model_bundle_assets,
+    _model_bundle_assets,
+)
 from ..adapters.models.local_runtime import probe_local_runtime
 from ..adapters.state.processed_sqlite import SQLiteProcessedRepository
 from ..adapters.state.sqlite_runtime import SQLiteRuntimeRepository, redact_secrets
@@ -131,6 +135,9 @@ def build_score_cache_key(config: dict) -> str:
         and bool(embedding.get("enabled", False))
     ):
         payload["local_embedding_cache_key"] = build_local_embedding_cache_key(config)
+    local_model_assets = _local_model_asset_identity(config)
+    if local_model_assets:
+        payload["local_model_assets"] = local_model_assets
     encoded = json.dumps(
         payload,
         ensure_ascii=False,
@@ -138,6 +145,72 @@ def build_score_cache_key(config: dict) -> str:
         separators=(",", ":"),
     ).encode("utf-8")
     return f"score-output-v2:{hashlib.sha256(encoded).hexdigest()}"
+
+
+def _local_model_asset_identity(config: dict) -> dict[str, dict[str, str]]:
+    if config.get("backend") != "local":
+        return {}
+    local = config.get("local", {})
+    if not isinstance(local, dict):
+        return {}
+    configured_assets = (
+        ("aesthetic", "model_path"),
+        ("detection", "model_path"),
+        ("detection", "face_model_path"),
+        ("face", "model_asset_path"),
+    )
+    identity: dict[str, dict[str, str]] = {}
+    for block_name, path_key in configured_assets:
+        block = local.get(block_name, {})
+        if not isinstance(block, dict) or not bool(block.get("enabled", False)):
+            continue
+        raw_path = str(block.get(path_key, "")).strip()
+        asset_key = f"local.{block_name}.{path_key}"
+        if not raw_path:
+            identity[asset_key] = {"state": "not_configured"}
+            continue
+        path = Path(raw_path).expanduser()
+        if not path.is_file():
+            identity[asset_key] = {"state": "missing"}
+            continue
+        try:
+            assets = _score_model_bundle_assets(path)
+            digest = _digest_model_bundle_assets(assets)
+        except Exception as error:
+            assets = [(f"model/{path.name}", path)]
+            try:
+                fallback_digest = _digest_model_bundle_assets(assets)
+            except Exception as digest_error:
+                identity[asset_key] = {
+                    "state": "unreadable",
+                    "inspection_error": type(error).__name__,
+                    "digest_error": type(digest_error).__name__,
+                }
+            else:
+                identity[asset_key] = {
+                    "state": "inspection_failed",
+                    "assets": assets[0][0],
+                    "sha256": fallback_digest,
+                    "inspection_error": type(error).__name__,
+                }
+            continue
+        identity[asset_key] = {
+            "state": "available",
+            "assets": ",".join(name for name, _ in assets),
+            "sha256": digest,
+        }
+    return identity
+
+
+def _score_model_bundle_assets(path: Path) -> list[tuple[str, Path]]:
+    if path.suffix.lower() == ".onnx":
+        return _model_bundle_assets(path)
+    assets = [(f"model/{path.name}", path)]
+    if path.suffix.lower() == ".xml":
+        weights_path = path.with_suffix(".bin")
+        if weights_path.is_file():
+            assets.append((f"weights/{weights_path.name}", weights_path))
+    return assets
 
 
 def _distribution_version(name: str) -> str:
@@ -160,6 +233,14 @@ def _enabled_model_distributions(config: dict) -> set[str]:
         config.get("screening", {}).get("enabled", False)
     ):
         distributions.update({"pyiqa", "torch"})
+    for block_name in ("aesthetic", "detection"):
+        block = local.get(block_name, {})
+        if (
+            isinstance(block, dict)
+            and bool(block.get("enabled", False))
+            and str(block.get("runtime", "openvino")).lower() == "openvino"
+        ):
+            distributions.update({"onnx", "openvino"})
     embedding = local.get("embedding", {})
     if isinstance(embedding, dict) and bool(embedding.get("enabled", False)):
         if str(embedding.get("runtime", "transformers")).lower() == "openvino":
@@ -443,6 +524,7 @@ def cmd_rescore(args, config):
                 aesthetic_calibration=(
                     config.get("local", {}).get("aesthetic", {}).get("calibration", {})
                 ),
+                grouping_enabled=bool(config.get("grouping", {}).get("enabled", False)),
             )
     print(f"Rejudged {updated} files.")
     return 0

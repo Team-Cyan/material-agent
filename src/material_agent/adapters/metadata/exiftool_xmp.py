@@ -1,4 +1,5 @@
 import logging
+import shutil
 import subprocess
 import xml.etree.ElementTree as ET
 import xml.sax.saxutils as _saxutils
@@ -17,6 +18,7 @@ _XMP_NS = {
 }
 _CREATOR_TOOL = "Team-Cyan material-agent"
 _MACHINE_TAG_PREFIX = "pj:"
+_MAX_XMP_BYTES = 16 * 1024 * 1024
 
 
 class ExifToolXMPWriter:
@@ -49,21 +51,11 @@ class ExifToolXMPWriter:
         return tags
 
     def _read_non_pj_subject_tags(self, xmp_path: str | Path) -> list[str]:
-        try:
-            tree = ET.parse(str(xmp_path))
-            root = tree.getroot()
-            tags = []
-            for li in root.findall(".//dc:subject/rdf:Bag/rdf:li", _XMP_NS):
-                if li.text and not li.text.startswith(_MACHINE_TAG_PREFIX):
-                    tags.append(li.text)
-            return tags
-        except Exception as error:
-            _log.warning(
-                "Failed to read Subject tags from %s: %s — user keywords may not be preserved",
-                xmp_path,
-                error,
-            )
-            return []
+        return self._read_non_pj_bag_tags(
+            xmp_path,
+            ".//dc:subject/rdf:Bag/rdf:li",
+            "Subject",
+        )
 
     def _read_non_pj_identifier_tags(self, xmp_path: str | Path) -> list[str]:
         return self._read_non_pj_bag_tags(
@@ -81,21 +73,22 @@ class ExifToolXMPWriter:
 
     def _read_non_pj_bag_tags(self, xmp_path: str | Path, pattern: str, label: str) -> list[str]:
         try:
-            tree = ET.parse(str(xmp_path))
-            root = tree.getroot()
+            root = _read_xmp_root(xmp_path)
             tags = []
             for li in root.findall(pattern, _XMP_NS):
                 if li.text and not li.text.startswith(_MACHINE_TAG_PREFIX):
                     tags.append(li.text)
             return tags
-        except Exception as error:
+        except (OSError, ET.ParseError, ValueError) as error:
             _log.warning(
-                "Failed to read %s tags from %s: %s — user metadata may not be preserved",
+                "Failed to read %s tags from %s: %s — refusing to overwrite user metadata",
                 label,
                 xmp_path,
                 error,
             )
-            return []
+            raise RuntimeError(
+                f"Unable to safely preserve {label} tags from existing XMP {xmp_path}"
+            ) from error
 
     def _sidecar_path(self, arw_path: str | Path) -> Path:
         source = Path(arw_path)
@@ -113,10 +106,16 @@ class ExifToolXMPWriter:
 
     def _read_ai_scalar_fields(self, xmp_path: str | Path) -> dict[str, str | None]:
         try:
-            root = ET.parse(str(xmp_path)).getroot()
-        except (OSError, ET.ParseError) as error:
-            _log.warning("Failed to read AI scalar fields from %s: %s", xmp_path, error)
-            return {"rating": None, "instructions": None, "description": None}
+            root = _read_xmp_root(xmp_path)
+        except (OSError, ET.ParseError, ValueError) as error:
+            _log.warning(
+                "Failed to read AI scalar fields from %s: %s — refusing scalar cleanup",
+                xmp_path,
+                error,
+            )
+            raise RuntimeError(
+                f"Unable to safely inspect AI scalar fields in existing XMP {xmp_path}"
+            ) from error
 
         description = None
         for item in root.findall(".//dc:description/rdf:Alt/rdf:li", _XMP_NS):
@@ -142,41 +141,60 @@ class ExifToolXMPWriter:
         xmp_path = self._sidecar_path(arw_path)
         if not xmp_path.exists():
             return {"rating": False, "instructions": False, "description": False}
-        preserved = self._read_non_pj_subject_tags(xmp_path)
-        preserved_identifiers = self._read_non_pj_identifier_tags(xmp_path)
-        preserved_hierarchical = self._read_non_pj_hierarchical_subject_tags(xmp_path)
-        current_fields = self._read_ai_scalar_fields(xmp_path)
-        expected_fields = expected_fields or {}
-        cleared = {
-            key: bool(
-                force_scalar_clear
-                or (
-                    key in expected_fields
-                    and str(current_fields.get(key)) == str(expected_fields.get(key))
+        _reject_symbolic_link(xmp_path)
+        source_identity = _path_identity(xmp_path)
+        temp_path = xmp_path.with_name(f".{xmp_path.stem}.clear-{uuid4().hex}.xmp")
+        try:
+            shutil.copy2(xmp_path, temp_path)
+            preserved = self._read_non_pj_subject_tags(temp_path)
+            preserved_identifiers = self._read_non_pj_identifier_tags(temp_path)
+            preserved_hierarchical = self._read_non_pj_hierarchical_subject_tags(temp_path)
+            current_fields = self._read_ai_scalar_fields(temp_path)
+            expected_fields = expected_fields or {}
+            cleared = {
+                key: bool(
+                    force_scalar_clear
+                    or (
+                        key in expected_fields
+                        and str(current_fields.get(key)) == str(expected_fields.get(key))
+                    )
                 )
+                for key in ("rating", "instructions", "description")
+            }
+            cmd = ["exiftool"]
+            if cleared["rating"]:
+                cmd.append("-XMP-xmp:Rating=")
+            if cleared["instructions"]:
+                cmd.append("-XMP-photoshop:Instructions=")
+            if cleared["description"]:
+                cmd.append("-XMP-dc:Description-x-default=")
+            cmd += [
+                "-XMP-dc:Subject=",
+                "-XMP-xmp:Identifier=",
+                "-XMP-lr:HierarchicalSubject=",
+            ]
+            cmd += [f"-XMP-dc:Subject={tag}" for tag in preserved]
+            cmd += [f"-XMP-xmp:Identifier={tag}" for tag in preserved_identifiers]
+            cmd += [f"-XMP-lr:HierarchicalSubject={tag}" for tag in preserved_hierarchical]
+            cmd += ["-overwrite_original", str(temp_path)]
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                timeout=30,
             )
-            for key in ("rating", "instructions", "description")
-        }
-        cmd = ["exiftool"]
-        if cleared["rating"]:
-            cmd.append("-XMP-xmp:Rating=")
-        if cleared["instructions"]:
-            cmd.append("-XMP-photoshop:Instructions=")
-        if cleared["description"]:
-            cmd.append("-XMP-dc:Description-x-default=")
-        cmd += [
-            "-XMP-dc:Subject=",
-            "-XMP-xmp:Identifier=",
-            "-XMP-lr:HierarchicalSubject=",
-        ]
-        cmd += [f"-XMP-dc:Subject={tag}" for tag in preserved]
-        cmd += [f"-XMP-xmp:Identifier={tag}" for tag in preserved_identifiers]
-        cmd += [f"-XMP-lr:HierarchicalSubject={tag}" for tag in preserved_hierarchical]
-        cmd += ["-overwrite_original", str(xmp_path)]
-        result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=30)
-        if result.returncode != 0:
-            raise RuntimeError(f"exiftool failed: {result.stderr}")
-        return cleared
+            if result.returncode != 0:
+                raise RuntimeError(f"exiftool failed: {result.stderr}")
+            if _path_identity(xmp_path) != source_identity:
+                raise RuntimeError(
+                    f"XMP changed during AI cleanup; refusing to overwrite: {xmp_path}"
+                )
+            temp_path.replace(xmp_path)
+            return cleared
+        except Exception:
+            temp_path.unlink(missing_ok=True)
+            raise
 
     def write(
         self,
@@ -186,24 +204,57 @@ class ExifToolXMPWriter:
         instructions: str,
         description: str,
     ):
+        _validate_material_rating(rating)
         xmp_path = self._sidecar_path(arw_path)
-        xmp_exists = xmp_path.exists()
-        preserved = self._read_non_pj_subject_tags(xmp_path) if xmp_exists else []
-        preserved_identifiers = self._read_non_pj_identifier_tags(xmp_path) if xmp_exists else []
-        preserved_hierarchical = (
-            self._read_non_pj_hierarchical_subject_tags(xmp_path) if xmp_exists else []
-        )
+        _reject_symbolic_link(xmp_path)
         subject_tags = _dedupe(subject_tags)
-        subject_args = ["-XMP-dc:Subject="] + [f"-XMP-dc:Subject={tag}" for tag in preserved]
-        identifier_tags = _dedupe(preserved_identifiers + subject_tags)
-        identifier_args = ["-XMP-xmp:Identifier="] + [
-            f"-XMP-xmp:Identifier={tag}" for tag in identifier_tags
-        ]
-        hierarchical_args = ["-XMP-lr:HierarchicalSubject="] + [
-            f"-XMP-lr:HierarchicalSubject={tag}" for tag in preserved_hierarchical
-        ]
-        metadata_date = self._xmp_timestamp()
+        source_identity = _path_identity(xmp_path)
+        temp_path = xmp_path.with_name(f".{xmp_path.stem}.write-{uuid4().hex}.xmp")
+        try:
+            if source_identity is not None:
+                shutil.copy2(xmp_path, temp_path)
+                self._update_existing_xmp(
+                    temp_path,
+                    rating=rating,
+                    subject_tags=subject_tags,
+                    instructions=instructions,
+                    description=description,
+                )
+            else:
+                self._write_minimal_xmp(
+                    temp_path,
+                    rating,
+                    [],
+                    subject_tags,
+                    [],
+                    instructions,
+                    description,
+                )
+            if _path_identity(xmp_path) != source_identity:
+                raise RuntimeError(f"XMP changed during write; refusing to overwrite: {xmp_path}")
+            temp_path.replace(xmp_path)
+        except Exception:
+            temp_path.unlink(missing_ok=True)
+            raise
 
+    def _update_existing_xmp(
+        self,
+        xmp_path: str | Path,
+        *,
+        rating: int,
+        subject_tags: list[str],
+        instructions: str,
+        description: str,
+    ) -> None:
+        """Update owned fields while retaining every unrelated XMP namespace."""
+
+        _validate_material_rating(rating)
+        xmp_path = Path(xmp_path)
+        preserved = self._read_non_pj_subject_tags(xmp_path)
+        preserved_identifiers = self._read_non_pj_identifier_tags(xmp_path)
+        preserved_hierarchical = self._read_non_pj_hierarchical_subject_tags(xmp_path)
+        identifier_tags = _dedupe(preserved_identifiers + _dedupe(subject_tags))
+        metadata_date = self._xmp_timestamp()
         cmd = [
             "exiftool",
             f"-XMP-xmp:Rating={rating}",
@@ -212,22 +263,15 @@ class ExifToolXMPWriter:
             f"-XMP-xmp:CreatorTool={_CREATOR_TOOL}",
             f"-XMP-xmp:MetadataDate={metadata_date}",
             f"-XMP-xmp:ModifyDate={metadata_date}",
-        ] + subject_args + identifier_args + hierarchical_args
-
-        if xmp_exists:
-            cmd += ["-overwrite_original", str(xmp_path)]
-        else:
-            self._write_minimal_xmp(
-                xmp_path,
-                rating,
-                preserved,
-                identifier_tags,
-                preserved_hierarchical,
-                instructions,
-                description,
-            )
-            return
-
+            "-XMP-dc:Subject=",
+            *[f"-XMP-dc:Subject={tag}" for tag in preserved],
+            "-XMP-xmp:Identifier=",
+            *[f"-XMP-xmp:Identifier={tag}" for tag in identifier_tags],
+            "-XMP-lr:HierarchicalSubject=",
+            *[f"-XMP-lr:HierarchicalSubject={tag}" for tag in preserved_hierarchical],
+            "-overwrite_original",
+            str(xmp_path),
+        ]
         result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=30)
         if result.returncode != 0:
             raise RuntimeError(f"exiftool failed: {result.stderr}")
@@ -242,6 +286,7 @@ class ExifToolXMPWriter:
         instructions: str,
         description: str,
     ):
+        _validate_material_rating(rating)
         xmp_path = Path(xmp_path)
         temp_path = xmp_path.with_name(f"{xmp_path.name}.tmp-{uuid4().hex}")
         try:
@@ -277,15 +322,15 @@ class ExifToolXMPWriter:
         identifier_xml = _rdf_bag_xml("xmp:Identifier", identifier_tags)
         hierarchical_xml = _rdf_bag_xml("lr:hierarchicalSubject", hierarchical_subject_tags)
         xmp = (
-            "<?xpacket begin=\"\ufeff\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n"
-            f"<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"{_CREATOR_TOOL}\">\n"
-            "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n"
-            " <rdf:Description rdf:about=\"\"\n"
-            "  xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"\n"
-            "  xmlns:xmpMM=\"http://ns.adobe.com/xap/1.0/mm/\"\n"
-            "  xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n"
-            "  xmlns:lr=\"http://ns.adobe.com/lightroom/1.0/\"\n"
-            "  xmlns:photoshop=\"http://ns.adobe.com/photoshop/1.0/\">\n"
+            '<?xpacket begin="\ufeff" id="W5M0MpCehiHzreSzNTczkc9d"?>\n'
+            f'<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="{_CREATOR_TOOL}">\n'
+            '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">\n'
+            ' <rdf:Description rdf:about=""\n'
+            '  xmlns:xmp="http://ns.adobe.com/xap/1.0/"\n'
+            '  xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"\n'
+            '  xmlns:dc="http://purl.org/dc/elements/1.1/"\n'
+            '  xmlns:lr="http://ns.adobe.com/lightroom/1.0/"\n'
+            '  xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/">\n'
             f"  <xmp:Rating>{rating}</xmp:Rating>\n"
             f"  <xmp:CreatorTool>{_CREATOR_TOOL}</xmp:CreatorTool>\n"
             f"  <xmp:MetadataDate>{metadata_date}</xmp:MetadataDate>\n"
@@ -298,7 +343,7 @@ class ExifToolXMPWriter:
             f"  <photoshop:Instructions>{esc(instructions)}</photoshop:Instructions>\n"
             "  <dc:description>\n"
             "   <rdf:Alt>\n"
-            f"   <rdf:li xml:lang=\"x-default\">{esc(description)}</rdf:li>\n"
+            f'   <rdf:li xml:lang="x-default">{esc(description)}</rdf:li>\n'
             "   </rdf:Alt>\n"
             "  </dc:description>\n"
             " </rdf:Description>\n"
@@ -320,6 +365,64 @@ def _dedupe(values: list[str]) -> list[str]:
     return result
 
 
+def _read_xmp_root(xmp_path: str | Path) -> ET.Element:
+    """Parse a bounded, declaration-free XMP document.
+
+    XMP sidecars are local inputs but may originate in other applications or
+    archives. Refusing DTD/entity declarations and limiting the byte count
+    prevents entity-expansion and unbounded-input denial of service without
+    adding another runtime dependency.
+    """
+
+    path = Path(xmp_path)
+    with path.open("rb") as source:
+        payload = source.read(_MAX_XMP_BYTES + 1)
+    if len(payload) > _MAX_XMP_BYTES:
+        raise ValueError(f"XMP exceeds the {_MAX_XMP_BYTES}-byte safety limit: {path}")
+    normalized = payload.upper()
+    if b"<!DOCTYPE" in normalized or b"<!ENTITY" in normalized:
+        raise ValueError(f"XMP DTD/entity declarations are not allowed: {path}")
+    # The byte bound and declaration rejection above address the ElementTree
+    # hazards reported by generic XML security scanners.
+    return ET.fromstring(payload)  # nosec B314
+
+
+def _path_identity(path: Path) -> tuple[int, ...] | None:
+    try:
+        link_stat = path.lstat()
+    except FileNotFoundError:
+        return None
+    try:
+        target_stat = path.stat()
+    except OSError:
+        target_identity = (-1, -1, -1, -1)
+    else:
+        target_identity = (
+            int(target_stat.st_dev),
+            int(target_stat.st_ino),
+            int(target_stat.st_size),
+            int(target_stat.st_mtime_ns),
+        )
+    return (
+        int(link_stat.st_dev),
+        int(link_stat.st_ino),
+        int(link_stat.st_size),
+        int(link_stat.st_mtime_ns),
+        *target_identity,
+    )
+
+
+def _reject_symbolic_link(path: Path) -> None:
+    if path.is_symlink():
+        raise RuntimeError(f"Refusing to replace symbolic-link XMP sidecar: {path}")
+
+
+def _validate_material_rating(rating: int) -> None:
+    """Keep material-agent ratings inside its interoperable 0..5 star contract."""
+    if type(rating) is not int or not 0 <= rating <= 5:
+        raise ValueError(f"rating must be an integer from 0 to 5, got: {rating!r}")
+
+
 def _xmp_scalar_value(root: ET.Element, prefix: str, local_name: str) -> str | None:
     namespace = _XMP_NS[prefix]
     qualified = f"{{{namespace}}}{local_name}"
@@ -337,10 +440,4 @@ def _rdf_bag_xml(tag_name: str, values: list[str]) -> str:
         return ""
     esc = _saxutils.escape
     li_items = "\n".join(f"    <rdf:li>{esc(value)}</rdf:li>" for value in values)
-    return (
-        f"  <{tag_name}>\n"
-        "   <rdf:Bag>\n"
-        f"{li_items}\n"
-        "   </rdf:Bag>\n"
-        f"  </{tag_name}>\n"
-    )
+    return f"  <{tag_name}>\n   <rdf:Bag>\n{li_items}\n   </rdf:Bag>\n  </{tag_name}>\n"

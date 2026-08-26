@@ -34,6 +34,8 @@ loads lazily and must preserve the service-free heuristic fallback.
 ## Invariants
 
 - Optional packages are not imported when their block is disabled.
+- Remote Transformers embedding models require a full immutable commit SHA;
+  the default DINOv2-small revision is pinned in configuration and provenance.
 - Missing packages or weights produce explicit fallback metadata unless the
   block's `enforce_available` flag is true.
 - Configured runtime and actual runtime are different provenance fields.

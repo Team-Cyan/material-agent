@@ -195,7 +195,10 @@ def build_review_job_executor(
         ]
         return apply_group_review_fallback(
             results_with_commentary,
-            enabled=config.get("screening_policy", {}).get("top1_review_fallback", True),
+            enabled=bool(
+                config.get("grouping", {}).get("enabled", False)
+                and config.get("screening_policy", {}).get("top1_review_fallback", True)
+            ),
         )
 
     def write_file(

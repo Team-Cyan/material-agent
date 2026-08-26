@@ -50,7 +50,7 @@ def _load_omlx_settings(path: Path | None) -> dict:
         return {}
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError):
+    except OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError:
         return {}
     return payload if isinstance(payload, dict) else {}
 
@@ -104,9 +104,12 @@ def is_configured_shared_omlx_runtime(
     server_host = server_cfg.get("host", "127.0.0.1")
     try:
         server_port = int(server_cfg.get("port", 11435))
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         server_port = 11435
-    return _normalized_local_host(base_host) == _normalized_local_host(server_host) and base_port == server_port
+    return (
+        _normalized_local_host(base_host) == _normalized_local_host(server_host)
+        and base_port == server_port
+    )
 
 
 def discover_local_omlx_version() -> str | None:
@@ -152,7 +155,9 @@ def discover_omlx_api_key(
     return ""
 
 
-def load_omlx_instance_settings(config: dict, *, instance_settings_path: Path | None = None) -> dict:
+def load_omlx_instance_settings(
+    config: dict, *, instance_settings_path: Path | None = None
+) -> dict:
     return _load_omlx_settings(instance_settings_path or _instance_settings_path(config))
 
 
@@ -258,7 +263,9 @@ def _find_source_model_dir(model_name: str, source_dirs: list[Path]) -> Path:
                 nested = child / candidate
                 if nested.is_dir():
                     return nested
-    raise FileNotFoundError(f"Cannot find OMLX model directory for {model_name!r} in {source_dirs!r}")
+    raise FileNotFoundError(
+        f"Cannot find OMLX model directory for {model_name!r} in {source_dirs!r}"
+    )
 
 
 def _parse_base_url(base_url: str) -> tuple[str, int]:
@@ -316,7 +323,9 @@ def sync_omlx_shared_runtime(
     model_settings["version"] = model_settings.get("version", 1)
     model_entries = model_settings.setdefault("models", {})
     active_set = set(active_models)
-    tracked_models = sorted(set(model_entries) | active_set | set(_discover_source_model_names(source_dirs)))
+    tracked_models = sorted(
+        set(model_entries) | active_set | set(_discover_source_model_names(source_dirs))
+    )
 
     for model_name in tracked_models:
         if model_name in active_set:
@@ -345,7 +354,9 @@ def sync_omlx_shared_runtime(
     if model_settings_changed:
         _write_json(model_settings_path, model_settings)
 
-    inactive_models = sorted(model_name for model_name in model_entries if model_name not in active_set)
+    inactive_models = sorted(
+        model_name for model_name in model_entries if model_name not in active_set
+    )
     return {
         "settings_path": str(settings_path),
         "model_settings_path": str(model_settings_path),
@@ -378,12 +389,18 @@ def setup_omlx_instance(
     home_model_settings_path: Path | None = None,
 ) -> dict:
     instance_root = _instance_root(config)
+    if instance_root.is_symlink():
+        raise ValueError(f"oMLX instance_root must not be a symbolic link: {instance_root}")
+    instance_root.mkdir(parents=True, exist_ok=True)
+
     model_dir = instance_root / "models"
     cache_dir = instance_root / "cache"
     logs_dir = instance_root / "logs"
     run_dir = instance_root / "run"
     for directory in (model_dir, cache_dir, logs_dir, run_dir):
-        directory.mkdir(parents=True, exist_ok=True)
+        if directory.is_symlink():
+            raise ValueError(f"oMLX managed directory must not be a symbolic link: {directory}")
+        directory.mkdir(exist_ok=True)
 
     active_models = collect_omlx_runtime_models(config)
     source_dirs = _discover_source_model_dirs(config, home_settings_path)
@@ -470,9 +487,7 @@ def build_omlx_start_command(
 ) -> list[str]:
     omlx = _omlx_config(config)
     admin = omlx.get("admin", {}) if isinstance(omlx.get("admin"), dict) else {}
-    ensure_dedicated_start_is_unauthenticated(
-        omlx.get("api_key") or admin.get("api_key")
-    )
+    ensure_dedicated_start_is_unauthenticated(omlx.get("api_key") or admin.get("api_key"))
     host, port = _parse_base_url(omlx.get("base_url", "http://127.0.0.1:11435"))
     command_prefix = list(omlx_command_prefix)
     if len(command_prefix) == 1 and command_prefix[0] == _APP_CLI_PATH:

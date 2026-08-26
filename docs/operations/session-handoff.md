@@ -26,6 +26,27 @@ original requirement-by-requirement status and
 `docs/operations/2026-07-13-whole-project-review-fixes.md` for the latest
 findings, repair plan, and verification boundary.
 
+## 2026-07-30 Review And Candidate Verification
+
+- the whole repository review hardened transient EXIF failure caching, bounded
+  SQLite cache reads, complete model-bundle cache identity, private Web runtime
+  files, Web/container path agreement, configuration failure cleanup, OMLX
+  symlink boundaries, and XMP parsing/write concurrency;
+- local verification passes 704 tests; six live OMLX integration tests remain
+  opt-in through `PIXEL_JUDGE_RUN_OMLX_TESTS=1`;
+- the current Unraid DockerMan container still uses immutable image
+  `intel-openvino-47fb49e` and is stopped (`Exited (137)`); this review did not
+  restart it, replace it, change its template, or publish an image;
+- candidate source `47fb49ed1c7a+tree.7370e5c8b2ed` was overlaid read-only on
+  that existing image in a networkless, read-only, capability-free one-shot
+  container; 600 real RAW EXIF reads, 1,901-path SQLite batching, XMP
+  preservation/fail-closed/concurrent-update checks, model companion identity,
+  Web private modes, configuration, entrypoint syntax, and OMLX symlink
+  isolation all passed;
+- the candidate run left source XMP at `0 -> 0` and production-state file count
+  at `31 -> 31`; the ephemeral container was removed, and the subsequent
+  DockerMan audit reported 13 containers, 9 templates, and zero issues.
+
 ## Real-Camera Pilot Snapshot
 
 - private fixtures: five calibration and five holdout Sony A7C II ARWs from one
@@ -57,20 +78,24 @@ findings, repair plan, and verification boundary.
 
 ## Recommended Next Task
 
-- no engineering blocker remains outside the user-deferred human preference
-  review/personal calibration and primary-library XMP promotion gates;
+- decide separately whether to publish this verified candidate and perform an
+  authorized DockerMan image update/start; source-overlay verification is not a
+  production deployment;
 - use the Web library/detail views for optional human outlier review when the
-  user is ready to provide real preference evidence.
+  service is deliberately restored and the user is ready to provide real
+  preference evidence.
 
 ## Web Operations Snapshot
 
 - the Web operator is deployed on Unraid as immutable image
-  `ghcr.io/team-cyan/material-agent:intel-openvino-fab2c84` at port `8776`;
+  `ghcr.io/team-cyan/material-agent:intel-openvino-47fb49e` at port `8776`, but
+  the container is currently stopped;
 - the generation-based index contains 40,620 files from
   `/mnt/user/material/photos`, all with current score records and zero errors;
 - `material-agent web` serves configuration, task, model, library, thumbnail,
   score payload, and log APIs plus the bundled responsive operator UI;
-- non-loopback listeners require a bearer-token file;
+- the maintained Unraid Web listener is intentionally unauthenticated on the
+  trusted LAN; port `8776` must not be forwarded to the Internet;
 - Web tasks are hard-coded to `--dry-run`, and the photo root is only used for
   scanning and thumbnail decode;
 - `library_index` and complete dry-run score artifacts live in `/config/state.db`;
@@ -114,7 +139,7 @@ findings, repair plan, and verification boundary.
   while GPU cold start and peak RSS were materially higher, so production stays
   on the simpler CPU batch-1 profile without `/dev/dri`;
 - model artifacts can now be listed, installed, selected, and deleted through
-  the CLI or a bearer-protected HTTP service. Bundled immutable assets are never
+  the CLI or the primary Web service. Bundled immutable assets are never
   physically removed, while downloaded assets live under `/config/models`;
 - human aesthetic labels live under an appdata SQLite store with train/holdout
   splits. No personal target calibration was fitted because no genuine labels

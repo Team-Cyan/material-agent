@@ -200,6 +200,30 @@ def test_root_entrypoint_finds_run_input_after_options_for_source_protection(tmp
     assert "chown" not in command_log
 
 
+def test_root_entrypoint_uses_web_input_and_work_dir_for_source_protection(tmp_path):
+    explicit_input = tmp_path / "web-photos"
+    result, command_log = _run_root_entrypoint(
+        tmp_path,
+        input_dir="/photos",
+        work_dir=tmp_path / "safe-env-work",
+        command_args=(
+            "material-agent",
+            "web",
+            "--host",
+            "0.0.0.0",
+            "--input-dir",
+            str(explicit_input),
+            "--work-dir",
+            str(explicit_input / ".material-agent"),
+        ),
+        prepare_runtime=False,
+    )
+
+    assert result.returncode == 64
+    assert "must stay outside MATERIAL_AGENT_INPUT_DIR" in result.stderr
+    assert "chown" not in command_log
+
+
 @pytest.mark.parametrize(
     "command_args",
     [
@@ -213,6 +237,27 @@ def test_root_entrypoint_rejects_malformed_run_options_before_chown(tmp_path, co
     result, command_log = _run_root_entrypoint(
         tmp_path,
         work_dir=tmp_path / "photos" / ".material-agent",
+        command_args=command_args,
+        prepare_runtime=False,
+    )
+
+    assert result.returncode == 64
+    assert command_log == ""
+
+
+@pytest.mark.parametrize(
+    "command_args",
+    [
+        ("material-agent", "web", "--input-dir", "/photos", "--work-dir"),
+        ("material-agent", "web", "--input-dir", "/photos", "--work-dir="),
+        ("material-agent", "web", "--input-dir", "/photos", "--work-dir", "/config", "--bogus"),
+    ],
+)
+def test_root_entrypoint_rejects_malformed_web_options_before_chown(tmp_path, command_args):
+    result, command_log = _run_root_entrypoint(
+        tmp_path,
+        input_dir="/photos",
+        work_dir=tmp_path / "safe-work",
         command_args=command_args,
         prepare_runtime=False,
     )

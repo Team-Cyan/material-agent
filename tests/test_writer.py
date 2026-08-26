@@ -1,10 +1,13 @@
 import json
+from pathlib import Path
 import shutil
 import subprocess
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import pytest
 
+from material_agent.adapters.metadata import exiftool_xmp
 from material_agent.adapters.metadata.exiftool_xmp import ExifToolXMPWriter
 from material_agent.io.writer import XMPWriter
 
@@ -30,6 +33,41 @@ def test_writer_score_to_stars():
     assert w.score_to_stars(5.0) == 3
     assert w.score_to_stars(10.0) == 5
     assert w.score_to_stars(20.0) == 5
+
+
+@pytest.mark.parametrize("rating", [0, 1, 2, 3, 4, 5])
+def test_writer_accepts_full_material_rating_range(tmp_path, rating):
+    arw = tmp_path / f"rating-{rating}.ARW"
+    arw.write_bytes(b"fake")
+
+    ExifToolXMPWriter().write(
+        str(arw),
+        rating=rating,
+        subject_tags=[],
+        instructions="x",
+        description="x",
+    )
+
+    assert f"<xmp:Rating>{rating}</xmp:Rating>" in arw.with_suffix(".xmp").read_text(
+        encoding="utf-8"
+    )
+
+
+@pytest.mark.parametrize("rating", [-1, 6, 4.5, True, "5"])
+def test_writer_rejects_rating_outside_material_contract(tmp_path, rating):
+    arw = tmp_path / "invalid-rating.ARW"
+    arw.write_bytes(b"fake")
+
+    with pytest.raises(ValueError, match="integer from 0 to 5"):
+        ExifToolXMPWriter().write(
+            str(arw),
+            rating=rating,
+            subject_tags=[],
+            instructions="x",
+            description="x",
+        )
+
+    assert not arw.with_suffix(".xmp").exists()
 
 
 def test_writer_rejects_unsupported_machine_tag_target():
@@ -59,7 +97,13 @@ def test_writer_new_xmp_written_directly(tmp_path):
     xmp = tmp_path / "test.xmp"
     w = ExifToolXMPWriter()
     with patch("subprocess.run") as mock_run:
-        w.write(str(arw), rating=4, subject_tags=["pj:score=8.0"], instructions="exp:8.0", description="好照片")
+        w.write(
+            str(arw),
+            rating=4,
+            subject_tags=["pj:score=8.0"],
+            instructions="exp:8.0",
+            description="好照片",
+        )
     assert not mock_run.called, "subprocess must not be called when creating a new XMP"
     assert xmp.exists()
 
@@ -69,8 +113,13 @@ def test_writer_new_xmp_contains_subject_tags(tmp_path):
     arw.write_bytes(b"fake")
     xmp = tmp_path / "test.xmp"
     w = ExifToolXMPWriter()
-    w.write(str(arw), rating=4, subject_tags=["pj:score=8.0", "pj:scene=人物"],
-            instructions="exp:8.0", description="好照片")
+    w.write(
+        str(arw),
+        rating=4,
+        subject_tags=["pj:score=8.0", "pj:scene=人物"],
+        instructions="exp:8.0",
+        description="好照片",
+    )
     content = xmp.read_text(encoding="utf-8")
     assert "<dc:subject>" not in content
     assert "<xmp:Identifier>" in content
@@ -84,7 +133,9 @@ def test_writer_new_xmp_has_no_exif_namespace(tmp_path):
     arw.write_bytes(b"fake")
     xmp = tmp_path / "test.xmp"
     w = ExifToolXMPWriter()
-    w.write(str(arw), rating=3, subject_tags=["pj:score=7.0"], instructions="exp:7.0", description="x")
+    w.write(
+        str(arw), rating=3, subject_tags=["pj:score=7.0"], instructions="exp:7.0", description="x"
+    )
     content = xmp.read_text(encoding="utf-8")
     assert "xmlns:exif=" not in content
     assert "xmlns:tiff=" not in content
@@ -198,14 +249,22 @@ def test_writer_updates_existing_xmp_without_output_flag(tmp_path):
     arw = tmp_path / "test.ARW"
     arw.write_bytes(b"fake")
     xmp = tmp_path / "test.xmp"
-    xmp.write_text("existing")
+    xmp.write_text(_SAMPLE_XMP, encoding="utf-8")
     w = ExifToolXMPWriter()
     with patch("subprocess.run") as mock_run:
         mock_run.return_value.returncode = 0
-        w.write(str(arw), rating=4, subject_tags=["pj:score=8.0"],
-                instructions="exp:8.0", description="好照片")
+        w.write(
+            str(arw),
+            rating=4,
+            subject_tags=["pj:score=8.0"],
+            instructions="exp:8.0",
+            description="好照片",
+        )
     cmd = mock_run.call_args[0][0]
-    assert str(xmp) == cmd[-1]
+    assert Path(cmd[-1]).parent == xmp.parent
+    assert Path(cmd[-1]).name.startswith(".test.write-")
+    assert not Path(cmd[-1]).exists()
+    assert xmp.exists()
     assert "-o" not in cmd
 
 
@@ -217,11 +276,19 @@ def test_writer_updates_existing_uppercase_xmp_sidecar(tmp_path):
     w = ExifToolXMPWriter()
     with patch("subprocess.run") as mock_run:
         mock_run.return_value.returncode = 0
-        w.write(str(arw), rating=4, subject_tags=["pj:score=8.0"],
-                instructions="exp:8.0", description="好照片")
+        w.write(
+            str(arw),
+            rating=4,
+            subject_tags=["pj:score=8.0"],
+            instructions="exp:8.0",
+            description="好照片",
+        )
 
     cmd = mock_run.call_args[0][0]
-    assert str(xmp) == cmd[-1]
+    assert Path(cmd[-1]).parent == xmp.parent
+    assert Path(cmd[-1]).name.startswith(".test.write-")
+    assert not Path(cmd[-1]).exists()
+    assert xmp.exists()
     assert "test.xmp" not in {path.name for path in tmp_path.iterdir()}
 
 
@@ -233,8 +300,13 @@ def test_writer_updates_existing_xmp_description_as_x_default(tmp_path):
     w = ExifToolXMPWriter()
     with patch("subprocess.run") as mock_run:
         mock_run.return_value.returncode = 0
-        w.write(str(arw), rating=4, subject_tags=["pj:score=8.0"],
-                instructions="exp:8.0", description="好照片")
+        w.write(
+            str(arw),
+            rating=4,
+            subject_tags=["pj:score=8.0"],
+            instructions="exp:8.0",
+            description="好照片",
+        )
 
     cmd = mock_run.call_args[0][0]
     assert "-XMP-photoshop:Instructions=exp:8.0" in cmd
@@ -272,7 +344,7 @@ def test_writer_overwrite_original_only_for_existing_xmp(tmp_path):
 
     # Existing file: -overwrite_original present, no -o
     xmp = tmp_path / "test.xmp"
-    xmp.write_text("existing")
+    xmp.write_text(_SAMPLE_XMP, encoding="utf-8")
     with patch("subprocess.run") as mock_run:
         mock_run.return_value.returncode = 0
         w.write(str(arw), rating=3, subject_tags=[], instructions="x", description="x")
@@ -291,8 +363,13 @@ def test_writer_preserves_user_keywords_on_rewrite(tmp_path):
     w = ExifToolXMPWriter()
     with patch("subprocess.run") as mock_run:
         mock_run.return_value.returncode = 0
-        w.write(str(arw), rating=4, subject_tags=["pj:score=8.0"],
-                instructions="exp:8.0", description="好照片")
+        w.write(
+            str(arw),
+            rating=4,
+            subject_tags=["pj:score=8.0"],
+            instructions="exp:8.0",
+            description="好照片",
+        )
 
     # Only one subprocess call (the write); reading is done via ET.parse
     assert mock_run.call_count == 1
@@ -305,6 +382,71 @@ def test_writer_preserves_user_keywords_on_rewrite(tmp_path):
     assert "-XMP-dc:Subject=pj:rank=1/3" not in write_cmd
 
 
+@pytest.mark.skipif(shutil.which("exiftool") is None, reason="exiftool is not installed")
+def test_writer_real_exiftool_update_preserves_unrelated_xmp(tmp_path):
+    arw = tmp_path / "preserve.ARW"
+    arw.write_bytes(b"fake")
+    xmp = arw.with_suffix(".xmp")
+    xmp.write_text(
+        (
+            "<?xpacket begin='' id='W5M0MpCehiHzreSzNTczkc9d'?>"
+            "<x:xmpmeta xmlns:x='adobe:ns:meta/'>"
+            "<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>"
+            "<rdf:Description rdf:about='' "
+            "xmlns:dc='http://purl.org/dc/elements/1.1/' "
+            "xmlns:xmp='http://ns.adobe.com/xap/1.0/' "
+            "xmlns:lr='http://ns.adobe.com/lightroom/1.0/' "
+            "xmlns:crs='http://ns.adobe.com/camera-raw-settings/1.0/'>"
+            "<crs:Exposure2012>1.25</crs:Exposure2012>"
+            "<dc:subject><rdf:Bag>"
+            "<rdf:li>human-keyword</rdf:li><rdf:li>pj:score=1.0</rdf:li>"
+            "</rdf:Bag></dc:subject>"
+            "<xmp:Identifier><rdf:Bag>"
+            "<rdf:li>human-identifier</rdf:li><rdf:li>pj:score=1.0</rdf:li>"
+            "</rdf:Bag></xmp:Identifier>"
+            "<lr:hierarchicalSubject><rdf:Bag>"
+            "<rdf:li>Places|Stage</rdf:li>"
+            "</rdf:Bag></lr:hierarchicalSubject>"
+            "</rdf:Description></rdf:RDF></x:xmpmeta>"
+            "<?xpacket end='w'?>"
+        ),
+        encoding="utf-8",
+    )
+
+    ExifToolXMPWriter().write(
+        str(arw),
+        rating=5,
+        subject_tags=["pj:score=9.0"],
+        instructions="quality:9.0",
+        description="updated",
+    )
+
+    result = subprocess.run(
+        [
+            "exiftool",
+            "-j",
+            "-XMP-xmp:Rating",
+            "-XMP-dc:Subject",
+            "-XMP-xmp:Identifier",
+            "-XMP-lr:HierarchicalSubject",
+            "-XMP-crs:Exposure2012",
+            str(xmp),
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=30,
+        check=True,
+    )
+    payload = json.loads(result.stdout)[0]
+
+    assert payload["Rating"] == 5
+    assert payload["Subject"] == "human-keyword"
+    assert payload["Identifier"] == ["human-identifier", "pj:score=9.0"]
+    assert payload["HierarchicalSubject"] == "Places|Stage"
+    assert payload["Exposure2012"] == 1.25
+
+
 def test_writer_read_subject_tags_parses_xmp_directly(tmp_path):
     """_read_non_pj_subject_tags uses ET.parse, no subprocess."""
     xmp = tmp_path / "test.xmp"
@@ -314,16 +456,125 @@ def test_writer_read_subject_tags_parses_xmp_directly(tmp_path):
     assert tags == ["wedding"]
 
 
-def test_writer_read_subject_tags_logs_warning_on_bad_xmp(tmp_path, caplog):
-    """Bad XMP triggers a warning log and returns [] rather than crashing."""
+def test_writer_read_subject_tags_refuses_bad_xmp(tmp_path, caplog):
+    """Bad XMP must fail closed instead of converting user metadata to an empty bag."""
     import logging
+
     xmp = tmp_path / "bad.xmp"
     xmp.write_text("not xml at all", encoding="utf-8")
     w = ExifToolXMPWriter()
     with caplog.at_level(logging.WARNING, logger="material_agent"):
-        result = w._read_non_pj_subject_tags(str(xmp))
-    assert result == []
-    assert any("user keywords may not be preserved" in r.message for r in caplog.records)
+        with pytest.raises(RuntimeError, match="Unable to safely preserve Subject"):
+            w._read_non_pj_subject_tags(str(xmp))
+    assert any("refusing to overwrite user metadata" in r.message for r in caplog.records)
+
+
+def test_writer_does_not_invoke_exiftool_when_existing_xmp_is_malformed(tmp_path):
+    arw = tmp_path / "bad.ARW"
+    arw.write_bytes(b"fake")
+    arw.with_suffix(".xmp").write_text("not xml at all", encoding="utf-8")
+
+    with patch("subprocess.run") as mock_run:
+        with pytest.raises(RuntimeError, match="Unable to safely preserve Subject"):
+            ExifToolXMPWriter().write(
+                str(arw),
+                rating=4,
+                subject_tags=["pj:score=8.0"],
+                instructions="x",
+                description="x",
+            )
+
+    mock_run.assert_not_called()
+
+
+def test_writer_refuses_concurrent_existing_sidecar_change(tmp_path):
+    arw = tmp_path / "concurrent.ARW"
+    arw.write_bytes(b"fake")
+    xmp = arw.with_suffix(".xmp")
+    xmp.write_text(_SAMPLE_XMP, encoding="utf-8")
+
+    class _ConcurrentWriter(ExifToolXMPWriter):
+        def _update_existing_xmp(self, temporary_path, **kwargs):
+            Path(temporary_path).write_text("candidate", encoding="utf-8")
+            xmp.write_text("human update", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="changed during write"):
+        _ConcurrentWriter().write(
+            str(arw),
+            rating=4,
+            subject_tags=[],
+            instructions="x",
+            description="x",
+        )
+
+    assert xmp.read_text(encoding="utf-8") == "human update"
+    assert not list(tmp_path.glob(".concurrent.write-*.xmp"))
+
+
+def test_writer_refuses_sidecar_created_during_new_write(tmp_path):
+    arw = tmp_path / "created.ARW"
+    arw.write_bytes(b"fake")
+    xmp = arw.with_suffix(".xmp")
+
+    class _ConcurrentWriter(ExifToolXMPWriter):
+        def _write_minimal_xmp(self, temporary_path, *args, **kwargs):
+            Path(temporary_path).write_text("candidate", encoding="utf-8")
+            xmp.write_text("human-created sidecar", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="changed during write"):
+        _ConcurrentWriter().write(
+            str(arw),
+            rating=4,
+            subject_tags=[],
+            instructions="x",
+            description="x",
+        )
+
+    assert xmp.read_text(encoding="utf-8") == "human-created sidecar"
+    assert not list(tmp_path.glob(".created.write-*.xmp"))
+
+
+def test_writer_refuses_xmp_entity_declarations_before_exiftool(tmp_path):
+    arw = tmp_path / "entity.ARW"
+    arw.write_bytes(b"fake")
+    arw.with_suffix(".xmp").write_text(
+        (
+            "<!DOCTYPE x [<!ENTITY expansion 'unsafe'>]>"
+            "<x:xmpmeta xmlns:x='adobe:ns:meta/'>&expansion;</x:xmpmeta>"
+        ),
+        encoding="utf-8",
+    )
+
+    with patch("subprocess.run") as mock_run:
+        with pytest.raises(RuntimeError, match="Unable to safely preserve Subject"):
+            ExifToolXMPWriter().write(
+                str(arw),
+                rating=4,
+                subject_tags=[],
+                instructions="x",
+                description="x",
+            )
+
+    mock_run.assert_not_called()
+
+
+def test_writer_refuses_xmp_above_bounded_parse_limit(tmp_path, monkeypatch):
+    monkeypatch.setattr(exiftool_xmp, "_MAX_XMP_BYTES", 32)
+    arw = tmp_path / "oversized.ARW"
+    arw.write_bytes(b"fake")
+    arw.with_suffix(".xmp").write_bytes(b"<x>" + b"a" * 64 + b"</x>")
+
+    with patch("subprocess.run") as mock_run:
+        with pytest.raises(RuntimeError, match="Unable to safely preserve Subject"):
+            ExifToolXMPWriter().write(
+                str(arw),
+                rating=4,
+                subject_tags=[],
+                instructions="x",
+                description="x",
+            )
+
+    mock_run.assert_not_called()
 
 
 def test_writer_clear_ai_tags_preserves_non_pj_keywords(tmp_path):
@@ -362,8 +613,9 @@ def test_writer_clear_ai_tags_preserves_human_edited_scalar_fields(tmp_path):
     )
     content = xmp.read_text(encoding="utf-8")
     xmp.write_text(
-        content.replace("<xmp:Rating>4</xmp:Rating>", "<xmp:Rating>5</xmp:Rating>")
-        .replace("agent description", "human description"),
+        content.replace("<xmp:Rating>4</xmp:Rating>", "<xmp:Rating>5</xmp:Rating>").replace(
+            "agent description", "human description"
+        ),
         encoding="utf-8",
     )
 
@@ -384,6 +636,56 @@ def test_writer_clear_ai_tags_preserves_human_edited_scalar_fields(tmp_path):
     assert "-XMP-photoshop:Instructions=" in cmd
     assert "-XMP-dc:Description-x-default=" not in cmd
     assert "-XMP-xmp:Identifier=" in cmd
+
+
+def test_writer_clear_ai_tags_refuses_concurrent_sidecar_change(tmp_path):
+    arw = tmp_path / "clear-concurrent.ARW"
+    arw.write_bytes(b"fake")
+    xmp = arw.with_suffix(".xmp")
+    xmp.write_text(_SAMPLE_XMP, encoding="utf-8")
+
+    def _run(*_args, **_kwargs):
+        xmp.write_text("human update", encoding="utf-8")
+        return SimpleNamespace(returncode=0, stderr="")
+
+    with patch("subprocess.run", side_effect=_run):
+        with pytest.raises(RuntimeError, match="changed during AI cleanup"):
+            ExifToolXMPWriter().clear_ai_tags(str(arw), force_scalar_clear=True)
+
+    assert xmp.read_text(encoding="utf-8") == "human update"
+    assert not list(tmp_path.glob(".clear-concurrent.clear-*.xmp"))
+
+
+def test_writer_refuses_existing_symbolic_link_sidecar(tmp_path):
+    arw = tmp_path / "linked.ARW"
+    arw.write_bytes(b"fake")
+    target = tmp_path / "shared.xmp"
+    target.write_text(_SAMPLE_XMP, encoding="utf-8")
+    arw.with_suffix(".xmp").symlink_to(target)
+
+    with pytest.raises(RuntimeError, match="symbolic-link XMP sidecar"):
+        ExifToolXMPWriter().write(
+            str(arw),
+            rating=4,
+            subject_tags=[],
+            instructions="x",
+            description="x",
+        )
+
+    assert target.read_text(encoding="utf-8") == _SAMPLE_XMP
+
+
+def test_writer_clear_ai_tags_refuses_symbolic_link_sidecar(tmp_path):
+    arw = tmp_path / "linked-clear.ARW"
+    arw.write_bytes(b"fake")
+    target = tmp_path / "shared-clear.xmp"
+    target.write_text(_SAMPLE_XMP, encoding="utf-8")
+    arw.with_suffix(".xmp").symlink_to(target)
+
+    with pytest.raises(RuntimeError, match="symbolic-link XMP sidecar"):
+        ExifToolXMPWriter().clear_ai_tags(str(arw), force_scalar_clear=True)
+
+    assert target.read_text(encoding="utf-8") == _SAMPLE_XMP
 
 
 def test_io_writer_keeps_compatibility_alias():

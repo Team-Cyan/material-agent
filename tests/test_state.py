@@ -526,12 +526,13 @@ def test_visual_hash_cache_round_trip():
         }
 
 
-def test_exif_cache_skips_none_and_invalidates_when_file_changes(tmp_path):
+def test_exif_cache_preserves_none_and_invalidates_when_file_changes(tmp_path):
     image_path = tmp_path / "image.raw"
     image_path.write_bytes(b"first")
     with State(tmp_path) as state:
         state.set_exif_cache({str(image_path): None})
-        assert state.conn.execute("SELECT COUNT(*) FROM exif_cache").fetchone()[0] == 0
+        assert state.conn.execute("SELECT COUNT(*) FROM exif_cache").fetchone()[0] == 1
+        assert state.get_exif_cache([str(image_path)]) == {str(image_path): None}
 
         state.set_exif_cache({str(image_path): "2026:07:13 10:00:00"})
         assert state.get_exif_cache([str(image_path)]) == {str(image_path): "2026:07:13 10:00:00"}
@@ -539,6 +540,30 @@ def test_exif_cache_skips_none_and_invalidates_when_file_changes(tmp_path):
         image_path.write_bytes(b"replacement-with-different-size")
 
         assert state.get_exif_cache([str(image_path)]) == {}
+
+
+def test_large_cache_reads_use_bounded_sqlite_parameter_batches(tmp_path, monkeypatch):
+    paths = [f"/missing/{index:04d}.raw" for index in range(1_901)]
+    with State(tmp_path) as state:
+        state.set_exif_cache({path: None for path in paths})
+        state.set_visual_hash_cache({path: "0" * 16 for path in paths})
+        state.set_embedding_cache({path: [0.1, 0.2] for path in paths}, "model-v1")
+        original_execute = state._execute
+        parameter_counts: list[int] = []
+
+        def _tracking_execute(sql, params=()):
+            if " IN (" in sql:
+                parameter_counts.append(len(params))
+            return original_execute(sql, params)
+
+        monkeypatch.setattr(state, "_execute", _tracking_execute)
+
+        assert len(state.get_exif_cache(paths)) == len(paths)
+        assert len(state.get_visual_hash_cache(paths)) == len(paths)
+        assert len(state.get_embedding_cache(paths, "model-v1")) == len(paths)
+
+    assert len(parameter_counts) == 9
+    assert max(parameter_counts) <= 901
 
 
 def test_visual_hash_cache_invalidates_when_file_changes(tmp_path):

@@ -3,7 +3,7 @@
 import copy
 import sys
 
-from .constants import AESTHETIC_DIMS
+from .constants import AESTHETIC_DIMS, DINOV2_MODEL_NAME, DINOV2_MODEL_REVISION
 
 
 _OMLX_RUNTIME_DEFAULTS = {
@@ -422,7 +422,11 @@ def normalize_config(cfg: dict) -> dict:
     embedding["enabled"] = _coerce_bool_like(embedding.get("enabled", False))
     embedding["enforce_available"] = _coerce_bool_like(embedding.get("enforce_available", False))
     embedding.setdefault("runtime", "transformers")
-    embedding.setdefault("model_name", "facebook/dinov2-small")
+    embedding.setdefault("model_name", DINOV2_MODEL_NAME)
+    if "model_revision" not in embedding:
+        embedding["model_revision"] = (
+            DINOV2_MODEL_REVISION if embedding["model_name"] == DINOV2_MODEL_NAME else ""
+        )
     embedding.setdefault("device", "cpu")
     embedding.setdefault("model_path", "")
     embedding.setdefault("processor_path", "")
@@ -492,16 +496,22 @@ def normalize_config(cfg: dict) -> dict:
         )
 
     normalized["focus_integrity"] = copy.deepcopy(normalized.get("focus_integrity", {}))
-    normalized["focus_integrity"].setdefault("enabled", True)
+    normalized["focus_integrity"]["enabled"] = _coerce_bool_like(
+        normalized["focus_integrity"].get("enabled", True)
+    )
     normalized["focus_integrity"].setdefault("mode", "subject_roi")
-    normalized["focus_integrity"].setdefault("high_resolution_roi", True)
+    normalized["focus_integrity"]["high_resolution_roi"] = _coerce_bool_like(
+        normalized["focus_integrity"].get("high_resolution_roi", True)
+    )
     normalized["focus_integrity"].setdefault("downscale_warning_ratio", 3.0)
     normalized["focus_integrity"].setdefault("roi_expand_ratio", 0.12)
     normalized["focus_integrity"].setdefault("eye_roi_ratio", 0.16)
     normalized["focus_integrity"].setdefault("global_blur_reject_below", 0.25)
 
     normalized["portrait_face_eye"] = copy.deepcopy(normalized.get("portrait_face_eye", {}))
-    normalized["portrait_face_eye"].setdefault("enabled", False)
+    normalized["portrait_face_eye"]["enabled"] = _coerce_bool_like(
+        normalized["portrait_face_eye"].get("enabled", False)
+    )
     normalized["portrait_face_eye"].setdefault("min_face_ratio", 0.08)
     normalized["portrait_face_eye"].setdefault("review_penalty", 0.8)
 
@@ -514,7 +524,9 @@ def normalize_config(cfg: dict) -> dict:
 
     normalized["screening_policy"] = copy.deepcopy(normalized.get("screening_policy", {}))
     normalized["screening_policy"].setdefault("weight", 0.10)
-    normalized["screening_policy"].setdefault("top1_review_fallback", True)
+    normalized["screening_policy"]["top1_review_fallback"] = _coerce_bool_like(
+        normalized["screening_policy"].get("top1_review_fallback", True)
+    )
 
     normalized["review_pipeline"] = copy.deepcopy(normalized.get("review_pipeline", {}))
     normalized["review_pipeline"].setdefault("score_prefetch_window", 2)
@@ -589,15 +601,11 @@ def validate_config(cfg: dict) -> None:
     registry_dir = model_management.get("registry_dir")
     if not isinstance(registry_dir, str) or not registry_dir.strip():
         errors.append(
-            "model_management.registry_dir must be a non-empty string, "
-            f"got: {registry_dir!r}"
+            f"model_management.registry_dir must be a non-empty string, got: {registry_dir!r}"
         )
     catalog_path = model_management.get("catalog_path", "")
     if not isinstance(catalog_path, str):
-        errors.append(
-            "model_management.catalog_path must be a string, "
-            f"got: {catalog_path!r}"
-        )
+        errors.append(f"model_management.catalog_path must be a string, got: {catalog_path!r}")
     preview = cfg.get("preview", {})
     if "prefer_embedded" in preview and not _is_valid_bool_like(preview.get("prefer_embedded")):
         errors.append(
@@ -612,9 +620,7 @@ def validate_config(cfg: dict) -> None:
         if value is not None and (
             not isinstance(value, int) or isinstance(value, bool) or not 64 <= value <= 8192
         ):
-            errors.append(
-                f"preview.{key} must be an integer between 64 and 8192, got: {value!r}"
-            )
+            errors.append(f"preview.{key} must be an integer between 64 and 8192, got: {value!r}")
     focus_integrity = cfg.get("focus_integrity", {})
     for key in ("enabled", "high_resolution_roi"):
         if not _is_valid_bool_like(focus_integrity.get(key, False)):
@@ -629,9 +635,7 @@ def validate_config(cfg: dict) -> None:
     for key in ("roi_expand_ratio", "eye_roi_ratio"):
         value = focus_integrity.get(key)
         if not isinstance(value, int | float) or not 0.0 <= float(value) <= 1.0:
-            errors.append(
-                f"focus_integrity.{key} must be a number between 0 and 1, got: {value!r}"
-            )
+            errors.append(f"focus_integrity.{key} must be a number between 0 and 1, got: {value!r}")
     blur_threshold = focus_integrity.get("global_blur_reject_below")
     if not isinstance(blur_threshold, int | float) or not 0.0 <= float(blur_threshold) <= 10.0:
         errors.append(
@@ -665,6 +669,57 @@ def validate_config(cfg: dict) -> None:
         errors.append(
             "review_pipeline.max_files must be an integer between "
             f"1 and {_MAX_REVIEW_FILE_LIMIT}, got: {max_files!r}"
+        )
+    decision_policy = cfg.get("decision_policy", {})
+    keep_threshold = decision_policy.get("keep_threshold")
+    review_threshold = decision_policy.get("review_threshold")
+    for key, value in (
+        ("keep_threshold", keep_threshold),
+        ("review_threshold", review_threshold),
+    ):
+        if (
+            not isinstance(value, int | float)
+            or isinstance(value, bool)
+            or not 0.0 <= float(value) <= 10.0
+        ):
+            errors.append(
+                f"decision_policy.{key} must be a number between 0 and 10, got: {value!r}"
+            )
+    if (
+        isinstance(keep_threshold, int | float)
+        and not isinstance(keep_threshold, bool)
+        and isinstance(review_threshold, int | float)
+        and not isinstance(review_threshold, bool)
+        and float(review_threshold) > float(keep_threshold)
+    ):
+        errors.append("decision_policy.review_threshold must not exceed keep_threshold")
+    hard_reject = decision_policy.get("hard_reject", {})
+    for key in ("technical_quality_below", "subject_focus_below"):
+        value = hard_reject.get(key)
+        if (
+            not isinstance(value, int | float)
+            or isinstance(value, bool)
+            or not 0.0 <= float(value) <= 10.0
+        ):
+            errors.append(
+                f"decision_policy.hard_reject.{key} must be a number between 0 and 10, "
+                f"got: {value!r}"
+            )
+    screening_policy = cfg.get("screening_policy", {})
+    screening_weight = screening_policy.get("weight")
+    if (
+        not isinstance(screening_weight, int | float)
+        or isinstance(screening_weight, bool)
+        or not 0.0 <= float(screening_weight) <= 0.60
+    ):
+        errors.append(
+            "screening_policy.weight must be a number between 0 and 0.60, "
+            f"got: {screening_weight!r}"
+        )
+    if not _is_valid_bool_like(screening_policy.get("top1_review_fallback", True)):
+        errors.append(
+            "screening_policy.top1_review_fallback must be a boolean, "
+            f"got: {screening_policy.get('top1_review_fallback')!r}"
         )
     grouping = cfg.get("grouping", {})
     embedding_similarity = grouping.get("embedding_similarity", {})
@@ -848,9 +903,7 @@ def validate_config(cfg: dict) -> None:
             )
         policy_version = calibration.get("policy_version", "target-affine-v1")
         if not isinstance(policy_version, str) or not policy_version.strip():
-            errors.append(
-                "local.aesthetic.calibration.policy_version must be a non-empty string"
-            )
+            errors.append("local.aesthetic.calibration.policy_version must be a non-empty string")
         minimum_label_count = calibration.get("minimum_label_count", 20)
         if (
             not isinstance(minimum_label_count, int)
@@ -874,8 +927,7 @@ def validate_config(cfg: dict) -> None:
         pivot = calibration.get("pivot", 5.5)
         if not isinstance(pivot, int | float) or isinstance(pivot, bool) or not 1 <= pivot <= 10:
             errors.append(
-                "local.aesthetic.calibration.pivot must be between 1 and 10, "
-                f"got: {pivot!r}"
+                f"local.aesthetic.calibration.pivot must be between 1 and 10, got: {pivot!r}"
             )
         profiles = calibration.get("profiles", {})
         if isinstance(profiles, dict):
@@ -923,6 +975,23 @@ def validate_config(cfg: dict) -> None:
             value = embedding.get(key)
             if not isinstance(value, str) or not value.strip():
                 errors.append(f"local.embedding.{key} must be a non-empty string, got: {value!r}")
+        model_revision = embedding.get("model_revision", "")
+        if not isinstance(model_revision, str):
+            errors.append(
+                f"local.embedding.model_revision must be a string, got: {model_revision!r}"
+            )
+        elif (
+            embedding.get("enabled", False)
+            and embedding.get("runtime", "transformers") == "transformers"
+            and (
+                len(model_revision) != 40
+                or any(character not in "0123456789abcdef" for character in model_revision.lower())
+            )
+        ):
+            errors.append(
+                "local.embedding.model_revision must be a full 40-character commit "
+                "SHA when Transformers embedding is enabled"
+            )
         result_cache_size = embedding.get("result_cache_size", 256)
         if (
             not isinstance(result_cache_size, int)

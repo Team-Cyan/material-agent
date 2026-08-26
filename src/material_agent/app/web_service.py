@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from contextlib import redirect_stdout
 import hashlib
+import io
 import json
 import os
 import shutil
@@ -22,6 +24,7 @@ from ..adapters.state.sqlite_runtime import SQLiteRuntimeRepository, redact_secr
 from ..commands.scoring import load_config
 from ..domain.scoring_engine import decode_raw
 from ..io.scanner import scan_arw_files
+from ..utils.file_security import secure_private_file
 from .model_catalog_service import (
     DEFAULT_MODEL_CATALOG,
     ModelCatalogService,
@@ -33,19 +36,51 @@ _REDACTED = "[REDACTED]"
 _TERMINAL_TASK_STATES = {"finished", "failed", "cancelled", "interrupted"}
 
 
+def _write_private_text(path: Path, content: str) -> None:
+    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    try:
+        os.fchmod(descriptor, 0o600)
+        with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+            descriptor = -1
+            handle.write(content)
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+
+
+def _open_private_append(path: Path):
+    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+    try:
+        os.fchmod(descriptor, 0o600)
+        return os.fdopen(descriptor, "ab", buffering=0)
+    except Exception:
+        os.close(descriptor)
+        raise
+
+
+def _load_web_config(path: Path) -> dict:
+    validation_output = io.StringIO()
+    try:
+        with redirect_stdout(validation_output):
+            return load_config(str(path))
+    except SystemExit as error:
+        detail = validation_output.getvalue().strip()
+        raise ValueError(detail or f"invalid runtime config: {path}") from error
+
+
 def _json_value(raw: str | None, fallback):
     if not raw:
         return fallback
     try:
         return json.loads(raw)
-    except (TypeError, json.JSONDecodeError):
+    except TypeError, json.JSONDecodeError:
         return fallback
 
 
 def _safe_int(value, *, default: int, minimum: int, maximum: int) -> int:
     try:
         parsed = int(value)
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         return default
     return min(maximum, max(minimum, parsed))
 
@@ -54,13 +89,13 @@ def _restore_redacted(existing, proposed):
     if proposed == _REDACTED:
         return existing
     if isinstance(existing, dict) and isinstance(proposed, dict):
-        return {
-            key: _restore_redacted(existing.get(key), value)
-            for key, value in proposed.items()
-        }
+        return {key: _restore_redacted(existing.get(key), value) for key, value in proposed.items()}
     if isinstance(proposed, list):
         return [
-            _restore_redacted(existing[index] if isinstance(existing, list) and index < len(existing) else None, value)
+            _restore_redacted(
+                existing[index] if isinstance(existing, list) and index < len(existing) else None,
+                value,
+            )
             for index, value in enumerate(proposed)
         ]
     return proposed
@@ -113,7 +148,7 @@ class WebLibraryRepository:
             try:
                 relative = path.relative_to(self.input_root)
                 stat = path.stat()
-            except (OSError, ValueError):
+            except OSError, ValueError:
                 continue
             rows.append(
                 (
@@ -222,15 +257,15 @@ class WebLibraryRepository:
             "scored": int(row["with_score"] or 0),
             "score_records": int(row["scored"] or 0),
             "errors": int(row["errors"] or 0),
-            "average_score": None if row["average_score"] is None else round(float(row["average_score"]), 3),
+            "average_score": None
+            if row["average_score"] is None
+            else round(float(row["average_score"]), 3),
             "scenes": [{"scene": item["scene"], "count": item["count"]} for item in scenes],
         }
 
     def list_items(self, query: dict[str, list[str]]) -> dict:
         page = _safe_int(query.get("page", [1])[0], default=1, minimum=1, maximum=1_000_000)
-        page_size = _safe_int(
-            query.get("page_size", [48])[0], default=48, minimum=1, maximum=200
-        )
+        page_size = _safe_int(query.get("page_size", [48])[0], default=48, minimum=1, maximum=200)
         search = query.get("search", [""])[0].strip()
         scene = query.get("scene", [""])[0].strip()
         decision = query.get("decision", [""])[0].strip()
@@ -259,10 +294,7 @@ class WebLibraryRepository:
             "path": "li.relative_path ASC",
         }.get(order, "li.relative_path ASC")
         cte = self._latest_scores_cte()
-        tables = (
-            " FROM library_index li "
-            "LEFT JOIN latest_scores ls ON ls.file_path=li.file_path "
-        )
+        tables = " FROM library_index li LEFT JOIN latest_scores ls ON ls.file_path=li.file_path "
         where_sql = " WHERE " + " AND ".join(where)
         with self._connect() as connection:
             total = connection.execute(
@@ -405,6 +437,9 @@ class WebTaskManager:
         self.state_path = self.web_dir / "tasks.json"
         self.config_dir.mkdir(parents=True, exist_ok=True)
         self.log_dir.mkdir(parents=True, exist_ok=True)
+        for directory in (self.web_dir, self.config_dir, self.log_dir):
+            directory.chmod(0o700)
+        secure_private_file(self.config_path)
         self._lock = threading.RLock()
         self._processes: dict[str, subprocess.Popen] = {}
         self._tasks = self._load()
@@ -420,23 +455,28 @@ class WebTaskManager:
         try:
             payload = json.loads(self.state_path.read_text(encoding="utf-8"))
             return {item["id"]: WebTask(**item) for item in payload if isinstance(item, dict)}
-        except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        except OSError, TypeError, ValueError, json.JSONDecodeError:
             return {}
 
     def _persist(self) -> None:
         self.web_dir.mkdir(parents=True, exist_ok=True)
         temporary = self.state_path.with_suffix(".tmp")
-        temporary.write_text(
-            json.dumps([task.as_dict() for task in self._tasks.values()], ensure_ascii=False, indent=2),
-            encoding="utf-8",
+        _write_private_text(
+            temporary,
+            json.dumps(
+                [task.as_dict() for task in self._tasks.values()], ensure_ascii=False, indent=2
+            ),
         )
         os.replace(temporary, self.state_path)
+        secure_private_file(self.state_path)
 
     def list(self) -> list[dict]:
         with self._lock:
             return [
                 task.as_dict()
-                for task in sorted(self._tasks.values(), key=lambda item: item.created_at, reverse=True)
+                for task in sorted(
+                    self._tasks.values(), key=lambda item: item.created_at, reverse=True
+                )
             ]
 
     def active(self) -> dict | None:
@@ -460,10 +500,19 @@ class WebTaskManager:
             if max_files is None:
                 review.pop("max_files", None)
             else:
-                review["max_files"] = _safe_int(max_files, default=128, minimum=1, maximum=1_000_000)
+                review["max_files"] = _safe_int(
+                    max_files, default=128, minimum=1, maximum=1_000_000
+                )
             task_config = self.config_dir / f"{task_id}.yaml"
-            task_config.write_text(yaml.safe_dump(raw, allow_unicode=True, sort_keys=False), encoding="utf-8")
-            load_config(str(task_config))
+            _write_private_text(
+                task_config,
+                yaml.safe_dump(raw, allow_unicode=True, sort_keys=False),
+            )
+            try:
+                _load_web_config(task_config)
+            except Exception:
+                task_config.unlink(missing_ok=True)
+                raise
             log_path = self.log_dir / f"{task_id}.log"
             command = [
                 self.executable,
@@ -489,7 +538,7 @@ class WebTaskManager:
             self._tasks[task_id] = task
             self._persist()
             try:
-                log_handle = log_path.open("ab", buffering=0)
+                log_handle = _open_private_append(log_path)
                 process = subprocess.Popen(
                     command,
                     cwd=str(self.work_dir),
@@ -640,6 +689,7 @@ class MaterialWebHandler(BaseHTTPRequestHandler):
         if urlsplit(self.path).path != "/api/config":
             self._json(HTTPStatus.NOT_FOUND, {"error": "not_found"})
             return
+        temporary: Path | None = None
         try:
             body = self._body()
             proposed = body.get("config")
@@ -649,13 +699,18 @@ class MaterialWebHandler(BaseHTTPRequestHandler):
             merged = _restore_redacted(existing, proposed)
             temporary = self.server.config_path.with_suffix(".web.tmp")
             backup = self.server.config_path.with_suffix(".web.bak")
-            temporary.write_text(
-                yaml.safe_dump(merged, allow_unicode=True, sort_keys=False), encoding="utf-8"
+            _write_private_text(
+                temporary,
+                yaml.safe_dump(merged, allow_unicode=True, sort_keys=False),
             )
-            load_config(str(temporary))
+            _load_web_config(temporary)
             shutil.copy2(self.server.config_path, backup)
+            secure_private_file(backup)
             os.replace(temporary, self.server.config_path)
+            secure_private_file(self.server.config_path)
         except (OSError, ValueError, yaml.YAMLError) as error:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
             self._json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
             return
         self._json(HTTPStatus.OK, self._read_config())

@@ -1,7 +1,13 @@
 from contextlib import nullcontext
 from pathlib import Path
+import shutil
+from uuid import uuid4
 
-from ..adapters.metadata.exiftool_xmp import ExifToolXMPWriter
+from ..adapters.metadata.exiftool_xmp import (
+    ExifToolXMPWriter,
+    _path_identity,
+    _reject_symbolic_link,
+)
 from ..adapters.state.processed_sqlite import SQLiteProcessedRepository
 from ..domain.commentary import rank_description
 from ..domain.scoring_engine import build_visible_breakdown_instructions, build_xmp_instructions
@@ -18,7 +24,9 @@ class RewriteXmpService:
         self.writer = writer or ExifToolXMPWriter()
         self.repository = repository
 
-    def run(self, input_dir: str, *, dry_run: bool, output_language: str = "zh", progress=None) -> dict[str, int]:
+    def run(
+        self, input_dir: str, *, dry_run: bool, output_language: str = "zh", progress=None
+    ) -> dict[str, int]:
         db_path = ensure_runtime_paths(input_dir).db_path
         if not db_path.exists():
             raise FileNotFoundError(db_path)
@@ -32,21 +40,27 @@ class RewriteXmpService:
         for row in rows:
             arw_path = Path(row["file_path"])
             xmp_path = self.writer._sidecar_path(arw_path)
-            user_keywords = self.writer._read_non_pj_subject_tags(xmp_path) if xmp_path.exists() else []
-            user_identifiers = (
-                self.writer._read_non_pj_identifier_tags(xmp_path) if xmp_path.exists() else []
-            )
-            user_hierarchical = (
-                self.writer._read_non_pj_hierarchical_subject_tags(xmp_path)
-                if xmp_path.exists()
-                else []
-            )
 
             if dry_run:
-                print(
-                    f"[dry-run] {arw_path.name}: rating={row['star_rating']} "
-                    f"score={row['total_score']:.1f} preserve={user_keywords}"
-                )
+                try:
+                    if _path_identity(xmp_path) is not None:
+                        _reject_symbolic_link(xmp_path)
+                        self.writer._read_non_pj_subject_tags(xmp_path)
+                        self.writer._read_non_pj_identifier_tags(xmp_path)
+                        self.writer._read_non_pj_hierarchical_subject_tags(xmp_path)
+                except Exception as error:
+                    print(f"ERROR validating {xmp_path}: {error}")
+                    err += 1
+                    if progress:
+                        progress.on_error(str(arw_path), error)
+                else:
+                    print(
+                        f"[dry-run] {arw_path.name}: rating={row['star_rating']} "
+                        f"score={row['total_score']:.1f}"
+                    )
+                    ok += 1
+                    if progress:
+                        progress.on_phase_advance()
                 continue
 
             boosted = bool(row["group_boosted"])
@@ -67,7 +81,9 @@ class RewriteXmpService:
 
                 visible_breakdown = json.loads(row["visible_breakdown_json"])
             if visible_breakdown:
-                instructions = build_visible_breakdown_instructions(visible_breakdown, output_language=output_language)
+                instructions = build_visible_breakdown_instructions(
+                    visible_breakdown, output_language=output_language
+                )
             else:
                 db_scores = {dim: row[f"score_{dim}"] for dim in VISION_DIMS}
                 db_scores["exposure"] = row["score_exposure"]
@@ -77,7 +93,11 @@ class RewriteXmpService:
                     output_language=output_language,
                 )
 
-            parts = [part for part in [row["commentary_group_issues"], row["commentary_shooting"]] if part]
+            parts = [
+                part
+                for part in [row["commentary_group_issues"], row["commentary_shooting"]]
+                if part
+            ]
             group_commentary = "\n".join(parts)
             post_commentary = row["commentary_post"] or ""
             description = (
@@ -89,9 +109,7 @@ class RewriteXmpService:
                 self._rewrite_xmp_atomically(
                     xmp_path=xmp_path,
                     rating=row["star_rating"],
-                    subject_tags=user_keywords,
-                    identifier_tags=user_identifiers + subject_tags,
-                    hierarchical_subject_tags=user_hierarchical,
+                    subject_tags=subject_tags,
                     instructions=instructions,
                     description=description,
                 )
@@ -115,23 +133,34 @@ class RewriteXmpService:
         xmp_path: Path,
         rating: int,
         subject_tags: list[str],
-        identifier_tags: list[str],
-        hierarchical_subject_tags: list[str],
         instructions: str,
         description: str,
     ) -> None:
-        temp_path = xmp_path.with_name(f"{xmp_path.name}.tmp")
+        _reject_symbolic_link(xmp_path)
+        temp_path = xmp_path.with_name(f".{xmp_path.stem}.rewrite-{uuid4().hex}.xmp")
+        source_identity = _path_identity(xmp_path)
         try:
-            temp_path.unlink(missing_ok=True)
-            self.writer._write_minimal_xmp(
-                temp_path,
-                rating,
-                subject_tags,
-                identifier_tags,
-                hierarchical_subject_tags,
-                instructions,
-                description,
-            )
+            if source_identity is not None:
+                shutil.copy2(xmp_path, temp_path)
+                self.writer._update_existing_xmp(
+                    temp_path,
+                    rating=rating,
+                    subject_tags=subject_tags,
+                    instructions=instructions,
+                    description=description,
+                )
+            else:
+                self.writer._write_minimal_xmp(
+                    temp_path,
+                    rating,
+                    [],
+                    subject_tags,
+                    [],
+                    instructions,
+                    description,
+                )
+            if _path_identity(xmp_path) != source_identity:
+                raise RuntimeError(f"XMP changed during rewrite; refusing to overwrite: {xmp_path}")
             temp_path.replace(xmp_path)
         except Exception:
             temp_path.unlink(missing_ok=True)

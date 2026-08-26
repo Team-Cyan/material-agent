@@ -101,6 +101,7 @@ local:
     enforce_available: false
     runtime: transformers
     model_name: facebook/dinov2-small
+    model_revision: ed25f3a31f01632728cabb09d1542f84ab7b0056
     device: cpu
     model_path: ""
     processor_path: ""

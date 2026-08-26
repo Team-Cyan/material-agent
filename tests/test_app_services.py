@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import signal
 import sqlite3
 import threading
@@ -796,7 +797,12 @@ def test_rewrite_xmp_preserves_existing_sidecar_when_rewrite_fails(tmp_path):
     photo = tmp_path / "cat.ARW"
     photo.write_bytes(b"raw")
     xmp_path = tmp_path / "cat.xmp"
-    original = "original-xmp"
+    original = (
+        "<x:xmpmeta xmlns:x='adobe:ns:meta/'>"
+        "<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>"
+        "<rdf:Description rdf:about=''/>"
+        "</rdf:RDF></x:xmpmeta>"
+    )
     xmp_path.write_text(original, encoding="utf-8")
 
     with sqlite3.connect(db_path) as conn:
@@ -876,14 +882,128 @@ def test_rewrite_xmp_preserves_existing_sidecar_when_rewrite_fails(tmp_path):
         conn.commit()
 
     class _FailingWriter(ExifToolXMPWriter):
-        def _write_minimal_xmp(self, xmp_path, rating, subject_tags, instructions, description):
+        def _update_existing_xmp(self, xmp_path, **kwargs):
             raise RuntimeError("disk full")
 
     summary = RewriteXmpService(writer=_FailingWriter()).run(str(tmp_path), dry_run=False)
 
     assert summary == {"ok": 0, "err": 1}
     assert xmp_path.read_text(encoding="utf-8") == original
-    assert not (tmp_path / "cat.xmp.tmp").exists()
+    assert not list(tmp_path.glob(".cat.rewrite-*.xmp"))
+
+
+def test_rewrite_xmp_copies_existing_metadata_before_atomic_update(tmp_path):
+    xmp_path = tmp_path / "cat.xmp"
+    original = (
+        "<x:xmpmeta xmlns:x='adobe:ns:meta/'>"
+        "<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>"
+        "<rdf:Description xmlns:crs='http://ns.adobe.com/camera-raw-settings/1.0/' "
+        "crs:Exposure2012='1.25'/>"
+        "</rdf:RDF></x:xmpmeta>"
+    )
+    xmp_path.write_text(original, encoding="utf-8")
+
+    class _RecordingWriter(ExifToolXMPWriter):
+        def _update_existing_xmp(self, temporary_path, **kwargs):
+            temporary = Path(temporary_path)
+            content = temporary.read_text(encoding="utf-8")
+            assert "crs:Exposure2012='1.25'" in content
+            temporary.write_text(content.replace("1.25", "1.50"), encoding="utf-8")
+
+    RewriteXmpService(writer=_RecordingWriter())._rewrite_xmp_atomically(
+        xmp_path=xmp_path,
+        rating=4,
+        subject_tags=["pj:score=8.0"],
+        instructions="instructions",
+        description="description",
+    )
+
+    assert "crs:Exposure2012='1.50'" in xmp_path.read_text(encoding="utf-8")
+    assert not list(tmp_path.glob(".cat.rewrite-*.xmp"))
+
+
+def test_rewrite_xmp_refuses_concurrent_existing_sidecar_change(tmp_path):
+    xmp_path = tmp_path / "cat.xmp"
+    xmp_path.write_text("<x:xmpmeta xmlns:x='adobe:ns:meta/'/>", encoding="utf-8")
+
+    class _ConcurrentWriter(ExifToolXMPWriter):
+        def _update_existing_xmp(self, temporary_path, **kwargs):
+            Path(temporary_path).write_text("candidate", encoding="utf-8")
+            xmp_path.write_text("human update after copy", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="changed during rewrite"):
+        RewriteXmpService(writer=_ConcurrentWriter())._rewrite_xmp_atomically(
+            xmp_path=xmp_path,
+            rating=4,
+            subject_tags=["pj:score=8.0"],
+            instructions="instructions",
+            description="description",
+        )
+
+    assert xmp_path.read_text(encoding="utf-8") == "human update after copy"
+    assert not list(tmp_path.glob(".cat.rewrite-*.xmp"))
+
+
+def test_rewrite_xmp_refuses_sidecar_created_during_new_write(tmp_path):
+    xmp_path = tmp_path / "cat.xmp"
+
+    class _ConcurrentWriter(ExifToolXMPWriter):
+        def _write_minimal_xmp(self, temporary_path, *args, **kwargs):
+            Path(temporary_path).write_text("candidate", encoding="utf-8")
+            xmp_path.write_text("human-created sidecar", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="changed during rewrite"):
+        RewriteXmpService(writer=_ConcurrentWriter())._rewrite_xmp_atomically(
+            xmp_path=xmp_path,
+            rating=4,
+            subject_tags=["pj:score=8.0"],
+            instructions="instructions",
+            description="description",
+        )
+
+    assert xmp_path.read_text(encoding="utf-8") == "human-created sidecar"
+    assert not list(tmp_path.glob(".cat.rewrite-*.xmp"))
+
+
+def test_rewrite_xmp_refuses_symbolic_link_sidecar(tmp_path):
+    target = tmp_path / "shared.xmp"
+    target.write_text("preserve", encoding="utf-8")
+    sidecar = tmp_path / "linked.xmp"
+    sidecar.symlink_to(target)
+
+    with pytest.raises(RuntimeError, match="symbolic-link XMP sidecar"):
+        RewriteXmpService()._rewrite_xmp_atomically(
+            xmp_path=sidecar,
+            rating=4,
+            subject_tags=[],
+            instructions="instructions",
+            description="description",
+        )
+
+    assert target.read_text(encoding="utf-8") == "preserve"
+
+
+def test_rewrite_xmp_dry_run_fails_closed_on_malformed_sidecar(tmp_path):
+    build_runtime_paths(tmp_path).db_path.parent.mkdir(parents=True, exist_ok=True)
+    build_runtime_paths(tmp_path).db_path.touch()
+    photo = tmp_path / "cat.ARW"
+    photo.write_bytes(b"raw")
+    photo.with_suffix(".xmp").write_text("not XML", encoding="utf-8")
+
+    class _Repository:
+        def fetch_rewrite_rows(self):
+            return [
+                {
+                    "file_path": str(photo),
+                    "star_rating": 4,
+                    "total_score": 8.0,
+                }
+            ]
+
+    summary = RewriteXmpService(repository=_Repository()).run(str(tmp_path), dry_run=True)
+
+    assert summary == {"ok": 0, "err": 1}
+    assert photo.with_suffix(".xmp").read_text(encoding="utf-8") == "not XML"
 
 
 def test_reset_ai_judgement_uses_xmp_provenance_and_preserves_legacy_scalars(tmp_path):

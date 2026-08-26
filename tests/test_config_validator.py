@@ -154,11 +154,29 @@ def test_normalize_config_defaults_inference_enforce_available_false():
 def test_normalize_config_defaults_openvino_throughput_controls():
     embedding = normalize_config({"backend": "local"})["local"]["embedding"]
 
+    assert embedding["model_revision"] == "ed25f3a31f01632728cabb09d1542f84ab7b0056"
     assert embedding["performance_hint"] == "THROUGHPUT"
     assert embedding["batch_size"] == 1
     assert embedding["max_in_flight"] == 8
     assert embedding["infer_requests"] == "auto"
     assert embedding["allow_batch_fallback"] is True
+
+
+def test_validate_config_rejects_unpinned_transformers_embedding(capsys):
+    cfg = normalize_config({"backend": "local", "commentary_enabled": False})
+    cfg["local"]["embedding"].update(
+        {
+            "enabled": True,
+            "runtime": "transformers",
+            "model_name": "example/custom-model",
+            "model_revision": "main",
+        }
+    )
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert "model_revision" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize(
@@ -675,6 +693,53 @@ def test_normalize_config_sets_layered_decision_defaults():
     assert normalized["decision_policy"]["review_threshold"] == 5.5
 
 
+@pytest.mark.parametrize(
+    "section,value,expected",
+    [
+        ("decision_policy", {"keep_threshold": "high"}, "keep_threshold"),
+        ("decision_policy", {"review_threshold": 11}, "review_threshold"),
+        (
+            "decision_policy",
+            {"keep_threshold": 5, "review_threshold": 6},
+            "must not exceed",
+        ),
+        (
+            "decision_policy",
+            {"hard_reject": {"technical_quality_below": -1}},
+            "technical_quality_below",
+        ),
+        ("screening_policy", {"weight": 0.61}, "screening_policy.weight"),
+        (
+            "screening_policy",
+            {"top1_review_fallback": "sometimes"},
+            "top1_review_fallback",
+        ),
+    ],
+)
+def test_validate_config_rejects_invalid_layered_policy(section, value, expected, capsys):
+    cfg = _minimal_config()
+    cfg[section] = value
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert expected in capsys.readouterr().out
+
+
+def test_normalize_config_coerces_layered_policy_boolean_strings():
+    cfg = _minimal_config()
+    cfg["focus_integrity"] = {"enabled": "false", "high_resolution_roi": "false"}
+    cfg["portrait_face_eye"] = {"enabled": "false"}
+    cfg["screening_policy"] = {"top1_review_fallback": "false"}
+
+    normalized = normalize_config(cfg)
+
+    assert normalized["focus_integrity"]["enabled"] is False
+    assert normalized["focus_integrity"]["high_resolution_roi"] is False
+    assert normalized["portrait_face_eye"]["enabled"] is False
+    assert normalized["screening_policy"]["top1_review_fallback"] is False
+
+
 def test_normalize_config_sets_lightweight_detection_defaults():
     normalized = normalize_config(_minimal_config())
 
@@ -707,9 +772,7 @@ def test_invalid_aesthetic_calibration_profile_exits(capsys):
             "calibration": {
                 "enabled": True,
                 "minimum_label_count": 1,
-                "profiles": {
-                    "person": {"scale": 0.0, "offset": 8.0, "label_count": -1}
-                },
+                "profiles": {"person": {"scale": 0.0, "offset": 8.0, "label_count": -1}},
             }
         }
     }

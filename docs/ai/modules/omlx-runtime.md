@@ -52,6 +52,9 @@ It covers transport, capability probing, runtime instance management, and failur
 - `response_format_json_schema` is the current default contract path for the local DMG runtime; `structured_outputs` and `xgrammar` remain observable capability fields and can be made hard requirements when the runtime supports them
 - transport should stay minimal and not absorb higher-level policy
 - on the shared desktop runtime, `/v1/models` may behave like an installed-model catalog superset; keep strict `instance_matches` for dedicated enforcement, but surface `effective_model_set_matches` and `served_models_catalog_superset` for diagnostics
+- dedicated instance setup must reject a symbolic-link `instance_root` or
+  managed `models`, `cache`, `logs`, and `run` directory before cleanup or
+  generated-file writes
 
 ## Typical Safe Changes
 

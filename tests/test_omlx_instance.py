@@ -144,10 +144,29 @@ def test_setup_omlx_instance_links_only_config_union_models_and_enables_cache(tm
     model_settings_text = home_model_settings.read_text(encoding="utf-8")
     assert model_settings_text == '{"version":1,"models":{}}'
 
-    dedicated_model_settings = (Path(summary["instance_root"]) / "model_settings.json").read_text(encoding="utf-8")
+    dedicated_model_settings = (Path(summary["instance_root"]) / "model_settings.json").read_text(
+        encoding="utf-8"
+    )
     assert '"Qwen2.5-VL-7B-Instruct-4bit"' in dedicated_model_settings
     assert '"is_default": true' in dedicated_model_settings.lower()
     assert '"is_pinned": true' in dedicated_model_settings.lower()
+
+
+def test_setup_omlx_instance_rejects_symlinked_models_directory(tmp_path):
+    instance_root = tmp_path / "instance"
+    instance_root.mkdir()
+    outside_models = tmp_path / "outside-models"
+    outside_models.mkdir()
+    sentinel = outside_models / "keep-me"
+    sentinel.write_text("preserve", encoding="utf-8")
+    (instance_root / "models").symlink_to(outside_models, target_is_directory=True)
+
+    cfg = _base_config(instance_root)
+
+    with pytest.raises(ValueError, match="must not be a symbolic link"):
+        setup_omlx_instance(cfg)
+
+    assert sentinel.read_text(encoding="utf-8") == "preserve"
 
 
 def test_setup_omlx_instance_resolves_model_repo_prefix_against_basename_dirs(tmp_path):

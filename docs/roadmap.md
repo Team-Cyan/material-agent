@@ -82,7 +82,7 @@
   batch 1 as the production default because neither device had a stable material
   throughput advantage while GPU startup and memory costs were substantially
   higher
-- added the built-in bearer-protected Web operator surface for configuration,
+- added the built-in trusted-LAN Web operator surface for configuration,
   checksum-pinned model lifecycle, full-library indexing, dry-run task control,
   logs, thumbnail browsing, filtering, and complete score/tag/description
   payload inspection without source-library writes
@@ -109,14 +109,26 @@
 - normalized the 1,455 Mac-imported ARWs from private `0700/gid20` metadata to
   `users` group-readable access using the checksum-verified import receipt;
   non-root rawpy decoding and the subsequent full-library run both passed
+- consolidated the maintained Unraid deployment to one container: the primary
+  Web process owns model management, has no TMDB dependency, and intentionally
+  uses no application token on trusted LAN port `8776`
+- completed a repository-wide correctness/security refinement covering
+  transient EXIF cache failures, bounded SQLite parameter batches, complete
+  model asset identity and immutable DINOv2 revision, private Web state,
+  fail-closed bounded XMP parsing, and concurrent sidecar lost-update
+  protection, including symbolic-link sidecar rejection; the full local suite
+  and an isolated Unraid source-overlay smoke pass complete the release gate
 
 ## In Progress
 
-- none outside the explicitly deferred human-review and XMP promotion gates
+- Capture One XMP interoperability design and real-application round-trip
+  validation; the standards-based contract is documented, while application
+  readback/writeback remains gated on an isolated Capture One fixture pass
 
 ## Next
 
-- none outside the explicitly deferred human-review and XMP promotion gates
+- review score/photo outliers from the grouping-enabled full-library rerun and
+  compare the new group-size/rank distribution with the singleton-only baseline
 
 ## Later
 

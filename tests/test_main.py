@@ -301,6 +301,116 @@ def test_score_cache_key_tracks_pipeline_revision(monkeypatch):
     assert build_score_cache_key(config) != baseline
 
 
+@pytest.mark.parametrize(
+    "block_name,path_key",
+    [
+        ("aesthetic", "model_path"),
+        ("detection", "model_path"),
+        ("detection", "face_model_path"),
+        ("face", "model_asset_path"),
+    ],
+)
+def test_score_cache_key_tracks_enabled_local_model_file_content(tmp_path, block_name, path_key):
+    config = load_config("config.yaml")
+    model_path = tmp_path / f"{block_name}-{path_key}.bin"
+    model_path.write_bytes(b"model-v1")
+    config["local"][block_name]["enabled"] = True
+    config["local"][block_name][path_key] = str(model_path)
+    if block_name == "detection":
+        other_key = "face_model_path" if path_key == "model_path" else "model_path"
+        other_path = tmp_path / f"detection-{other_key}.bin"
+        other_path.write_bytes(b"other-model")
+        config["local"][block_name][other_key] = str(other_path)
+
+    baseline = build_score_cache_key(config)
+    model_path.write_bytes(b"model-v2")
+
+    assert build_score_cache_key(config) != baseline
+
+
+def test_score_cache_key_tracks_openvino_runtime_version(tmp_path, monkeypatch):
+    config = load_config("config.yaml")
+    model_path = tmp_path / "nima.bin"
+    model_path.write_bytes(b"model")
+    config["local"]["aesthetic"].update(
+        {
+            "enabled": True,
+            "runtime": "openvino",
+            "model_path": str(model_path),
+        }
+    )
+    versions = {"openvino": "2026.2.0"}
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._distribution_version",
+        lambda name: versions.get(name, "fixture"),
+    )
+    baseline = build_score_cache_key(config)
+
+    versions["openvino"] = "2026.3.0"
+
+    assert build_score_cache_key(config) != baseline
+
+
+def test_score_cache_key_tolerates_corrupt_optional_onnx(tmp_path):
+    config = load_config("config.yaml")
+    model_path = tmp_path / "corrupt.onnx"
+    model_path.write_bytes(b"not an ONNX model")
+    config["local"]["detection"].update(
+        {
+            "enabled": True,
+            "enforce_available": False,
+            "runtime": "openvino",
+            "model_path": str(model_path),
+        }
+    )
+
+    assert build_score_cache_key(config).startswith("score-output-v2:")
+
+
+def test_score_cache_key_tolerates_model_identity_read_race(tmp_path, monkeypatch):
+    config = load_config("config.yaml")
+    model_path = tmp_path / "model.onnx"
+    model_path.write_bytes(b"present during initial check")
+    config["local"]["detection"].update(
+        {
+            "enabled": True,
+            "enforce_available": False,
+            "runtime": "openvino",
+            "model_path": str(model_path),
+        }
+    )
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._score_model_bundle_assets",
+        lambda _path: (_ for _ in ()).throw(PermissionError("inspection failed")),
+    )
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._digest_model_bundle_assets",
+        lambda _assets: (_ for _ in ()).throw(PermissionError("digest failed")),
+    )
+
+    assert build_score_cache_key(config).startswith("score-output-v2:")
+
+
+def test_score_cache_key_tolerates_model_digest_read_failure(tmp_path, monkeypatch):
+    config = load_config("config.yaml")
+    model_path = tmp_path / "model.bin"
+    model_path.write_bytes(b"model")
+    config["local"]["aesthetic"].update(
+        {
+            "enabled": True,
+            "enforce_available": False,
+            "runtime": "openvino",
+            "model_path": str(model_path),
+        }
+    )
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._digest_model_bundle_assets",
+        lambda _assets: (_ for _ in ()).throw(PermissionError("digest failed")),
+    )
+
+    assert build_score_cache_key(config).startswith("score-output-v2:")
+
+
 def test_cmd_run_rejects_missing_raw_omlx_config():
     from material_agent.commands.scoring import cmd_run
 
@@ -436,12 +546,8 @@ def test_cli_shell_builds_parser_for_reset_ai():
             "--dry-run",
         ]
     )
-    clear_args = parser.parse_args(
-        ["reset-ai", "--dir", "/tmp/photos", "--clear-xmp"]
-    )
-    compatibility_args = parser.parse_args(
-        ["reset-ai", "--dir", "/tmp/photos", "--keep-xmp"]
-    )
+    clear_args = parser.parse_args(["reset-ai", "--dir", "/tmp/photos", "--clear-xmp"])
+    compatibility_args = parser.parse_args(["reset-ai", "--dir", "/tmp/photos", "--keep-xmp"])
 
     assert default_args.command == "reset-ai"
     assert default_args.dir == "/tmp/photos"
@@ -594,9 +700,7 @@ def test_cli_main_routes_rewrite_commentary(monkeypatch):
     assert called["args"].rewrite_xmp is True
 
 
-def test_cmd_rewrite_commentary_returns_nonzero_for_xmp_errors(
-    tmp_path, monkeypatch, capsys
-):
+def test_cmd_rewrite_commentary_returns_nonzero_for_xmp_errors(tmp_path, monkeypatch, capsys):
     from material_agent.commands.io import cmd_rewrite_commentary
 
     _make_db(str(tmp_path))
@@ -764,7 +868,9 @@ def test_cmd_run_delegates_runtime_start_to_review_run_service(monkeypatch):
                 called["kwargs"] = kwargs
                 return "job-123"
 
-        monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        monkeypatch.setattr(
+            "material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService
+        )
         monkeypatch.setattr(
             "material_agent.adapters.state.sqlite_runtime.SQLiteRuntimeRepository.get_job_result",
             lambda *_args: {"status": "finished", "summary": {}},
@@ -810,9 +916,7 @@ def test_cmd_run_returns_nonzero_for_partial_errors_and_passes_score_cache_key(
             captured["file_paths"] = kwargs["file_paths"]
             return "job-with-errors"
 
-    monkeypatch.setattr(
-        "material_agent.commands.scoring._check_exiftool_version", lambda: None
-    )
+    monkeypatch.setattr("material_agent.commands.scoring._check_exiftool_version", lambda: None)
     monkeypatch.setattr(
         "material_agent.commands.scoring._sync_shared_omlx_models_if_needed",
         lambda _config: None,
@@ -821,9 +925,7 @@ def test_cmd_run_returns_nonzero_for_partial_errors_and_passes_score_cache_key(
         "material_agent.commands.scoring.SQLiteProcessedRepository",
         _FakeProcessedRepository,
     )
-    monkeypatch.setattr(
-        "material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService
-    )
+    monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
     monkeypatch.setattr(
         "material_agent.adapters.state.sqlite_runtime.SQLiteRuntimeRepository.get_job_result",
         lambda *_args: {"status": "finished_with_errors", "summary": {"error_files": 1}},
@@ -882,11 +984,18 @@ def test_review_runtime_marks_done_with_commentary_in_single_write(monkeypatch):
         fake_writer.score_to_stars.return_value = 3
         fake_writer.build_subject_tags.return_value = ["pj:score=5.5"]
 
-        monkeypatch.setattr("material_agent.app.review_runtime.make_client", lambda config: object())
-        monkeypatch.setattr("material_agent.app.review_runtime.decode_raw", lambda file_path, preview: object())
+        monkeypatch.setattr(
+            "material_agent.app.review_runtime.make_client", lambda config: object()
+        )
+        monkeypatch.setattr(
+            "material_agent.app.review_runtime.decode_raw", lambda file_path, preview: object()
+        )
         monkeypatch.setattr("material_agent.app.review_runtime.compute_scores", fake_compute_scores)
         monkeypatch.setattr("material_agent.app.review_runtime.CommentaryGenerator", _Commentary)
-        monkeypatch.setattr("material_agent.app.review_runtime.ExifToolXMPWriter", lambda *_args, **_kwargs: fake_writer)
+        monkeypatch.setattr(
+            "material_agent.app.review_runtime.ExifToolXMPWriter",
+            lambda *_args, **_kwargs: fake_writer,
+        )
 
         executor = build_review_job_executor(
             repository=repo,
@@ -953,7 +1062,9 @@ def test_cmd_run_restarts_shared_omlx_models_for_local_desktop_runtime(monkeypat
             "material_agent.app.omlx_instance_service.OMLXInstanceService",
             lambda: _FakeService(),
         )
-        monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        monkeypatch.setattr(
+            "material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService
+        )
         _mock_finished_job(monkeypatch)
 
         result = cmd_run(args, cfg)
@@ -964,7 +1075,10 @@ def test_cmd_run_restarts_shared_omlx_models_for_local_desktop_runtime(monkeypat
         assert called["restarted_config"]["backend"] == "omlx"
         assert result == 0
         assert "Restarted shared oMLX runtime with active models: Qwen3-VL-4B-Instruct-4bit" in out
-        assert "Inactive shared desktop models remain installed but unpinned: gemma-4-e2b-it-4bit" in out
+        assert (
+            "Inactive shared desktop models remain installed but unpinned: gemma-4-e2b-it-4bit"
+            in out
+        )
 
 
 def test_cmd_run_skips_shared_omlx_sync_for_dedicated_runtime(monkeypatch):
@@ -976,9 +1090,12 @@ def test_cmd_run_skips_shared_omlx_sync_for_dedicated_runtime(monkeypatch):
         args = _run_args(d, allow_empty=True)
 
         monkeypatch.setattr("material_agent.commands.scoring._check_exiftool_version", lambda: None)
+
         class _FakeService:
             def sync_shared(self, config):
-                raise AssertionError("shared desktop sync should be skipped for dedicated runtime mode")
+                raise AssertionError(
+                    "shared desktop sync should be skipped for dedicated runtime mode"
+                )
 
         class _FakeReviewRunService:
             def __init__(self, repository):
@@ -991,7 +1108,9 @@ def test_cmd_run_skips_shared_omlx_sync_for_dedicated_runtime(monkeypatch):
             "material_agent.app.omlx_instance_service.OMLXInstanceService",
             lambda: _FakeService(),
         )
-        monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        monkeypatch.setattr(
+            "material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService
+        )
         _mock_finished_job(monkeypatch)
 
         assert cmd_run(args, cfg) == 0
@@ -1045,7 +1164,9 @@ def test_cmd_run_starts_shared_omlx_when_desktop_runtime_is_unreachable(monkeypa
             "material_agent.app.omlx_instance_service.OMLXInstanceService",
             lambda: _FakeService(),
         )
-        monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        monkeypatch.setattr(
+            "material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService
+        )
         _mock_finished_job(monkeypatch)
 
         result = cmd_run(args, cfg)
@@ -1074,7 +1195,9 @@ def test_cmd_run_skips_shared_omlx_sync_for_non_desktop_local_runtime(monkeypatc
 
         class _FakeService:
             def sync_shared(self, config):
-                raise AssertionError("shared desktop sync should be skipped for non-desktop local runtime configs")
+                raise AssertionError(
+                    "shared desktop sync should be skipped for non-desktop local runtime configs"
+                )
 
         class _FakeReviewRunService:
             def __init__(self, repository):
@@ -1087,7 +1210,9 @@ def test_cmd_run_skips_shared_omlx_sync_for_non_desktop_local_runtime(monkeypatc
             "material_agent.app.omlx_instance_service.OMLXInstanceService",
             lambda: _FakeService(),
         )
-        monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        monkeypatch.setattr(
+            "material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService
+        )
         _mock_finished_job(monkeypatch)
 
         assert cmd_run(args, cfg) == 0
@@ -1129,7 +1254,9 @@ def test_cmd_run_only_builds_runtime_probe_hook_for_enabled_omlx_backend(
                 called["kwargs"] = kwargs
                 return "job-123"
 
-        monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        monkeypatch.setattr(
+            "material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService
+        )
         _mock_finished_job(monkeypatch)
 
         result = cmd_run(args, cfg)
@@ -1167,7 +1294,9 @@ def test_cmd_run_with_local_backend_uses_local_preflight(monkeypatch):
                 assert callable(kwargs["preflight_hook"])
                 return "job-123"
 
-        monkeypatch.setattr("material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService)
+        monkeypatch.setattr(
+            "material_agent.commands.scoring.ReviewRunService", _FakeReviewRunService
+        )
         monkeypatch.setattr(
             "material_agent.adapters.state.sqlite_runtime.SQLiteRuntimeRepository.get_job_result",
             lambda *_args: {"status": "finished", "summary": {}},
@@ -1221,6 +1350,7 @@ def test_cmd_rescore_delegates_to_rescore_service(monkeypatch):
                 }
             }
         }
+        assert called["kwargs"]["grouping_enabled"] is False
 
 
 def test_cmd_rescore_missing_db_returns_nonzero(tmp_path, capsys):
@@ -1258,9 +1388,7 @@ def test_cmd_reset_ai_only_clears_xmp_when_explicitly_requested(
                 "xmp_cleared": 0,
             }
 
-    monkeypatch.setattr(
-        "material_agent.commands.io.ResetAiJudgementService", _FakeResetService
-    )
+    monkeypatch.setattr("material_agent.commands.io.ResetAiJudgementService", _FakeResetService)
     args = Namespace(dir=str(tmp_path), dry_run=False)
     if clear_xmp is not None:
         args.clear_xmp = clear_xmp

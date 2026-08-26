@@ -91,6 +91,28 @@ def test_score_cache_key_tracks_openvino_bundle_content(tmp_path):
     assert build_score_cache_key(config) != baseline
 
 
+def test_score_cache_key_tracks_detection_onnx_external_data(tmp_path):
+    model_path = tmp_path / "detector.onnx"
+    _write_external_onnx(model_path)
+    config = {
+        "backend": "local",
+        "local": {
+            "detection": {
+                "enabled": True,
+                "runtime": "openvino",
+                "model_path": str(model_path),
+                "face_model_path": "",
+            }
+        },
+    }
+    external_path = next(path for path in tmp_path.iterdir() if path != model_path)
+    baseline = build_score_cache_key(config)
+
+    external_path.write_bytes(external_path.read_bytes() + b"changed")
+
+    assert build_score_cache_key(config) != baseline
+
+
 def test_materialize_openvino_bundle_dereferences_external_data(tmp_path):
     source = tmp_path / "source"
     blobs = tmp_path / "blobs"

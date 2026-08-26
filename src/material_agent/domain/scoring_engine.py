@@ -100,8 +100,9 @@ def decode_raw(file_path: str, preview_config: dict) -> RawFrame:
             interpolation=cv2.INTER_AREA,
         )
     gray = cv2.cvtColor(preview_rgb, cv2.COLOR_RGB2GRAY)
+    preview_bgr = cv2.cvtColor(preview_rgb, cv2.COLOR_RGB2BGR)
     _, jpeg_enc = cv2.imencode(
-        ".jpg", preview_rgb, [cv2.IMWRITE_JPEG_QUALITY, preview_config["jpeg_quality"]]
+        ".jpg", preview_bgr, [cv2.IMWRITE_JPEG_QUALITY, preview_config["jpeg_quality"]]
     )
     preview_h, preview_w = preview_rgb.shape[:2]
     return RawFrame(
@@ -586,9 +587,7 @@ def _build_layered_signals(
                 "signal_key": "overall_aesthetic",
                 "value": effective_score,
                 "confidence": 1.0,
-                "source": (
-                    "target_calibration" if calibration.get("applied") else "learned_model"
-                ),
+                "source": ("target_calibration" if calibration.get("applied") else "learned_model"),
                 "model_name": aesthetic.get("model_name"),
                 "model_version": (
                     calibration.get("policy_version")

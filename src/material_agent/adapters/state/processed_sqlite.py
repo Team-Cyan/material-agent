@@ -21,6 +21,7 @@ _BASE_SCORE_COLUMNS = ["score_exposure", "score_sharpness"] + _VISION_COLUMNS
 _SCORE_METADATA_VERSION = 1
 _RAW_EMBEDDING_KEYS = {"_embedding_vector", "embedding_vector", "vector"}
 _XMP_SCALAR_FIELDS = ("rating", "instructions", "description")
+_SQLITE_IN_BATCH_SIZE = 900
 
 
 def _file_fingerprint(file_path: str) -> tuple[int, int]:
@@ -39,6 +40,11 @@ def _stored_fingerprint_matches(row: sqlite3.Row) -> bool:
     if stored_size is None or stored_mtime is None:
         return True
     return (int(stored_size), int(stored_mtime)) == _file_fingerprint(row["file_path"])
+
+
+def _path_batches(file_paths: list[str]):
+    for start in range(0, len(file_paths), _SQLITE_IN_BATCH_SIZE):
+        yield file_paths[start : start + _SQLITE_IN_BATCH_SIZE]
 
 
 def _sanitize_score_metadata(value):
@@ -251,12 +257,16 @@ class SQLiteProcessedRepository:
     def get_exif_cache(self, file_paths: list[str]) -> dict[str, str | None]:
         if not file_paths:
             return {}
-        placeholders = ",".join("?" * len(file_paths))
-        rows = self._execute(
-            f"SELECT file_path, datetime_original, file_size, mtime_ns "
-            f"FROM exif_cache WHERE file_path IN ({placeholders})",
-            file_paths,
-        ).fetchall()
+        rows = []
+        for batch in _path_batches(file_paths):
+            placeholders = ",".join("?" * len(batch))
+            rows.extend(
+                self._execute(
+                    f"SELECT file_path, datetime_original, file_size, mtime_ns "
+                    f"FROM exif_cache WHERE file_path IN ({placeholders})",
+                    batch,
+                ).fetchall()
+            )
         return {
             row["file_path"]: row["datetime_original"]
             for row in rows
@@ -267,7 +277,6 @@ class SQLiteProcessedRepository:
         rows = [
             (file_path, value, *_file_fingerprint(file_path))
             for file_path, value in entries.items()
-            if value is not None
         ]
         if not rows:
             return
@@ -281,12 +290,16 @@ class SQLiteProcessedRepository:
     def get_visual_hash_cache(self, file_paths: list[str]) -> dict[str, str]:
         if not file_paths:
             return {}
-        placeholders = ",".join("?" * len(file_paths))
-        rows = self._execute(
-            f"SELECT file_path, phash, file_size, mtime_ns "
-            f"FROM visual_hash_cache WHERE file_path IN ({placeholders})",
-            file_paths,
-        ).fetchall()
+        rows = []
+        for batch in _path_batches(file_paths):
+            placeholders = ",".join("?" * len(batch))
+            rows.extend(
+                self._execute(
+                    f"SELECT file_path, phash, file_size, mtime_ns "
+                    f"FROM visual_hash_cache WHERE file_path IN ({placeholders})",
+                    batch,
+                ).fetchall()
+            )
         return {
             row["file_path"]: row["phash"]
             for row in rows
@@ -310,12 +323,16 @@ class SQLiteProcessedRepository:
     def get_embedding_cache(self, file_paths: list[str], model_key: str) -> dict[str, list[float]]:
         if not file_paths:
             return {}
-        placeholders = ",".join("?" * len(file_paths))
-        rows = self._execute(
-            f"SELECT file_path, vector_json, file_size, mtime_ns FROM embedding_cache "
-            f"WHERE model_key=? AND file_path IN ({placeholders})",
-            [model_key, *file_paths],
-        ).fetchall()
+        rows = []
+        for batch in _path_batches(file_paths):
+            placeholders = ",".join("?" * len(batch))
+            rows.extend(
+                self._execute(
+                    f"SELECT file_path, vector_json, file_size, mtime_ns FROM embedding_cache "
+                    f"WHERE model_key=? AND file_path IN ({placeholders})",
+                    [model_key, *batch],
+                ).fetchall()
+            )
         loaded: dict[str, list[float]] = {}
         for row in rows:
             if (row["file_size"], row["mtime_ns"]) != _file_fingerprint(row["file_path"]):

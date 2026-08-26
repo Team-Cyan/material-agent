@@ -47,6 +47,8 @@ while preserving user-authored metadata when possible.
 
 ## Invariants
 
+- material-agent emits integer ratings in the inclusive `0..5` range; five
+  stars is a valid AI result and must not be reserved for human-only use
 - non-machine subject tags should be preserved whenever readable
 - generated `pj:*` tags should be deterministic for the same score payload
 - generated `pj:*` tags should be stored in `xmp:Identifier`, not normal
@@ -60,6 +62,20 @@ while preserving user-authored metadata when possible.
 - existing sidecar updates should write `photoshop:Instructions` through the explicit Photoshop namespace
 - existing sidecar updates should clear stale `pj:*` data from `dc:subject`
   while preserving non-machine user keywords
+- existing sidecar updates and rewrites must preserve unrelated namespaces and
+  fields instead of rebuilding the whole document from the known field subset
+- malformed existing XMP must fail closed before any metadata write; an
+  unreadable preservation source is never treated as an empty tag set
+- XMP parsing is byte-bounded and rejects DTD/entity declarations before XML
+  parsing, so an imported sidecar cannot trigger entity expansion or unbounded
+  memory use
+- rewrite dry-runs must parse every existing preservation source, so malformed
+  XMP fails during preflight instead of only during a real write
+- ordinary write-back, AI cleanup, and rewrite must modify a same-directory
+  temporary copy, compare the sidecar identity immediately before replacement,
+  and refuse to overwrite a sidecar created or changed after the operation began
+- existing symbolic-link sidecars are rejected rather than atomically replacing
+  the link itself and silently changing its ownership semantics
 - XMP output must stay compatible with ExifTool writes and rewrite flows
 - `reset-ai` must not touch XMP unless the operator passes `--clear-xmp`
 - legacy processed rows without an owned XMP payload may clear deterministic
@@ -95,12 +111,21 @@ while preserving user-authored metadata when possible.
 ## Known Tensions / Technical Debt
 
 - The writer currently uses both ExifTool writes and direct XML generation, which means there are effectively two write paths to keep aligned.
-- `RewriteXmpService` reaches into writer internals such as `_read_non_ai_subject_tags()` and `_write_minimal_xmp()`, which is practical but leaky.
+- `RewriteXmpService` reaches into writer internals such as
+  `_read_non_pj_subject_tags()` and `_write_minimal_xmp()`, which is practical
+  but leaky.
 - Description formatting is assembled in runtime wiring rather than owned entirely by the writer boundary.
 - New sidecars now include creator/lifecycle metadata and XMPMM IDs, but the existing-file ExifTool update path intentionally avoids overwriting `xmpMM:DocumentID` until a preservation/migration policy exists.
 - `pj:*` machine data now lives in `xmp:Identifier`. This avoids polluting
   user keyword lists but still keeps deterministic machine tags in a standard
   XMP Basic bag readable by ExifTool.
+- Capture One can consume the standard rating and keyword fields, but whether
+  its two-way metadata sync preserves `xmp:Identifier` and unrelated XMP
+  fields remains fixture-matrix evidence rather than an assumed guarantee.
+- A Capture One human-rating round trip needs separate AI and effective-rating
+  ownership. The current writer can preserve user-modified scalar fields during
+  explicit AI reset, but ordinary review/rewrite paths still emit the current
+  AI rating and must not be promoted as a bidirectional workflow yet.
 - DaVinci Resolve compatibility is not guaranteed by this module. The target is
   standards-based XMP that common DAM/photo tools can read; Resolve should be
   verified with a real fixture matrix before claiming support.

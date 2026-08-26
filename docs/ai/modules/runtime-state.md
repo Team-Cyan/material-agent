@@ -58,6 +58,13 @@ It uses one runtime database path but models two different concerns:
 - signal rows must stay compatible with rescore logic
 - cached score reuse requires both a current size+mtime fingerprint and the
   current score/output cache key; `reprocess` bypasses score reuse explicitly
+- the score/output cache key must fingerprint every enabled local model asset,
+  including aesthetic, object-detection, and face-detection model files,
+  declared ONNX external-data files, and OpenVINO IR `.bin` companions; enabled
+  runtime distribution versions are part of the same identity
+- cache identity inspection failures must degrade to an explicit deterministic
+  state rather than aborting an otherwise valid heuristic fallback run
+- bulk cache reads must split path lists into bounded SQLite parameter batches
 - a recovered score payload must retain runtime/model provenance, commentary,
   signals, and group metadata rather than reconstructing a lossy subset
 - raw embedding vectors must not be serialized into ordinary score metadata or

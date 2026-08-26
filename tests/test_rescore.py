@@ -2,7 +2,7 @@ import tempfile
 
 import pytest
 
-from material_agent.domain.layered_decision import summarize_signals
+from material_agent.domain.layered_decision import apply_group_review_fallback, summarize_signals
 from material_agent.main import cmd_rescore
 from material_agent.utils.state import State
 
@@ -10,6 +10,44 @@ from material_agent.utils.state import State
 class _Args:
     def __init__(self, d):
         self.dir = d
+
+
+def test_group_review_fallback_promotes_a_singleton_when_enabled():
+    results = [
+        (
+            "/fake/only.arw",
+            {"score_total": 4.2, "decision": "reject", "decision_reasons": []},
+        )
+    ]
+
+    updated = apply_group_review_fallback(results, enabled=True)
+
+    assert updated[0][1]["decision"] == "review"
+    assert updated[0][1]["decision_reasons"] == ["top1_review_fallback"]
+
+
+def test_group_review_fallback_leaves_a_singleton_when_disabled():
+    results = [
+        (
+            "/fake/only.arw",
+            {"score_total": 4.2, "decision": "reject", "decision_reasons": []},
+        )
+    ]
+
+    assert apply_group_review_fallback(results, enabled=False) == results
+
+
+def test_group_review_fallback_promotes_best_of_multiple_candidates():
+    results = [
+        ("/fake/a.arw", {"score_total": 4.2, "decision": "reject", "decision_reasons": []}),
+        ("/fake/b.arw", {"score_total": 5.1, "decision": "reject", "decision_reasons": []}),
+    ]
+
+    updated = apply_group_review_fallback(results, enabled=True)
+
+    assert updated[0][1]["decision"] == "reject"
+    assert updated[1][1]["decision"] == "review"
+    assert updated[1][1]["decision_reasons"] == ["top1_review_fallback"]
 
 
 def test_layered_summary_penalizes_a_single_obviously_weak_dimension():
@@ -57,12 +95,15 @@ def test_layered_summary_penalizes_a_single_obviously_weak_dimension():
 def test_rescore_updates_total_without_ai():
     with tempfile.TemporaryDirectory() as d:
         s = State(d)
-        s.conn.execute("""
+        s.conn.execute(
+            """
             INSERT INTO processed (file_path, status, scene,
                 score_subject, score_composition, score_lighting, score_color,
                 score_clarity, score_depth, score_mood)
             VALUES (?,?,?,?,?,?,?,?,?,?)
-        """, ("/fake/a.jpg", "done", "people", 9.0, 8.0, 7.0, 7.0, 9.0, 0.0, 0.0))
+        """,
+            ("/fake/a.jpg", "done", "people", 9.0, 8.0, 7.0, 7.0, 9.0, 0.0, 0.0),
+        )
         s.conn.commit()
 
         cfg = {"scene_weights": {"people": {"clarity": 1.0}}}
@@ -81,12 +122,15 @@ def test_rescore_updates_total_without_ai():
 def test_rescore_falls_back_to_default():
     with tempfile.TemporaryDirectory() as d:
         s = State(d)
-        s.conn.execute("""
+        s.conn.execute(
+            """
             INSERT INTO processed (file_path, status, scene,
                 score_subject, score_composition, score_lighting, score_color,
                 score_clarity, score_depth, score_mood)
             VALUES (?,?,?,?,?,?,?,?,?,?)
-        """, ("/fake/b.jpg", "done", "unknown", 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+        """,
+            ("/fake/b.jpg", "done", "unknown", 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+        )
         s.conn.commit()
 
         cfg = {"scene_weights": {"default": {"composition": 1.0}}}
@@ -208,12 +252,30 @@ def test_rescore_scene_filter_preserves_existing_group_rank_without_full_group_c
             [
                 ("/fake/people.jpg", "technical", "technical_quality", 6.2, 1.0, "cpu", None, None),
                 ("/fake/people.jpg", "aggregate", "subject_focus", 6.0, 1.0, "cpu", None, None),
-                ("/fake/people.jpg", "screening", "screening_prior", 6.1, 1.0, "musiq", "musiq", "1"),
+                (
+                    "/fake/people.jpg",
+                    "screening",
+                    "screening_prior",
+                    6.1,
+                    1.0,
+                    "musiq",
+                    "musiq",
+                    "1",
+                ),
                 ("/fake/people.jpg", "aesthetic", "subject_moment", 6.0, 1.0, "vision", "vlm", "1"),
                 ("/fake/people.jpg", "aesthetic", "composition", 6.0, 1.0, "vision", "vlm", "1"),
                 ("/fake/people.jpg", "aesthetic", "lighting", 6.0, 1.0, "vision", "vlm", "1"),
                 ("/fake/people.jpg", "aesthetic", "color", 6.0, 1.0, "vision", "vlm", "1"),
-                ("/fake/people.jpg", "aesthetic", "depth_separation", 6.0, 1.0, "vision", "vlm", "1"),
+                (
+                    "/fake/people.jpg",
+                    "aesthetic",
+                    "depth_separation",
+                    6.0,
+                    1.0,
+                    "vision",
+                    "vlm",
+                    "1",
+                ),
                 ("/fake/people.jpg", "aesthetic", "mood_story", 6.0, 1.0, "vision", "vlm", "1"),
                 ("/fake/city.jpg", "technical", "technical_quality", 8.8, 1.0, "cpu", None, None),
                 ("/fake/city.jpg", "aggregate", "subject_focus", 8.6, 1.0, "cpu", None, None),

@@ -5,6 +5,7 @@ app_user="material-agent"
 app_group="material-agent"
 run_as_root=false
 source_input_dir="${MATERIAL_AGENT_INPUT_DIR:-/photos}"
+source_work_dir="${MATERIAL_AGENT_WORK_DIR:-/app/.material-agent}"
 
 discover_run_input() {
   help_seen=false
@@ -114,6 +115,73 @@ discover_dir_input() {
   printf '%s\n' "$discovered_dir"
 }
 
+discover_web_option() {
+  wanted="$1"
+  shift
+  discovered=""
+  help_seen=false
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      -h|--help)
+        help_seen=true
+        shift
+        ;;
+      --host|--port|--input-dir|--config|--work-dir|--registry-dir|--catalog)
+        option="$1"
+        if [ "$#" -lt 2 ]; then
+          echo "Missing value for web option: $option" >&2
+          return 2
+        fi
+        case "$2" in
+          -*)
+            echo "Missing value for web option: $option" >&2
+            return 2
+            ;;
+        esac
+        if [ "$option" = "$wanted" ]; then
+          if [ -n "$discovered" ]; then
+            echo "Duplicate web option: $wanted" >&2
+            return 2
+          fi
+          discovered="$2"
+        fi
+        shift 2
+        ;;
+      --host=|--port=|--input-dir=|--config=|--work-dir=|--registry-dir=|--catalog=)
+        echo "Missing value for web option: ${1%%=*}" >&2
+        return 2
+        ;;
+      --host=?*|--port=?*|--input-dir=?*|--config=?*|--work-dir=?*|--registry-dir=?*|--catalog=?*)
+        option=${1%%=*}
+        if [ "$option" = "$wanted" ]; then
+          if [ -n "$discovered" ]; then
+            echo "Duplicate web option: $wanted" >&2
+            return 2
+          fi
+          discovered=${1#*=}
+        fi
+        shift
+        ;;
+      -*)
+        echo "Unsupported web option while resolving runtime paths: $1" >&2
+        return 2
+        ;;
+      *)
+        echo "Unexpected positional web argument: $1" >&2
+        return 2
+        ;;
+    esac
+  done
+  if [ -z "$discovered" ]; then
+    if [ "$help_seen" = true ]; then
+      return 1
+    fi
+    echo "Missing $wanted for web command" >&2
+    return 2
+  fi
+  printf '%s\n' "$discovered"
+}
+
 discover_source_input() {
   if [ "${1:-}" = "material-agent" ]; then
     shift
@@ -125,6 +193,9 @@ discover_source_input() {
     run)
       discover_run_input "$@"
       ;;
+    web)
+      discover_web_option --input-dir "$@"
+      ;;
     scan-scenes|suggest-scenes|remap-scenes|rescore|rewrite-xmp|rewrite-commentary|reset-ai|fix-db)
       discover_dir_input "$@"
       ;;
@@ -134,8 +205,34 @@ discover_source_input() {
   esac
 }
 
+discover_work_input() {
+  if [ "${1:-}" = "material-agent" ]; then
+    shift
+  fi
+  command_name="${1:-}"
+  [ -n "$command_name" ] || return 1
+  shift
+  case "$command_name" in
+    web)
+      discover_web_option --work-dir "$@"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
 if explicit_input=$(discover_source_input "$@"); then
   source_input_dir="$explicit_input"
+else
+  discover_status=$?
+  if [ "$discover_status" -ne 1 ]; then
+    exit 64
+  fi
+fi
+
+if explicit_work=$(discover_work_input "$@"); then
+  source_work_dir="$explicit_work"
 else
   discover_status=$?
   if [ "$discover_status" -ne 1 ]; then
@@ -202,7 +299,7 @@ if [ "$(id -u)" = "0" ]; then
   usermod -g "$pgid" "$app_user"
   add_dri_groups "$pgid"
 
-  requested_work_dir="${MATERIAL_AGENT_WORK_DIR:-/app/.material-agent}"
+  requested_work_dir="$source_work_dir"
   requested_input_dir="$source_input_dir"
   if [ -L "$requested_work_dir" ]; then
     echo "MATERIAL_AGENT_WORK_DIR must not be a symbolic link: $requested_work_dir" >&2
@@ -225,6 +322,8 @@ if [ "$(id -u)" = "0" ]; then
       ;;
   esac
   mkdir -p "$work_dir"
+  export MATERIAL_AGENT_WORK_DIR="$work_dir"
+  export MATERIAL_AGENT_INPUT_DIR="$input_dir"
   chown -h "$puid:$pgid" "$work_dir" /home/material-agent
   for runtime_file in \
     "$work_dir/state.db" \

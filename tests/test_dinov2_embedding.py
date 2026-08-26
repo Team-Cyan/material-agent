@@ -22,7 +22,7 @@ class _FakeEmbeddingRuntime:
 
 def test_dinov2_adapter_returns_vector_with_provenance():
     adapter = DinoV2EmbeddingAdapter(
-        {"model_name": "fixture-dino", "device": "cpu"},
+        {"model_name": "fixture-dino", "model_revision": "a" * 40, "device": "cpu"},
         runtime=_FakeEmbeddingRuntime(),
     )
 
@@ -31,6 +31,7 @@ def test_dinov2_adapter_returns_vector_with_provenance():
     assert result["vector"] == [0.1, 0.2, 0.3]
     assert result["dimensions"] == 3
     assert result["model_name"] == "fixture-dino"
+    assert result["model_version"] == "a" * 40
 
 
 class _FakeEmbeddingAdapter:
@@ -82,9 +83,7 @@ class _CountingEmbeddingAdapter:
 
 
 def test_local_embedding_result_cache_is_lru_bounded_and_clearable():
-    client = AsyncLocalClient(
-        {"embedding": {"enabled": True, "result_cache_size": 2}}
-    )
+    client = AsyncLocalClient({"embedding": {"enabled": True, "result_cache_size": 2}})
     adapter = _CountingEmbeddingAdapter()
     client._embedding = adapter
     first = _jpeg_bytes((10, 20, 30))
@@ -140,4 +139,11 @@ def test_dinov2_adapter_rejects_empty_vector():
     adapter = DinoV2EmbeddingAdapter(runtime=_EmptyEmbeddingRuntime())
 
     with pytest.raises(RuntimeError, match="empty embedding"):
+        asyncio.run(adapter.embed_image(_jpeg_bytes()))
+
+
+def test_dinov2_adapter_refuses_unpinned_remote_model_before_import():
+    adapter = DinoV2EmbeddingAdapter({"model_name": "example/unpinned"})
+
+    with pytest.raises(RuntimeError, match="model_revision"):
         asyncio.run(adapter.embed_image(_jpeg_bytes()))

@@ -17,13 +17,16 @@ class RescoreService:
         scoring_config: dict,
         scorers_config: dict,
         aesthetic_calibration: dict | None = None,
+        grouping_enabled: bool = True,
     ) -> int:
         config = {
             "scene_profiles": scene_weights or {},
             "decision_policy": scoring_config.get("decision_policy", {}),
             "screening_policy": scoring_config.get("screening_policy", {}),
         }
-        top1_review_fallback = bool(config["screening_policy"].get("top1_review_fallback", True))
+        top1_review_fallback = bool(
+            grouping_enabled and config["screening_policy"].get("top1_review_fallback", True)
+        )
         filtered_mode = bool(scene_filters)
 
         rows = self.repository.fetch_rescore_rows(scene_filters=scene_filters)
@@ -45,7 +48,9 @@ class RescoreService:
         summaries_by_group: dict[str, list[dict]] = {}
         for row in rows:
             scene = row["scene"] or "other"
-            file_signals = signals_by_file.get(row["file_path"]) or self.repository.legacy_scores_to_signals(row)
+            file_signals = signals_by_file.get(
+                row["file_path"]
+            ) or self.repository.legacy_scores_to_signals(row)
             if not file_signals:
                 continue
 
@@ -76,8 +81,12 @@ class RescoreService:
                     updates.append(
                         {
                             **item,
-                            "decision_reasons": json.dumps(item["decision_reasons"], ensure_ascii=False),
-                            "visible_breakdown_json": json.dumps(item["visible_breakdown"], ensure_ascii=False),
+                            "decision_reasons": json.dumps(
+                                item["decision_reasons"], ensure_ascii=False
+                            ),
+                            "visible_breakdown_json": json.dumps(
+                                item["visible_breakdown"], ensure_ascii=False
+                            ),
                         }
                     )
             if updates:
@@ -88,14 +97,20 @@ class RescoreService:
             ranked = sorted(items, key=lambda item: float(item["total_score"]), reverse=True)
             ranked_pairs = [(item["file_path"], item) for item in ranked]
             ranked_pairs = apply_group_review_fallback(ranked_pairs, enabled=top1_review_fallback)
-            ranked_pairs = sorted(ranked_pairs, key=lambda item: float(item[1]["total_score"]), reverse=True)
+            ranked_pairs = sorted(
+                ranked_pairs, key=lambda item: float(item[1]["total_score"]), reverse=True
+            )
             for rank, (_, item) in enumerate(ranked_pairs, start=1):
                 updates.append(
                     {
                         **item,
                         "group_rank": rank,
-                        "decision_reasons": json.dumps(item["decision_reasons"], ensure_ascii=False),
-                        "visible_breakdown_json": json.dumps(item["visible_breakdown"], ensure_ascii=False),
+                        "decision_reasons": json.dumps(
+                            item["decision_reasons"], ensure_ascii=False
+                        ),
+                        "visible_breakdown_json": json.dumps(
+                            item["visible_breakdown"], ensure_ascii=False
+                        ),
                     }
                 )
 

@@ -2,6 +2,7 @@ from types import SimpleNamespace
 
 import cv2
 import numpy as np
+import pytest
 import rawpy
 
 from material_agent.domain.scoring_engine import decode_raw
@@ -72,7 +73,9 @@ def test_decode_raw_prefers_embedded_preview(monkeypatch, tmp_path):
     raw_file = tmp_path / "image.ARW"
     raw_file.write_bytes(b"fake")
 
-    frame = decode_raw(str(raw_file), {"max_size": 1024, "jpeg_quality": 85, "prefer_embedded": True})
+    frame = decode_raw(
+        str(raw_file), {"max_size": 1024, "jpeg_quality": 85, "prefer_embedded": True}
+    )
 
     assert fake_raw.postprocess_called is False
     assert frame.pixels is None
@@ -81,6 +84,11 @@ def test_decode_raw_prefers_embedded_preview(monkeypatch, tmp_path):
     assert frame.preview_size == (1024, 640)
     assert frame.gray.shape == (640, 1024)
     assert frame.jpeg_bytes
+    decoded_bgr = cv2.imdecode(np.frombuffer(frame.jpeg_bytes, dtype=np.uint8), cv2.IMREAD_COLOR)
+    blue, green, red = decoded_bgr.mean(axis=(0, 1))
+    assert red == pytest.approx(64, abs=3)
+    assert green == pytest.approx(128, abs=3)
+    assert blue == pytest.approx(192, abs=3)
 
 
 def test_decode_raw_falls_back_to_half_size_postprocess(monkeypatch, tmp_path):
@@ -89,7 +97,9 @@ def test_decode_raw_falls_back_to_half_size_postprocess(monkeypatch, tmp_path):
     raw_file = tmp_path / "image.ARW"
     raw_file.write_bytes(b"fake")
 
-    frame = decode_raw(str(raw_file), {"max_size": 1024, "jpeg_quality": 85, "prefer_embedded": True})
+    frame = decode_raw(
+        str(raw_file), {"max_size": 1024, "jpeg_quality": 85, "prefer_embedded": True}
+    )
 
     assert fake_raw.postprocess_called is True
     assert frame.pixels is None

@@ -1,3 +1,6 @@
+DINOV2_MODEL_NAME = "facebook/dinov2-small"
+DINOV2_MODEL_REVISION = "ed25f3a31f01632728cabb09d1542f84ab7b0056"
+
 SCENE_LIST = [
     "people",
     "sports",

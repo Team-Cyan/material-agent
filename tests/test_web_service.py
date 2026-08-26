@@ -1,11 +1,13 @@
 import json
 import sqlite3
+import stat
 import threading
 import urllib.error
 import urllib.request
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
 import yaml
 
 from material_agent.app.web_service import (
@@ -129,6 +131,15 @@ def test_web_tasks_are_always_dry_run_and_can_remove_sample_limit(tmp_path, monk
     assert "--dry-run" in captured["command"]
     task_config = yaml.safe_load(Path(task["config_path"]).read_text(encoding="utf-8"))
     assert "max_files" not in task_config["review_pipeline"]
+    private_paths = [
+        config_path,
+        Path(task["config_path"]),
+        Path(task["log_path"]),
+        manager.state_path,
+    ]
+    assert {stat.S_IMODE(path.stat().st_mode) for path in private_paths} == {0o600}
+    assert stat.S_IMODE(manager.web_dir.stat().st_mode) == 0o700
+
 
 def test_web_api_is_available_without_token_on_trusted_lan(tmp_path):
     server = MaterialWebServer(
@@ -144,9 +155,42 @@ def test_web_api_is_available_without_token_on_trusted_lan(tmp_path):
     base = f"http://127.0.0.1:{server.server_port}"
     try:
         assert b"material-agent" in urllib.request.urlopen(base + "/").read()
-        assert json.loads(urllib.request.urlopen(base + "/health").read()) == {
-            "status": "ok"
-        }
+        assert json.loads(urllib.request.urlopen(base + "/health").read()) == {"status": "ok"}
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=2)
+
+
+def test_web_config_rejects_invalid_policy_without_replacing_active_config(tmp_path):
+    config_path = tmp_path / "config.yaml"
+    original = yaml.safe_load(Path("config.yaml").read_text(encoding="utf-8"))
+    config_path.write_text(yaml.safe_dump(original), encoding="utf-8")
+    server = MaterialWebServer(
+        ("127.0.0.1", 0),
+        library=MagicMock(),
+        tasks=MagicMock(),
+        model_service=MagicMock(),
+        config_path=config_path,
+        thumbnail_dir=tmp_path / "thumbs",
+    )
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    proposed = json.loads(json.dumps(original))
+    proposed["decision_policy"]["keep_threshold"] = "invalid"
+    request = urllib.request.Request(
+        f"http://127.0.0.1:{server.server_port}/api/config",
+        data=json.dumps({"config": proposed}).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="PUT",
+    )
+    try:
+        with pytest.raises(urllib.error.HTTPError) as error:
+            urllib.request.urlopen(request)
+        assert error.value.code == 400
+        assert "keep_threshold" in error.value.read().decode("utf-8")
+        assert yaml.safe_load(config_path.read_text(encoding="utf-8")) == original
+        assert not config_path.with_suffix(".web.tmp").exists()
     finally:
         server.shutdown()
         server.server_close()

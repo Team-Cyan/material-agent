@@ -1,11 +1,15 @@
 import io
 import json
+import logging
 import subprocess
 from datetime import datetime
 
 import imagehash
 import rawpy
 from PIL import Image
+
+_EXIFTOOL_BATCH_SIZE = 256
+_log = logging.getLogger("material_agent")
 
 
 def read_exif_datetimes(files: list[str], state=None, progress=None) -> dict[str, datetime | None]:
@@ -27,36 +31,41 @@ def read_exif_datetimes(files: list[str], state=None, progress=None) -> dict[str
         return result
 
     new_raw: dict[str, str | None] = {}
-    try:
-        if progress:
-            progress.on_phase_start("reading EXIF", len(missing))
-        proc = subprocess.run(
-            ["exiftool", "-DateTimeOriginal", "-s3", "-j"] + missing,
-            capture_output=True,
-            text=True,
-            timeout=300,
-        )
-        rows = json.loads(proc.stdout)
-        row_by_path = {row.get("SourceFile", ""): row for row in rows}
-        for file_path in missing:
-            row = row_by_path.get(file_path, {})
-            val = row.get("DateTimeOriginal", "") or ""
-            new_raw[file_path] = val if val else None
-            try:
-                result[file_path] = datetime.strptime(val, "%Y:%m:%d %H:%M:%S") if val else None
-            except ValueError:
-                result[file_path] = None
-        if progress:
-            progress.on_phase_advance(len(missing))
-    except Exception:
-        if progress:
-            progress.on_phase_start("reading EXIF", len(missing))
-        for file_path in missing:
-            val = _read_exif_single(file_path)
-            new_raw[file_path] = val.strftime("%Y:%m:%d %H:%M:%S") if val else None
-            result[file_path] = val
+    if progress:
+        progress.on_phase_start("reading EXIF", len(missing))
+    for start in range(0, len(missing), _EXIFTOOL_BATCH_SIZE):
+        batch = missing[start : start + _EXIFTOOL_BATCH_SIZE]
+        try:
+            batch_raw, batch_result = _read_exif_batch(batch)
+        except Exception as error:
+            _log.warning(
+                "Bulk EXIF read failed for %d files; falling back per file: %s",
+                len(batch),
+                error,
+            )
+            for file_path in batch:
+                read_ok, raw_val, val = _read_exif_single_result(file_path)
+                if read_ok:
+                    new_raw[file_path] = raw_val
+                result[file_path] = val
+                if progress:
+                    progress.on_phase_advance()
+        else:
+            missing_rows = [file_path for file_path in batch if file_path not in batch_raw]
+            if missing_rows:
+                _log.warning(
+                    "Bulk EXIF output omitted %d files; retrying those files individually",
+                    len(missing_rows),
+                )
+                for file_path in missing_rows:
+                    read_ok, raw_val, val = _read_exif_single_result(file_path)
+                    if read_ok:
+                        batch_raw[file_path] = raw_val
+                    batch_result[file_path] = val
+            new_raw.update(batch_raw)
+            result.update(batch_result)
             if progress:
-                progress.on_phase_advance()
+                progress.on_phase_advance(len(batch))
 
     if state and new_raw:
         state.set_exif_cache(new_raw)
@@ -64,7 +73,41 @@ def read_exif_datetimes(files: list[str], state=None, progress=None) -> dict[str
     return result
 
 
+def _read_exif_batch(files: list[str]) -> tuple[dict[str, str | None], dict[str, datetime | None]]:
+    proc = subprocess.run(
+        ["exiftool", "-DateTimeOriginal", "-s3", "-j", *files],
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(proc.stderr.strip() or f"exiftool exited with status {proc.returncode}")
+    rows = json.loads(proc.stdout)
+    if not isinstance(rows, list):
+        raise ValueError("exiftool JSON output must be a list")
+
+    row_by_path = {row.get("SourceFile", ""): row for row in rows if isinstance(row, dict)}
+    raw: dict[str, str | None] = {}
+    parsed: dict[str, datetime | None] = {}
+    for file_path in files:
+        row = row_by_path.get(file_path)
+        if row is None:
+            parsed[file_path] = None
+            continue
+        val = row.get("DateTimeOriginal", "") or ""
+        raw[file_path] = val if val else None
+        try:
+            parsed[file_path] = datetime.strptime(val, "%Y:%m:%d %H:%M:%S") if val else None
+        except ValueError:
+            parsed[file_path] = None
+    return raw, parsed
+
+
 def _read_exif_single(file_path: str) -> datetime | None:
+    return _read_exif_single_result(file_path)[2]
+
+
+def _read_exif_single_result(file_path: str) -> tuple[bool, str | None, datetime | None]:
     try:
         result = subprocess.run(
             ["exiftool", "-DateTimeOriginal", "-s3", file_path],
@@ -72,10 +115,16 @@ def _read_exif_single(file_path: str) -> datetime | None:
             text=True,
             timeout=10,
         )
+        if result.returncode != 0:
+            return False, None, None
         val = result.stdout.strip()
-        return datetime.strptime(val, "%Y:%m:%d %H:%M:%S") if val else None
+        try:
+            parsed = datetime.strptime(val, "%Y:%m:%d %H:%M:%S") if val else None
+        except ValueError:
+            parsed = None
+        return True, val or None, parsed
     except Exception:
-        return None
+        return False, None, None
 
 
 class Grouper:
@@ -106,7 +155,9 @@ class Grouper:
                 groups[-1].append(sorted_files[i])
         return groups
 
-    def _visual_merge(self, groups: list[list[str]], times: dict, state=None, progress=None) -> list[list[str]]:
+    def _visual_merge(
+        self, groups: list[list[str]], times: dict, state=None, progress=None
+    ) -> list[list[str]]:
         cfg = self.config["visual_similarity"]
         threshold = cfg["hash_threshold"]
         max_gap_s = cfg["max_merge_gap_minutes"] * 60
@@ -190,11 +241,7 @@ class Grouper:
                 i += 1
         if state and new_hash_entries and hasattr(state, "set_visual_hash_cache"):
             state.set_visual_hash_cache(new_hash_entries)
-        if (
-            state
-            and new_embedding_entries
-            and hasattr(state, "set_embedding_cache")
-        ):
+        if state and new_embedding_entries and hasattr(state, "set_embedding_cache"):
             state.set_embedding_cache(new_embedding_entries, self.embedding_model_key)
         return merged
 
@@ -213,7 +260,9 @@ class Grouper:
             return None
 
     @staticmethod
-    def _load_visual_hash_cache(groups: list[list[str]], state=None) -> dict[str, imagehash.ImageHash]:
+    def _load_visual_hash_cache(
+        groups: list[list[str]], state=None
+    ) -> dict[str, imagehash.ImageHash]:
         if state is None or len(groups) < 2 or not hasattr(state, "get_visual_hash_cache"):
             return {}
 

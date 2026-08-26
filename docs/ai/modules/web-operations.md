@@ -33,6 +33,10 @@ write XMP, ratings, processed-cache rows, or files in the photo-library mount.
 - runtime config: an operator-owned appdata file mounted read-write;
 - no Web state is stored beside source photos.
 
+Web directories are private (`0700`). Runtime configuration, task snapshots,
+per-task configuration, logs, and configuration backup/temporary files are
+created or repaired as private files (`0600`).
+
 The library index is stored in `library_index` inside the runtime database. It
 keeps paths, sizes, modification times, and a scan generation. Scores are read
 from the latest `jobs`/`job_files`/`artifacts(kind=score_payload)` record, so
@@ -48,10 +52,14 @@ that would be sent to the metadata writer. This preview is DB-only in dry-run.
   the Internet or an untrusted VLAN.
 - Preserve redacted secret values when a configuration is round-tripped.
 - Validate a temporary YAML file with `load_config` before atomically replacing
-  the active configuration, and keep the `.web.bak` backup.
+  the active configuration, clean a rejected temporary file, and keep the
+  private `.web.bak` backup.
 - Resolve library paths below the configured input root before thumbnail reads.
 - Do not add an endpoint that accepts arbitrary commands or arbitrary paths.
 - Keep one active scoring subprocess per work directory.
+- Keep container entrypoint source protection aligned with explicit Web CLI
+  `--input-dir` and `--work-dir` values as well as their environment defaults;
+  the scoring subprocess must inherit the resolved work directory.
 
 ## CLI
 
