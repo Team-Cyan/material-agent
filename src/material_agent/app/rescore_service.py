@@ -1,7 +1,11 @@
 import json
 
 from ..adapters.state.processed_sqlite import SQLiteProcessedRepository
-from ..domain.layered_decision import apply_group_review_fallback, summarize_signals
+from ..domain.layered_decision import (
+    apply_group_best_candidate_review,
+    group_best_candidate_review_enabled,
+    summarize_signals,
+)
 from ..domain.aesthetic_calibration import calibrate_signals_for_rescore
 
 
@@ -17,15 +21,15 @@ class RescoreService:
         scoring_config: dict,
         scorers_config: dict,
         aesthetic_calibration: dict | None = None,
-        grouping_enabled: bool = True,
+        grouping_config: dict | None = None,
     ) -> int:
         config = {
             "scene_profiles": scene_weights or {},
             "decision_policy": scoring_config.get("decision_policy", {}),
             "screening_policy": scoring_config.get("screening_policy", {}),
         }
-        top1_review_fallback = bool(
-            grouping_enabled and config["screening_policy"].get("top1_review_fallback", True)
+        best_candidate_review_enabled = group_best_candidate_review_enabled(
+            {"grouping": grouping_config or {}}
         )
         filtered_mode = bool(scene_filters)
 
@@ -96,7 +100,9 @@ class RescoreService:
         for group_id, items in summaries_by_group.items():
             ranked = sorted(items, key=lambda item: float(item["total_score"]), reverse=True)
             ranked_pairs = [(item["file_path"], item) for item in ranked]
-            ranked_pairs = apply_group_review_fallback(ranked_pairs, enabled=top1_review_fallback)
+            ranked_pairs = apply_group_best_candidate_review(
+                ranked_pairs, enabled=best_candidate_review_enabled
+            )
             ranked_pairs = sorted(
                 ranked_pairs, key=lambda item: float(item[1]["total_score"]), reverse=True
             )

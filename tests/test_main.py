@@ -1350,7 +1350,7 @@ def test_cmd_rescore_delegates_to_rescore_service(monkeypatch):
                 }
             }
         }
-        assert called["kwargs"]["grouping_enabled"] is False
+        assert called["kwargs"]["grouping_config"]["enabled"] is False
 
 
 def test_cmd_rescore_missing_db_returns_nonzero(tmp_path, capsys):

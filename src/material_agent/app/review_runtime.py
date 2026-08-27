@@ -13,7 +13,10 @@ from ..domain.commentary import (
     split_group_commentary_sections,
 )
 from ..domain.grouper import Grouper
-from ..domain.layered_decision import apply_group_review_fallback
+from ..domain.layered_decision import (
+    apply_group_best_candidate_review,
+    group_best_candidate_review_enabled,
+)
 from ..domain.scoring_engine import (
     build_score_instructions,
     build_visible_breakdown_instructions,
@@ -202,12 +205,9 @@ def build_review_job_executor(
             )
             for file_path, payload in group_results
         ]
-        return apply_group_review_fallback(
+        return apply_group_best_candidate_review(
             results_with_commentary,
-            enabled=bool(
-                config.get("grouping", {}).get("enabled", False)
-                and config.get("screening_policy", {}).get("top1_review_fallback", True)
-            ),
+            enabled=group_best_candidate_review_enabled(config),
         )
 
     def write_file(

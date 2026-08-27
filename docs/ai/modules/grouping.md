@@ -52,10 +52,10 @@ The current strategy is time split first, then optional visual merge.
   never persist a transient read failure as a cached absence
 - cache lookups for large libraries must split SQLite `IN` queries below the
   engine parameter limit
-- group top-1 fallback is scoped by `grouping.enabled`; when grouping is
-  enabled, it may still preserve the only candidate in a genuine singleton
-  group, but it must not affect the synthetic singletons produced when the
-  entire grouping stage is disabled
+- `grouping.best_candidate_review.enabled` is scoped by `grouping.enabled`;
+  when grouping is enabled, it may still preserve the only candidate in a
+  genuine singleton group, but it must not affect the synthetic singletons
+  produced when the entire grouping stage is disabled
 
 ## Typical Safe Changes
 

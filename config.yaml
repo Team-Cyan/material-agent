@@ -136,6 +136,10 @@ grouping:
     # Opt-in until real-camera grouping calibration is complete.
     enabled: false
     threshold: 0.85
+  best_candidate_review:
+    # Only applies to real groups while grouping.enabled is true. When a group
+    # has no keep and no hard rejection, preserve its best candidate for review.
+    enabled: true
   group_guard:
     enabled: true
     min_score: 7.0
@@ -236,7 +240,6 @@ decision_policy:
 
 screening_policy:
   weight: 0.10
-  top1_review_fallback: true
 
 scene_weights:
   default:

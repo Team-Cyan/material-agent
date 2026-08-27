@@ -2,7 +2,11 @@ import tempfile
 
 import pytest
 
-from material_agent.domain.layered_decision import apply_group_review_fallback, summarize_signals
+from material_agent.domain.layered_decision import (
+    apply_group_best_candidate_review,
+    group_best_candidate_review_enabled,
+    summarize_signals,
+)
 from material_agent.main import cmd_rescore
 from material_agent.utils.state import State
 
@@ -12,7 +16,7 @@ class _Args:
         self.dir = d
 
 
-def test_group_review_fallback_promotes_a_singleton_when_enabled():
+def test_group_best_candidate_review_promotes_a_singleton_when_enabled():
     results = [
         (
             "/fake/only.arw",
@@ -20,13 +24,13 @@ def test_group_review_fallback_promotes_a_singleton_when_enabled():
         )
     ]
 
-    updated = apply_group_review_fallback(results, enabled=True)
+    updated = apply_group_best_candidate_review(results, enabled=True)
 
     assert updated[0][1]["decision"] == "review"
-    assert updated[0][1]["decision_reasons"] == ["top1_review_fallback"]
+    assert updated[0][1]["decision_reasons"] == ["group_best_candidate_review"]
 
 
-def test_group_review_fallback_leaves_a_singleton_when_disabled():
+def test_group_best_candidate_review_leaves_a_singleton_when_disabled():
     results = [
         (
             "/fake/only.arw",
@@ -34,20 +38,55 @@ def test_group_review_fallback_leaves_a_singleton_when_disabled():
         )
     ]
 
-    assert apply_group_review_fallback(results, enabled=False) == results
+    assert apply_group_best_candidate_review(results, enabled=False) == results
 
 
-def test_group_review_fallback_promotes_best_of_multiple_candidates():
+def test_group_best_candidate_review_promotes_best_of_multiple_candidates():
     results = [
         ("/fake/a.arw", {"score_total": 4.2, "decision": "reject", "decision_reasons": []}),
         ("/fake/b.arw", {"score_total": 5.1, "decision": "reject", "decision_reasons": []}),
     ]
 
-    updated = apply_group_review_fallback(results, enabled=True)
+    updated = apply_group_best_candidate_review(results, enabled=True)
 
     assert updated[0][1]["decision"] == "reject"
     assert updated[1][1]["decision"] == "review"
-    assert updated[1][1]["decision_reasons"] == ["top1_review_fallback"]
+    assert updated[1][1]["decision_reasons"] == ["group_best_candidate_review"]
+
+
+def test_group_best_candidate_review_ignores_hard_reject_and_promotes_soft_reject():
+    results = [
+        (
+            "/fake/hard.arw",
+            {
+                "score_total": 6.0,
+                "decision": "reject",
+                "decision_reasons": ["subject_focus_below_threshold"],
+            },
+        ),
+        (
+            "/fake/soft.arw",
+            {"score_total": 4.0, "decision": "reject", "decision_reasons": []},
+        ),
+    ]
+
+    updated = apply_group_best_candidate_review(results, enabled=True)
+
+    assert updated[0][1]["decision"] == "reject"
+    assert updated[1][1]["decision"] == "review"
+    assert updated[1][1]["decision_reasons"] == ["group_best_candidate_review"]
+
+
+def test_group_best_candidate_review_requires_grouping_and_its_own_switch():
+    assert not group_best_candidate_review_enabled(
+        {"grouping": {"enabled": False, "best_candidate_review": {"enabled": True}}}
+    )
+    assert not group_best_candidate_review_enabled(
+        {"grouping": {"enabled": True, "best_candidate_review": {"enabled": False}}}
+    )
+    assert group_best_candidate_review_enabled(
+        {"grouping": {"enabled": True, "best_candidate_review": {"enabled": True}}}
+    )
 
 
 def test_layered_summary_penalizes_a_single_obviously_weak_dimension():
@@ -311,7 +350,7 @@ def test_rescore_scene_filter_preserves_existing_group_rank_without_full_group_c
                     "subject_focus_below": 1.5,
                 },
             },
-            "screening_policy": {"weight": 0.10, "top1_review_fallback": True},
+            "screening_policy": {"weight": 0.10},
         }
 
         from material_agent.app.rescore_service import RescoreService

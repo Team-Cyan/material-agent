@@ -429,6 +429,7 @@ def test_intel_image_baked_config_runs_bundled_openvino_aesthetic_model():
     assert embedding["enabled"] is False
     assert config["inference"]["runtime"] == "openvino"
     assert config["inference"]["device"] == "CPU"
+    assert config["grouping"]["best_candidate_review"]["enabled"] is True
     assert config["screening"]["enabled"] is False
 
 

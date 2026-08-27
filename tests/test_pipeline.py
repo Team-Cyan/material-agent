@@ -566,7 +566,7 @@ def test_review_runtime_keeps_done_group_members_for_cross_run_rank(monkeypatch)
     with tempfile.TemporaryDirectory() as d:
         cfg = _config(d)
         cfg["grouping"]["enabled"] = True
-        cfg["screening_policy"] = {"top1_review_fallback": False}
+        cfg["grouping"]["best_candidate_review"] = {"enabled": False}
         repo = SQLiteRuntimeRepository(":memory:")
         session_id = SessionService(repo).create_session(
             kind=SessionKind.CLI,
@@ -650,7 +650,7 @@ def test_review_runtime_rewrites_done_members_when_incremental_group_changes(mon
     with tempfile.TemporaryDirectory() as d:
         cfg = _config(d)
         cfg["grouping"]["enabled"] = True
-        cfg["screening_policy"] = {"top1_review_fallback": False}
+        cfg["grouping"]["best_candidate_review"] = {"enabled": False}
         repo = SQLiteRuntimeRepository(":memory:")
         session_id = SessionService(repo).create_session(
             kind=SessionKind.CLI,

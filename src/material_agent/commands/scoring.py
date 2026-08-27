@@ -524,7 +524,7 @@ def cmd_rescore(args, config):
                 aesthetic_calibration=(
                     config.get("local", {}).get("aesthetic", {}).get("calibration", {})
                 ),
-                grouping_enabled=bool(config.get("grouping", {}).get("enabled", False)),
+                grouping_config=config.get("grouping", {}),
             )
     print(f"Rejudged {updated} files.")
     return 0

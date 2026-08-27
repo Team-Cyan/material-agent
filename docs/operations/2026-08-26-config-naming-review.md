@@ -49,6 +49,13 @@ preferences.
 | `preview.fallback_decode` | Only `half_size` is accepted and decode does not branch on it. | Remove until another mode exists. |
 | `scene_weights` | Legacy input is transformed into `scene_profiles`, while both names remain in normalized/cache state. | Migrate to one canonical `score_policy.scene_profiles` representation. |
 
+Implemented bridge: v1 now stores this selection rule canonically at
+`grouping.best_candidate_review.enabled`; the old
+`screening_policy.top1_review_fallback` path is accepted only as an input alias,
+is removed from normalized snapshots, and conflicts are rejected. A later v2
+migration can move the stable inner shape to
+`pipeline.grouping.best_candidate_review.enabled` with the rest of `grouping`.
+
 ## Core Runtime and Library Names
 
 | Current path | Recommendation | Rationale |

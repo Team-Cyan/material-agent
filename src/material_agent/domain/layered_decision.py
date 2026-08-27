@@ -150,36 +150,42 @@ def summarize_signals(signals: list[dict], *, scene: str, config: dict) -> Layer
     )
 
 
-def apply_group_review_fallback(
+def group_best_candidate_review_enabled(config: dict) -> bool:
+    grouping = config.get("grouping", {})
+    return bool(
+        grouping.get("enabled", False)
+        and grouping.get("best_candidate_review", {}).get("enabled", True)
+    )
+
+
+def apply_group_best_candidate_review(
     results: list[tuple[str, dict]], *, enabled: bool = True
 ) -> list[tuple[str, dict]]:
     if not enabled or not results:
         return results
-    if any(payload.get("decision") == "keep" for _, payload in results):
+    if any(payload.get("decision") in {"keep", "review"} for _, payload in results):
         return results
-    if any(
-        payload.get("decision") == "reject" and payload.get("decision_reasons")
-        for _, payload in results
-    ):
+    eligible = [
+        (file_path, payload)
+        for file_path, payload in results
+        if payload.get("decision") == "reject" and not payload.get("decision_reasons")
+    ]
+    if not eligible:
         return results
 
     ranked = sorted(
-        results,
+        eligible,
         key=lambda item: float(item[1].get("score_total", item[1].get("total_score", 0.0)) or 0.0),
         reverse=True,
     )
     best_file, best_payload = ranked[0]
-    if best_payload.get("decision") == "reject":
-        updated_payload = dict(best_payload)
-        updated_payload["decision"] = "review"
-        reasons = list(updated_payload.get("decision_reasons", []))
-        reasons.append("top1_review_fallback")
-        updated_payload["decision_reasons"] = reasons
-        results = [
-            (file_path, updated_payload if file_path == best_file else payload)
-            for file_path, payload in results
-        ]
-    return results
+    updated_payload = dict(best_payload)
+    updated_payload["decision"] = "review"
+    updated_payload["decision_reasons"] = ["group_best_candidate_review"]
+    return [
+        (file_path, updated_payload if file_path == best_file else payload)
+        for file_path, payload in results
+    ]
 
 
 def _average(values: list[float | None]) -> float | None:

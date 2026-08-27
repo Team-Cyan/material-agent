@@ -82,6 +82,7 @@ _MAPPING_SECTION_PATHS = (
     ("grouping",),
     ("grouping", "visual_similarity"),
     ("grouping", "embedding_similarity"),
+    ("grouping", "best_candidate_review"),
     ("grouping", "group_guard"),
     ("screening",),
     ("screening", "musiq"),
@@ -468,9 +469,38 @@ def normalize_config(cfg: dict) -> dict:
     preview["prefer_embedded"] = _coerce_bool_like(preview.get("prefer_embedded", True))
 
     grouping = normalized.setdefault("grouping", {})
+    grouping["enabled"] = _coerce_bool_like(grouping.get("enabled", False))
+    grouping.setdefault("time_gap_seconds", 30)
+    visual_similarity = grouping.setdefault("visual_similarity", {})
+    visual_similarity["enabled"] = _coerce_bool_like(
+        visual_similarity.get("enabled", False)
+    )
+    visual_similarity.setdefault("hash_threshold", 10)
+    visual_similarity.setdefault("max_merge_gap_minutes", 10)
     embedding_similarity = grouping.setdefault("embedding_similarity", {})
     embedding_similarity["enabled"] = _coerce_bool_like(embedding_similarity.get("enabled", False))
     embedding_similarity.setdefault("threshold", 0.85)
+
+    screening_policy = normalized.setdefault("screening_policy", {})
+    legacy_review_key = "top1_review_fallback"
+    legacy_review_present = legacy_review_key in screening_policy
+    legacy_review_value = screening_policy.pop(legacy_review_key, None)
+    best_candidate_review = grouping.setdefault("best_candidate_review", {})
+    canonical_review_present = "enabled" in best_candidate_review
+    canonical_review_value = best_candidate_review.get("enabled")
+    if legacy_review_present and canonical_review_present:
+        if _coerce_bool_like(legacy_review_value) != _coerce_bool_like(canonical_review_value):
+            raise ValueError(
+                "Conflicting configuration values for "
+                "screening_policy.top1_review_fallback and "
+                "grouping.best_candidate_review.enabled"
+            )
+    selected_review_value = (
+        canonical_review_value
+        if canonical_review_present
+        else legacy_review_value if legacy_review_present else True
+    )
+    best_candidate_review["enabled"] = _coerce_bool_like(selected_review_value)
 
     screening = normalized.setdefault("screening", {})
     screening["backend"] = (screening.get("backend") or "musiq").lower()
@@ -524,9 +554,6 @@ def normalize_config(cfg: dict) -> dict:
 
     normalized["screening_policy"] = copy.deepcopy(normalized.get("screening_policy", {}))
     normalized["screening_policy"].setdefault("weight", 0.10)
-    normalized["screening_policy"]["top1_review_fallback"] = _coerce_bool_like(
-        normalized["screening_policy"].get("top1_review_fallback", True)
-    )
 
     normalized["review_pipeline"] = copy.deepcopy(normalized.get("review_pipeline", {}))
     normalized["review_pipeline"].setdefault("score_prefetch_window", 2)
@@ -716,12 +743,53 @@ def validate_config(cfg: dict) -> None:
             "screening_policy.weight must be a number between 0 and 0.60, "
             f"got: {screening_weight!r}"
         )
-    if not _is_valid_bool_like(screening_policy.get("top1_review_fallback", True)):
-        errors.append(
-            "screening_policy.top1_review_fallback must be a boolean, "
-            f"got: {screening_policy.get('top1_review_fallback')!r}"
-        )
     grouping = cfg.get("grouping", {})
+    if not _is_valid_bool_like(grouping.get("enabled", False)):
+        errors.append(
+            f"grouping.enabled must be a boolean, got: {grouping.get('enabled')!r}"
+        )
+    time_gap_seconds = grouping.get("time_gap_seconds")
+    if (
+        not isinstance(time_gap_seconds, int | float)
+        or isinstance(time_gap_seconds, bool)
+        or not 0.0 <= float(time_gap_seconds) <= 86400.0
+    ):
+        errors.append(
+            "grouping.time_gap_seconds must be a number between 0 and 86400, "
+            f"got: {time_gap_seconds!r}"
+        )
+    visual_similarity = grouping.get("visual_similarity", {})
+    if not _is_valid_bool_like(visual_similarity.get("enabled", False)):
+        errors.append(
+            "grouping.visual_similarity.enabled must be a boolean, "
+            f"got: {visual_similarity.get('enabled')!r}"
+        )
+    hash_threshold = visual_similarity.get("hash_threshold")
+    if (
+        not isinstance(hash_threshold, int)
+        or isinstance(hash_threshold, bool)
+        or not 0 <= hash_threshold <= 64
+    ):
+        errors.append(
+            "grouping.visual_similarity.hash_threshold must be an integer between 0 and 64, "
+            f"got: {hash_threshold!r}"
+        )
+    max_merge_gap_minutes = visual_similarity.get("max_merge_gap_minutes")
+    if (
+        not isinstance(max_merge_gap_minutes, int | float)
+        or isinstance(max_merge_gap_minutes, bool)
+        or not 0.0 <= float(max_merge_gap_minutes) <= 1440.0
+    ):
+        errors.append(
+            "grouping.visual_similarity.max_merge_gap_minutes must be a number between 0 "
+            f"and 1440, got: {max_merge_gap_minutes!r}"
+        )
+    best_candidate_review = grouping.get("best_candidate_review", {})
+    if not _is_valid_bool_like(best_candidate_review.get("enabled", True)):
+        errors.append(
+            "grouping.best_candidate_review.enabled must be a boolean, "
+            f"got: {best_candidate_review.get('enabled')!r}"
+        )
     embedding_similarity = grouping.get("embedding_similarity", {})
     if not _is_valid_bool_like(embedding_similarity.get("enabled", False)):
         errors.append(
@@ -731,6 +799,7 @@ def validate_config(cfg: dict) -> None:
     embedding_threshold = embedding_similarity.get("threshold", 0.85)
     if (
         not isinstance(embedding_threshold, int | float)
+        or isinstance(embedding_threshold, bool)
         or not -1.0 <= float(embedding_threshold) <= 1.0
     ):
         errors.append(

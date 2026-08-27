@@ -92,6 +92,8 @@ grouping:
   embedding_similarity:
     enabled: false
     threshold: 0.85
+  best_candidate_review:
+    enabled: true
   group_guard:
     enabled: true
     min_score: 7.0

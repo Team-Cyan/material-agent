@@ -710,9 +710,9 @@ def test_normalize_config_sets_layered_decision_defaults():
         ),
         ("screening_policy", {"weight": 0.61}, "screening_policy.weight"),
         (
-            "screening_policy",
-            {"top1_review_fallback": "sometimes"},
-            "top1_review_fallback",
+            "grouping",
+            {"best_candidate_review": {"enabled": "sometimes"}},
+            "grouping.best_candidate_review.enabled",
         ),
     ],
 )
@@ -730,14 +730,68 @@ def test_normalize_config_coerces_layered_policy_boolean_strings():
     cfg = _minimal_config()
     cfg["focus_integrity"] = {"enabled": "false", "high_resolution_roi": "false"}
     cfg["portrait_face_eye"] = {"enabled": "false"}
-    cfg["screening_policy"] = {"top1_review_fallback": "false"}
+    cfg["grouping"]["enabled"] = "false"
+    cfg["grouping"]["best_candidate_review"] = {"enabled": "false"}
 
     normalized = normalize_config(cfg)
 
     assert normalized["focus_integrity"]["enabled"] is False
     assert normalized["focus_integrity"]["high_resolution_roi"] is False
     assert normalized["portrait_face_eye"]["enabled"] is False
-    assert normalized["screening_policy"]["top1_review_fallback"] is False
+    assert normalized["grouping"]["enabled"] is False
+    assert normalized["grouping"]["best_candidate_review"]["enabled"] is False
+
+
+def test_normalize_config_migrates_legacy_group_review_key() -> None:
+    cfg = _minimal_config()
+    cfg["screening_policy"] = {"top1_review_fallback": "false"}
+
+    normalized = normalize_config(cfg)
+
+    assert normalized["grouping"]["best_candidate_review"]["enabled"] is False
+    assert "top1_review_fallback" not in normalized["screening_policy"]
+
+
+def test_normalize_config_rejects_conflicting_group_review_keys() -> None:
+    cfg = _minimal_config()
+    cfg["grouping"]["best_candidate_review"] = {"enabled": True}
+    cfg["screening_policy"] = {"top1_review_fallback": False}
+
+    with pytest.raises(ValueError, match="Conflicting configuration values"):
+        normalize_config(cfg)
+
+
+@pytest.mark.parametrize(
+    ("grouping", "expected"),
+    [
+        ({"enabled": "sometimes"}, "grouping.enabled"),
+        ({"time_gap_seconds": True}, "grouping.time_gap_seconds"),
+        (
+            {"visual_similarity": {"enabled": "sometimes"}},
+            "grouping.visual_similarity.enabled",
+        ),
+        (
+            {"visual_similarity": {"hash_threshold": 65}},
+            "grouping.visual_similarity.hash_threshold",
+        ),
+        (
+            {"visual_similarity": {"max_merge_gap_minutes": -1}},
+            "grouping.visual_similarity.max_merge_gap_minutes",
+        ),
+        (
+            {"embedding_similarity": {"threshold": True}},
+            "grouping.embedding_similarity.threshold",
+        ),
+    ],
+)
+def test_validate_config_rejects_invalid_grouping_values(grouping, expected, capsys):
+    cfg = _minimal_config()
+    cfg["grouping"] = grouping
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert expected in capsys.readouterr().out
 
 
 def test_normalize_config_sets_lightweight_detection_defaults():
