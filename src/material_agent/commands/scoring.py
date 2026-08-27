@@ -36,7 +36,7 @@ _SCORE_CACHE_CONFIG_KEYS = (
     "ollama",
     "omlx",
     "scorers",
-    "scoring",
+    "score_policy",
     "screening",
     "screening_policy",
     "decision_policy",

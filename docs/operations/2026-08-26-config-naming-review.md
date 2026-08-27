@@ -38,7 +38,7 @@ preferences.
 | --- | --- | --- |
 | `screening_policy.top1_review_fallback` | Group-selection behavior is stored under screening and previously ran even when grouping was disabled. | Move to `pipeline.grouping.best_candidate_review.enabled`. Gate it on `pipeline.grouping.enabled`. |
 | `scoring.pixel_weight`, `scoring.vision_weight` | Legacy paths, now stripped during normalization. They previously controlled only a non-authoritative diagnostic total. | Completed: removed the diagnostic aggregate and retained the layered summary as the only total. |
-| `scoring.cache_revision` | Changes cache identity but its name suggests score behavior. | Move to `score_policy.revision`. |
+| `scoring.cache_revision` | Legacy input alias, now removed from normalized/cache state after migration. | Completed: canonical key is `score_policy.revision`. |
 | `grouping.group_guard.*` | No production consumer calls `GroupGuard`; the keys are inert. | Remove until a tested policy owns them. |
 | `focus_integrity.high_resolution_roi` | Normalized and validated, but does not control RAW decoding or focus analysis. | Remove or wire it; prefer `pipeline.raw_preview.focus_max_edge_pixels` as the actual control. |
 | `portrait_face_eye.min_face_ratio` | Normalized but never consumed. | Remove or implement under a defined portrait-focus policy. |
@@ -79,6 +79,11 @@ Removed `input_dir` and `reprocess` from durable configuration. They are
 accepted as legacy input but stripped during normalization; every run injects
 its input root and cache-bypass decision exclusively from explicit task/CLI
 arguments.
+
+Moved the score-output cache identity marker from `scoring.cache_revision` to
+`score_policy.revision`. The legacy spelling is accepted only as an input alias,
+is stripped after normalization, and conflicts with the canonical key fail
+closed.
 
 ## Core Runtime and Library Names
 

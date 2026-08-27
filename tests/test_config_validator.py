@@ -23,7 +23,7 @@ def _minimal_config():
         "scorers": {},
         "grouping": {},
         "preview": {},
-        "scoring": {},
+        "score_policy": {},
         "scene_profiles": {},
     }
 
@@ -684,7 +684,7 @@ def test_normalize_config_promotes_and_removes_legacy_scene_weights():
     assert "scene_weights" not in normalized
 
 
-def test_normalize_config_removes_legacy_aggregate_weights() -> None:
+def test_normalize_config_migrates_legacy_scoring_fields() -> None:
     cfg = _minimal_config()
     cfg["scoring"] = {
         "cache_revision": "fixture-v1",
@@ -694,7 +694,17 @@ def test_normalize_config_removes_legacy_aggregate_weights() -> None:
 
     normalized = normalize_config(cfg)
 
-    assert normalized["scoring"] == {"cache_revision": "fixture-v1"}
+    assert normalized["score_policy"] == {"revision": "fixture-v1"}
+    assert "scoring" not in normalized
+
+
+def test_normalize_config_rejects_conflicting_score_policy_revisions() -> None:
+    cfg = _minimal_config()
+    cfg["scoring"] = {"cache_revision": "legacy-v1"}
+    cfg["score_policy"] = {"revision": "canonical-v2"}
+
+    with pytest.raises(ValueError, match="Conflicting configuration values"):
+        normalize_config(cfg)
 
 
 def test_normalize_config_removes_per_run_operational_fields() -> None:

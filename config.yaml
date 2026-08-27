@@ -193,9 +193,9 @@ scorers:
   mood:
     enabled: true
 
-scoring:
+score_policy:
   # Bump for deliberate scoring-policy migrations outside normal config fields.
-  cache_revision: score-policy-v2
+  revision: score-policy-v2
 
 screening:
   # MUSIQ remains opt-in because the lean CPU/OpenVINO images do not bundle

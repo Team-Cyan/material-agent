@@ -287,6 +287,10 @@ def test_score_cache_key_tracks_score_grouping_and_terminal_output_inputs():
     }
     assert build_score_cache_key(calibration_change) != baseline
 
+    revision_change = copy.deepcopy(config)
+    revision_change["score_policy"]["revision"] = "score-policy-test-change"
+    assert build_score_cache_key(revision_change) != baseline
+
     scene_change = copy.deepcopy(config)
     scene_change["scene_profiles"]["default"]["aesthetic_weights"]["composition"] += 0.01
     assert build_score_cache_key(scene_change) != baseline

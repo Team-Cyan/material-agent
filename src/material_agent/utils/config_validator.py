@@ -102,6 +102,7 @@ _MAPPING_SECTION_PATHS = (
     ("scene_weights",),
     ("scorers",),
     ("scoring",),
+    ("score_policy",),
 )
 
 
@@ -556,9 +557,35 @@ def normalize_config(cfg: dict) -> dict:
     normalized["screening_policy"] = copy.deepcopy(normalized.get("screening_policy", {}))
     normalized["screening_policy"].setdefault("weight", 0.10)
 
-    scoring = normalized.setdefault("scoring", {})
+    scoring = copy.deepcopy(normalized.get("scoring", {}))
     scoring.pop("pixel_weight", None)
     scoring.pop("vision_weight", None)
+    legacy_revision_present = "cache_revision" in scoring
+    legacy_revision = scoring.pop("cache_revision", None)
+    score_policy = copy.deepcopy(normalized.get("score_policy", {}))
+    canonical_revision_present = "revision" in score_policy
+    canonical_revision = score_policy.get("revision")
+    if (
+        legacy_revision_present
+        and canonical_revision_present
+        and legacy_revision != canonical_revision
+    ):
+        raise ValueError(
+            "Conflicting configuration values for "
+            "scoring.cache_revision and score_policy.revision"
+        )
+    selected_revision = (
+        canonical_revision
+        if canonical_revision_present
+        else legacy_revision if legacy_revision_present else None
+    )
+    if selected_revision is not None:
+        score_policy["revision"] = selected_revision
+    normalized["score_policy"] = score_policy
+    if scoring:
+        normalized["scoring"] = scoring
+    else:
+        normalized.pop("scoring", None)
 
     normalized["review_pipeline"] = copy.deepcopy(normalized.get("review_pipeline", {}))
     normalized["review_pipeline"].setdefault("score_prefetch_window", 2)
@@ -592,7 +619,7 @@ def validate_config(cfg: dict) -> None:
     cfg = normalize_config(cfg)
     errors = []
 
-    for key in ("scorers", "grouping", "preview", "scoring"):
+    for key in ("scorers", "grouping", "preview", "score_policy"):
         if key not in cfg:
             errors.append(f"Missing required config key: '{key}'")
 
