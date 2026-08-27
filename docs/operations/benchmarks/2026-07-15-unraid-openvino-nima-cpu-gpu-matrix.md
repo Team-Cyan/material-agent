@@ -6,7 +6,7 @@ Keep the production NIMA profile on `CPU`, batch 1, with up to eight inference
 requests. Do not split this stage across CPU and GPU and do not require
 `/dev/dri` in the ordinary scoring container.
 
-The target i7-11700T does execute the NIMA graph on `GPU.0`, but the small warm
+The tested Intel iGPU does execute the NIMA graph on `GPU.0`, but the small warm
 throughput difference changed direction between repetitions. GPU cold startup
 and memory use were consistently higher, so the GPU path does not offer a
 stable material benefit for this model and workload.
@@ -17,7 +17,7 @@ stable material benefit for this model and workload.
 - model: bundled NIMA MobileNet/AVA FP16 TFLite, SHA-256
   `a5051a0fcced735682735e3e0fd58ee54c83ed664282a003f52235b3dbcb9320`;
 - runtime: OpenVINO 2026.2.1;
-- source: 128 RAW files under `/mnt/user/material/photos`, mounted at `/photos`
+- source: 128 RAW files under `/mnt/user/photos`, mounted at `/photos`
   read-only;
 - state: `/mnt/user/appdata/material-agent/runtime/.material-agent`, mounted at
   `/config` read-write;

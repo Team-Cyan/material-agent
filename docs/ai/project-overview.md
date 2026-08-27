@@ -61,3 +61,16 @@ Do not start by reading every historical OMLX plan copied from `material-judge`.
 - Keep CPU fallback working before adding accelerator-specific code.
 - Prefer small, module-scoped changes.
 - Update `docs/ai/inference-runtime.md` when runtime-provider behavior changes.
+
+## Public Repository Boundary
+
+This repository owns the application: photo discovery and decoding, scoring,
+grouping, SQLite state, XMP behavior, the Web/CLI surfaces, model runtimes, and
+generic container deployment contracts.
+
+It must not contain private-machine control capabilities or profiles. In
+particular, saved host addresses, credentials, SSH execution, DockerMan or
+ComposeMan update orchestration, NAS backup/restore receipts, Home Assistant,
+router, and proxy operations belong in a separate private operations
+repository. Application documentation may describe the interface expected by
+an external operator, but must use generic paths and sanitized evidence.

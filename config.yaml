@@ -116,8 +116,8 @@ local:
     min_detection_confidence: 0.5
 
 inference:
-  # The i7-11700T target benchmark selected CPU over its integrated GPU for the
-  # bundled DINOv3 graph. Other devices remain explicit deployment overrides.
+  # The tested 11th-generation Intel host selected CPU over its integrated GPU
+  # for the bundled DINOv3 graph. Other devices remain explicit overrides.
   runtime: openvino
   device: CPU
   fallback_device: "CPU"

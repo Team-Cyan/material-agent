@@ -15,7 +15,7 @@ Improve two things without destabilizing the core scoring path:
 
 ### 1. Core scoring looks broadly usable
 
-From the current runtime database at `/Users/lancer/materials/photos/.material-agent/state.db`:
+From the current runtime database at `/data/photos/.material-agent/state.db`:
 
 - processed rows: about `40k`
 - average `total_score`: about `6.04`

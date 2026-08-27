@@ -33,7 +33,7 @@
 - quarantined OMLX/Ollama behind an explicit compatibility gate and removed
   legacy runtime helpers from the default command surface
 - added RAW input support to the isolated benchmark and completed the first
-  five-calibration/five-holdout Sony A7C II concert-burst evaluation
+  five-calibration/five-holdout real-camera burst evaluation
 - completed an isolated five-file XMP pilot with source hash verification and
   no writes to the original holdout directory
 - completed a whole-project correctness and deployment hardening pass covering
@@ -103,12 +103,12 @@
 - replaced per-file SQLite commits and per-singleton stage churn with bounded
   transaction batching, indexed artifact aggregation, and commentary-disabled
   coroutine elision for whole-library result persistence
-- completed the post-fix 40,620-file Unraid dry-run in 5,683 seconds
-  (7.148 files/second): task exit code 0, 40,620 scored, zero errors, zero
-  source XMP/state writes, DB/log state under `/config`, and `/photos` read-only
-- normalized the 1,455 Mac-imported ARWs from private `0700/gid20` metadata to
-  `users` group-readable access using the checksum-verified import receipt;
-  non-root rawpy decoding and the subsequent full-library run both passed
+- completed the post-fix 40k-plus-file Unraid dry-run at 7.148 files/second:
+  task exit code 0, zero errors, zero source XMP/state writes, DB/log state
+  under `/config`, and `/photos` read-only
+- verified non-root rawpy decoding and a subsequent full-library run after an
+  external operator corrected imported-file permissions from a bounded,
+  checksum-verified receipt
 - consolidated the maintained Unraid deployment to one container: the primary
   Web process owns model management, has no TMDB dependency, and intentionally
   uses no application token on trusted LAN port `8776`

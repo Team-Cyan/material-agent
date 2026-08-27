@@ -39,8 +39,8 @@ Evidence:
 - the harness decodes proprietary RAW inputs through the same embedded-preview
   path used by production and records preview source and dimensions without
   writing to the source directories;
-- the first private real-camera set contains ten Sony A7C II ARW concert frames,
-  split five calibration/five holdout.
+- the first private real-camera set contains ten proprietary RAW burst frames,
+  split five calibration/five holdout; the files remain outside Git.
 
 ## Milestone 2: Semantic Scene Slice
 
@@ -53,8 +53,8 @@ Evidence:
 - scene accuracy on synthetic v1 changes from 1/4 to 4/4;
 - `other` rate changes from 4/4 to 1/4;
 - actual runtime is reported as `open_clip:cpu`, not configured OpenVINO.
-- the original prompt set classified all ten concert frames as `other`;
-- adding a specific live-concert prompt produced 5/5 calibration and 5/5
+- the original prompt set classified all ten event frames as `other`;
+- adding an event-specific prompt produced 5/5 calibration and 5/5
   holdout scene accuracy while the maintained synthetic set remained 4/4.
 
 Missing promotion evidence:
@@ -86,7 +86,7 @@ Contradicting promotion evidence:
 - reject-prior recall is 2/3 at the recorded benchmark threshold;
 - enabling default fusion from this evidence would violate the reject-safety
   gate.
-- on the real concert burst, DINOv2 finds a same-group nearest neighbour for
+- on the real-camera burst, DINOv2 finds a same-group nearest neighbour for
   10/10 frames, but MediaPipe detects 0/10 small, oblique, hair-occluded faces;
   the face block therefore remains unsuitable as a default portrait gate.
 
@@ -125,14 +125,14 @@ Available evidence:
 
 - XMP sidecar writer behavior, preservation, and ExifTool readability have unit
   and integration coverage;
-- current live Unraid safe-read confirms host `OMNI` on an i7-11700T;
+- a sanitized Unraid safe-read confirmed the expected Intel CPU/iGPU class;
 - the host has Docker but no host Python/uv, so validation must run in a
   purpose-built container;
 - `material-agent` is installed as a DockerMan-managed one-shot container using
   `ghcr.io/team-cyan/material-agent:intel-openvino` at revision `54e7654`;
 - the bounded target-host run finished 10/10 files with zero errors and stored
   its fresh database at `/config/state.db` under the appdata bind mount;
-- `/mnt/user/material/photos` was mounted at `/photos` with `RW=false`, dry-run
+- `/mnt/user/photos` was mounted at `/photos` with `RW=false`, dry-run
   remained enabled, and the post-run audit found zero source-side XMP files and
   zero source-side `.material-agent` directories;
 - runtime state and `run.log` stay in the writable `/config` appdata mount, not

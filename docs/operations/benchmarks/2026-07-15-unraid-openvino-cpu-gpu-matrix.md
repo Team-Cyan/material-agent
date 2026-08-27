@@ -12,9 +12,9 @@ from revision `dda680d46fe9114df54c57193c4bc4d6ee8b1bf0`.
 Host:
 
 - Unraid 7.2.4, Linux 6.12.54;
-- Intel Core i7-11700T with Intel integrated GPU exposed through `/dev/dri`;
+- tested 11th-generation Intel CPU with integrated GPU exposed through `/dev/dri`;
 - OpenVINO 2026.2.1;
-- fixed first 128 RAW files from `/mnt/user/material/photos`;
+- fixed first 128 RAW files from `/mnt/user/photos`;
 - 32-preview windows, eight asynchronous requests, `THROUGHPUT` hint;
 - grouping, screening, and learned score fusion disabled to isolate the
   maintained heuristic-plus-embedding pipeline.

@@ -6,7 +6,7 @@ This document defines the runtime strategy for `material-agent`.
 
 Run photo culling on NAS-class hardware without requiring a local HTTP VLM service.
 
-The first target is Intel integrated GPU hardware such as i7-11700T-class systems. The implementation should still run on CPU-only hosts.
+The first target is 11th-generation Intel integrated-GPU-class hardware. The implementation should still run on CPU-only hosts.
 
 ## Non-Goals
 
@@ -40,7 +40,7 @@ Adapters own vendor-specific setup. The review pipeline should not import OpenVI
    - First accelerated implementation.
    - Target Intel CPU, integrated GPU, discrete GPU, and NPU through OpenVINO.
    - Use native OpenVINO on Python 3.14; `onnxruntime-openvino` does not yet publish `cp314` wheels.
-   - Default device: `CPU` after the target i7-11700T throughput matrix.
+   - Default device: `CPU` after the tested Intel CPU/iGPU throughput matrix.
      `AUTO:GPU,CPU` and explicit `GPU` remain supported overrides.
    - Docker should mount `/dev/dri` on Linux hosts.
 
@@ -243,7 +243,7 @@ The embedding path is throughput-aware rather than one-image synchronous:
 
 The Intel image uses a 32-preview preparation window, batch 1, and up to eight
 in-flight requests. This target-specific default avoids the dynamic-shape
-auto-batch path because batch 4/8 did not improve throughput on the i7-11700T.
+auto-batch path because batch 4/8 did not improve throughput on the tested Intel host.
 These are throughput controls, not semantic model settings,
 so changing them does not invalidate persisted embedding vectors.
 The preparation window remains capped at 32 to bound memory, while the separate

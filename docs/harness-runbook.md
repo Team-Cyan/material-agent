@@ -68,13 +68,13 @@ uv run material-agent omlx-start --config config.yaml --restart-shared
 uv run material-agent omlx-benchmark \
   --config config.yaml \
   --models Qwen3-VL-4B-Instruct-4bit \
-  --sample-set /Users/lancer/materials/photos
+  --sample-set /data/photos
 
 # 真实样片 harness
 uv run material-agent omlx-harness \
   --config config.yaml \
   --models Qwen3-VL-4B-Instruct-4bit gemma-4-e2b-it-4bit \
-  --sample-set /Users/lancer/materials/photos \
+  --sample-set /data/photos \
   --limit 12
 ```
 

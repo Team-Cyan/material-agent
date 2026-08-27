@@ -188,7 +188,7 @@ We now have a strict live test that checks the raw OMLX reply itself, not only t
 Verified result after the current tuning:
 
 - Repository tests for instance setup/status, config parsing, MUSIQ fallback, and scoring integration pass.
-- Real local run on `/Users/lancer/materials/test` completed with:
+- Real local run on `/data/test-photos` completed with:
   - `fast` using MUSIQ locally
   - `full` vision using `Qwen3-VL-8B-Instruct-4bit`
   - commentary remaining separate from scoring

@@ -1,7 +1,7 @@
 {
-  "run_dir": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-kv-isolated-qwen8/20260409-230610",
-  "attempts_path": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-kv-isolated-qwen8/20260409-230610/attempts.jsonl",
-  "result_root": "/Users/lancer/projects/material-agent/artifacts/benchmarks/omlx-kv-isolated-qwen8",
+  "run_dir": "/workspace/material-agent/artifacts/benchmarks/omlx-kv-isolated-qwen8/20260409-230610",
+  "attempts_path": "/workspace/material-agent/artifacts/benchmarks/omlx-kv-isolated-qwen8/20260409-230610/attempts.jsonl",
+  "result_root": "/workspace/material-agent/artifacts/benchmarks/omlx-kv-isolated-qwen8",
   "mode": "kv_cache_batch",
   "repeat_count": 10,
   "sample_paths": [
@@ -16,9 +16,9 @@
   ],
   "cache_enabled": true,
   "preflight_status": {
-    "instance_root": "/Users/lancer/.material-agent/omlx",
-    "model_dir": "/Users/lancer/.material-agent/omlx/models",
-    "cache_dir": "/Users/lancer/.material-agent/omlx/cache",
+    "instance_root": "/home/example/.material-agent/omlx",
+    "model_dir": "/home/example/.material-agent/omlx/models",
+    "cache_dir": "/home/example/.material-agent/omlx/cache",
     "active_models": [
       "Qwen3-VL-8B-Instruct-4bit"
     ],

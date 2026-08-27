@@ -91,7 +91,7 @@ docker run --rm --device /dev/dri \
   -e MATERIAL_AGENT_INPUT_DIR=/photos \
   -e MATERIAL_AGENT_WORK_DIR=/config \
   -e MATERIAL_AGENT_DRY_RUN=true \
-  -v /mnt/user/material/photos:/photos:ro \
+  -v /mnt/user/photos:/photos:ro \
   -v /mnt/user/appdata/material-agent/runtime/.material-agent:/config \
   ghcr.io/team-cyan/material-agent:intel-openvino
 ```

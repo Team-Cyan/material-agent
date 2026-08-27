@@ -4,11 +4,11 @@ from material_agent.utils.launcher import build_macos_command_launcher
 
 
 def test_build_macos_command_launcher_uses_repo_root_and_config_path():
-    repo_root = Path("/Users/lancer/projects/material-agent")
+    repo_root = Path("/workspace/material-agent")
 
     script = build_macos_command_launcher(repo_root)
 
-    assert "REPO_ROOT='/Users/lancer/projects/material-agent'" in script
+    assert "REPO_ROOT='/workspace/material-agent'" in script
     assert 'CONFIG_PATH="$REPO_ROOT/config.yaml"' in script
     assert 'uv run material-agent run "$TARGET_DIR" --config "$CONFIG_PATH"' in script
     assert 'read -r -p "Press Enter to close..."' in script
