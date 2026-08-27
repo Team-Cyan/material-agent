@@ -41,7 +41,6 @@ _SCORE_CACHE_CONFIG_KEYS = (
     "screening_policy",
     "decision_policy",
     "scene_profiles",
-    "scene_weights",
     "grouping",
     "preview",
     "focus_integrity",
@@ -514,13 +513,9 @@ def cmd_rescore(args, config):
         with SQLiteProcessedRepository(args.dir) as repository:
             updated = RescoreService(repository).run(
                 scene_filters=scene_keys,
-                scene_weights=config.get("scene_profiles", {}),
-                scoring_config={
-                    **config.get("scoring", {}),
-                    "decision_policy": config.get("decision_policy", {}),
-                    "screening_policy": config.get("screening_policy", {}),
-                },
-                scorers_config=config.get("scorers", {}),
+                scene_profiles=config.get("scene_profiles", {}),
+                decision_policy=config.get("decision_policy", {}),
+                screening_policy=config.get("screening_policy", {}),
                 aesthetic_calibration=(
                     config.get("local", {}).get("aesthetic", {}).get("calibration", {})
                 ),

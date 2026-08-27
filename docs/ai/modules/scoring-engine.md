@@ -59,6 +59,10 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 - output scores should stay bounded to expected numeric ranges
 - score bundle shape must remain compatible with runtime persistence and rewrite flows
 - rejection paths must still emit enough information for downstream summary and persistence
+- normal results and every early-rejection path use the same layered summary as
+  the sole authoritative total; there is no separate pixel/vision aggregate
+- `scene_profiles` is the canonical scene-weight configuration; legacy
+  `scene_weights` is accepted only as a normalization-time input alias
 - RAW previews remain RGB for grayscale analysis, but must be converted to BGR
   before OpenCV JPEG encoding so downstream PIL/model consumers receive the
   original RGB colors

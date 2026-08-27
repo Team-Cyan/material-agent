@@ -198,8 +198,6 @@ scorers:
 scoring:
   # Bump for deliberate scoring-policy migrations outside normal config fields.
   cache_revision: score-policy-v2
-  pixel_weight: 0.35
-  vision_weight: 0.65
 
 screening:
   # MUSIQ remains opt-in because the lean CPU/OpenVINO images do not bundle
@@ -227,76 +225,76 @@ decision_policy:
 screening_policy:
   weight: 0.10
 
-scene_weights:
+scene_profiles:
   default:
-    subject: 0.18
-    composition: 0.17
-    lighting: 0.16
-    color: 0.14
-    clarity: 0.17
-    depth: 0.08
-    mood: 0.10
+    aesthetic_weights:
+      subject_moment: 0.2169
+      composition: 0.2048
+      lighting: 0.1928
+      color: 0.1687
+      depth_separation: 0.0964
+      mood_story: 0.1205
   people:
-    subject: 0.28
-    composition: 0.15
-    lighting: 0.15
-    color: 0.10
-    clarity: 0.20
-    depth: 0.05
-    mood: 0.07
+    aesthetic_weights:
+      subject_moment: 0.35
+      composition: 0.1875
+      lighting: 0.1875
+      color: 0.125
+      depth_separation: 0.0625
+      mood_story: 0.0875
   sports:
-    subject: 0.25
-    composition: 0.13
-    lighting: 0.12
-    color: 0.08
-    clarity: 0.25
-    depth: 0.07
-    mood: 0.10
+    aesthetic_weights:
+      subject_moment: 0.3333
+      composition: 0.1733
+      lighting: 0.16
+      color: 0.1067
+      depth_separation: 0.0933
+      mood_story: 0.1333
   landscape:
-    subject: 0.08
-    composition: 0.22
-    lighting: 0.20
-    color: 0.18
-    clarity: 0.12
-    depth: 0.12
-    mood: 0.08
+    aesthetic_weights:
+      subject_moment: 0.0909
+      composition: 0.25
+      lighting: 0.2273
+      color: 0.2045
+      depth_separation: 0.1364
+      mood_story: 0.0909
   city:
-    subject: 0.10
-    composition: 0.22
-    lighting: 0.18
-    color: 0.14
-    clarity: 0.12
-    depth: 0.12
-    mood: 0.12
+    aesthetic_weights:
+      subject_moment: 0.1136
+      composition: 0.25
+      lighting: 0.2045
+      color: 0.1591
+      depth_separation: 0.1364
+      mood_story: 0.1364
   indoor:
-    subject: 0.20
-    composition: 0.17
-    lighting: 0.20
-    color: 0.14
-    clarity: 0.15
-    depth: 0.05
-    mood: 0.09
+    aesthetic_weights:
+      subject_moment: 0.2353
+      composition: 0.2
+      lighting: 0.2353
+      color: 0.1647
+      depth_separation: 0.0588
+      mood_story: 0.1059
   detail:
-    subject: 0.20
-    composition: 0.20
-    lighting: 0.16
-    color: 0.16
-    clarity: 0.18
-    depth: 0.05
-    mood: 0.05
+    aesthetic_weights:
+      subject_moment: 0.2439
+      composition: 0.2439
+      lighting: 0.1951
+      color: 0.1951
+      depth_separation: 0.061
+      mood_story: 0.061
   animals:
-    subject: 0.28
-    composition: 0.14
-    lighting: 0.14
-    color: 0.10
-    clarity: 0.22
-    depth: 0.05
-    mood: 0.07
+    aesthetic_weights:
+      subject_moment: 0.359
+      composition: 0.1795
+      lighting: 0.1795
+      color: 0.1282
+      depth_separation: 0.0641
+      mood_story: 0.0897
   other:
-    subject: 0.18
-    composition: 0.17
-    lighting: 0.16
-    color: 0.14
-    clarity: 0.17
-    depth: 0.08
-    mood: 0.10
+    aesthetic_weights:
+      subject_moment: 0.2169
+      composition: 0.2048
+      lighting: 0.1928
+      color: 0.1687
+      depth_separation: 0.0964
+      mood_story: 0.1205

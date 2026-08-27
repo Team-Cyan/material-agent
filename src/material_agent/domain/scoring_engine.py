@@ -180,7 +180,6 @@ def build_visible_breakdown_instructions(
 def _build_rejected_bundle(
     *,
     status: str,
-    total: float,
     scores: dict[str, float],
     meta: dict,
     config: dict,
@@ -198,7 +197,7 @@ def _build_rejected_bundle(
                 decision_reasons.append(existing_reason)
     return ScoreBundle(
         scores=scores,
-        total=round(total, 2),
+        total=summary.total_score if summary is not None else 0.0,
         boosted=False,
         meta=meta,
         scene=scene,
@@ -267,7 +266,6 @@ async def compute_scores(
         }
         return _build_rejected_bundle(
             status="catastrophic_blur_rejected",
-            total=pixel_total,
             scores=scores,
             meta=meta,
             config=config,
@@ -285,7 +283,6 @@ async def compute_scores(
         )
         return _build_rejected_bundle(
             status="pixel_rejected",
-            total=pixel_total,
             scores=scores,
             meta=meta,
             config=config,
@@ -316,17 +313,8 @@ async def compute_scores(
                         fast_score,
                         effective_tier2_threshold,
                     )
-                    scoring_cfg = config.get("scoring", {})
-                    total = _combine_scores(
-                        pixel_total=pixel_total,
-                        vision_total=fast_score,
-                        pixel_results=pixel_results,
-                        pixel_weight=scoring_cfg.get("pixel_weight", 0.3),
-                        vision_weight=scoring_cfg.get("vision_weight", 0.7),
-                    )
                     return _build_rejected_bundle(
                         status="fast_rejected",
-                        total=total,
                         scores=scores,
                         meta=meta,
                         config=config,
@@ -390,17 +378,6 @@ async def compute_scores(
         scene_raw = ""
 
     scores = {r.name: r.score for r in results}
-    pixel_results = [r for r in results if r.name not in VISION_DIMS]
-    vision_scores = {r.name: r.score for r in results if r.name in VISION_DIMS}
-    scoring_cfg = config.get("scoring", {})
-    total = Aggregator.aggregate_with_scene(
-        pixel_results,
-        vision_scores,
-        scene,
-        config.get("scene_weights", {}),
-        pixel_weight=scoring_cfg.get("pixel_weight", 0.3),
-        vision_weight=scoring_cfg.get("vision_weight", 0.7),
-    )
     signals = _build_layered_signals(
         scores=scores,
         meta=meta,
@@ -418,10 +395,6 @@ async def compute_scores(
         scene=scene,
         scene_raw=scene_raw,
         instructions=instructions,
-        extra={
-            "aggregated_total": total,
-            "layered_total": local_total,
-        },
         decision=summary.decision,
         decision_reasons=summary.decision_reasons,
         screening_prior=summary.screening_prior,
@@ -429,22 +402,6 @@ async def compute_scores(
         policy_version=summary.policy_version,
         signals=signals,
     )
-
-
-def _combine_scores(
-    *,
-    pixel_total: float,
-    vision_total: float,
-    pixel_results: list[ScorerResult],
-    pixel_weight: float,
-    vision_weight: float,
-) -> float:
-    if not pixel_results:
-        return round(vision_total, 2)
-    w_sum = pixel_weight + vision_weight
-    if w_sum <= 0:
-        return round(pixel_total, 2)
-    return round((pixel_total * pixel_weight + vision_total * vision_weight) / w_sum, 2)
 
 
 def _build_layered_signals(

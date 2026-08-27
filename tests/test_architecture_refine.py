@@ -18,6 +18,7 @@ from material_agent.core.commentary import (
     regenerate_post_commentary,
 )
 from material_agent.core.scoring_engine import RawFrame, compute_scores
+from material_agent.domain.layered_decision import summarize_signals
 from material_agent.scorers.base import ScorerResult
 
 
@@ -73,16 +74,17 @@ def _base_config() -> dict:
             "visual_similarity": {"enabled": False},
         },
         "preview": {"max_size": 256, "jpeg_quality": 85},
-        "scoring": {"pixel_weight": 0.3, "vision_weight": 0.7},
-        "scene_weights": {
+        "scoring": {},
+        "scene_profiles": {
             "default": {
-                "subject": 1 / 7,
-                "composition": 1 / 7,
-                "lighting": 1 / 7,
-                "color": 1 / 7,
-                "clarity": 1 / 7,
-                "depth": 1 / 7,
-                "mood": 1 / 7,
+                "aesthetic_weights": {
+                    "subject_moment": 1 / 6,
+                    "composition": 1 / 6,
+                    "lighting": 1 / 6,
+                    "color": 1 / 6,
+                    "depth_separation": 1 / 6,
+                    "mood_story": 1 / 6,
+                }
             }
         },
         "ollama": {
@@ -2273,6 +2275,9 @@ def test_scoring_engine_tier1_rejects_before_model_call():
     assert bundle.visible_breakdown["technical_quality"] == 0.0
     assert bundle.screening_prior == 0.0
     assert bundle.signals
+    assert bundle.total == summarize_signals(
+        bundle.signals, scene=bundle.scene, config=cfg
+    ).total_score
     assert client.score_image_called is False
 
 
@@ -2294,6 +2299,9 @@ def test_scoring_engine_tier2_fast_rejects_before_full_model():
     assert bundle.screening_prior == 1.0
     assert bundle.visible_breakdown["technical_quality"] > 0.0
     assert bundle.signals
+    assert bundle.total == summarize_signals(
+        bundle.signals, scene=bundle.scene, config=cfg
+    ).total_score
     assert client.score_image_called is False
 
 
@@ -2421,16 +2429,14 @@ def test_scoring_engine_final_total_is_owned_by_local_layered_summary():
 
     bundle = asyncio.run(compute_scores(frame, client, cfg))
 
-    assert bundle.total == bundle.extra["layered_total"]
     assert bundle.total != 9.9
-    assert bundle.extra["aggregated_total"] != bundle.total
+    assert bundle.extra == {}
 
 
 def test_scoring_engine_uses_scene_aware_exposure_in_final_total(monkeypatch):
     cfg = _base_config()
     cfg["scorers"]["sharpness"]["enabled"] = False
     cfg["scorers"]["exposure"]["weight"] = 1.0
-    cfg["scoring"] = {"pixel_weight": 1.0, "vision_weight": 0.0}
     for dim in ("composition", "lighting", "color", "clarity", "depth", "mood"):
         cfg["scorers"][dim]["enabled"] = False
     client = _ScreeningClient(fast_score=8.0)

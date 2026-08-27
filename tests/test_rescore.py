@@ -145,7 +145,20 @@ def test_rescore_updates_total_without_ai():
         )
         s.conn.commit()
 
-        cfg = {"scene_weights": {"people": {"clarity": 1.0}}}
+        cfg = {
+            "scene_profiles": {
+                "people": {
+                    "aesthetic_weights": {
+                        "subject_moment": 1 / 6,
+                        "composition": 1 / 6,
+                        "lighting": 1 / 6,
+                        "color": 1 / 6,
+                        "depth_separation": 1 / 6,
+                        "mood_story": 1 / 6,
+                    }
+                }
+            }
+        }
         cmd_rescore(_Args(d), cfg)
 
         row = s.conn.execute(
@@ -172,7 +185,11 @@ def test_rescore_falls_back_to_default():
         )
         s.conn.commit()
 
-        cfg = {"scene_weights": {"default": {"composition": 1.0}}}
+        cfg = {
+            "scene_profiles": {
+                "default": {"aesthetic_weights": {"composition": 1.0}}
+            }
+        }
         cmd_rescore(_Args(d), cfg)
 
         row = s.conn.execute(
@@ -360,9 +377,9 @@ def test_rescore_scene_filter_preserves_existing_group_rank_without_full_group_c
         try:
             updated = RescoreService(repo).run(
                 scene_filters=["people"],
-                scene_weights=cfg["scene_profiles"],
-                scoring_config=cfg,
-                scorers_config={},
+                scene_profiles=cfg["scene_profiles"],
+                decision_policy=cfg.get("decision_policy", {}),
+                screening_policy=cfg.get("screening_policy", {}),
             )
         finally:
             repo.close()

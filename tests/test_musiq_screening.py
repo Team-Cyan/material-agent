@@ -44,16 +44,17 @@ def _base_config() -> dict:
             "visual_similarity": {"enabled": False},
         },
         "preview": {"max_size": 256, "jpeg_quality": 85},
-        "scoring": {"pixel_weight": 0.3, "vision_weight": 0.7},
-        "scene_weights": {
+        "scoring": {},
+        "scene_profiles": {
             "default": {
-                "subject": 1 / 7,
-                "composition": 1 / 7,
-                "lighting": 1 / 7,
-                "color": 1 / 7,
-                "clarity": 1 / 7,
-                "depth": 1 / 7,
-                "mood": 1 / 7,
+                "aesthetic_weights": {
+                    "subject_moment": 1 / 6,
+                    "composition": 1 / 6,
+                    "lighting": 1 / 6,
+                    "color": 1 / 6,
+                    "depth_separation": 1 / 6,
+                    "mood_story": 1 / 6,
+                }
             }
         },
         "screening": {

@@ -33,7 +33,6 @@ _CONFIG_KEYS = (
     "decision_policy",
     "screening_policy",
     "scene_profiles",
-    "scene_weights",
     "xmp",
 )
 

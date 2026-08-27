@@ -1,5 +1,9 @@
 # Localize Final Scoring Implementation Plan
 
+> **Status:** Historical implementation plan. The current contract is defined
+> by `docs/ai/modules/scoring-engine.md`; the layered summary is now the only
+> authoritative total and no diagnostic aggregate is retained.
+>
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Remove model-owned overall scores from both full scoring and fast screening so the model only returns signals, while local rules own final scoring and keep/review/reject decisions.
@@ -344,7 +348,7 @@ def test_compute_scores_total_is_derived_from_local_layered_summary():
     bundle = asyncio.run(compute_scores(_fake_frame(), _full_client_with_legacy_overall(), _config()))
 
     assert bundle.policy_version == "layered-v1"
-    assert bundle.total == bundle.extra["layered_total"]
+    assert bundle.extra == {}
     assert bundle.total != 9.9
 
 
@@ -373,13 +377,12 @@ return ScoreBundle(
     visible_breakdown=summary.visible_breakdown,
     policy_version=summary.policy_version,
     signals=signals,
-    extra={"aggregated_total": total, "layered_total": local_total},
 )
 ```
 
 Implementation rules:
-- the aggregator result may remain as an intermediate input
 - only the local layered summary owns the final `ScoreBundle.total`
+- no separate pixel/vision aggregate is computed or exposed
 - no model-provided single-number score may override `bundle.total`
 
 - [ ] **Step 3: Run focused tests**
@@ -526,4 +529,3 @@ git commit -m "docs(scorer): document local scoring ownership"
 - `screening_prior` remains the local field name throughout.
 - `score_total` remains the runtime payload field name throughout.
 - Full-score output remains dimension-based and scene-based only.
-

@@ -24,7 +24,7 @@ def _minimal_config():
         "grouping": {},
         "preview": {},
         "scoring": {},
-        "scene_weights": {},
+        "scene_profiles": {},
     }
 
 
@@ -647,15 +647,16 @@ def test_scene_profiles_unknown_dimension_exits(capsys):
     assert "unknown dimensions" in capsys.readouterr().out
 
 
-def test_scene_weights_correct_sum_passes():
+def test_legacy_scene_weights_correct_sum_passes():
     cfg = _minimal_config()
     weights = {d: 0.0 for d in VISION_DIMS}
     weights["clarity"] = 1.0
-    cfg["scene_weights"]["detail"] = weights
+    cfg["scene_profiles"] = {}
+    cfg["scene_weights"] = {"detail": weights}
     validate_config(cfg)  # should not raise
 
 
-def test_normalize_config_promotes_scene_weights_to_scene_profiles():
+def test_normalize_config_promotes_and_removes_legacy_scene_weights():
     cfg = _minimal_config()
     cfg["scene_weights"] = {
         "default": {
@@ -680,6 +681,20 @@ def test_normalize_config_promotes_scene_weights_to_scene_profiles():
         "depth_separation": 0.0556,
         "mood_story": 0.0556,
     }
+    assert "scene_weights" not in normalized
+
+
+def test_normalize_config_removes_legacy_aggregate_weights() -> None:
+    cfg = _minimal_config()
+    cfg["scoring"] = {
+        "cache_revision": "fixture-v1",
+        "pixel_weight": 0.3,
+        "vision_weight": 0.7,
+    }
+
+    normalized = normalize_config(cfg)
+
+    assert normalized["scoring"] == {"cache_revision": "fixture-v1"}
 
 
 def test_normalize_config_sets_layered_decision_defaults():

@@ -554,6 +554,10 @@ def normalize_config(cfg: dict) -> dict:
     normalized["screening_policy"] = copy.deepcopy(normalized.get("screening_policy", {}))
     normalized["screening_policy"].setdefault("weight", 0.10)
 
+    scoring = normalized.setdefault("scoring", {})
+    scoring.pop("pixel_weight", None)
+    scoring.pop("vision_weight", None)
+
     normalized["review_pipeline"] = copy.deepcopy(normalized.get("review_pipeline", {}))
     normalized["review_pipeline"].setdefault("score_prefetch_window", 2)
 
@@ -570,6 +574,7 @@ def normalize_config(cfg: dict) -> dict:
     if "omlx" in normalized:
         normalized["omlx"] = _normalize_omlx_group(normalized.get("omlx", {}))
     normalized["scene_profiles"] = _build_scene_profiles(normalized)
+    normalized.pop("scene_weights", None)
     return normalized
 
 

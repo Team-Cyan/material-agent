@@ -61,10 +61,6 @@ def _config(input_dir):
             "commentary_model": "llava:13b",
             "commentary_enabled": False,
         },
-        "scoring": {
-            "pixel_weight": 0.3,
-            "vision_weight": 0.7,
-        },
         "preview": {"max_size": 256, "jpeg_quality": 85},
     }
 

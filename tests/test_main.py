@@ -265,7 +265,7 @@ def test_score_cache_key_tracks_score_grouping_and_terminal_output_inputs():
     assert build_score_cache_key(calibration_change) != baseline
 
     scene_change = copy.deepcopy(config)
-    scene_change["scene_weights"]["default"]["composition"] += 0.01
+    scene_change["scene_profiles"]["default"]["aesthetic_weights"]["composition"] += 0.01
     assert build_score_cache_key(scene_change) != baseline
 
     grouping_change = copy.deepcopy(config)
@@ -1315,8 +1315,9 @@ def test_cmd_rescore_delegates_to_rescore_service(monkeypatch):
     with tempfile.TemporaryDirectory() as d:
         _make_db(d)
         cfg = {
-            "scene_weights": {"default": {"composition": 1.0}},
-            "scoring": {"pixel_weight": 0.3, "vision_weight": 0.7},
+            "scene_profiles": {
+                "default": {"aesthetic_weights": {"composition": 1.0}}
+            },
             "scorers": {
                 "exposure": {"enabled": True, "weight": 0.5, "min_score": 0.0},
                 "sharpness": {"enabled": True, "weight": 0.5, "min_score": 0.0},
@@ -1338,7 +1339,7 @@ def test_cmd_rescore_delegates_to_rescore_service(monkeypatch):
         cmd_rescore(args, cfg)
 
         assert called["kwargs"]["scene_filters"] == ["people"]
-        assert called["kwargs"]["scene_weights"] == {
+        assert called["kwargs"]["scene_profiles"] == {
             "default": {
                 "aesthetic_weights": {
                     "subject_moment": 0.0,
@@ -1599,18 +1600,19 @@ def test_rescore_includes_pixel_scores():
         s.conn.commit()
 
         cfg = {
-            "scene_weights": {
+            "scene_profiles": {
                 "default": {
-                    "subject": 1 / 7,
-                    "composition": 1 / 7,
-                    "lighting": 1 / 7,
-                    "color": 1 / 7,
-                    "clarity": 1 / 7,
-                    "depth": 1 / 7,
-                    "mood": 1 / 7,
+                    "aesthetic_weights": {
+                        "subject_moment": 1 / 6,
+                        "composition": 1 / 6,
+                        "lighting": 1 / 6,
+                        "color": 1 / 6,
+                        "depth_separation": 1 / 6,
+                        "mood_story": 1 / 6,
+                    }
                 }
             },
-            "scoring": {"pixel_weight": 0.3, "vision_weight": 0.7},
+            "scoring": {},
             "scorers": {
                 "exposure": {"enabled": True, "weight": 0.5, "min_score": 0.0},
                 "sharpness": {"enabled": True, "weight": 0.5, "min_score": 0.0},
@@ -1629,24 +1631,26 @@ def test_rescore_includes_pixel_scores():
 # ---------------------------------------------------------------------------
 
 
-def test_scene_weights_cover_all_scenes():
+def test_scene_profiles_cover_all_scenes():
     """Every scene in SCENE_LIST (except 'other') should have a key in config."""
     config_path = os.path.join(os.path.dirname(__file__), "..", "config.yaml")
     with open(config_path) as f:
         cfg = yaml.safe_load(f)
-    weights = cfg.get("scene_weights", {})
-    missing = [s for s in SCENE_LIST if s != "other" and s not in weights]
-    assert missing == [], f"Missing scene_weights for: {missing}"
+    profiles = cfg.get("scene_profiles", {})
+    missing = [s for s in SCENE_LIST if s != "other" and s not in profiles]
+    assert missing == [], f"Missing scene_profiles for: {missing}"
 
 
-def test_scene_weights_sum_to_one():
+def test_scene_profile_aesthetic_weights_sum_to_one():
     """Each per-scene weight dict should sum to ≤ 1.0 (normalised downstream)."""
     config_path = os.path.join(os.path.dirname(__file__), "..", "config.yaml")
     with open(config_path) as f:
         cfg = yaml.safe_load(f)
-    for scene, w in cfg.get("scene_weights", {}).items():
-        total = sum(w.values())
-        assert abs(total - 1.0) < 1e-6, f"scene_weights[{scene}] sums to {total}, expected 1.0"
+    for scene, profile in cfg.get("scene_profiles", {}).items():
+        total = sum(profile["aesthetic_weights"].values())
+        assert abs(total - 1.0) < 1e-3, (
+            f"scene_profiles[{scene}].aesthetic_weights sums to {total}, expected 1.0"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -1671,18 +1675,19 @@ def test_rescore_scene_filter_only_updates_matching_scene():
         state.conn.commit()
 
         cfg = {
-            "scene_weights": {
+            "scene_profiles": {
                 "people": {
-                    "subject": 0.0,
-                    "composition": 0.0,
-                    "lighting": 0.0,
-                    "color": 0.0,
-                    "clarity": 0.0,
-                    "depth": 0.0,
-                    "mood": 0.0,
+                    "aesthetic_weights": {
+                        "subject_moment": 1 / 6,
+                        "composition": 1 / 6,
+                        "lighting": 1 / 6,
+                        "color": 1 / 6,
+                        "depth_separation": 1 / 6,
+                        "mood_story": 1 / 6,
+                    }
                 }
             },
-            "scoring": {"pixel_weight": 1.0, "vision_weight": 0.0},
+            "scoring": {},
             "scorers": {
                 "exposure": {"enabled": True, "weight": 0.5, "min_score": 0.0},
                 "sharpness": {"enabled": True, "weight": 0.5, "min_score": 0.0},

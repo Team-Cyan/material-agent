@@ -2,6 +2,7 @@ import numpy as np
 import asyncio
 
 from material_agent.domain.scoring_engine import RawFrame, compute_scores
+from material_agent.domain.layered_decision import summarize_signals
 from material_agent.domain.subject_focus import analyze_subject_focus
 
 
@@ -134,3 +135,6 @@ def test_catastrophic_global_blur_rejects_before_model_stage():
     assert result.decision == "reject"
     assert "global_catastrophic_blur" in result.decision_reasons
     assert result.meta["subject_focus"]["source"] == "global_blur_guard"
+    assert result.total == summarize_signals(
+        result.signals, scene=result.scene, config=config
+    ).total_score

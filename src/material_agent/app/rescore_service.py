@@ -17,16 +17,16 @@ class RescoreService:
         self,
         *,
         scene_filters: list[str] | None,
-        scene_weights: dict,
-        scoring_config: dict,
-        scorers_config: dict,
+        scene_profiles: dict,
+        decision_policy: dict,
+        screening_policy: dict,
         aesthetic_calibration: dict | None = None,
         grouping_config: dict | None = None,
     ) -> int:
         config = {
-            "scene_profiles": scene_weights or {},
-            "decision_policy": scoring_config.get("decision_policy", {}),
-            "screening_policy": scoring_config.get("screening_policy", {}),
+            "scene_profiles": scene_profiles or {},
+            "decision_policy": decision_policy or {},
+            "screening_policy": screening_policy or {},
         }
         best_candidate_review_enabled = group_best_candidate_review_enabled(
             {"grouping": grouping_config or {}}

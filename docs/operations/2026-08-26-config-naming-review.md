@@ -37,7 +37,7 @@ preferences.
 | Current path | Finding | Recommended action |
 | --- | --- | --- |
 | `screening_policy.top1_review_fallback` | Group-selection behavior is stored under screening and previously ran even when grouping was disabled. | Move to `pipeline.grouping.best_candidate_review.enabled`. Gate it on `pipeline.grouping.enabled`. |
-| `scoring.pixel_weight`, `scoring.vision_weight` | They produce only the diagnostic `aggregated_total`; the persisted final score uses fixed layered weights. | Remove after migration, or wire an explicitly named `score_policy.fusion` into the authoritative score. |
+| `scoring.pixel_weight`, `scoring.vision_weight` | Legacy paths, now stripped during normalization. They previously controlled only a non-authoritative diagnostic total. | Completed: removed the diagnostic aggregate and retained the layered summary as the only total. |
 | `scoring.cache_revision` | Changes cache identity but its name suggests score behavior. | Move to `score_policy.revision`. |
 | `grouping.group_guard.*` | No production consumer calls `GroupGuard`; the keys are inert. | Remove until a tested policy owns them. |
 | `focus_integrity.high_resolution_roi` | Normalized and validated, but does not control RAW decoding or focus analysis. | Remove or wire it; prefer `pipeline.raw_preview.focus_max_edge_pixels` as the actual control. |
@@ -47,7 +47,7 @@ preferences.
 | `xmp.write_mode` | Only `sidecar` is accepted. | Remove false configurability; keep sidecar as an invariant. |
 | `xmp.machine_tag_target` | Only `identifier` is accepted. | Remove false configurability or implement another tested target. |
 | `preview.fallback_decode` | Only `half_size` is accepted and decode does not branch on it. | Remove until another mode exists. |
-| `scene_weights` | Legacy input is transformed into `scene_profiles`, while both names remain in normalized/cache state. | Migrate to one canonical `score_policy.scene_profiles` representation. |
+| `scene_weights` | Legacy input is transformed into `scene_profiles` and removed from normalized/cache state. | Completed for v1; move the canonical shape to `score_policy.scene_profiles` with the versioned v2 migration. |
 
 Implemented bridge: v1 now stores this selection rule canonically at
 `grouping.best_candidate_review.enabled`; the old
@@ -68,6 +68,12 @@ Removed fixed-value aliases from canonical v1 output:
 input and are stripped during normalization; unsupported values still fail
 closed. RAW fallback remains half-size demosaic, XMP remains sidecar-only, and
 machine tags remain in `xmp:Identifier` as code-level invariants.
+
+Removed the non-authoritative aggregate score path and its
+`scoring.pixel_weight` / `scoring.vision_weight` controls. Normal, prefilter
+reject, and hard-reject results now all use the same layered total. Public
+configuration uses `scene_profiles`; legacy `scene_weights` remains an input
+alias but is removed from normalized snapshots and cache identity.
 
 ## Core Runtime and Library Names
 

@@ -1088,12 +1088,9 @@ def test_rescore_service_recalculates_totals_without_ai(tmp_path):
 
     updated = RescoreService(repo).run(
         scene_filters=["people"],
-        scene_weights={"people": {"clarity": 1.0}},
-        scoring_config={"pixel_weight": 0.3, "vision_weight": 0.7},
-        scorers_config={
-            "exposure": {"enabled": True, "weight": 0.5, "min_score": 0.0},
-            "sharpness": {"enabled": True, "weight": 0.5, "min_score": 0.0},
-        },
+        scene_profiles={"people": {"aesthetic_weights": {"composition": 1.0}}},
+        decision_policy={},
+        screening_policy={},
     )
 
     row = repo.conn.execute(
@@ -1101,6 +1098,6 @@ def test_rescore_service_recalculates_totals_without_ai(tmp_path):
     ).fetchone()
 
     assert updated == 1
-    assert abs(row[0] - 7.08) < 0.01
-    assert row[1] == "review"
+    assert abs(row[0] - 8.5) < 0.01
+    assert row[1] == "keep"
     assert row[2] == 4
