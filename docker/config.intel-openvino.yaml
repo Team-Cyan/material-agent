@@ -94,9 +94,6 @@ grouping:
     threshold: 0.85
   best_candidate_review:
     enabled: true
-  group_guard:
-    enabled: true
-    min_score: 7.0
 
 preview:
   prefer_embedded: true
@@ -108,7 +105,6 @@ preview:
 focus_integrity:
   enabled: true
   mode: subject_roi
-  high_resolution_roi: true
   downscale_warning_ratio: 3.0
   roi_expand_ratio: 0.12
   eye_roi_ratio: 0.16
@@ -116,8 +112,6 @@ focus_integrity:
 
 portrait_face_eye:
   enabled: true
-  min_face_ratio: 0.08
-  review_penalty: 0.8
 
 scorers:
   exposure:

@@ -83,7 +83,6 @@ _MAPPING_SECTION_PATHS = (
     ("grouping", "visual_similarity"),
     ("grouping", "embedding_similarity"),
     ("grouping", "best_candidate_review"),
-    ("grouping", "group_guard"),
     ("screening",),
     ("screening", "musiq"),
     ("focus_integrity",),
@@ -501,6 +500,7 @@ def normalize_config(cfg: dict) -> dict:
         else legacy_review_value if legacy_review_present else True
     )
     best_candidate_review["enabled"] = _coerce_bool_like(selected_review_value)
+    grouping.pop("group_guard", None)
 
     screening = normalized.setdefault("screening", {})
     screening["backend"] = (screening.get("backend") or "musiq").lower()
@@ -530,9 +530,7 @@ def normalize_config(cfg: dict) -> dict:
         normalized["focus_integrity"].get("enabled", True)
     )
     normalized["focus_integrity"].setdefault("mode", "subject_roi")
-    normalized["focus_integrity"]["high_resolution_roi"] = _coerce_bool_like(
-        normalized["focus_integrity"].get("high_resolution_roi", True)
-    )
+    normalized["focus_integrity"].pop("high_resolution_roi", None)
     normalized["focus_integrity"].setdefault("downscale_warning_ratio", 3.0)
     normalized["focus_integrity"].setdefault("roi_expand_ratio", 0.12)
     normalized["focus_integrity"].setdefault("eye_roi_ratio", 0.16)
@@ -542,8 +540,8 @@ def normalize_config(cfg: dict) -> dict:
     normalized["portrait_face_eye"]["enabled"] = _coerce_bool_like(
         normalized["portrait_face_eye"].get("enabled", False)
     )
-    normalized["portrait_face_eye"].setdefault("min_face_ratio", 0.08)
-    normalized["portrait_face_eye"].setdefault("review_penalty", 0.8)
+    normalized["portrait_face_eye"].pop("min_face_ratio", None)
+    normalized["portrait_face_eye"].pop("review_penalty", None)
 
     normalized["decision_policy"] = copy.deepcopy(normalized.get("decision_policy", {}))
     normalized["decision_policy"].setdefault("keep_threshold", 7.5)
@@ -649,11 +647,11 @@ def validate_config(cfg: dict) -> None:
         ):
             errors.append(f"preview.{key} must be an integer between 64 and 8192, got: {value!r}")
     focus_integrity = cfg.get("focus_integrity", {})
-    for key in ("enabled", "high_resolution_roi"):
-        if not _is_valid_bool_like(focus_integrity.get(key, False)):
-            errors.append(
-                f"focus_integrity.{key} must be a boolean, got: {focus_integrity.get(key)!r}"
-            )
+    if not _is_valid_bool_like(focus_integrity.get("enabled", False)):
+        errors.append(
+            "focus_integrity.enabled must be a boolean, "
+            f"got: {focus_integrity.get('enabled')!r}"
+        )
     if focus_integrity.get("mode") not in {"preview_proxy", "subject_roi"}:
         errors.append(
             "focus_integrity.mode must be 'preview_proxy' or 'subject_roi', "

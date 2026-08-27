@@ -687,7 +687,6 @@ def test_normalize_config_sets_layered_decision_defaults():
 
     assert normalized["focus_integrity"]["enabled"] is True
     assert normalized["focus_integrity"]["mode"] == "subject_roi"
-    assert normalized["focus_integrity"]["high_resolution_roi"] is True
     assert normalized["portrait_face_eye"]["enabled"] is False
     assert normalized["decision_policy"]["keep_threshold"] == 7.5
     assert normalized["decision_policy"]["review_threshold"] == 5.5
@@ -728,7 +727,7 @@ def test_validate_config_rejects_invalid_layered_policy(section, value, expected
 
 def test_normalize_config_coerces_layered_policy_boolean_strings():
     cfg = _minimal_config()
-    cfg["focus_integrity"] = {"enabled": "false", "high_resolution_roi": "false"}
+    cfg["focus_integrity"] = {"enabled": "false"}
     cfg["portrait_face_eye"] = {"enabled": "false"}
     cfg["grouping"]["enabled"] = "false"
     cfg["grouping"]["best_candidate_review"] = {"enabled": "false"}
@@ -736,7 +735,6 @@ def test_normalize_config_coerces_layered_policy_boolean_strings():
     normalized = normalize_config(cfg)
 
     assert normalized["focus_integrity"]["enabled"] is False
-    assert normalized["focus_integrity"]["high_resolution_roi"] is False
     assert normalized["portrait_face_eye"]["enabled"] is False
     assert normalized["grouping"]["enabled"] is False
     assert normalized["grouping"]["best_candidate_review"]["enabled"] is False
@@ -759,6 +757,23 @@ def test_normalize_config_rejects_conflicting_group_review_keys() -> None:
 
     with pytest.raises(ValueError, match="Conflicting configuration values"):
         normalize_config(cfg)
+
+
+def test_normalize_config_strips_inert_legacy_policy_fields() -> None:
+    cfg = _minimal_config()
+    cfg["grouping"]["group_guard"] = {"enabled": True, "min_score": 7.0}
+    cfg["focus_integrity"] = {"enabled": True, "high_resolution_roi": False}
+    cfg["portrait_face_eye"] = {
+        "enabled": True,
+        "min_face_ratio": 0.08,
+        "review_penalty": 0.8,
+    }
+
+    normalized = normalize_config(cfg)
+
+    assert "group_guard" not in normalized["grouping"]
+    assert "high_resolution_roi" not in normalized["focus_integrity"]
+    assert normalized["portrait_face_eye"] == {"enabled": True}
 
 
 @pytest.mark.parametrize(

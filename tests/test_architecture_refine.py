@@ -71,7 +71,6 @@ def _base_config() -> dict:
         "grouping": {
             "enabled": False,
             "visual_similarity": {"enabled": False},
-            "group_guard": {"enabled": False, "min_score": 7.0},
         },
         "preview": {"max_size": 256, "jpeg_quality": 85},
         "scoring": {"pixel_weight": 0.3, "vision_weight": 0.7},

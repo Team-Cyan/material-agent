@@ -42,7 +42,6 @@ def _base_config() -> dict:
         "grouping": {
             "enabled": False,
             "visual_similarity": {"enabled": False},
-            "group_guard": {"enabled": False, "min_score": 7.0},
         },
         "preview": {"max_size": 256, "jpeg_quality": 85},
         "scoring": {"pixel_weight": 0.3, "vision_weight": 0.7},
@@ -280,7 +279,7 @@ def test_compute_scores_marks_large_downscale_focus_as_preview_proxy():
     assert bundle.meta["preview_source"] == "embedded"
     assert bundle.meta["focus_assessment"] == "preview_proxy"
     assert bundle.meta["focus_review_required"] is True
-    assert bundle.meta["focus_review_reason"] == "high_resolution_roi_not_run"
+    assert bundle.meta["focus_review_reason"] == "focus_proxy_unavailable_for_large_downscale"
     focus_signal = next(signal for signal in bundle.signals if signal["signal_key"] == "focus_integrity")
     assert focus_signal["source"] == "preview_proxy"
     assert focus_signal["confidence"] < 0.5

@@ -140,9 +140,6 @@ grouping:
     # Only applies to real groups while grouping.enabled is true. When a group
     # has no keep and no hard rejection, preserve its best candidate for review.
     enabled: true
-  group_guard:
-    enabled: true
-    min_score: 7.0
 
 preview:
   # Prefer the camera-embedded JPEG/thumbnail for NAS-scale scoring. Full RAW
@@ -160,7 +157,6 @@ focus_integrity:
   # Global focus only guards catastrophic blur. The authoritative score is
   # measured again in the detected subject/eye ROI, with saliency fallback.
   mode: subject_roi
-  high_resolution_roi: true
   downscale_warning_ratio: 3.0
   roi_expand_ratio: 0.12
   eye_roi_ratio: 0.16
@@ -169,8 +165,6 @@ focus_integrity:
 portrait_face_eye:
   # Disabled by default until a face/eye ROI model is wired into the pipeline.
   enabled: false
-  min_face_ratio: 0.08
-  review_penalty: 0.8
 
 scorers:
   exposure:

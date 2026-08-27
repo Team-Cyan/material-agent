@@ -618,7 +618,7 @@ def _build_frame_meta(frame: RawFrame, config: dict) -> dict:
         )
         if downscale_ratio >= warning_ratio and frame.focus_gray is None:
             meta["focus_review_required"] = True
-            meta["focus_review_reason"] = "high_resolution_roi_not_run"
+            meta["focus_review_reason"] = "focus_proxy_unavailable_for_large_downscale"
     return meta
 
 

@@ -28,7 +28,6 @@ def _config(input_dir):
                 "hash_threshold": 10,
                 "max_merge_gap_minutes": 10,
             },
-            "group_guard": {"enabled": True, "min_score": 7.0},
         },
         "scorers": {
             "exposure": {

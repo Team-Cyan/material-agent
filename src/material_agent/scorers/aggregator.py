@@ -48,16 +48,3 @@ class Aggregator:
             return round(pixel_total, 2)
         w_sum = pixel_weight + vision_weight
         return round((pixel_total * pixel_weight + vision_total * vision_weight) / w_sum, 2)
-
-
-class GroupGuard:
-    @staticmethod
-    def apply(scores: list[float], min_score: float) -> list[float]:
-        if not scores:
-            return []
-        if max(scores) >= min_score:
-            return scores
-        result = list(scores)
-        idx = result.index(max(result))
-        result[idx] = min_score
-        return result

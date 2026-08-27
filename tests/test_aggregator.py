@@ -1,7 +1,5 @@
-import pytest
-
 from material_agent.scorers.base import ScorerResult
-from material_agent.scorers.aggregator import Aggregator, GroupGuard
+from material_agent.scorers.aggregator import Aggregator
 
 
 def _r(name, score, weight, enabled=True, min_score=0.0):
@@ -27,19 +25,6 @@ def test_aggregator_min_score_cap():
     results = [_r("exposure", 2.0, 0.5, min_score=3.0), _r("sharpness", 9.0, 0.5)]
     total = Aggregator.aggregate(results)
     assert total <= 3.0
-
-
-def test_group_guard_boost():
-    scores = [1.5, 2.0, 2.8]
-    boosted = GroupGuard.apply(scores, min_score=7.0)
-    assert max(boosted) == 7.0
-    assert boosted.index(7.0) == scores.index(max(scores))
-
-
-def test_group_guard_no_boost_needed():
-    scores = [3.5, 5.0, 7.0]
-    boosted = GroupGuard.apply(scores, min_score=7.0)
-    assert boosted == scores
 
 
 def test_aggregate_with_scene_uses_scene_weights():
@@ -75,25 +60,6 @@ def test_aggregate_with_scene_combines_pixel_and_vision():
     total = Aggregator.aggregate_with_scene(pixel_results, vision_scores, "other", scene_weights)
     # pixel total = 5.0, vision total = 10.0, combined = 5.0*0.3 + 10.0*0.7 = 8.5
     assert total == 8.5
-
-
-def test_group_guard_empty_list():
-    assert GroupGuard.apply([], min_score=7.0) == []
-
-
-def test_group_guard_single_score_boosted():
-    result = GroupGuard.apply([1.0], min_score=7.0)
-    assert result == [7.0]
-
-
-def test_group_guard_single_score_no_boost():
-    result = GroupGuard.apply([8.0], min_score=7.0)
-    assert result == [8.0]
-
-
-def test_group_guard_requires_explicit_min_score():
-    with pytest.raises(TypeError):
-        GroupGuard.apply([1.0, 2.0, 3.0])
 
 
 def test_aggregate_with_scene_no_vision():

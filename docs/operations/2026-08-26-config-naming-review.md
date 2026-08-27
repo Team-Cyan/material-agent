@@ -56,6 +56,12 @@ is removed from normalized snapshots, and conflicts are rejected. A later v2
 migration can move the stable inner shape to
 `pipeline.grouping.best_candidate_review.enabled` with the rest of `grouping`.
 
+Removed inert v1 fields: `grouping.group_guard.*`,
+`focus_integrity.high_resolution_roi`, `portrait_face_eye.min_face_ratio`, and
+`portrait_face_eye.review_penalty`. The normalizer also strips these legacy
+inputs so they no longer affect persisted snapshots or cache identity. The
+actual focus preview bound remains `preview.focus_max_size`.
+
 ## Core Runtime and Library Names
 
 | Current path | Recommendation | Rationale |

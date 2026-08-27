@@ -16,7 +16,6 @@ def _cfg(visual_enabled=False):
             "hash_threshold": 10,
             "max_merge_gap_minutes": 10,
         },
-        "group_guard": {"enabled": True, "min_score": 7.0},
         "embedding_similarity": {"enabled": False, "threshold": 0.85},
     }
 
