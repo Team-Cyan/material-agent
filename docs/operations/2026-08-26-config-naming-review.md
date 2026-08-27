@@ -62,6 +62,13 @@ Removed inert v1 fields: `grouping.group_guard.*`,
 inputs so they no longer affect persisted snapshots or cache identity. The
 actual focus preview bound remains `preview.focus_max_size`.
 
+Removed fixed-value aliases from canonical v1 output:
+`preview.fallback_decode`, `xmp.write_mode`, `xmp.compatibility_profile`, and
+`xmp.machine_tag_target`. Their only supported values remain accepted as legacy
+input and are stripped during normalization; unsupported values still fail
+closed. RAW fallback remains half-size demosaic, XMP remains sidecar-only, and
+machine tags remain in `xmp:Identifier` as code-level invariants.
+
 ## Core Runtime and Library Names
 
 | Current path | Recommendation | Rationale |

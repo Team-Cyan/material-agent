@@ -860,6 +860,46 @@ def test_normalize_config_sets_preview_and_xmp_defaults():
     normalized = normalize_config(_minimal_config())
 
     assert normalized["preview"]["prefer_embedded"] is True
-    assert normalized["preview"]["fallback_decode"] == "half_size"
-    assert normalized["xmp"]["write_mode"] == "sidecar"
-    assert normalized["xmp"]["machine_tag_target"] == "identifier"
+    assert "fallback_decode" not in normalized["preview"]
+    assert normalized["xmp"] == {}
+
+
+def test_normalize_config_strips_supported_fixed_mode_aliases() -> None:
+    cfg = _minimal_config()
+    cfg["preview"]["fallback_decode"] = "half_size"
+    cfg["xmp"] = {
+        "write_mode": "sidecar",
+        "compatibility_profile": "adobe",
+        "machine_tag_target": "identifier",
+    }
+
+    normalized = normalize_config(cfg)
+
+    assert "fallback_decode" not in normalized["preview"]
+    assert normalized["xmp"] == {}
+
+
+@pytest.mark.parametrize(
+    ("section", "key", "value", "expected"),
+    [
+        ("preview", "fallback_decode", "full_size", "preview.fallback_decode"),
+        ("xmp", "write_mode", "embedded", "xmp.write_mode"),
+        (
+            "xmp",
+            "compatibility_profile",
+            "capture_one",
+            "xmp.compatibility_profile",
+        ),
+        ("xmp", "machine_tag_target", "subject", "xmp.machine_tag_target"),
+    ],
+)
+def test_validate_config_rejects_unsupported_fixed_modes(
+    section, key, value, expected, capsys
+) -> None:
+    cfg = _minimal_config()
+    cfg.setdefault(section, {})[key] = value
+
+    with pytest.raises(SystemExit):
+        validate_config(cfg)
+
+    assert expected in capsys.readouterr().out

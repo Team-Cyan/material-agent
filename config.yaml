@@ -145,7 +145,6 @@ preview:
   # Prefer the camera-embedded JPEG/thumbnail for NAS-scale scoring. Full RAW
   # demosaic is only a fallback when the file has no usable embedded preview.
   prefer_embedded: true
-  fallback_decode: half_size
   max_size: 1024
   # Keep a larger grayscale proxy for subject/eye focus without retaining a
   # full RAW demosaic in memory.
@@ -217,13 +216,6 @@ screening:
 
 review_pipeline:
   score_prefetch_window: 2
-
-xmp:
-  write_mode: sidecar
-  compatibility_profile: adobe
-  # Machine-generated pj:* tags are stored in xmp:Identifier instead of normal
-  # dc:subject keywords, so Lightroom/Photomator see clean user keywords.
-  machine_tag_target: identifier
 
 decision_policy:
   keep_threshold: 7.5

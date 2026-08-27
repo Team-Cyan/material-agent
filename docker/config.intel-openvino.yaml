@@ -97,7 +97,6 @@ grouping:
 
 preview:
   prefer_embedded: true
-  fallback_decode: half_size
   max_size: 1024
   focus_max_size: 2048
   jpeg_quality: 85
@@ -155,8 +154,3 @@ screening:
 review_pipeline:
   # Keep preview preparation bounded while CPU batch-1 requests run concurrently.
   score_prefetch_window: 32
-
-xmp:
-  write_mode: sidecar
-  compatibility_profile: adobe
-  machine_tag_target: identifier

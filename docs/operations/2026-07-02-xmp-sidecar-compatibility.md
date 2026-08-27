@@ -110,8 +110,6 @@ Rules:
 Candidate config shape:
 
 ```yaml
-xmp:
-  write_mode: sidecar
   embedded_raw_rating:
     enabled: false
     write_only_rating: true

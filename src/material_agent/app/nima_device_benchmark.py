@@ -55,7 +55,6 @@ def run_nima_device_benchmark(
             path,
             {
                 "prefer_embedded": True,
-                "fallback_decode": "half_size",
                 "max_size": 1024,
                 "focus_max_size": 2048,
                 "jpeg_quality": 85,

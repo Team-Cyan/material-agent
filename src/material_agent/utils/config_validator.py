@@ -463,7 +463,8 @@ def normalize_config(cfg: dict) -> dict:
 
     preview = normalized.setdefault("preview", {})
     preview.setdefault("prefer_embedded", True)
-    preview.setdefault("fallback_decode", "half_size")
+    if preview.get("fallback_decode") in {None, "half_size"}:
+        preview.pop("fallback_decode", None)
     preview.setdefault("focus_max_size", 2048)
     preview["prefer_embedded"] = _coerce_bool_like(preview.get("prefer_embedded", True))
 
@@ -557,9 +558,14 @@ def normalize_config(cfg: dict) -> dict:
     normalized["review_pipeline"].setdefault("score_prefetch_window", 2)
 
     normalized["xmp"] = copy.deepcopy(normalized.get("xmp", {}))
-    normalized["xmp"].setdefault("write_mode", "sidecar")
-    normalized["xmp"].setdefault("compatibility_profile", "adobe")
-    normalized["xmp"].setdefault("machine_tag_target", "identifier")
+    fixed_xmp_values = {
+        "write_mode": "sidecar",
+        "compatibility_profile": "adobe",
+        "machine_tag_target": "identifier",
+    }
+    for key, supported_value in fixed_xmp_values.items():
+        if normalized["xmp"].get(key) in {None, supported_value}:
+            normalized["xmp"].pop(key, None)
 
     if "omlx" in normalized:
         normalized["omlx"] = _normalize_omlx_group(normalized.get("omlx", {}))
@@ -636,7 +642,7 @@ def validate_config(cfg: dict) -> None:
         errors.append(
             f"preview.prefer_embedded must be a boolean, got: {preview.get('prefer_embedded')!r}"
         )
-    if preview.get("fallback_decode", "half_size") not in {"half_size"}:
+    if "fallback_decode" in preview:
         errors.append(
             f"preview.fallback_decode must be 'half_size', got: {preview.get('fallback_decode')!r}"
         )
@@ -809,12 +815,17 @@ def validate_config(cfg: dict) -> None:
     ).get("enabled", False):
         errors.append("grouping.embedding_similarity requires local.embedding.enabled: true")
     xmp = cfg.get("xmp", {})
-    if xmp.get("write_mode", "sidecar") != "sidecar":
+    if "write_mode" in xmp:
         errors.append(
             "xmp.write_mode must be 'sidecar'; direct RAW metadata writes are not supported, "
             f"got: {xmp.get('write_mode')!r}"
         )
-    if xmp.get("machine_tag_target", "identifier") not in {"identifier"}:
+    if "compatibility_profile" in xmp:
+        errors.append(
+            "xmp.compatibility_profile must be 'adobe'; no alternative profile is "
+            f"implemented, got: {xmp.get('compatibility_profile')!r}"
+        )
+    if "machine_tag_target" in xmp:
         errors.append(
             f"xmp.machine_tag_target must be 'identifier', got: {xmp.get('machine_tag_target')!r}"
         )
