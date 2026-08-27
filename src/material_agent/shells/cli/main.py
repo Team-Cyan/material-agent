@@ -113,6 +113,12 @@ def cmd_web(args):
     return _cmd_web(args)
 
 
+def cmd_review_scores(args):
+    from ...commands.score_review import cmd_review_scores as _cmd_review_scores
+
+    return _cmd_review_scores(args)
+
+
 def configure_run_parser(parser) -> None:
     parser.add_argument("input_dir", help="Directory containing RAW files")
     parser.add_argument("--config", default="config.yaml")
@@ -260,6 +266,17 @@ def build_parser() -> argparse.ArgumentParser:
         dest="registry_dir",
     )
     p_web.add_argument("--catalog")
+    p_review_scores = sub.add_parser(
+        "review-scores",
+        help="Build a bounded read-only score and photo sample review",
+        allow_abbrev=False,
+    )
+    p_review_scores.add_argument("--input-dir", required=True, dest="input_dir")
+    p_review_scores.add_argument("--work-dir", required=True, dest="work_dir")
+    p_review_scores.add_argument("--output-dir", required=True, dest="output_dir")
+    p_review_scores.add_argument(
+        "--sample-count", type=int, default=18, choices=range(6, 25), dest="sample_count"
+    )
     p_benchmark.add_argument("--repeat-count", type=int, default=2, dest="repeat_count")
     p_benchmark.add_argument(
         "--reject-threshold", type=float, default=4.0, dest="reject_threshold"
@@ -374,6 +391,8 @@ def main():
             return cmd_benchmark_nima_device(args)
         if args.command == "web":
             return cmd_web(args)
+        if args.command == "review-scores":
+            return cmd_review_scores(args)
         if args.command == "scan-scenes":
             return cmd_scan_scenes(args)
         if args.command == "suggest-scenes":

@@ -75,9 +75,27 @@ material-agent web \
 
 The maintained Unraid deployment listens on the trusted LAN without a token.
 
+For a bounded offline comparison of persisted scores, execution provenance,
+the effective task configuration, and the exact JPEG previews consumed by the
+scorers, run the application-owned review command inside the deployed image:
+
+```bash
+material-agent review-scores \
+  --input-dir /photos \
+  --work-dir /config \
+  --output-dir /config/reviews/latest \
+  --sample-count 18
+```
+
+The command opens `state.db` read-only, selects samples across score quantiles,
+scenes, and multi-photo group spreads, and writes `review.json` plus a contact
+sheet. It does not generate an RGB/BGR channel-swapped reference: the rendered
+image is the actual JPEG byte stream used by scoring.
+
 ## Verification
 
 - `uv run pytest -q tests/test_web_service.py`
+- `uv run pytest -q tests/test_score_review.py`
 - `uv run pytest -q`
 - `uv run ruff check .`
 - verify unauthenticated `/health` returns `{"status":"ok"}` from the trusted

@@ -112,6 +112,10 @@
 - consolidated the maintained Unraid deployment to one container: the primary
   Web process owns model management, has no TMDB dependency, and intentionally
   uses no application token on trusted LAN port `8776`
+- added an application-owned, read-only `review-scores` command that samples
+  persisted results across score quantiles, scenes, and group spreads while
+  reporting the effective configuration and execution provenance alongside the
+  exact JPEG previews consumed by scoring
 - completed a repository-wide correctness/security refinement covering
   transient EXIF cache failures, bounded SQLite parameter batches, complete
   model asset identity and immutable DINOv2 revision, private Web state,
