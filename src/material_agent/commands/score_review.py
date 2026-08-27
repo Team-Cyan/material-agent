@@ -3,7 +3,9 @@ from __future__ import annotations
 import io
 import json
 import math
+import os
 import sqlite3
+import tempfile
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
@@ -44,6 +46,14 @@ def _json_object(value: str | None) -> dict[str, Any]:
     return parsed if isinstance(parsed, dict) else {}
 
 
+def _as_values(value: Any) -> list[Any]:
+    if value is None:
+        return []
+    if isinstance(value, (list, tuple, set)):
+        return list(value)
+    return [value]
+
+
 def _percentile(sorted_values: list[float], fraction: float) -> float | None:
     if not sorted_values:
         return None
@@ -59,11 +69,20 @@ def _percentile(sorted_values: list[float], fraction: float) -> float | None:
     )
 
 
+def _score_value(row: sqlite3.Row) -> float:
+    score = float(row["score_total"] or 0.0)
+    if not math.isfinite(score):
+        raise ValueError(f"non-finite score_total for job file {row['id']}: {score}")
+    return score
+
+
 def score_distribution(rows: Iterable[sqlite3.Row]) -> dict[str, Any]:
     materialized = list(rows)
-    scores = sorted(float(row["score_total"] or 0.0) for row in materialized)
+    scores = sorted(_score_value(row) for row in materialized)
     buckets: Counter[str] = Counter()
-    group_sizes = Counter(str(row["group_id"] or "missing") for row in materialized)
+    group_sizes = Counter(
+        str(row["group_id"] or f"ungrouped:{row['id']}") for row in materialized
+    )
     for score in scores:
         lower = min(9, max(0, int(score)))
         buckets[f"{lower}-{lower + 1}"] += 1
@@ -95,7 +114,7 @@ def score_distribution(rows: Iterable[sqlite3.Row]) -> dict[str, Any]:
 def select_score_samples(rows: Iterable[sqlite3.Row], limit: int) -> list[dict[str, Any]]:
     ordered = sorted(
         rows,
-        key=lambda row: (float(row["score_total"] or 0.0), str(row["file_path"])),
+        key=lambda row: (_score_value(row), str(row["file_path"])),
     )
     selected: dict[str, dict[str, Any]] = {}
 
@@ -125,8 +144,7 @@ def select_score_samples(rows: Iterable[sqlite3.Row], limit: int) -> list[dict[s
             by_group[str(row["group_id"])].append(row)
     spreads = sorted(
         (
-            float(group_rows[-1]["score_total"] or 0.0)
-            - float(group_rows[0]["score_total"] or 0.0),
+            _score_value(group_rows[-1]) - _score_value(group_rows[0]),
             group_id,
             group_rows,
         )
@@ -220,11 +238,13 @@ def _execution_summary(connection: sqlite3.Connection, job_id: str) -> dict[str,
             model = {}
         counters["payloads"] += 1
         counters["decisions"][str(payload.get("decision", "missing"))] += 1
-        for reason in payload.get("decision_reasons") or []:
+        for reason in _as_values(payload.get("decision_reasons")):
             counters["decision_reasons"][str(reason)] += 1
         counters["model_statuses"][str(model.get("status", "missing"))] += 1
         counters["runtimes"][str(model.get("runtime", "missing"))] += 1
-        devices = model.get("execution_devices") or [model.get("device", "missing")]
+        devices = _as_values(model.get("execution_devices"))
+        if not devices:
+            devices = [model.get("device", "missing")]
         for device in devices:
             counters["execution_devices"][str(device)] += 1
         if model.get("model_digest"):
@@ -243,6 +263,35 @@ def _fit(image: Image.Image, size: tuple[int, int]) -> Image.Image:
     return ImageOps.contain(image.convert("RGB"), size, Image.Resampling.LANCZOS)
 
 
+def _private_directory(path: Path) -> Path:
+    if path.is_symlink():
+        raise ValueError(f"review output directory must not be a symbolic link: {path}")
+    path.mkdir(parents=True, exist_ok=True)
+    if not path.is_dir():
+        raise ValueError(f"review output path is not a directory: {path}")
+    path.chmod(0o700)
+    return path.resolve(strict=True)
+
+
+def _write_private_bytes(path: Path, payload: bytes) -> None:
+    descriptor, temporary_name = tempfile.mkstemp(
+        prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
+    )
+    temporary_path = Path(temporary_name)
+    try:
+        os.fchmod(descriptor, 0o600)
+        with os.fdopen(descriptor, "wb") as handle:
+            handle.write(payload)
+        temporary_path.replace(path)
+    except BaseException:
+        try:
+            os.close(descriptor)
+        except OSError:
+            pass
+        temporary_path.unlink(missing_ok=True)
+        raise
+
+
 def _render_contact_sheet(
     samples: list[dict[str, Any]],
     *,
@@ -250,8 +299,11 @@ def _render_contact_sheet(
     output_root: Path,
     preview_config: dict[str, Any],
 ) -> str:
-    image_dir = output_root / "samples"
-    image_dir.mkdir(parents=True, exist_ok=True)
+    missing_preview_keys = {"max_size", "jpeg_quality"} - preview_config.keys()
+    if missing_preview_keys:
+        missing = ", ".join(sorted(missing_preview_keys))
+        raise ValueError(f"recorded job preview configuration is missing: {missing}")
+    image_dir = _private_directory(output_root / "samples")
     tile_width, tile_height = 420, 310
     columns = 3
     row_count = max(1, math.ceil(len(samples) / columns))
@@ -264,10 +316,10 @@ def _render_contact_sheet(
             scored = Image.open(io.BytesIO(frame.jpeg_bytes)).convert("RGB")
             thumbnail = _fit(scored, (400, 220))
             sample_path = image_dir / f"{index:02d}.jpg"
-            thumbnail.save(sample_path, "JPEG", quality=88, optimize=True)
+            _write_private_bytes(sample_path, frame.jpeg_bytes)
             sample["image"] = {
                 "file": str(sample_path.relative_to(output_root)),
-                "source": "actual_scoring_input",
+                "source": "reconstructed_scoring_input",
                 "preview_source": frame.preview_source,
                 "original_size": frame.original_size,
                 "preview_size": frame.preview_size,
@@ -292,7 +344,9 @@ def _render_contact_sheet(
         except (OSError, RuntimeError, ValueError) as error:
             sample["image_error"] = f"{type(error).__name__}: {error}"
     sheet_path = output_root / "contact-sheet.jpg"
-    sheet.save(sheet_path, "JPEG", quality=90, optimize=True)
+    encoded_sheet = io.BytesIO()
+    sheet.save(encoded_sheet, "JPEG", quality=90, optimize=True)
+    _write_private_bytes(sheet_path, encoded_sheet.getvalue())
     return str(sheet_path.relative_to(output_root))
 
 
@@ -309,9 +363,24 @@ def build_score_review(
         raise ValueError(f"input root is not a directory: {input_root}")
     if not database_path.is_file():
         raise ValueError(f"runtime database is missing: {database_path}")
-    output_root.mkdir(parents=True, exist_ok=True)
+    resolved_input_root = input_root.resolve(strict=True)
+    resolved_output_root = output_root.resolve(strict=False)
+    try:
+        resolved_output_root.relative_to(resolved_input_root)
+    except ValueError:
+        pass
+    else:
+        raise ValueError("review output directory must be outside the photo input root")
+    try:
+        resolved_input_root.relative_to(resolved_output_root)
+    except ValueError:
+        pass
+    else:
+        raise ValueError("review output directory must not contain the photo input root")
+    output_root = _private_directory(output_root)
 
-    connection = sqlite3.connect(f"file:{database_path.resolve()}?mode=ro", uri=True)
+    database_uri = f"{database_path.resolve().as_uri()}?mode=ro"
+    connection = sqlite3.connect(database_uri, uri=True)
     connection.row_factory = sqlite3.Row
     try:
         connection.execute("PRAGMA query_only=ON")
@@ -362,8 +431,8 @@ def build_score_review(
                 }
             )
         config = _json_object(job["config_snapshot"])
-        preview = dict(config.get("preview") or {})
-        preview.update({"max_size": 640, "focus_max_size": 640, "jpeg_quality": 86})
+        raw_preview = config.get("preview")
+        preview = dict(raw_preview) if isinstance(raw_preview, dict) else {}
         contact_sheet = _render_contact_sheet(
             samples,
             input_root=input_root,
@@ -387,13 +456,16 @@ def build_score_review(
             "sample_count_rendered": sum("image" in sample for sample in samples),
             "contact_sheet": contact_sheet,
             "samples": samples,
-            "image_note": "contact sheet reproduces the JPEG bytes used by scoring",
+            "image_note": (
+                "samples are reconstructed with the recorded job preview configuration "
+                "and the current decoder; historical JPEG byte identity cannot be proven"
+            ),
         }
     finally:
         connection.close()
-    (output_root / "review.json").write_text(
-        json.dumps(result, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
+    _write_private_bytes(
+        output_root / "review.json",
+        (json.dumps(result, ensure_ascii=False, indent=2) + "\n").encode("utf-8"),
     )
     return result
 

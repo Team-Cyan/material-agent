@@ -76,8 +76,8 @@ material-agent web \
 The maintained Unraid deployment listens on the trusted LAN without a token.
 
 For a bounded offline comparison of persisted scores, execution provenance,
-the effective task configuration, and the exact JPEG previews consumed by the
-scorers, run the application-owned review command inside the deployed image:
+the effective task configuration, and reconstructed scoring previews, run the
+application-owned review command inside the deployed image:
 
 ```bash
 material-agent review-scores \
@@ -88,9 +88,12 @@ material-agent review-scores \
 ```
 
 The command opens `state.db` read-only, selects samples across score quantiles,
-scenes, and multi-photo group spreads, and writes `review.json` plus a contact
-sheet. It does not generate an RGB/BGR channel-swapped reference: the rendered
-image is the actual JPEG byte stream used by scoring.
+scenes, and multi-photo group spreads, and writes private (`0700` directory,
+`0600` files) `review.json`, reconstructed JPEG samples, and a contact sheet
+outside the photo input tree. Reconstruction uses the recorded job preview
+configuration and the current decoder, including the explicit RGB-to-BGR
+conversion immediately before OpenCV JPEG encoding. Historical byte identity
+cannot be proven because prior scoring jobs did not persist their JPEG inputs.
 
 ## Verification
 

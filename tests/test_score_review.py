@@ -1,7 +1,10 @@
+import io
 import json
+import os
 import sqlite3
 from pathlib import Path
 
+import pytest
 from PIL import Image
 
 from material_agent.commands.score_review import build_score_review
@@ -30,7 +33,10 @@ def _seed_runtime_database(path: Path, photos: list[Path]) -> None:
         );
         """
     )
-    config = {"preview": {"prefer_embedded": True}, "grouping": {"enabled": True}}
+    config = {
+        "preview": {"prefer_embedded": True, "max_size": 1024, "jpeg_quality": 85},
+        "grouping": {"enabled": True},
+    }
     connection.execute(
         "INSERT INTO sessions VALUES (?,?,?,?,?,?,?)",
         ("session", "review", str(photos[0].parent), json.dumps(config), "finished", "1", "2"),
@@ -77,7 +83,9 @@ def _seed_runtime_database(path: Path, photos: list[Path]) -> None:
     connection.close()
 
 
-def test_build_score_review_uses_actual_scoring_preview(tmp_path: Path, monkeypatch) -> None:
+def test_build_score_review_preserves_reconstructed_scoring_preview(
+    tmp_path: Path, monkeypatch
+) -> None:
     input_root = tmp_path / "photos"
     input_root.mkdir()
     photos = []
@@ -115,9 +123,13 @@ def test_build_score_review_uses_actual_scoring_preview(tmp_path: Path, monkeypa
     assert result["distribution"]["groups"]["multi_photo_count"] == 1
     assert result["execution"]["runtimes"] == {"openvino": 8}
     assert result["config"]["grouping"] == {"enabled": True}
-    assert result["image_note"] == "contact sheet reproduces the JPEG bytes used by scoring"
+    assert "historical JPEG byte identity cannot be proven" in result["image_note"]
     assert (output / "contact-sheet.jpg").is_file()
     assert (output / "review.json").is_file()
+    assert (output / "samples" / "01.jpg").read_bytes() == preview_bytes
+    assert os.stat(output).st_mode & 0o777 == 0o700
+    assert os.stat(output / "review.json").st_mode & 0o777 == 0o600
+    assert os.stat(output / "samples" / "01.jpg").st_mode & 0o777 == 0o600
 
 
 def test_build_score_review_rejects_database_path_outside_input_root(
@@ -144,3 +156,63 @@ def test_build_score_review_rejects_database_path_outside_input_root(
 
     assert result["sample_count_rendered"] == 0
     assert all("escapes input root" in sample["image_error"] for sample in result["samples"])
+
+
+def test_score_distribution_treats_missing_group_ids_as_singletons(tmp_path: Path, monkeypatch) -> None:
+    input_root = tmp_path / "photos"
+    input_root.mkdir()
+    photos = []
+    for index in range(6):
+        photo = input_root / f"{index:02d}.ARW"
+        photo.write_bytes(b"fixture")
+        photos.append(photo)
+    database = tmp_path / "state.db"
+    _seed_runtime_database(database, photos)
+    with sqlite3.connect(database) as connection:
+        connection.execute("UPDATE job_files SET group_id=NULL")
+    preview_bytes = io.BytesIO()
+    Image.new("RGB", (8, 8), (20, 30, 40)).save(preview_bytes, "JPEG")
+    monkeypatch.setattr(
+        "material_agent.commands.score_review.decode_raw",
+        lambda *_args, **_kwargs: RawFrame(
+            jpeg_bytes=preview_bytes.getvalue(),
+            gray=None,
+            preview_source="embedded",
+            original_size=(8, 8),
+            preview_size=(8, 8),
+        ),
+    )
+
+    result = build_score_review(
+        input_root=input_root,
+        database_path=database,
+        output_root=tmp_path / "review",
+        sample_count=6,
+    )
+
+    assert result["distribution"]["groups"] == {
+        "count": 6,
+        "singleton_count": 6,
+        "multi_photo_count": 0,
+        "maximum_size": 1,
+    }
+
+
+def test_build_score_review_rejects_output_inside_input_root(tmp_path: Path) -> None:
+    input_root = tmp_path / "photos"
+    input_root.mkdir()
+    photos = []
+    for index in range(6):
+        photo = input_root / f"{index:02d}.ARW"
+        photo.write_bytes(b"fixture")
+        photos.append(photo)
+    database = tmp_path / "state.db"
+    _seed_runtime_database(database, photos)
+
+    with pytest.raises(ValueError, match="outside the photo input root"):
+        build_score_review(
+            input_root=input_root,
+            database_path=database,
+            output_root=input_root / "review",
+            sample_count=6,
+        )
