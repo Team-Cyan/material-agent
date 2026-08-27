@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 
 import numpy as np
 
+from material_agent.adapters.state.processed_sqlite import SQLiteProcessedRepository
 from material_agent.adapters.state.sqlite_runtime import SQLiteRuntimeRepository
 from material_agent.app.dto import JobStage, JobType, SessionKind
 from material_agent.app.job_service import JobService
@@ -375,6 +376,128 @@ def test_review_runtime_dry_run_does_not_pollute_processed_cache(monkeypatch):
         assert "job_file_written" not in event_types
         state.mark_scored.assert_not_called()
         state.mark_done.assert_not_called()
+
+
+def test_review_runtime_releases_runtime_writer_before_group_cache_write(monkeypatch, tmp_path):
+    from material_agent.app.review_runtime import build_review_job_executor
+
+    cfg = _config(str(tmp_path))
+    cfg["grouping"]["enabled"] = True
+    db_path = tmp_path / "runtime.db"
+    repo = SQLiteRuntimeRepository(db_path)
+    state = SQLiteProcessedRepository(db_path)
+    state.conn.execute("PRAGMA busy_timeout=100")
+    photo = tmp_path / "test.ARW"
+    photo.write_bytes(b"raw")
+    session_id = SessionService(repo).create_session(
+        kind=SessionKind.CLI,
+        input_root=str(tmp_path),
+        config_snapshot=cfg,
+    )
+    job_id = JobService(repo).create_job(
+        session_id=session_id,
+        job_type=JobType.REVIEW_PHOTOS,
+        initial_stage=JobStage.DISCOVER,
+    )
+
+    class _Grouper:
+        def __init__(self, *_args, **_kwargs):
+            pass
+
+        def group(self, file_paths, *, state, progress):
+            state.set_exif_cache({file_paths[0]: "2026:08:27 06:39:55"})
+            return [list(file_paths)]
+
+    async def fake_compute_scores(*_args, **_kwargs):
+        return ScoreBundle(
+            scores={"exposure": 7.0, "sharpness": 6.0},
+            total=6.5,
+            boosted=False,
+            meta={},
+            scene="other",
+            scene_raw="fixture",
+            instructions="fixture",
+        )
+
+    monkeypatch.setattr("material_agent.app.review_runtime.Grouper", _Grouper)
+    monkeypatch.setattr("material_agent.app.review_runtime.make_client", lambda _config: object())
+    monkeypatch.setattr("material_agent.app.review_runtime.decode_raw", lambda *_args: object())
+    monkeypatch.setattr("material_agent.app.review_runtime.compute_scores", fake_compute_scores)
+
+    try:
+        summary = build_review_job_executor(
+            repository=repo,
+            config=cfg,
+            state=state,
+            progress=MagicMock(),
+            dry_run=True,
+        ).run(job_id, [str(photo)])
+        assert summary["status"] == "finished"
+        assert state.get_exif_cache([str(photo)]) == {str(photo): "2026:08:27 06:39:55"}
+    finally:
+        state.close()
+        repo.close()
+
+
+def test_review_runtime_releases_runtime_writer_before_processed_state_writes(
+    monkeypatch, tmp_path
+):
+    from material_agent.app.review_runtime import build_review_job_executor
+
+    cfg = _config(str(tmp_path))
+    db_path = tmp_path / "runtime.db"
+    repo = SQLiteRuntimeRepository(db_path)
+    state = SQLiteProcessedRepository(db_path)
+    state.conn.execute("PRAGMA busy_timeout=100")
+    photo = tmp_path / "test.ARW"
+    photo.write_bytes(b"raw")
+    session_id = SessionService(repo).create_session(
+        kind=SessionKind.CLI,
+        input_root=str(tmp_path),
+        config_snapshot=cfg,
+    )
+    job_id = JobService(repo).create_job(
+        session_id=session_id,
+        job_type=JobType.REVIEW_PHOTOS,
+        initial_stage=JobStage.DISCOVER,
+    )
+
+    async def fake_compute_scores(*_args, **_kwargs):
+        return ScoreBundle(
+            scores={"exposure": 7.0, "sharpness": 6.0},
+            total=6.5,
+            boosted=False,
+            meta={},
+            scene="other",
+            scene_raw="fixture",
+            instructions="fixture",
+        )
+
+    fake_writer = MagicMock()
+    fake_writer.score_to_stars.return_value = 3
+    fake_writer.build_subject_tags.return_value = ["pj:score=6.5"]
+    monkeypatch.setattr("material_agent.app.review_runtime.make_client", lambda _config: object())
+    monkeypatch.setattr("material_agent.app.review_runtime.decode_raw", lambda *_args: object())
+    monkeypatch.setattr("material_agent.app.review_runtime.compute_scores", fake_compute_scores)
+    monkeypatch.setattr(
+        "material_agent.app.review_runtime.ExifToolXMPWriter",
+        lambda *_args, **_kwargs: fake_writer,
+    )
+
+    try:
+        summary = build_review_job_executor(
+            repository=repo,
+            config=cfg,
+            state=state,
+            progress=MagicMock(),
+            dry_run=False,
+        ).run(job_id, [str(photo)])
+        assert summary["status"] == "finished"
+        assert summary["written_files"] == 1
+        assert state.is_done(str(photo))
+    finally:
+        state.close()
+        repo.close()
 
 
 def test_review_runtime_dry_run_records_cached_done_file_as_skipped(monkeypatch):

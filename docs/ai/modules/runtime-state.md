@@ -77,6 +77,9 @@ It uses one runtime database path but models two different concerns:
   queued/running/paused jobs into a durable cancelled terminal state
 - review jobs coalesce chatty runtime commits into bounded batches, while
   non-job repository calls retain immediate commit semantics
+- before a processed-state callback writes through its separate connection,
+  the active runtime batch must be flushed so one process cannot retain the
+  SQLite writer lock against itself
 - artifact lookups must keep indexes for both `(job_file_id, kind)` and
   `(job_id, kind)`; final timing aggregation reads one job-wide artifact batch
   instead of issuing one unindexed query per file

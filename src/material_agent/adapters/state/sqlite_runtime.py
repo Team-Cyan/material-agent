@@ -78,6 +78,18 @@ class SQLiteRuntimeRepository:
             self.conn.commit()
             self._pending_logical_commits = 0
 
+    def flush_pending_writes(self) -> None:
+        """Commit the active runtime batch before another DB connection writes.
+
+        Runtime and processed state intentionally use separate connections to
+        the same SQLite database.  A deferred runtime transaction must release
+        its writer lock before a processed-state callback updates a cache or a
+        review result.
+        """
+
+        self.conn.commit()
+        self._pending_logical_commits = 0
+
     @contextmanager
     def batched_commits(self, commit_every: int = 2048):
         """Coalesce chatty runtime writes while preserving bounded recovery."""

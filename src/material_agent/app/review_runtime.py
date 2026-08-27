@@ -45,6 +45,11 @@ def build_review_job_executor(
     writer = ExifToolXMPWriter(config.get("xmp", {}))
     event_sink = RichEventSink(progress)
 
+    def flush_runtime_writes() -> None:
+        flush = getattr(repository, "flush_pending_writes", None)
+        if callable(flush):
+            flush()
+
     def embedding_for_file(file_path: str) -> list[float] | None:
         embedding_cfg = config.get("grouping", {}).get("embedding_similarity", {})
         if not embedding_cfg.get("enabled", False) or not hasattr(client, "embed_image"):
@@ -57,6 +62,9 @@ def build_review_job_executor(
         if not file_paths:
             return []
         if config["grouping"]["enabled"]:
+            # Grouper cache writes use the processed-state connection. Release
+            # the runtime batch's writer lock before crossing that boundary.
+            flush_runtime_writes()
             embedding_enabled = bool(
                 config["grouping"].get("embedding_similarity", {}).get("enabled", False)
             )
@@ -128,6 +136,7 @@ def build_review_job_executor(
         timing["score_seconds"] = round(time.perf_counter() - score_started, 6)
         bundle.meta["timing"] = timing
         if state is not None and not dry_run:
+            flush_runtime_writes()
             state.mark_scored(
                 file_path,
                 bundle.total,
@@ -278,6 +287,10 @@ def build_review_job_executor(
             )
             return
 
+        # XMP and processed-state finalization form the terminal write path.
+        # Do not enter it while the runtime connection owns SQLite's writer
+        # lock from a deferred event batch.
+        flush_runtime_writes()
         writer.write(
             file_path,
             rating=star,

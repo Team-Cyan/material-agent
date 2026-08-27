@@ -46,6 +46,32 @@ def test_runtime_repository_batches_logical_commits_with_bounded_visibility(tmp_
     assert observer.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 1
 
 
+def test_runtime_repository_can_flush_active_batch_for_peer_writer(tmp_path):
+    db_path = tmp_path / "runtime.db"
+    repo = SQLiteRuntimeRepository(db_path)
+    observer = sqlite3.connect(db_path)
+
+    with repo.batched_commits(commit_every=10):
+        repo.create_session(
+            kind=SessionKind.CLI,
+            input_root="/tmp/photos",
+            config_snapshot={},
+            status=SessionStatus.OPEN,
+        )
+        repo.flush_pending_writes()
+        assert observer.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 1
+
+        repo.create_session(
+            kind=SessionKind.CLI,
+            input_root="/tmp/more-photos",
+            config_snapshot={},
+            status=SessionStatus.OPEN,
+        )
+        assert observer.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 1
+
+    assert observer.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 2
+
+
 def test_runtime_repository_lists_job_artifacts_in_one_query(tmp_path):
     repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
     session_id = repo.create_session(
