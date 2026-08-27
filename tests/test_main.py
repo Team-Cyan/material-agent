@@ -14,6 +14,7 @@ import yaml
 
 from material_agent.app.dto import JobStage, JobStatus
 from material_agent.commands.scoring import (
+    apply_run_overrides,
     build_score_cache_key,
     load_config,
     load_raw_config,
@@ -159,6 +160,8 @@ def test_repo_default_screening_thresholds_are_low_for_poor_photo_sets():
 def test_repo_default_backend_uses_local_openvino_profile():
     cfg = load_config("config.yaml")
     assert cfg["backend"] == "local"
+    assert "input_dir" not in cfg
+    assert "reprocess" not in cfg
     assert cfg["commentary_enabled"] is False
     assert cfg["inference"]["runtime"] == "openvino"
     assert cfg["inference"]["device"] == "CPU"
@@ -167,6 +170,26 @@ def test_repo_default_backend_uses_local_openvino_profile():
     assert cfg["inference"]["enforce_available"] is False
     assert "omlx" not in cfg
     assert "ollama" not in cfg
+
+
+def test_run_overrides_ignore_legacy_persisted_reprocess(tmp_path):
+    config = load_config("config.yaml")
+    config["input_dir"] = "/legacy/config/path"
+    config["reprocess"] = True
+
+    overridden = apply_run_overrides(config, _run_args(tmp_path))
+
+    assert overridden["input_dir"] == str(tmp_path)
+    assert overridden["reprocess"] is False
+
+
+def test_run_overrides_apply_explicit_reprocess_flag(tmp_path):
+    args = _run_args(tmp_path)
+    args.reprocess = True
+
+    overridden = apply_run_overrides(load_config("config.yaml"), args)
+
+    assert overridden["reprocess"] is True
 
 
 def test_repo_default_local_settings_are_normalized():

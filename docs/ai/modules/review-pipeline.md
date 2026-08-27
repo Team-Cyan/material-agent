@@ -33,7 +33,7 @@ It does not define image-quality policy itself. Instead, it orchestrates groupin
 
 ## Inputs
 
-- `input_dir`
+- explicit task/CLI `input_dir` (never sourced from durable configuration)
 - validated and normalized config
 - processed-state repository
 - runtime repository
@@ -84,6 +84,10 @@ Runtime file states distinguish real writes from simulations and cache reuse:
   back only the current batch, while previously committed batches stay resumable
 - one work directory has one mutating controller at a time; `run` and mutating
   maintenance commands share the same exclusive lock
+- `input_dir` and `reprocess` are per-run inputs; legacy copies in durable
+  configuration are stripped before explicit task/CLI overrides are applied
+- the legacy Python `Pipeline(config)` wrapper may accept these fields only as
+  in-memory invocation inputs and re-injects them after stable-config normalization
 - startup reconciles abandoned open/running/paused runtime records before a new
   run, and SIGTERM produces durable `cancelled` state with bounded shutdown
 - orchestration code should remain thin and delegate real rules outward

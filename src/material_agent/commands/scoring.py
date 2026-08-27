@@ -95,8 +95,7 @@ def _check_exiftool_version(min_version=(12, 0)):
 def apply_run_overrides(config: dict, args) -> dict:
     config = normalize_config(config)
     config["input_dir"] = args.input_dir
-    if getattr(args, "reprocess", False):
-        config["reprocess"] = True
+    config["reprocess"] = bool(getattr(args, "reprocess", False))
     if getattr(args, "scorers", None):
         enabled = set(args.scorers.split(","))
         for name in config["scorers"]:

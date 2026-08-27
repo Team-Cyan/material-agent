@@ -697,6 +697,17 @@ def test_normalize_config_removes_legacy_aggregate_weights() -> None:
     assert normalized["scoring"] == {"cache_revision": "fixture-v1"}
 
 
+def test_normalize_config_removes_per_run_operational_fields() -> None:
+    cfg = _minimal_config()
+    cfg["input_dir"] = "/legacy/config/path"
+    cfg["reprocess"] = True
+
+    normalized = normalize_config(cfg)
+
+    assert "input_dir" not in normalized
+    assert "reprocess" not in normalized
+
+
 def test_normalize_config_sets_layered_decision_defaults():
     normalized = normalize_config(_minimal_config())
 

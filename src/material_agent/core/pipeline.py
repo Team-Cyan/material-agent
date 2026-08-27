@@ -22,7 +22,11 @@ class Pipeline:
         log_path: str = None,
         dry_run: bool = False,
     ):
+        input_dir = config.get("input_dir", "")
+        reprocess = bool(config.get("reprocess", False))
         self.config = normalize_config(config)
+        self.config["input_dir"] = input_dir
+        self.config["reprocess"] = reprocess
         self.state = state
         self.dry_run = dry_run
         self.progress = progress or RichProgress(log_path=log_path)

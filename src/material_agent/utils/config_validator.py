@@ -301,6 +301,8 @@ def normalize_config(cfg: dict) -> dict:
     normalized.pop("vision_backend", None)
     normalized["log_level"] = (normalized.get("log_level") or "info").lower()
     normalized["output_language"] = (normalized.get("output_language") or "zh").lower()
+    normalized.pop("input_dir", None)
+    normalized.pop("reprocess", None)
     raw_extensions = normalized.get("raw_extensions", ["ARW"])
     if isinstance(raw_extensions, list) and all(
         isinstance(extension, str) for extension in raw_extensions

@@ -75,6 +75,11 @@ reject, and hard-reject results now all use the same layered total. Public
 configuration uses `scene_profiles`; legacy `scene_weights` remains an input
 alias but is removed from normalized snapshots and cache identity.
 
+Removed `input_dir` and `reprocess` from durable configuration. They are
+accepted as legacy input but stripped during normalization; every run injects
+its input root and cache-bypass decision exclusively from explicit task/CLI
+arguments.
+
 ## Core Runtime and Library Names
 
 | Current path | Recommendation | Rationale |
@@ -82,8 +87,8 @@ alias but is removed from normalized snapshots and cache identity.
 | `backend` | `runtime.backend` | `backend` is too generic at the document root. |
 | `legacy.enabled` | `compatibility.legacy_backends_enabled` | State what is being allowed. |
 | `log_level` | `runtime.logging.level` | Associate the value with runtime logging. |
-| `input_dir` | Remove from durable config | The run/Web task input root is operational state and already supplied separately. |
-| `reprocess` | Remove from durable config | It is a per-run cache-bypass option, not stable scoring policy. |
+| `input_dir` | Removed from durable config | The run/Web task input root is operational state and is supplied separately. |
+| `reprocess` | Removed from durable config | It is a per-run cache-bypass option, not stable scoring policy. |
 | `raw_extensions` | `library.raw_extensions` | Associate discovery rules with the library. |
 | `output_language` | `output.language` | Associate the language with generated output. |
 | `commentary_enabled` | `output.commentary.enabled` | Avoid a root-level feature toggle. |

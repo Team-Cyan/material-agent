@@ -10,8 +10,6 @@ backend: local
 output_language: zh
 log_level: info
 commentary_enabled: false
-input_dir: "/path/to/photos"
-reprocess: false
 raw_extensions: [ARW, CR3, NEF, RAF, DNG, ORF, RW2]
 
 legacy:
