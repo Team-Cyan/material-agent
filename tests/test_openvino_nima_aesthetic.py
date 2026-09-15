@@ -57,6 +57,7 @@ def test_nima_adapter_returns_learned_distribution_with_actual_device():
 
 def test_local_client_batches_and_caches_aesthetic_predictions():
     class Scorer:
+        result_cache_revision = "fixture-v1"
         calls = 0
 
         async def score_images(self, payloads):

@@ -120,10 +120,14 @@ def build_review_job_executor(
             for prepared in prepared_items
             if not prepared.get("cached") and prepared.get("frame") is not None
         ]
-        if frames and aesthetic.get("enabled", False) and hasattr(client, "score_aesthetics"):
-            run_coro_sync(client.score_aesthetics([frame.jpeg_bytes for frame in frames]))
-        if frames and embedding.get("enabled", False) and hasattr(client, "embed_images"):
-            run_coro_sync(client.embed_images([frame.jpeg_bytes for frame in frames]))
+        for settings, method in ((aesthetic, "score_aesthetics"), (embedding, "embed_images")):
+            if frames and settings.get("enabled", False) and hasattr(client, method):
+                try:
+                    run_coro_sync(getattr(client, method)([frame.jpeg_bytes for frame in frames]))
+                except Exception:
+                    if settings.get("enforce_available", False):
+                        raise
+                    # Per-image scoring emits the normalized fallback evidence.
 
     def score_prepared(prepared: dict) -> dict:
         if prepared.get("cached"):

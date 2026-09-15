@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections import OrderedDict
 from io import BytesIO
 import hashlib
 import time
@@ -9,6 +8,16 @@ import numpy as np
 from PIL import Image
 
 from ..utils.constants import VISION_DIMS
+from ..adapters.models.inference_contract import (
+    REVISION,
+    ResultCache,
+    AssetSnapshot,
+    bounded_reason,
+    fallback_record,
+    identity,
+    preprocessing_spec,
+    runtime_version,
+)
 
 
 class AsyncLocalClient:
@@ -32,9 +41,13 @@ class AsyncLocalClient:
         self._embedding = None
         self._face = None
         self.embedding_result_cache_size = int(self.embedding_config.get("result_cache_size", 256))
-        self._embedding_result_cache: OrderedDict[str, dict] = OrderedDict()
+        self._embedding_cache = ResultCache(self.embedding_result_cache_size)
+        self._embedding_result_cache = self._embedding_cache.values
         self.aesthetic_result_cache_size = int(self.aesthetic_config.get("result_cache_size", 256))
-        self._aesthetic_result_cache: OrderedDict[str, dict] = OrderedDict()
+        self._aesthetic_cache = ResultCache(self.aesthetic_result_cache_size)
+        self._aesthetic_result_cache = self._aesthetic_cache.values
+        self._result_identities = {}
+        self._asset_snapshots = {}
 
     async def score_image(self, jpeg_bytes: bytes) -> dict:
         heuristic_started = time.perf_counter()
@@ -85,7 +98,11 @@ class AsyncLocalClient:
             except Exception as error:
                 if self.detection_config.get("enforce_available", False):
                     raise
-                result["_detection"] = {"status": "fallback", "error": str(error)}
+                result["_detection"] = {
+                    "status": "fallback",
+                    "error": bounded_reason(error),
+                    "execution": fallback_record(error, "detection"),
+                }
             else:
                 result["_detection"] = {"status": "model", **detection}
                 if detection.get("scene") and detection["scene"] != "other":
@@ -103,7 +120,8 @@ class AsyncLocalClient:
                     raise
                 result["_semantic"] = {
                     "status": "fallback",
-                    "error": str(error),
+                    "error": bounded_reason(error),
+                    "execution": fallback_record(error, "semantic"),
                 }
             else:
                 result["scene"] = semantic["scene"]
@@ -121,7 +139,11 @@ class AsyncLocalClient:
             except Exception as error:
                 if self.quality_config.get("enforce_available", False):
                     raise
-                result["_quality"] = {"status": "fallback", "error": str(error)}
+                result["_quality"] = {
+                    "status": "fallback",
+                    "error": bounded_reason(error),
+                    "execution": fallback_record(error, "quality"),
+                }
             else:
                 result["_scoring_mode"] = "hybrid"
                 result["_quality"] = {"status": "model", **quality}
@@ -136,7 +158,11 @@ class AsyncLocalClient:
             except Exception as error:
                 if self.aesthetic_config.get("enforce_available", False):
                     raise
-                result["_aesthetic"] = {"status": "fallback", "error": str(error)}
+                result["_aesthetic"] = {
+                    "status": "fallback",
+                    "error": bounded_reason(error),
+                    "execution": fallback_record(error, "aesthetic"),
+                }
             else:
                 result["_aesthetic"] = {"status": "model", **aesthetic}
                 result["aesthetic_score"] = round(float(aesthetic["score"]), 2)
@@ -152,7 +178,11 @@ class AsyncLocalClient:
             except Exception as error:
                 if self.embedding_config.get("enforce_available", False):
                     raise
-                result["_embedding"] = {"status": "fallback", "error": str(error)}
+                result["_embedding"] = {
+                    "status": "fallback",
+                    "error": bounded_reason(error),
+                    "execution": fallback_record(error, "embedding"),
+                }
             else:
                 vector = embedding.pop("vector")
                 result["_embedding"] = {"status": "model", **embedding}
@@ -169,7 +199,11 @@ class AsyncLocalClient:
             except Exception as error:
                 if self.face_config.get("enforce_available", False):
                     raise
-                result["_face"] = {"status": "fallback", "error": str(error)}
+                result["_face"] = {
+                    "status": "fallback",
+                    "error": bounded_reason(error),
+                    "execution": fallback_record(error, "face"),
+                }
             else:
                 result["_face"] = {"status": "model", **face}
                 result["_scoring_mode"] = "hybrid"
@@ -184,87 +218,96 @@ class AsyncLocalClient:
         return (await self.embed_images([jpeg_bytes]))[0]
 
     async def embed_images(self, jpeg_images: list[bytes]) -> list[dict]:
-        if not jpeg_images:
-            return []
-        results: list[dict | None] = [None] * len(jpeg_images)
-        missing_indexes: dict[str, list[int]] = {}
-        missing_payloads: dict[str, bytes] = {}
-        for index, jpeg_bytes in enumerate(jpeg_images):
-            cache_key = hashlib.sha256(jpeg_bytes).hexdigest()
-            cached = self._embedding_result_cache.get(cache_key)
-            if cached is not None:
-                self._embedding_result_cache.move_to_end(cache_key)
-                results[index] = {**cached, "vector": list(cached["vector"])}
-                continue
-            missing_indexes.setdefault(cache_key, []).append(index)
-            missing_payloads.setdefault(cache_key, jpeg_bytes)
-
-        if missing_payloads:
-            scorer = self._embedding_scorer()
-            payloads = list(missing_payloads.values())
-            if hasattr(scorer, "embed_images"):
-                embeddings = await scorer.embed_images(payloads)
-            else:
-                embeddings = [await scorer.embed_image(payload) for payload in payloads]
-            if len(embeddings) != len(payloads):
-                raise RuntimeError("embedding adapter returned an unexpected result count")
-            for cache_key, embedding in zip(missing_payloads, embeddings, strict=True):
-                stored = {**embedding, "vector": list(embedding["vector"])}
-                if self.embedding_result_cache_size > 0:
-                    self._embedding_result_cache[cache_key] = stored
-                    self._embedding_result_cache.move_to_end(cache_key)
-                    while len(self._embedding_result_cache) > self.embedding_result_cache_size:
-                        self._embedding_result_cache.popitem(last=False)
-                for index in missing_indexes[cache_key]:
-                    results[index] = {**stored, "vector": list(stored["vector"])}
-
-        if any(result is None for result in results):
-            raise RuntimeError("embedding cache failed to resolve every input")
-        return [result for result in results if result is not None]
+        return await self._cached_model_results("embedding", jpeg_images)
 
     async def score_aesthetic(self, jpeg_bytes: bytes) -> dict:
         return (await self.score_aesthetics([jpeg_bytes]))[0]
 
     async def score_aesthetics(self, jpeg_images: list[bytes]) -> list[dict]:
-        if not jpeg_images:
-            return []
-        results: list[dict | None] = [None] * len(jpeg_images)
-        missing_indexes: dict[str, list[int]] = {}
-        missing_payloads: dict[str, bytes] = {}
-        for index, jpeg_bytes in enumerate(jpeg_images):
-            cache_key = hashlib.sha256(jpeg_bytes).hexdigest()
-            cached = self._aesthetic_result_cache.get(cache_key)
-            if cached is not None:
-                self._aesthetic_result_cache.move_to_end(cache_key)
-                results[index] = {**cached, "distribution": list(cached["distribution"])}
-                continue
-            missing_indexes.setdefault(cache_key, []).append(index)
-            missing_payloads.setdefault(cache_key, jpeg_bytes)
+        return await self._cached_model_results("aesthetic", jpeg_images)
 
-        if missing_payloads:
-            scorer = self._aesthetic_scorer()
-            payloads = list(missing_payloads.values())
-            predictions = await scorer.score_images(payloads)
-            if len(predictions) != len(payloads):
-                raise RuntimeError("aesthetic adapter returned an unexpected result count")
-            for cache_key, prediction in zip(missing_payloads, predictions, strict=True):
-                stored = {**prediction, "distribution": list(prediction["distribution"])}
-                if self.aesthetic_result_cache_size > 0:
-                    self._aesthetic_result_cache[cache_key] = stored
-                    self._aesthetic_result_cache.move_to_end(cache_key)
-                    while len(self._aesthetic_result_cache) > self.aesthetic_result_cache_size:
-                        self._aesthetic_result_cache.popitem(last=False)
-                for index in missing_indexes[cache_key]:
-                    results[index] = {**stored, "distribution": list(stored["distribution"])}
-        if any(result is None for result in results):
-            raise RuntimeError("aesthetic cache failed to resolve every input")
-        return [result for result in results if result is not None]
+    async def _cached_model_results(self, kind, payloads):
+        if not payloads:
+            return []
+        config = getattr(self, kind + "_config")
+        cache = getattr(self, "_" + kind + "_cache")
+        asset_paths = (str(config.get("model_path", "")), config.get("processor_path"))
+        snapshot = self._asset_snapshots.get(kind)
+        if snapshot is None or (snapshot.model_path, snapshot.processor_path) != asset_paths:
+            snapshot = self._asset_snapshots[kind] = AssetSnapshot(*asset_paths)
+        assets = snapshot.current()
+        key = identity(
+            {
+                "schema": REVISION,
+                "kind": kind,
+                "config": config,
+                "inference": self.inference,
+                "assets": assets,
+                "preprocessing": preprocessing_spec(kind, config),
+                "versions": {
+                    name: runtime_version(name)
+                    for name in ("openvino", "numpy", "Pillow", "torch", "transformers")
+                },
+            }
+        )
+        previous = self._result_identities.get(kind)
+        if previous is not None and previous != key:
+            cache.clear()
+            setattr(self, "_" + kind, None)
+        self._result_identities[kind] = key
+        result = [None] * len(payloads)
+        missing = {}
+        cacheable = assets["state"] == "available" or config.get("runtime") == "transformers"
+        # Custom adapters must declare a revision before enabling cache reuse.
+        scorer = getattr(self, "_" + kind)
+        custom_revision = getattr(scorer, "result_cache_revision", None)
+        if custom_revision:
+            key = identity({"base": key, "custom_revision": custom_revision})
+            cacheable = True
+        for index, payload in enumerate(payloads):
+            content_key = identity({"model": key, "content": hashlib.sha256(payload).hexdigest()})
+            cached = cache.get(content_key) if cacheable else None
+            if cached is not None:
+                cached["result_cache"] = {"identity": content_key, "status": "hit"}
+                result[index] = cached
+            else:
+                missing.setdefault(content_key, (payload, []))[1].append(index)
+        keys = list(missing)
+        for start in range(0, len(keys), 32):
+            chunk = keys[start : start + 32]
+            inputs = [missing[k][0] for k in chunk]
+            scorer = getattr(self, "_" + kind + "_scorer")()
+            if kind == "embedding":
+                predictions = (
+                    await scorer.embed_images(inputs)
+                    if hasattr(scorer, "embed_images")
+                    else [await scorer.embed_image(p) for p in inputs]
+                )
+            else:
+                predictions = await scorer.score_images(inputs)
+            if len(predictions) != len(inputs):
+                raise RuntimeError(kind + " adapter returned an unexpected result count")
+            from copy import deepcopy
+
+            for content_key, prediction in zip(chunk, predictions, strict=True):
+                stored = deepcopy(prediction)
+                stored["result_cache"] = {
+                    "identity": content_key,
+                    "status": "miss" if cacheable else "bypass",
+                }
+                if cacheable:
+                    cache.put(content_key, stored)
+                for index in missing[content_key][1]:
+                    result[index] = deepcopy(stored)
+        if any(row is None for row in result):
+            raise RuntimeError("model cache failed to resolve every input")
+        return result
 
     def clear_embedding_result_cache(self) -> None:
-        self._embedding_result_cache.clear()
+        self._embedding_cache.clear()
 
     def clear_aesthetic_result_cache(self) -> None:
-        self._aesthetic_result_cache.clear()
+        self._aesthetic_cache.clear()
 
     async def score_image_fast(self, jpeg_bytes: bytes) -> dict[str, float]:
         full = await self.score_image(jpeg_bytes)

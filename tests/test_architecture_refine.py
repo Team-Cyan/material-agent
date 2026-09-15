@@ -119,6 +119,7 @@ def test_make_client_passes_inference_config_to_local_client():
 
 def test_local_client_batches_missing_embeddings_and_reuses_cache():
     class _BatchEmbedding:
+        result_cache_revision = "fixture-v1"
         def __init__(self):
             self.calls = []
 

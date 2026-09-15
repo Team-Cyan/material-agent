@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from PIL import Image
+from .inference_contract import optional_execution
 
 from ...utils.constants import DINOV2_MODEL_NAME, DINOV2_MODEL_REVISION
 
@@ -54,6 +55,7 @@ class DinoV2EmbeddingAdapter:
             raise RuntimeError("DINOv2 runtime returned an empty embedding")
         return {
             "vector": [float(value) for value in vector],
+            "execution": optional_execution("transformers", self.config),
             "dimensions": len(vector),
             "model_name": self.model_name,
             "model_version": self.model_revision or "runtime-injected",

@@ -139,6 +139,7 @@ def test_local_client_records_semantic_fallback_without_fabricating_scene():
 
     assert result["scene"] == "other"
     assert result["_scoring_mode"] == "heuristic"
+    assert result["_semantic"].pop("execution")["status"] == "unavailable"
     assert result["_semantic"] == {"status": "fallback", "error": "weights missing"}
 
 

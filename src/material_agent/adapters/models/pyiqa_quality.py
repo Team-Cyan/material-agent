@@ -5,6 +5,7 @@ from io import BytesIO
 from typing import Any, Protocol
 
 from PIL import Image
+from .inference_contract import optional_execution
 
 
 DEFAULT_QUALITY_METRICS = {
@@ -94,6 +95,7 @@ class PyIqaQualityAdapter:
         }
         return {
             "aggregate_score": round(aggregate, 6),
+            "execution": optional_execution("pyiqa", self.config),
             "aggregates": aggregates,
             "signals": signals,
             "runtime": "pyiqa",

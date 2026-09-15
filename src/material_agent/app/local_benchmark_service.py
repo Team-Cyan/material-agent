@@ -195,35 +195,29 @@ def _benchmark_timing_metrics(results: list[dict[str, Any]]) -> dict[str, Any]:
     heuristic = sum(
         float((row.get("timing") or {}).get("local_heuristic_seconds", 0.0)) for row in results
     )
-    model_totals = {
-        "preprocess_seconds": 0.0,
-        "inference_seconds": 0.0,
-        "postprocess_seconds": 0.0,
-        "compile_seconds": 0.0,
-    }
-    seen_runs: set[object] = set()
-    for row in results:
-        model = row.get("aesthetic") or row.get("embedding")
-        if not isinstance(model, dict):
-            continue
-        run_id = model.get("inference_run_id")
-        if run_id is None or run_id in seen_runs:
-            continue
-        seen_runs.add(run_id)
-        timing = model.get("timing")
-        if not isinstance(timing, dict):
-            continue
-        for key in ("preprocess_seconds", "inference_seconds", "postprocess_seconds"):
-            model_totals[key] += float(timing.get(key, 0.0))
-        model_totals["compile_seconds"] = max(
-            model_totals["compile_seconds"],
-            float(timing.get("compile_seconds", 0.0)),
-        )
+    from .jobs.review_photos import _aggregate_timings
+
+    class Evidence:
+        def list_artifact_metadata(self, **kwargs):
+            return [
+                {"meta": {kind: row.get(kind) for kind in ("detection", "aesthetic", "embedding")}}
+                for row in results
+            ]
+
+    totals = _aggregate_timings(Evidence(), [], job_id="benchmark")
     return {
         "raw_decode_seconds": round(raw_decode, 6),
         "local_heuristic_seconds": round(heuristic, 6),
-        "model_runs": len(seen_runs),
-        **{f"model_{key}": round(value, 6) for key, value in model_totals.items()},
+        "model_runs": totals.get("model_runs", 0),
+        **{
+            f"model_{key}": totals.get(f"model_{key}", 0.0)
+            for key in (
+                "preprocess_seconds",
+                "inference_seconds",
+                "postprocess_seconds",
+                "compile_seconds",
+            )
+        },
     }
 
 
@@ -283,6 +277,7 @@ async def _score_items(
                 "aesthetic": aesthetic,
                 "aesthetic_calibration": aesthetic_calibration,
                 "embedding": payload.get("_embedding"),
+                "detection": payload.get("_detection"),
                 "timing": payload.get("_timing"),
                 "embedding_vector": payload.get("_embedding_vector"),
                 "face": payload.get("_face"),

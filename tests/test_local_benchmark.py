@@ -201,6 +201,7 @@ def test_benchmark_warm_repeat_clears_embedding_results_but_reuses_adapter(
     )
 
     class _CountingEmbeddingAdapter:
+        result_cache_revision = "fixture-v1"
         def __init__(self):
             self.calls = 0
 
@@ -254,6 +255,7 @@ def test_benchmark_pairwise_aesthetic_metric_uses_effective_nima_scores(
     )
 
     class _AestheticAdapter:
+        result_cache_revision = "fixture-v1"
         async def score_images(self, payloads):
             scores = [8.0, 6.0, 2.0]
             return [

@@ -28,6 +28,8 @@ def _aggregate_timings(
         "model_compile_seconds": 0.0,
     }
     seen_inference_runs: set[object] = set()
+    seen_compiles: set[object] = set()
+    legacy_compiles: dict[str, float] = {}
     run_kinds: set[str] = set()
     seen_runs_by_kind: dict[str, set[object]] = {}
     found = False
@@ -85,11 +87,19 @@ def _aggregate_timings(
                     found = True
             compile_seconds = model_timing.get("compile_seconds")
             if isinstance(compile_seconds, int | float):
-                totals["model_compile_seconds"] = max(
-                    totals["model_compile_seconds"], float(compile_seconds)
-                )
+                compile_id = model.get("compile_event_id")
                 category_key = f"{kind}_compile_seconds"
-                totals[category_key] = max(totals.get(category_key, 0.0), float(compile_seconds))
+                if compile_id is not None:
+                    if compile_id not in seen_compiles:
+                        seen_compiles.add(compile_id)
+                        totals["model_compile_seconds"] += float(compile_seconds)
+                        totals[category_key] = totals.get(category_key, 0.0) + float(compile_seconds)
+                else:
+                    previous = legacy_compiles.get(kind, 0.0)
+                    delta = max(previous, float(compile_seconds)) - previous
+                    legacy_compiles[kind] = previous + delta
+                    totals["model_compile_seconds"] += delta
+                    totals[category_key] = totals.get(category_key, 0.0) + delta
                 found = True
     if not found:
         return {}

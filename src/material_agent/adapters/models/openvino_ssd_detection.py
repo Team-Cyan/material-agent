@@ -12,12 +12,20 @@ from typing import Any
 import cv2
 import numpy as np
 from PIL import Image
+from .inference_contract import (
+    ModelDeclaration,
+    AssetSnapshot,
+    asset_identity,
+    execution_record,
+    result_record,
+    preprocessing_spec,
+    serialized,
+)
+from .openvino_session import OpenVinoSession
 
 from .openvino_embedding import (
     _cache_identity,
     _portable_path,
-    _read_execution_devices,
-    _should_compile_fallback,
 )
 
 
@@ -156,7 +164,12 @@ class OpenVinoSsdObjectDetectorAdapter:
         self.max_results = max(1, int(self.config.get("max_results", 10)))
         self.face_score_threshold = float(self.config.get("face_score_threshold", 0.60))
         self._runtime = runtime
+        self._execution_lock = threading.RLock()
+        self._asset_snapshot = AssetSnapshot(self.model_path, None)
+        self._asset_state = self._asset_snapshot.current()
         self._face_detector = None
+        self._face_snapshot = AssetSnapshot(self.face_model_path)
+        self._face_state = self._face_snapshot.current()
         self._runtime_lock = threading.Lock()
         self._face_lock = threading.Lock()
         self.model_digest = _file_digest(Path(self.model_path))
@@ -165,7 +178,13 @@ class OpenVinoSsdObjectDetectorAdapter:
     async def detect_objects(self, jpeg_bytes: bytes) -> dict[str, Any]:
         return await asyncio.to_thread(self._detect_sync, jpeg_bytes)
 
+    @serialized
     def _detect_sync(self, jpeg_bytes: bytes) -> dict[str, Any]:
+        current_assets = self._asset_snapshot.current()
+        if current_assets != self._asset_state:
+            self._runtime = None
+            self._asset_state = current_assets
+            self.model_digest = _file_digest(Path(self.model_path))
         decode_started = time.perf_counter()
         image = Image.open(BytesIO(jpeg_bytes)).convert("RGB")
         rgb = np.asarray(image)
@@ -181,6 +200,8 @@ class OpenVinoSsdObjectDetectorAdapter:
                         )
                     runtime = _OpenVinoSsdRuntime(
                         model_path=self.model_path,
+                        model_name=self.config.get("model_name", "ssd-mobilenet-v1-12"),
+                        model_version=self.config.get("model_version", "onnxmodelzoo-opset12"),
                         device=self.device,
                         fallback_device=self.fallback_device,
                         compiled_cache_dir=self.compiled_cache_dir,
@@ -209,6 +230,28 @@ class OpenVinoSsdObjectDetectorAdapter:
         fallback_used = bool(getattr(runtime, "fallback_used", False))
         return {
             "inference_run_id": uuid.uuid4().hex,
+            "execution": execution_record(runtime),
+            "result_cache": result_record(
+                jpeg_bytes,
+                self.config,
+                execution_record(runtime),
+                extra={"face_asset": asset_identity(self.face_model_path)},
+            ),
+            "compile_event_id": getattr(runtime, "compile_event_id", None),
+            "openvino_version": getattr(runtime, "openvino_version", "unknown"),
+            "execution_device_readback": (
+                "unknown" if getattr(runtime, "execution_device_readback_error", None) else "actual"
+            ),
+            "face_execution": {
+                "schema": "local-inference-v1",
+                "lifecycle": "model_specific",
+                "runtime": "opencv-dnn",
+                "status": "success" if Path(self.face_model_path).is_file() else "unavailable",
+                "assets": asset_identity(self.face_model_path),
+                "execution_devices": ["unknown"],
+                "preprocessing_revision": "yunet-bgr-640-v1",
+                "missing_evidence": ["execution_device_readback"],
+            },
             "model_name": str(self.config.get("model_name", "ssd-mobilenet-v1-12")),
             "model_version": str(self.config.get("model_version", "onnxmodelzoo-opset12")),
             "runtime": "openvino",
@@ -223,7 +266,8 @@ class OpenVinoSsdObjectDetectorAdapter:
             "face_model_name": "opencv-yunet-int8" if self.face_model_path else None,
             "face_model_digest": self.face_model_digest if self.face_model_path else None,
             "compiled_cache_dir": _portable_path(self.compiled_cache_dir),
-            "cache_identity": _cache_identity(
+            "cache_identity": getattr(runtime, "compiled_cache_identity", None)
+            or _cache_identity(
                 self.model_digest,
                 requested_device,
                 getattr(runtime, "openvino_version", "unknown"),
@@ -232,6 +276,12 @@ class OpenVinoSsdObjectDetectorAdapter:
             ),
             "input_size": self.input_size,
             "score_threshold": self.score_threshold,
+            "postprocessing_policy": {
+                "revision": "ssd-subject-selection-v1",
+                "max_results": self.max_results,
+                "score_threshold": self.score_threshold,
+                "face_score_threshold": self.face_score_threshold,
+            },
             "objects": objects,
             "faces": faces,
             "primary_subject_index": primary_index,
@@ -247,6 +297,11 @@ class OpenVinoSsdObjectDetectorAdapter:
     def _detect_faces(self, rgb: np.ndarray) -> tuple[list[dict], dict]:
         if not self.face_model_path or not Path(self.face_model_path).is_file():
             return [], {}
+        current_face = self._face_snapshot.current()
+        if current_face != self._face_state:
+            self._face_detector = None
+            self._face_state = current_face
+            self.face_model_digest = _file_digest(Path(self.face_model_path))
         started = time.perf_counter()
         height, width = rgb.shape[:2]
         scale = min(640 / max(height, width), 1.0)
@@ -302,87 +357,69 @@ class OpenVinoSsdObjectDetectorAdapter:
         return faces, {"face_detection_seconds": round(time.perf_counter() - started, 6)}
 
 
-class _OpenVinoSsdRuntime:
+class _OpenVinoSsdRuntime(OpenVinoSession):
     def __init__(
         self,
         *,
-        model_path: str,
-        device: str,
-        fallback_device: str,
-        compiled_cache_dir: str,
-        input_size: int,
+        model_path,
+        device,
+        fallback_device,
+        compiled_cache_dir,
+        input_size,
+        model_name="ssd-mobilenet-v1-12",
+        model_version="onnxmodelzoo-opset12",
     ):
-        try:
-            import openvino as ov
-        except ImportError as error:
-            raise RuntimeError(
-                "OpenVINO SSD detection requires intel-openvino dependencies"
-            ) from error
-        model_file = Path(model_path)
-        if not model_file.is_file():
-            raise RuntimeError(f"OpenVINO SSD model does not exist: {model_file}")
-        cache_dir = Path(compiled_cache_dir)
-        cache_dir.mkdir(parents=True, exist_ok=True)
-        self.ov = ov
-        self.core = ov.Core()
-        self.openvino_version = str(getattr(ov, "__version__", "unknown"))
-        self.requested_device = device
-        self.compiled_device = device
-        self.fallback_device = fallback_device
-        self.fallback_used = False
-        self.fallback_reason = None
-        model = self.core.read_model(str(model_file))
-        model.reshape({model.input(0).get_any_name(): [1, input_size, input_size, 3]})
-        config = {"CACHE_DIR": str(cache_dir), "PERFORMANCE_HINT": "LATENCY"}
-        compile_started = time.perf_counter()
-        try:
-            self.compiled = self.core.compile_model(model, device, config)
-        except RuntimeError as error:
-            if not _should_compile_fallback(
-                requested_device=device,
-                fallback_device=fallback_device,
-                available_devices=[str(value) for value in self.core.available_devices],
-                error=error,
-            ):
-                raise
-            self.fallback_used = True
-            self.fallback_reason = f"{type(error).__name__}: {error}"
-            self.compiled_device = fallback_device
-            self.compiled = self.core.compile_model(model, fallback_device, config)
-        self.compile_seconds = time.perf_counter() - compile_started
-        self.execution_devices, self.execution_device_readback_error = _read_execution_devices(
-            self.compiled
+        declaration = ModelDeclaration.create(
+            model_name,
+            model_version,
+            asset_identity(model_path),
+            preprocessing_spec("detection", {"input_size": input_size}),
+            "ssd-coco-boxes-v1",
+        )
+        super().__init__(
+            model_path=model_path,
+            declaration=declaration,
+            device=device,
+            fallback_device=fallback_device,
+            compiled_cache_dir=compiled_cache_dir,
+            performance_hint="LATENCY",
+            batch_size=1,
+            max_in_flight=1,
+            infer_requests=1,
         )
 
-    def detect(self, rgb: np.ndarray) -> tuple[list[dict], dict]:
-        preprocess_started = time.perf_counter()
-        input_size = int(self.compiled.input(0).shape[1])
-        resized = cv2.resize(rgb, (input_size, input_size), interpolation=cv2.INTER_AREA)
-        tensor = np.expand_dims(resized.astype(np.uint8, copy=False), axis=0)
-        preprocess_seconds = time.perf_counter() - preprocess_started
-        inference_started = time.perf_counter()
-        output = self.compiled([tensor])
-        inference_seconds = time.perf_counter() - inference_started
-        arrays = {port.get_any_name(): np.asarray(output[port]) for port in self.compiled.outputs}
+    def detect(self, rgb):
+        results = self.run([rgb], self._preprocess, self._normalize)
+        return results[0], dict(self.last_run_timing)
+
+    def _preprocess(self, rgb):
+        spec = self.declaration.record()["preprocessing"]
+        resized = cv2.resize(rgb, tuple(spec["resize"]), interpolation=spec["resample"])
+        return np.expand_dims(resized.astype(np.uint8, copy=False), axis=0)
+
+    def _normalize(self, outputs):
+        arrays = {
+            port.get_any_name(): value
+            for port, value in zip(self.compiled.outputs, outputs, strict=True)
+        }
         count = int(arrays["num_detections"].reshape(-1)[0])
         boxes = arrays["detection_boxes"].reshape(-1, 4)
         classes = arrays["detection_classes"].reshape(-1)
         scores = arrays["detection_scores"].reshape(-1)
-        detections = [
-            {
-                "class_id": int(classes[index]),
-                "confidence": round(float(scores[index]), 6),
-                "bbox": _clamp_bbox(
-                    [boxes[index][1], boxes[index][0], boxes[index][3], boxes[index][2]]
-                ),
-            }
-            for index in range(min(count, len(scores)))
+        if count < 0 or count > min(len(boxes), len(classes), len(scores)):
+            raise RuntimeError("SSD detection count exceeds output tensors")
+        return [
+            [
+                {
+                    "class_id": int(classes[index]),
+                    "confidence": round(float(scores[index]), 6),
+                    "bbox": _clamp_bbox(
+                        [boxes[index][1], boxes[index][0], boxes[index][3], boxes[index][2]]
+                    ),
+                }
+                for index in range(count)
+            ]
         ]
-        return detections, {
-            "compile_seconds": round(self.compile_seconds, 6),
-            "preprocess_seconds": round(preprocess_seconds, 6),
-            "inference_seconds": round(inference_seconds, 6),
-        }
 
 
 def _select_primary_subject(objects: list[dict]) -> int | None:
@@ -436,7 +473,7 @@ def _clamp_bbox(values) -> list[float]:
 
 def _file_digest(path: Path) -> str:
     if not path.is_file():
-        return hashlib.sha256(str(path).encode()).hexdigest()
+        return None
     digest = hashlib.sha256()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):

@@ -49,7 +49,7 @@ _SCORE_CACHE_CONFIG_KEYS = (
     "output_language",
     "xmp",
 )
-_SCORE_PIPELINE_CACHE_REVISION = "material-agent.score-output.v2"
+_SCORE_PIPELINE_CACHE_REVISION = "material-agent.score-output.v3-inference"
 _SCORE_RUNTIME_DISTRIBUTIONS = (
     "numpy",
     "opencv-python",

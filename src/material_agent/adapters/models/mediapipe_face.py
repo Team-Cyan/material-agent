@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from PIL import Image
+from .inference_contract import optional_execution
 
 
 class FaceRuntime(Protocol):
@@ -47,6 +48,7 @@ class MediaPipeFaceAdapter:
         area_ratios = [_landmark_area_ratio(face) for face in faces if face]
         return {
             "face_present": bool(faces),
+            "execution": optional_execution("mediapipe", self.config),
             "face_count": len(faces),
             "max_face_area_ratio": round(max(area_ratios, default=0.0), 6),
             "landmark_counts": [len(face) for face in faces],

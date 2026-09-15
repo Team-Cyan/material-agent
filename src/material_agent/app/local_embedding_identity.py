@@ -45,7 +45,7 @@ def build_local_embedding_cache_key(config: dict[str, Any]) -> str:
     runtime = str(embedding.get("runtime", "transformers")).strip().lower()
     payload: dict[str, Any] = {
         "schema_version": "material-agent.embedding-cache.v2",
-        "preprocessing_revision": "raw-preview-to-adapter-v2",
+        "preprocessing_revision": "raw-preview-to-adapter-v3-inference",
         "runtime": runtime,
         "settings": settings,
         "preview": config.get("preview", {}),

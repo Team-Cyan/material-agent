@@ -35,6 +35,7 @@ def test_dinov2_adapter_returns_vector_with_provenance():
 
 
 class _FakeEmbeddingAdapter:
+    result_cache_revision = "fixture-v1"
     async def embed_image(self, jpeg_bytes):
         return {
             "vector": [0.1, 0.2],
@@ -54,6 +55,7 @@ def test_local_client_keeps_embedding_vector_out_of_embedding_metadata():
     result = asyncio.run(client.score_image(_jpeg_bytes()))
 
     assert result["_embedding_vector"] == [0.1, 0.2]
+    assert result["_embedding"].pop("result_cache")["status"] == "miss"
     assert result["_embedding"] == {
         "status": "model",
         "dimensions": 2,
@@ -67,6 +69,7 @@ def test_local_client_keeps_embedding_vector_out_of_embedding_metadata():
 
 
 class _CountingEmbeddingAdapter:
+    result_cache_revision = "fixture-v1"
     def __init__(self):
         self.calls = 0
 

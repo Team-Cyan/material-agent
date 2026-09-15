@@ -119,6 +119,7 @@ def test_local_client_quality_failure_is_explicit_fallback():
 
     result = asyncio.run(client.score_image(_jpeg_bytes()))
 
+    assert result["_quality"].pop("execution")["status"] == "unavailable"
     assert result["_quality"] == {
         "status": "fallback",
         "error": "quality weights missing",
