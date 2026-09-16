@@ -16,8 +16,10 @@ time/hash grouping are implemented. Continuation batches implement readable-grou
 keep coverage with separate quality/selection persistence, XMP projection-attempt
 ledger/rewrite receipts, and explicit evidence applicability plus opt-in bounded
 refinement. Six public RAWs did not gain focus resolution through half-size RAW
-decode; refinement remains disabled. GPT acceptance lacks a callable API channel
-and a frozen burst/preference reference set; external acceptance remains pending.
+decode; refinement remains disabled. GPT acceptance uses fresh-context Codex subagents, not a required external API.
+Both initial panels hit usage limits; the controlled pilot and baseline are frozen
+in `.local/subagent-blind-review/`. Real burst acceptance and external verification
+remain pending.
 XMP protection/projection has local in-memory verification;
 no actual XMP write, deployment or production review is authorized in this session.
 

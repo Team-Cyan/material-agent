@@ -125,3 +125,15 @@ its SHA-256 is recorded. No frozen image manifest or GPT result is claimed.
 Photo Triage's official project page is task-relevant; its linked download host
 failed both HTTPS and HTTP access. No remote image evaluation or download occurred.
 The 15 original unrelated dirty files still match the starting patch byte for byte.
+
+
+## Correction: Codex subagent blind-review channel
+
+The user corrected the API-only channel assumption. Two independent Codex panels
+were actually dispatched with fresh histories, neutral IDs, reversed ordering and
+no baseline access. Both failed with usage-limit errors before producing visual
+judgments. A six-source/twelve-candidate controlled in-memory blur pilot and the
+full default heuristic scoring/coverage baseline are frozen for resumption.
+Source hashes remain unchanged. No human-reference or GPT agreement result is
+claimed. The preflight and handoff now record this actual blocker instead of
+requiring an external API. See `.local/subagent-blind-review/dispatch-status.json`.
