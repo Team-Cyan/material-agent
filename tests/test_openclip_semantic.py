@@ -149,3 +149,24 @@ def test_local_client_enforces_semantic_availability_when_requested():
 
     with pytest.raises(RuntimeError, match="weights missing"):
         asyncio.run(client.score_image(_jpeg_bytes()))
+
+
+def test_semantic_adapter_initializes_runtime_once_under_concurrency(monkeypatch):
+    from concurrent.futures import ThreadPoolExecutor
+    import time
+    from material_agent.adapters.models import openclip_semantic
+
+    created = []
+
+    def create(**kwargs):
+        time.sleep(0.01)
+        created.append(kwargs)
+        return _FakeRuntime([0.8, 0.2])
+
+    monkeypatch.setattr(openclip_semantic, '_OpenClipRuntime', create)
+    adapter = OpenClipSemanticAdapter({'prompts': {'people': 'portrait', 'other': 'other'}})
+    jpeg = _jpeg_bytes()
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        results = list(pool.map(adapter._classify_sync, [jpeg] * 8))
+    assert len(created) == 1
+    assert all(row['scene'] == 'people' for row in results)

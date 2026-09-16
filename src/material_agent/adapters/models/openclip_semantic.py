@@ -3,9 +3,11 @@ from __future__ import annotations
 import asyncio
 from io import BytesIO
 from pathlib import Path
+from threading import Lock
 from typing import Any, Protocol
 
 from PIL import Image
+from .inference_contract import optional_execution
 
 
 DEFAULT_SCENE_PROMPTS = {
@@ -40,6 +42,7 @@ class OpenClipSemanticAdapter:
             raise ValueError("local.semantic.prompts must be a non-empty mapping")
         self.prompts = {str(label): str(prompt) for label, prompt in raw_prompts.items()}
         self._runtime = runtime
+        self._runtime_lock = Lock()
 
     async def classify_image(self, jpeg_bytes: bytes) -> dict[str, Any]:
         return await asyncio.to_thread(self._classify_sync, jpeg_bytes)
@@ -47,13 +50,16 @@ class OpenClipSemanticAdapter:
     def _classify_sync(self, jpeg_bytes: bytes) -> dict[str, Any]:
         runtime = self._runtime
         if runtime is None:
-            runtime = _OpenClipRuntime(
-                model_name=self.model_name,
-                pretrained=self.pretrained,
-                device=self.device,
-                cache_dir=self.config.get("cache_dir"),
-            )
-            self._runtime = runtime
+            with self._runtime_lock:
+                runtime = self._runtime
+                if runtime is None:
+                    runtime = _OpenClipRuntime(
+                        model_name=self.model_name,
+                        pretrained=self.pretrained,
+                        device=self.device,
+                        cache_dir=self.config.get("cache_dir"),
+                    )
+                    self._runtime = runtime
         image = Image.open(BytesIO(jpeg_bytes)).convert("RGB")
         labels = list(self.prompts)
         probabilities = runtime.classify(image, [self.prompts[label] for label in labels])
@@ -64,6 +70,7 @@ class OpenClipSemanticAdapter:
         scene = "other" if raw_label == "screenshot" or confidence < self.min_confidence else raw_label
         return {
             "scene": scene,
+            "execution": optional_execution("open_clip_torch", self.config),
             "scene_raw": raw_label,
             "confidence": round(float(confidence), 6),
             "non_photo": raw_label == "screenshot",
@@ -106,14 +113,28 @@ class _OpenClipRuntime:
         self.tokenizer = open_clip.get_tokenizer(model_name)
         self.device = device
         self.torch = torch
+        self._inference_lock = Lock()
+        self._text_feature_key = None
+        self._text_features = None
 
     def classify(self, image: Image.Image, prompts: list[str]) -> list[float]:
-        image_tensor = self.preprocess(image).unsqueeze(0).to(self.device)
-        text_tensor = self.tokenizer(prompts).to(self.device)
-        with self.torch.inference_mode():
+        # One bank per immutable model instance, in exact prompt order. Oversized
+        # banks execute normally without retaining their tensor or prompt strings.
+        prompts = tuple(prompts)
+        cacheable = len(prompts) <= 256 and sum(map(len, prompts)) <= 65536
+        with self._inference_lock, self.torch.inference_mode():
+            image_tensor = self.preprocess(image).unsqueeze(0).to(self.device)
             image_features = self.model.encode_image(image_tensor)
-            text_features = self.model.encode_text(text_tensor)
             image_features = image_features / image_features.norm(dim=-1, keepdim=True)
-            text_features = text_features / text_features.norm(dim=-1, keepdim=True)
+            key = (id(self.model), self.device, prompts)
+            if cacheable and key == self._text_feature_key:
+                text_features = self._text_features
+            else:
+                text_tensor = self.tokenizer(list(prompts)).to(self.device)
+                text_features = self.model.encode_text(text_tensor)
+                text_features = text_features / text_features.norm(dim=-1, keepdim=True)
+                if cacheable:
+                    self._text_feature_key = key
+                    self._text_features = text_features
             probabilities = (100.0 * image_features @ text_features.T).softmax(dim=-1)[0]
-        return [float(value) for value in probabilities.detach().cpu().tolist()]
+            return [float(value) for value in probabilities.detach().cpu().tolist()]
