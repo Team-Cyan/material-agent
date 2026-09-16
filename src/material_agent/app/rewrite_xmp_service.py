@@ -7,6 +7,8 @@ from ..adapters.metadata.exiftool_xmp import (
     ExifToolXMPWriter,
     _path_identity,
     _reject_symbolic_link,
+    finish_projection,
+    failed_projection,
 )
 from ..adapters.state.processed_sqlite import SQLiteProcessedRepository
 from ..domain.commentary import rank_description
@@ -106,18 +108,48 @@ class RewriteXmpService:
                 f"{group_commentary}\n\n{post_commentary}"
             ).strip()
 
+            receipt = None
             try:
-                self._rewrite_xmp_atomically(
+                receipt = self._rewrite_xmp_atomically(
                     xmp_path=xmp_path,
                     rating=row["star_rating"],
                     subject_tags=subject_tags,
                     instructions=instructions,
                     description=description,
                 )
+                if isinstance(receipt, dict):
+                    with self._open_repository(input_dir) as repository:
+                        repository.record_xmp_projection(
+                            str(arw_path),
+                            receipt,
+                            operation="rewrite",
+                            owned_payload={
+                                **(
+                                    {"rating": row["star_rating"]}
+                                    if receipt.get("rating") == "written"
+                                    else {}
+                                ),
+                                "instructions": instructions,
+                                "description": description,
+                            },
+                        )
                 ok += 1
                 if progress:
                     progress.on_write_done(str(arw_path), float(row["total_score"]))
             except Exception as error:
+                if isinstance(receipt, dict) and receipt.get("status") == "committed":
+                    # The filesystem commit already happened. A DB/progress error
+                    # must not relabel that successful projection as a write failure.
+                    receipt = {**receipt, "persistence_error": type(error).__name__}
+                else:
+                    receipt = getattr(error, "xmp_receipt", failed_projection(None, error))
+                try:
+                    with self._open_repository(input_dir) as repository:
+                        repository.record_xmp_projection(
+                            str(arw_path), receipt, operation="rewrite"
+                        )
+                except Exception as ledger_error:
+                    print(f"ERROR recording XMP receipt: {type(ledger_error).__name__}")
                 print(f"ERROR writing {xmp_path}: {error}")
                 err += 1
                 if progress:
@@ -136,11 +168,19 @@ class RewriteXmpService:
         subject_tags: list[str],
         instructions: str,
         description: str,
-    ) -> None:
+    ) -> dict:
         _reject_symbolic_link(xmp_path)
         temp_path = xmp_path.with_name(f".{xmp_path.stem}.rewrite-{uuid4().hex}.xmp")
         source_identity = _path_identity(xmp_path)
+        projection = None
         try:
+            projection = self.writer.preview_projection(
+                xmp_path,
+                rating=rating,
+                subject_tags=subject_tags,
+                instructions=instructions,
+                description=description,
+            )
             if source_identity is not None:
                 shutil.copy2(xmp_path, temp_path)
                 self.writer._update_existing_xmp(
@@ -163,7 +203,9 @@ class RewriteXmpService:
             if _path_identity(xmp_path) != source_identity:
                 raise RuntimeError(f"XMP changed during rewrite; refusing to overwrite: {xmp_path}")
             temp_path.replace(xmp_path)
-        except Exception:
+            return finish_projection(projection)
+        except Exception as error:
+            error.xmp_receipt = failed_projection(projection, error)
             temp_path.unlink(missing_ok=True)
             raise
 

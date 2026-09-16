@@ -92,6 +92,29 @@ while preserving user-authored metadata when possible.
 - legacy processed rows without an owned XMP payload may clear deterministic
   machine tags but must preserve rating, instructions, and description
 
+## Projection snapshots and attempt ledger
+
+`preview_projection` reads current sidecar policy fields and returns a versioned
+plan without writes. Each rating/keyword/instructions/description record separates
+`imported`, `requested`, `planned`, `effective`, `status`, `reason`, and conflict
+facts. Imported authorship is always `unknown`; existing ratings are not human
+training labels. A dry-run review exposes this record in its score artifact.
+
+Public atomic review and rewrite writers return `committed` receipts only after
+replacement succeeds. Preserved nonzero ratings are `skipped`; generated fields
+are `written`. A failed operation records `failed` fields with unknown effective
+values, since a concurrent editor may have changed the source. Planned values are
+never represented as successful writes. Files are atomic, while batches may have
+mixed successful and failed receipts.
+
+`xmp_projection_ledger` stores append-only attempt snapshots independently of
+processed rows, so later `mark_error` does not erase write history. Successful
+rewrite also updates latest projection metadata and scalar ownership, excluding
+preserved ratings. If the filesystem commit succeeds but persistence fails, that
+is a persistence error, not a failed filesystem write. Recovery after a process
+crash between filesystem replacement and database persistence is not transactional.
+The ledger covers projection attempts, not an automatic external-app change watcher.
+
 ## Typical Safe Changes
 
 - add one more generated `pj:` tag
@@ -137,7 +160,8 @@ while preserving user-authored metadata when possible.
   ownership. The current writer can preserve user-modified scalar fields during
   explicit AI reset. Ordinary review/rewrite now protect nonzero ratings and
   project visible selection keywords, with in-memory compatibility checks.
-  Real software round trips and a complete import/write ledger remain unverified.
+  Projection-attempt import/write receipts are locally tested; real software
+  round trips remain unverified.
 - DaVinci Resolve compatibility is not guaranteed by this module. The target is
   standards-based XMP that common DAM/photo tools can read; Resolve should be
   verified with a real fixture matrix before claiming support.

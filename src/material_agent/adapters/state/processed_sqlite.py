@@ -92,6 +92,14 @@ CREATE TABLE IF NOT EXISTS processed (
     score_cache_key TEXT,
     xmp_payload_json TEXT
 );
+CREATE TABLE IF NOT EXISTS xmp_projection_ledger (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    file_path TEXT NOT NULL,
+    operation TEXT NOT NULL,
+    receipt_json TEXT NOT NULL,
+    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_xmp_projection_file ON xmp_projection_ledger(file_path, id);
 CREATE TABLE IF NOT EXISTS exif_cache (
     file_path TEXT PRIMARY KEY,
     datetime_original TEXT,
@@ -729,6 +737,37 @@ class SQLiteProcessedRepository:
             }
             for row in rows
         ]
+
+    def record_xmp_projection(
+        self, file_path: str, receipt: dict, *, operation: str, owned_payload: dict | None = None
+    ) -> None:
+        """Keep attempts independently of processed rows (including later errors)."""
+        encoded = json.dumps(_sanitize_score_metadata(receipt), ensure_ascii=False)
+        with self._lock:
+            self._execute(
+                "INSERT INTO xmp_projection_ledger(file_path,operation,receipt_json) VALUES (?,?,?)",
+                (file_path, operation, encoded),
+            )
+            row = self._execute(
+                "SELECT score_metadata_json FROM processed WHERE file_path=?", (file_path,)
+            ).fetchone()
+            if row is not None:
+                meta = self._load_json_dict(row["score_metadata_json"])
+                meta["xmp_projection"] = receipt
+                self._execute(
+                    "UPDATE processed SET score_metadata_json=?,score_metadata_version=? WHERE file_path=?",
+                    (
+                        json.dumps(_sanitize_score_metadata(meta), ensure_ascii=False),
+                        _SCORE_METADATA_VERSION,
+                        file_path,
+                    ),
+                )
+                if receipt.get("status") == "committed" and owned_payload is not None:
+                    self._execute(
+                        "UPDATE processed SET xmp_payload_json=? WHERE file_path=?",
+                        (self._encode_xmp_payload(owned_payload), file_path),
+                    )
+            self._commit()
 
     def fetch_rewrite_rows(self) -> list[sqlite3.Row]:
         return self._execute(

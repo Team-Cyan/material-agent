@@ -151,8 +151,11 @@ class ExifToolXMPWriter:
         temp_path = xmp_path.with_name(f".{xmp_path.stem}.clear-{uuid4().hex}.xmp")
         try:
             shutil.copy2(xmp_path, temp_path)
-            preserved = [tag for tag in self._read_non_pj_subject_tags(temp_path)
-                         if tag not in _SELECTION_KEYWORDS]
+            preserved = [
+                tag
+                for tag in self._read_non_pj_subject_tags(temp_path)
+                if tag not in _SELECTION_KEYWORDS
+            ]
             preserved_identifiers = self._read_non_pj_identifier_tags(temp_path)
             preserved_hierarchical = self._read_non_pj_hierarchical_subject_tags(temp_path)
             current_fields = self._read_ai_scalar_fields(temp_path)
@@ -202,6 +205,22 @@ class ExifToolXMPWriter:
             temp_path.unlink(missing_ok=True)
             raise
 
+    def preview_projection(
+        self,
+        xmp_path: str | Path,
+        *,
+        rating: int,
+        subject_tags: list[str],
+        instructions: str,
+        description: str,
+    ) -> dict:
+        """Read current metadata and plan fields without claiming a write occurred."""
+        _validate_material_rating(rating)
+        path = Path(xmp_path)
+        _reject_symbolic_link(path)
+        tree = _read_xmp_root(path) if _path_identity(path) is not None else None
+        return _projection_receipt(tree, rating, subject_tags, instructions, description)
+
     def write(
         self,
         arw_path: str,
@@ -216,10 +235,18 @@ class ExifToolXMPWriter:
         subject_tags = _dedupe(subject_tags)
         source_identity = _path_identity(xmp_path)
         temp_path = xmp_path.with_name(f".{xmp_path.stem}.write-{uuid4().hex}.xmp")
+        projection = None
         try:
+            projection = self.preview_projection(
+                xmp_path,
+                rating=rating,
+                subject_tags=subject_tags,
+                instructions=instructions,
+                description=description,
+            )
             if source_identity is not None:
                 shutil.copy2(xmp_path, temp_path)
-                projection = self._update_existing_xmp(
+                self._update_existing_xmp(
                     temp_path,
                     rating=rating,
                     subject_tags=subject_tags,
@@ -236,13 +263,12 @@ class ExifToolXMPWriter:
                     instructions,
                     description,
                 )
-                projection = {"rating": "written", "requested_rating": rating,
-                              "effective_rating": rating, "keywords": "written"}
             if _path_identity(xmp_path) != source_identity:
                 raise RuntimeError(f"XMP changed during write; refusing to overwrite: {xmp_path}")
             temp_path.replace(xmp_path)
-            return projection
-        except Exception:
+            return finish_projection(projection)
+        except Exception as error:
+            error.xmp_receipt = failed_projection(projection, error)
             temp_path.unlink(missing_ok=True)
             raise
 
@@ -261,7 +287,9 @@ class ExifToolXMPWriter:
         xmp_path = Path(xmp_path)
         root = _read_xmp_root(xmp_path)
         rating_allowed = _rating_write_allowed(root)
-        preserved = _project_selection_keywords(self._read_non_pj_subject_tags(xmp_path), subject_tags)
+        preserved = _project_selection_keywords(
+            self._read_non_pj_subject_tags(xmp_path), subject_tags
+        )
         preserved_identifiers = self._read_non_pj_identifier_tags(xmp_path)
         preserved_hierarchical = self._read_non_pj_hierarchical_subject_tags(xmp_path)
         identifier_tags = _dedupe(preserved_identifiers + _dedupe(subject_tags))
@@ -286,10 +314,14 @@ class ExifToolXMPWriter:
         result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=30)
         if result.returncode != 0:
             raise RuntimeError(f"exiftool failed: {result.stderr}")
-        return {"rating": "written" if rating_allowed else "preserved_nonzero",
-                "requested_rating": rating,
-                "effective_rating": rating if rating_allowed else _xmp_scalar_value(root, "xmp", "Rating"),
-                "keywords": "written"}
+        return {
+            "rating": "written" if rating_allowed else "preserved_nonzero",
+            "requested_rating": rating,
+            "effective_rating": rating
+            if rating_allowed
+            else _xmp_scalar_value(root, "xmp", "Rating"),
+            "keywords": "written",
+        }
 
     def _write_minimal_xmp(
         self,
@@ -381,6 +413,97 @@ def _dedupe(values: list[str]) -> list[str]:
     return result
 
 
+def _projection_receipt(tree, rating, identifiers, instructions, description) -> dict:
+    allowed = tree is None or _rating_write_allowed(tree)
+    imported_rating = None if tree is None else _xmp_scalar_value(tree, "xmp", "Rating")
+    keywords = (
+        []
+        if tree is None
+        else [li.text for li in tree.findall(".//dc:subject/rdf:Bag/rdf:li", _XMP_NS) if li.text]
+    )
+    proposed_keywords = _project_selection_keywords(
+        [tag for tag in keywords if not tag.startswith(_MACHINE_TAG_PREFIX)], identifiers
+    )
+    before = {
+        "rating": imported_rating,
+        "keywords": keywords,
+        "instructions": None,
+        "description": None,
+    }
+    if tree is not None:
+        before["instructions"] = _xmp_scalar_value(tree, "photoshop", "Instructions")
+        for li in tree.findall(".//dc:description/rdf:Alt/rdf:li", _XMP_NS):
+            if li.get("{http://www.w3.org/XML/1998/namespace}lang") in {None, "x-default"}:
+                before["description"] = li.text or ""
+                if li.get("{http://www.w3.org/XML/1998/namespace}lang") == "x-default":
+                    break
+    requested = {
+        "rating": rating,
+        "keywords": proposed_keywords,
+        "instructions": instructions,
+        "description": description,
+    }
+    fields = {}
+    for name, value in requested.items():
+        skip = name == "rating" and not allowed
+        fields[name] = {
+            "imported": before[name],
+            "requested": value,
+            "effective": before[name],
+            "planned": before[name] if skip else value,
+            "status": "skipped" if skip else "planned",
+            "reason": "preserved_nonzero" if skip else "ai_projection",
+            "conflict": skip and str(before[name]) != str(value),
+            "imported_author": "unknown",
+        }
+    return {
+        "version": 1,
+        "status": "planned",
+        "fields": fields,
+        "rating": "preserved_nonzero" if not allowed else "planned",
+        "requested_rating": rating,
+        "effective_rating": imported_rating,
+        "keywords": "planned",
+        "source": "existing_sidecar" if tree is not None else "missing_sidecar",
+    }
+
+
+def finish_projection(projection: dict) -> dict:
+    """Called only after atomic replacement, never after just a temp-file update."""
+    result = {**projection, "status": "committed", "fields": {}}
+    for name, field in projection["fields"].items():
+        result["fields"][name] = {
+            **field,
+            "effective": field["planned"],
+            "status": "skipped" if field["status"] == "skipped" else "written",
+        }
+    result["rating"] = (
+        "preserved_nonzero" if result["fields"]["rating"]["status"] == "skipped" else "written"
+    )
+    result["effective_rating"] = result["fields"]["rating"]["effective"]
+    result["keywords"] = "written"
+    return result
+
+
+def failed_projection(projection: dict | None, error: Exception) -> dict:
+    # A concurrent edit means the effective value may differ from our snapshot.
+    # Do not claim either the proposal or the imported value is now on disk.
+    fields = (projection or {}).get("fields", {})
+    return {
+        **(projection or {}),
+        "version": 1,
+        "status": "failed",
+        "error_type": type(error).__name__,
+        "effective_rating": None,
+        "rating": "failed",
+        "keywords": "failed",
+        "fields": {
+            name: {**fields.get(name, {}), "status": "failed", "effective": None}
+            for name in ("rating", "keywords", "instructions", "description")
+        },
+    }
+
+
 def _rating_write_allowed(root: ET.Element) -> bool:
     """Only missing or explicitly numeric-zero ratings may be filled.
 
@@ -409,8 +532,9 @@ def _rating_write_allowed(root: ET.Element) -> bool:
 
 
 def _project_selection_keywords(preserved: list[str], identifiers: list[str]) -> list[str]:
-    decisions = {tag.removeprefix("pj:decision=") for tag in identifiers
-                 if tag.startswith("pj:decision=")}
+    decisions = {
+        tag.removeprefix("pj:decision=") for tag in identifiers if tag.startswith("pj:decision=")
+    }
     if not decisions:
         return _dedupe(preserved)
     if len(decisions) != 1 or not decisions <= {"keep", "review", "reject"}:

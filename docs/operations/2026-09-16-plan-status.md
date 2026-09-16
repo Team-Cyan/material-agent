@@ -28,7 +28,7 @@ are permitted local verification; they are not physical interoperability proof.
 | First additional model experiment | Complete as diagnostic | MobileCLIP: fixed 200-image Stanford40 test subset, 84.5% top-1 / 97% top-5, text cache p95 0.393 to 0.120 s, 8,000 probabilities identical |
 | D01 / retained per-group preselection closure | Implemented locally | Readable scored groups retain an explicit keep, including all-defect groups; error-only groups remain errors. Versioned quality/selection metadata persists through cache and rescore; no score/star inflation. Grouping/fallback switches remain supported |
 | D03 missing/zero rating and keywords | Implemented locally in this continuation | Ordinary write and rewrite protect nonzero ratings; malformed/duplicate declarations fail; exact visible keep/reject projection; 36 no-write policy/integration tests |
-| D03 import/effective/write ledger | Partial | Ordinary review now stores requested/effective projection facts and does not claim preserved ratings as AI-owned. General import history, per-field failure/skip ledger and rewrite receipt persistence remain incomplete |
+| D03 import/effective/write ledger | Implemented for projection attempts locally | Versioned imported/requested/planned/effective fields, unknown authorship, nonzero conflicts and field outcomes; independent append-only ledger survives processed errors; rewrite persists receipts and scalar ownership. External change watching and crash reconciliation are not implemented |
 | D04 professional-software handoff | Unverified | No actual Bridge/Camera Raw/Photoshop or Capture One readback/writeback matrix has been run here; real XMP writes remain outside current authorization |
 | D05 evidence applicability and selective refinement | Partial | Existing face/eye safeguards and bounded previews exist. No complete explicit applicability/context contract or trigger/budget/termination loop for selective refinement was found in the current domain/client path |
 | D06 remaining model experiments/fusion | Not executed | TOPIQ/MUSIQ/MediaPipe/other candidates need separate frozen task-relevant datasets and resource comparisons. Stanford40 action labels do not validate technical quality or personal preference. No production fusion added |
@@ -69,9 +69,9 @@ Verification:
 1. Per-group coverage and quality/selection persistence are implemented and locally
    tested. Continue acceptance against task-relevant frozen preselection samples;
    do not restore semantic grouping.
-2. Complete metadata preview/import/effective-result and per-field write ledger,
-   including rewrite receipts, conflicts and partial failure. Keep fixtures in
-   memory until actual XMP writes are separately authorized.
+2. Projection-attempt preview/import/effective-result and per-field ledger are
+   locally implemented, including rewrite, conflicts and partial batch failure.
+   Actual sidecar/software round trips and crash reconciliation remain unverified.
 3. Add explicit unknown versus context-supported not-applicable evidence and
    bounded selective-refinement triggers. Do not fabricate back-view/silhouette
    evidence from a missing face detection.

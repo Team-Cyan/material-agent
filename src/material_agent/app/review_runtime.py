@@ -1,6 +1,6 @@
 import time
 
-from ..adapters.metadata.exiftool_xmp import ExifToolXMPWriter
+from ..adapters.metadata.exiftool_xmp import ExifToolXMPWriter, failed_projection
 from ..adapters.progress import RichEventSink
 from ..app.job_executor import JobExecutor
 from ..app.jobs import ReviewPhotosJob
@@ -268,6 +268,13 @@ def build_review_job_executor(
         }
 
         if dry_run:
+            score_payload["xmp_projection"] = writer.preview_projection(
+                writer._sidecar_path(file_path),
+                rating=star,
+                subject_tags=subject_tags,
+                instructions=xmp_instructions,
+                description=description,
+            )
             print(
                 f"[dry-run] {file_path}: rating={star}, score={total_score:.1f}, "
                 f"scene={scene}, rank={rank}/{group_size}"
@@ -278,17 +285,25 @@ def build_review_job_executor(
         # Do not enter it while the runtime connection owns SQLite's writer
         # lock from a deferred event batch.
         flush_runtime_writes()
-        write_record = writer.write(
-            file_path,
-            rating=star,
-            subject_tags=subject_tags,
-            instructions=xmp_instructions,
-            description=description,
-        )
-
+        try:
+            write_record = writer.write(
+                file_path,
+                rating=star,
+                subject_tags=subject_tags,
+                instructions=xmp_instructions,
+                description=description,
+            )
+        except Exception as error:
+            receipt = getattr(error, "xmp_receipt", failed_projection(None, error))
+            score_payload["xmp_projection"] = receipt
+            if state is not None:
+                state.record_xmp_projection(file_path, receipt, operation="review")
+            raise
         if isinstance(write_record, dict):
             score_payload["xmp_projection"] = write_record
             meta = {**meta, "xmp_projection": write_record}
+            if state is not None:
+                state.record_xmp_projection(file_path, write_record, operation="review")
         rating_owned = not isinstance(write_record, dict) or write_record.get("rating") == "written"
         if state is not None:
             commentary_issues, commentary_shooting = split_group_commentary_sections(

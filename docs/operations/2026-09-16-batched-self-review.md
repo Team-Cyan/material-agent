@@ -71,3 +71,20 @@ focused scoring/job/pipeline/state tests **59 passed, 14 skipped**. `make check`
 passed. Evidence: `.local/review-2026-09-16-coverage/tests.log` and original dirty
 patch beside it. All-error and mixed-error group tests use virtual paths; cache
 fingerprinting uses a text placeholder. No photo/XMP files were written.
+
+
+## Continuation batch: XMP projection attempt ledger
+
+Added versioned import/proposal/effective field snapshots and read-only preview,
+with unknown source authorship. Only successful atomic replacement produces a
+committed receipt. Review and rewrite persist attempts independently of processed
+status; rewrite updates scalar ownership without claiming preserved ratings.
+Self-review distinguished post-replacement persistence failure from filesystem
+failure. No cross-resource transactional crash-recovery claim is made.
+
+Verification: full guarded regression **718 passed, 102 skipped in 24.05 s**;
+after one additional review failure/dry-run integration test, the focused XMP
+suite reports **46 passed**. `make check` passed. Tests intercept copy/replace and
+writer calls or use in-memory packets; the only filesystem test state is SQLite.
+Log: `.local/review-2026-09-16-coverage/ledger-tests.log`. Professional-app and
+physical-sidecar verification remains pending separately.
