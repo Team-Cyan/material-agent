@@ -1,0 +1,265 @@
+{
+  "schema": "material-agent.blind-pilot-comparison.v1",
+  "reference_source": "model_generated",
+  "scope": "six public RAW source events plus controlled in-memory blur; not real burst acceptance",
+  "manifest_sha256": "d868bfe64904b7399f3bf3c6aee82cf3bf4c47cf6810b9fa893b894d485bacb7",
+  "panel_sha256": {
+    "A": "5eccc846111680691f229ab94cd96747d52b05099dd53e26cca85a9af8188514",
+    "B": "1aed461059aed2e1627e13a2f34b4b7e980d13d59c8989d8223a98fc3e16c017"
+  },
+  "groups": [
+    {
+      "group": 1,
+      "baseline_top1": "g1v0",
+      "baseline_keeps": [
+        "g1v0"
+      ],
+      "panels": {
+        "A": {
+          "readable_ids": [
+            "g1v0",
+            "g1v1"
+          ],
+          "acceptable_keep_ids": [
+            "g1v0"
+          ],
+          "preferred_ids": [
+            "g1v0"
+          ],
+          "complete": true
+        },
+        "B": {
+          "readable_ids": [
+            "g1v0",
+            "g1v1"
+          ],
+          "acceptable_keep_ids": [
+            "g1v0"
+          ],
+          "preferred_ids": [
+            "g1v0"
+          ],
+          "complete": true
+        }
+      }
+    },
+    {
+      "group": 2,
+      "baseline_top1": "g2v0",
+      "baseline_keeps": [
+        "g2v0"
+      ],
+      "panels": {
+        "A": {
+          "readable_ids": [
+            "g2v0",
+            "g2v1"
+          ],
+          "acceptable_keep_ids": [
+            "g2v0"
+          ],
+          "preferred_ids": [
+            "g2v0"
+          ],
+          "complete": true
+        },
+        "B": {
+          "readable_ids": [
+            "g2v0",
+            "g2v1"
+          ],
+          "acceptable_keep_ids": [
+            "g2v0"
+          ],
+          "preferred_ids": [
+            "g2v0"
+          ],
+          "complete": true
+        }
+      }
+    },
+    {
+      "group": 3,
+      "baseline_top1": "g3v0",
+      "baseline_keeps": [
+        "g3v0"
+      ],
+      "panels": {
+        "A": {
+          "readable_ids": [
+            "g3v0",
+            "g3v1"
+          ],
+          "acceptable_keep_ids": [
+            "g3v0"
+          ],
+          "preferred_ids": [
+            "g3v0"
+          ],
+          "complete": true
+        },
+        "B": {
+          "readable_ids": [
+            "g3v0",
+            "g3v1"
+          ],
+          "acceptable_keep_ids": [
+            "g3v0"
+          ],
+          "preferred_ids": [
+            "g3v0"
+          ],
+          "complete": true
+        }
+      }
+    },
+    {
+      "group": 4,
+      "baseline_top1": "g4v0",
+      "baseline_keeps": [
+        "g4v0"
+      ],
+      "panels": {
+        "A": {
+          "readable_ids": [
+            "g4v0",
+            "g4v1"
+          ],
+          "acceptable_keep_ids": [
+            "g4v0"
+          ],
+          "preferred_ids": [
+            "g4v0"
+          ],
+          "complete": true
+        },
+        "B": {
+          "readable_ids": [
+            "g4v0",
+            "g4v1"
+          ],
+          "acceptable_keep_ids": [
+            "g4v0"
+          ],
+          "preferred_ids": [
+            "g4v0"
+          ],
+          "complete": true
+        }
+      }
+    },
+    {
+      "group": 5,
+      "baseline_top1": "g5v0",
+      "baseline_keeps": [
+        "g5v0"
+      ],
+      "panels": {
+        "A": {
+          "readable_ids": [
+            "g5v0",
+            "g5v1"
+          ],
+          "acceptable_keep_ids": [
+            "g5v0"
+          ],
+          "preferred_ids": [
+            "g5v0"
+          ],
+          "complete": true
+        },
+        "B": {
+          "readable_ids": [
+            "g5v0",
+            "g5v1"
+          ],
+          "acceptable_keep_ids": [
+            "g5v0"
+          ],
+          "preferred_ids": [
+            "g5v0"
+          ],
+          "complete": true
+        }
+      }
+    },
+    {
+      "group": 6,
+      "baseline_top1": "g6v0",
+      "baseline_keeps": [
+        "g6v0"
+      ],
+      "panels": {
+        "A": {
+          "readable_ids": [
+            "g6v0",
+            "g6v1"
+          ],
+          "acceptable_keep_ids": [
+            "g6v0"
+          ],
+          "preferred_ids": [
+            "g6v0"
+          ],
+          "complete": true
+        },
+        "B": {
+          "readable_ids": [
+            "g6v0",
+            "g6v1"
+          ],
+          "acceptable_keep_ids": [
+            "g6v0"
+          ],
+          "preferred_ids": [
+            "g6v0"
+          ],
+          "complete": true
+        }
+      }
+    }
+  ],
+  "metrics": {
+    "A": {
+      "complete_groups": 6,
+      "top1_hits": 6,
+      "acceptable_count": 6,
+      "false_rejects": 0,
+      "system_keeps": 6,
+      "extra_keeps": 0,
+      "coverage_hits": 6,
+      "top1_agreement": 1.0,
+      "acceptable_keep_false_reject_rate": 0.0,
+      "extra_keep_rate": 0.0,
+      "pairwise": {
+        "hits": 6,
+        "eligible": 6,
+        "ties": 0,
+        "abstentions": 0
+      }
+    },
+    "B": {
+      "complete_groups": 6,
+      "top1_hits": 6,
+      "acceptable_count": 6,
+      "false_rejects": 0,
+      "system_keeps": 6,
+      "extra_keeps": 0,
+      "coverage_hits": 6,
+      "top1_agreement": 1.0,
+      "acceptable_keep_false_reject_rate": 0.0,
+      "extra_keep_rate": 0.0,
+      "pairwise": {
+        "hits": 6,
+        "eligible": 6,
+        "ties": 0,
+        "abstentions": 0
+      }
+    },
+    "order_reversal": {
+      "eligible_groups": 6,
+      "preferred_set_agreements": 6,
+      "acceptable_keep_set_agreements": 6
+    }
+  }
+}

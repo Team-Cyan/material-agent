@@ -1,8 +1,10 @@
 # Preselection acceptance preflight
 
-This is a readiness report, not a GPT acceptance result. Two independent Codex
-review agents were dispatched, but both hit usage limits before producing visual
-judgments. No evaluation agreement or acceptance accuracy is claimed.
+The controlled Codex diagnostic pilot is now complete after quota restoration:
+both independent panels viewed all 12 candidates and agreed with each other and
+the default full-scoring baseline on 6/6 controlled pairs. See the
+[pilot report](benchmarks/2026-09-16-codex-blind-pilot/report.md). This is not full
+real-burst acceptance; the broader input set remains outstanding.
 
 ## Frozen reviewer rubric
 
@@ -29,9 +31,8 @@ baseline or revealing labels. Compare the full scoring/selection path, not only
   provide an independent visual-review channel with fresh histories. The user
   explicitly requested this route after the initial API-only preflight.
 - Dispatched panels A/B with `fork_turns=none`, `gpt-5.6-sol`, medium reasoning,
-  neutral candidate IDs and opposite order. Both returned usage-limit errors,
-  with no judgments. No silent model substitution or reset-credit consumption
-  followed. The earlier request for external API configuration is superseded.
+  neutral candidate IDs and opposite order. Both initially returned usage-limit errors with no judgments. After the user
+  restored quota, the same panels completed without a model switch. The earlier request for external API configuration is superseded.
 - A diagnostic input set is now frozen: six existing public RAW sources, each
   paired with an in-memory Gaussian-blur variant (12 candidates, six groups).
   Manifest SHA-256:
@@ -39,13 +40,12 @@ baseline or revealing labels. Compare the full scoring/selection path, not only
   This is not a real burst holdout or the complete acceptance dataset.
 - The checked-in default local heuristic ran through full `compute_scores` and
   group coverage, with no runtime DB or XMP writer. Each group retained the
-  unblurred candidate; scores alone do not establish agreement with absent
-  reviewer answers. No thresholds were tuned.
+  unblurred candidate; the completed independent visual panels also selected those candidates.
+  No thresholds were tuned.
 - Renderer, frozen inputs, baseline, requested model/runtime versions and dispatch
   status are saved under ignored `.local/subagent-blind-review/`. Sources remain
-  hash-identical; variants are encoded only in memory. Resume independent panels
-  after resolving the usage limit or an explicit model-routing choice, then
-  compare mapped judgments only after both panels finish.
+  hash-identical; variants are encoded only in memory. The resumed panels finished before the controller mapped their judgments;
+  raw judgments and a sanitized comparison are committed with the pilot report.
 
 ## Task-relevant public dataset search
 
@@ -65,8 +65,8 @@ verified during this preflight. This search is not a claim that none exists.
 
 ## Remaining execution
 
-1. Resume the Codex review channel after the usage limit/model-routing decision,
-   and obtain a task-relevant real image/reference set for full acceptance.
+1. The Codex review channel is verified. Obtain a task-relevant real image/reference
+   set for full acceptance; the controlled pilot is not a substitute.
 2. Freeze a bounded event-disjoint subset and record source/terms, image hashes,
    group parameters and preview version. Do not fabricate capture timestamps.
 3. Collect blind judgments and independent reversed-order judgments; preserve raw

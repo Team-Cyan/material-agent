@@ -1,0 +1,133 @@
+{
+  "panel": "B",
+  "model": "gpt-5.6-sol",
+  "reference_source": "model_generated",
+  "rubric_schema": "material-agent.preselection-rubric.v1",
+  "inspected_counts": {
+    "groups_rendered": 6,
+    "anonymous_image_entries_rendered": 12,
+    "visually_displayed_images": 12,
+    "unreadable_image_entries": 0
+  },
+  "groups": [
+    {
+      "group_id": 1,
+      "readable_ids": ["B01X", "B01Y"],
+      "acceptable_keep_ids": ["B01Y"],
+      "preferred_ids": ["B01Y"],
+      "quality_findings_by_id": {
+        "B01X": "Cityscape is globally and severely out of focus; buildings, foliage, and skyline lack usable detail. Exposure and color remain broadly readable.",
+        "B01Y": "Cityscape is clearly focused with distinct building edges and foliage detail. Exposure is balanced, though the composition is conventional and foreground leaves occupy substantial space."
+      },
+      "selection_reasons_by_id": {
+        "B01X": "Not retained because severe global defocus removes the scene detail that carries the image.",
+        "B01Y": "Retained and preferred because it presents the same visible city view with strong clarity and adequate exposure."
+      },
+      "pairwise_preferences": [
+        {"first_id": "B01X", "second_id": "B01Y", "preference": "second"}
+      ],
+      "uncertainty": "The preview is sufficient to distinguish the large focus difference. No people or faces are visible, so eye detail is not applicable.",
+      "errors": []
+    },
+    {
+      "group_id": 2,
+      "readable_ids": ["B02X", "B02Y"],
+      "acceptable_keep_ids": ["B02X"],
+      "preferred_ids": ["B02X"],
+      "quality_findings_by_id": {
+        "B02X": "Harbor vessels and rigging are sharply resolved with clean exposure and ample sky. The broad empty sky weakens visual concentration slightly, but the subjects remain legible and well framed.",
+        "B02Y": "The entire harbor scene is heavily defocused, including both vessels and rigging; only large shapes and colors remain readable."
+      },
+      "selection_reasons_by_id": {
+        "B02X": "Retained and preferred for clear vessel detail, usable exposure, and coherent scene structure.",
+        "B02Y": "Not retained because global blur removes nearly all fine subject detail."
+      },
+      "pairwise_preferences": [
+        {"first_id": "B02X", "second_id": "B02Y", "preference": "first"}
+      ],
+      "uncertainty": "The focus difference is large and visible at preview scale. No people or faces are visible, so eye detail is not applicable.",
+      "errors": []
+    },
+    {
+      "group_id": 3,
+      "readable_ids": ["B03X", "B03Y"],
+      "acceptable_keep_ids": ["B03Y"],
+      "preferred_ids": ["B03Y"],
+      "quality_findings_by_id": {
+        "B03X": "Terracotta animal sculptures are globally soft, with modeled surfaces and edges visibly blurred. The close crop also cuts off multiple forms at the frame edges.",
+        "B03Y": "Sculpture surfaces, edges, and weathering are clearly resolved with balanced exposure. Several figures remain cropped, but the main forms are legible and the diagonal arrangement is coherent."
+      },
+      "selection_reasons_by_id": {
+        "B03X": "Not retained because its strong blur substantially weakens the same visible sculptural subject.",
+        "B03Y": "Retained and preferred because it preserves texture and form while maintaining a readable composition."
+      },
+      "pairwise_preferences": [
+        {"first_id": "B03X", "second_id": "B03Y", "preference": "second"}
+      ],
+      "uncertainty": "The subjects appear to be sculptures rather than living animals; eye-detail assessment is not applicable to photographic subject focus here.",
+      "errors": []
+    },
+    {
+      "group_id": 4,
+      "readable_ids": ["B04X", "B04Y"],
+      "acceptable_keep_ids": ["B04X"],
+      "preferred_ids": ["B04X"],
+      "quality_findings_by_id": {
+        "B04X": "House facade, windows, roof tiles, and surrounding foliage are clearly resolved. Bright sun creates hard contrast and some pale facade highlights, but structural detail remains readable.",
+        "B04Y": "The house and vegetation are globally out of focus; broad tonal areas remain recognizable but architectural detail is lost."
+      },
+      "selection_reasons_by_id": {
+        "B04X": "Retained and preferred for usable architectural detail and an adequately complete view of the house.",
+        "B04Y": "Not retained because global defocus eliminates most useful detail."
+      },
+      "pairwise_preferences": [
+        {"first_id": "B04X", "second_id": "B04Y", "preference": "first"}
+      ],
+      "uncertainty": "The preview supports a confident focus comparison. No people or faces are visible, so eye detail is not applicable.",
+      "errors": []
+    },
+    {
+      "group_id": 5,
+      "readable_ids": ["B05X", "B05Y"],
+      "acceptable_keep_ids": ["B05Y"],
+      "preferred_ids": ["B05Y"],
+      "quality_findings_by_id": {
+        "B05X": "Wooded hillside scene is strongly blurred and low in subject definition. Bright vertical streaks or reflections on the right and a diffuse overall rendering further reduce clarity.",
+        "B05Y": "Wooded hillside, autumn foliage, field structures, and background buildings are clearly resolved. Exposure is broadly balanced, though the composition is visually busy and the right-side field structures compete with the foliage."
+      },
+      "selection_reasons_by_id": {
+        "B05X": "Not retained because strong global blur and visible streaking substantially reduce scene detail.",
+        "B05Y": "Retained and preferred because it renders the same visible scene with much stronger detail and usable exposure."
+      },
+      "pairwise_preferences": [
+        {"first_id": "B05X", "second_id": "B05Y", "preference": "second"}
+      ],
+      "uncertainty": "The preview supports a confident focus comparison. No people or faces are visible, so eye detail is not applicable.",
+      "errors": []
+    },
+    {
+      "group_id": 6,
+      "readable_ids": ["B06X", "B06Y"],
+      "acceptable_keep_ids": ["B06X"],
+      "preferred_ids": ["B06X"],
+      "quality_findings_by_id": {
+        "B06X": "Fence boards, vegetation, and cast shadows are reasonably sharp. Direct light clips or nearly clips broad pale fence areas, and the centered fence subject is visually plain with foreground plants cut off.",
+        "B06Y": "Fence and vegetation are strongly defocused, with similarly harsh bright fence exposure and little usable surface detail."
+      },
+      "selection_reasons_by_id": {
+        "B06X": "Retained and preferred as the only clearly focused rendition, despite harsh exposure and limited subject interest.",
+        "B06Y": "Not retained because pronounced global blur compounds the already weak exposure and composition."
+      },
+      "pairwise_preferences": [
+        {"first_id": "B06X", "second_id": "B06Y", "preference": "first"}
+      ],
+      "uncertainty": "The preview supports a confident focus comparison, but exact highlight clipping cannot be measured visually. No people or faces are visible, so eye detail is not applicable.",
+      "errors": []
+    }
+  ],
+  "limitations": [
+    "Judgments are based only on rendered previews and cannot establish tiny original-resolution focus differences.",
+    "The initial B05Y display attempt used an insufficient command-output token cap; rerendering the unchanged input with a larger cap displayed the complete image successfully.",
+    "These are model-generated proxy references, not human ground truth or personal preference."
+  ]
+}

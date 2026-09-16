@@ -17,9 +17,10 @@ keep coverage with separate quality/selection persistence, XMP projection-attemp
 ledger/rewrite receipts, and explicit evidence applicability plus opt-in bounded
 refinement. Six public RAWs did not gain focus resolution through half-size RAW
 decode; refinement remains disabled. GPT acceptance uses fresh-context Codex subagents, not a required external API.
-Both initial panels hit usage limits; the controlled pilot and baseline are frozen
-in `.local/subagent-blind-review/`. Real burst acceptance and external verification
-remain pending.
+Both initial panels hit usage limits, then completed after quota restoration.
+The [controlled pilot](benchmarks/2026-09-16-codex-blind-pilot/report.md) shows 6/6
+preference agreement across both panels and the default baseline. Real burst
+acceptance and external verification remain pending.
 XMP protection/projection has local in-memory verification;
 no actual XMP write, deployment or production review is authorized in this session.
 

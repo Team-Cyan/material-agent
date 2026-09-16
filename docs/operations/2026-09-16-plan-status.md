@@ -33,7 +33,7 @@ are permitted local verification; they are not physical interoperability proof.
 | D05 evidence applicability and selective refinement | Implemented locally; refinement opt-in | Explicit observed/unknown/context-supported not_applicable; generic eye proxies removed. One-pass candidate/time/size bounds, baseline retention, no-resolution-gain guard and review reasons tested. Six real public RAWs show no larger half-size focus image, so refinement stays disabled pending quality acceptance |
 | D06 remaining model experiments/fusion | Not executed | TOPIQ/MUSIQ/MediaPipe/other candidates need separate frozen task-relevant datasets and resource comparisons. Stanford40 action labels do not validate technical quality or personal preference. No production fusion added |
 | D07 state/container resilience | Existing implementation, target revalidation outstanding | Appdata paths and state tests exist. No live backup/restore/container recreation or library-relocation migration was performed here; keep those separate from local code proof |
-| D08 GPT proxy acceptance | Not executed; channel/data gap verified | Codex subagent review is the selected channel; both independent fresh-context panels hit usage limits before judgments. A 12-candidate controlled pilot and full heuristic baseline are frozen. Real burst acceptance inputs remain missing; Stanford40 is action classification |
+| D08 GPT proxy acceptance | Controlled pilot complete; full acceptance pending | Two fresh-context Codex panels each viewed 12 controlled candidates. Baseline and reversed-order preferences agree 6/6; zero false rejects among 6 proxy-acceptable candidates per panel. Real event-disjoint burst holdout and missing case categories remain unverified. [Report](benchmarks/2026-09-16-codex-blind-pilot/report.md) |
 
 ## Work completed in this continuation
 
@@ -76,7 +76,7 @@ Verification:
    refinement disabled until a relevant quality/latency benchmark supports it;
    a RAW half-size decode is not automatically a higher-resolution observation.
 4. Rubric v1 is frozen; see [acceptance preflight](2026-09-16-preselection-acceptance-preflight.md).
-   A controlled pilot is frozen; Codex panels are usage-limited, and the real
+   The controlled pilot and opposite-order Codex reviews are complete; the real
    burst holdout remains unavailable. Photo Triage is
    task-relevant but its official download service failed this access check.
    Run blinded/order-reversal comparison only after those inputs are available.

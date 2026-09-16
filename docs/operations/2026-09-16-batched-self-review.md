@@ -137,3 +137,20 @@ full default heuristic scoring/coverage baseline are frozen for resumption.
 Source hashes remain unchanged. No human-reference or GPT agreement result is
 claimed. The preflight and handoff now record this actual blocker instead of
 requiring an external API. See `.local/subagent-blind-review/dispatch-status.json`.
+
+
+## Resumed Codex blind pilot
+
+After user-confirmed quota restoration, both original fresh-context reviewers
+completed on the frozen inputs, without changing model or exposing baseline
+outputs. Each visually inspected 12/12 candidates. A tool-display truncation was
+resolved by increasing output allowance on identical bytes, not by treating the
+photo as corrupt. The controller validated ID membership, distinct pairwise IDs,
+readable/keep/preferred subsets and all denominators after both panels finished.
+
+The [committed report](benchmarks/2026-09-16-codex-blind-pilot/report.md) includes
+raw judgments, mapping, baseline quality/selection roles and hashes. Preference
+and keep sets agree 6/6 between reversed-order panels and baseline; no production
+accuracy claim follows from this six-pair obvious-blur control. Final source
+hashes remain identical. Existing unrelated dirty files are preserved. No code
+or threshold changed; JSON/link checks and `git diff --check` cover this batch.

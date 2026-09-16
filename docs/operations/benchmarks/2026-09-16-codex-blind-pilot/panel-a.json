@@ -1,0 +1,129 @@
+{
+  "schema": "material-agent.preselection-blind-review.v1",
+  "reference_source": "model_generated",
+  "panel": "A",
+  "model": "gpt-5.6-sol",
+  "inspected_group_count": 6,
+  "inspected_image_count": 12,
+  "groups": [
+    {
+      "group_id": 1,
+      "readable_ids": ["A01X", "A01Y"],
+      "acceptable_keep_ids": ["A01X"],
+      "preferred_ids": ["A01X"],
+      "quality_findings_by_id": {
+        "A01X": "Clear building and foliage detail with balanced daylight exposure; the dark foreground foliage is visually busy and partly cropped.",
+        "A01Y": "The entire scene is heavily out of focus, obscuring building and foliage detail; exposure remains usable."
+      },
+      "selection_reasons_by_id": {
+        "A01X": "Preferred and acceptable because it is the only clearly focused rendering of the scene.",
+        "A01Y": "Not selected because severe global defocus removes useful detail while adding no visibly distinct moment."
+      },
+      "pairwise_preferences": [
+        {"first_id": "A01X", "second_id": "A01Y", "preference": "first"}
+      ],
+      "uncertainty": ["No face or eye evidence is visible, so eye quality was not assessed."],
+      "errors": []
+    },
+    {
+      "group_id": 2,
+      "readable_ids": ["A02X", "A02Y"],
+      "acceptable_keep_ids": ["A02Y"],
+      "preferred_ids": ["A02Y"],
+      "quality_findings_by_id": {
+        "A02X": "Strong global defocus makes both vessels and rigging indistinct; the broad sky and water remain evenly exposed.",
+        "A02Y": "The vessels and fine rigging are clearly resolved with natural exposure; the large empty sky reduces compositional concentration but does not obscure the subjects."
+      },
+      "selection_reasons_by_id": {
+        "A02X": "Not selected because global blur removes the main structural detail.",
+        "A02Y": "Preferred and acceptable for clear subject detail and a readable two-vessel composition."
+      },
+      "pairwise_preferences": [
+        {"first_id": "A02X", "second_id": "A02Y", "preference": "second"}
+      ],
+      "uncertainty": ["No face or eye evidence is visible, so eye quality was not assessed."],
+      "errors": []
+    },
+    {
+      "group_id": 3,
+      "readable_ids": ["A03X", "A03Y"],
+      "acceptable_keep_ids": ["A03X"],
+      "preferred_ids": ["A03X"],
+      "quality_findings_by_id": {
+        "A03X": "The terracotta sculptures show readable surface texture and edges with even exposure; several forms are cut by the frame edges and overlap heavily.",
+        "A03Y": "The same arrangement is visibly soft across the frame, reducing surface texture and edge definition; framing and exposure are otherwise similar."
+      },
+      "selection_reasons_by_id": {
+        "A03X": "Preferred and acceptable because it preserves substantially more sculpture texture and shape detail.",
+        "A03Y": "Not selected because its visible softness loses detail without a distinct composition or moment."
+      },
+      "pairwise_preferences": [
+        {"first_id": "A03X", "second_id": "A03Y", "preference": "first"}
+      ],
+      "uncertainty": ["The depicted figures appear to be sculptures; no live-subject eye or expression judgment was made."],
+      "errors": []
+    },
+    {
+      "group_id": 4,
+      "readable_ids": ["A04X", "A04Y"],
+      "acceptable_keep_ids": ["A04Y"],
+      "preferred_ids": ["A04Y"],
+      "quality_findings_by_id": {
+        "A04X": "The house and surrounding foliage are globally blurred, with poor edge and texture definition; bright daylight exposure is still readable.",
+        "A04Y": "House, roof tiles, windows and foliage are clearly resolved; direct sun creates strong contrast and some bright facade areas, but useful detail remains visible."
+      },
+      "selection_reasons_by_id": {
+        "A04X": "Not selected because global blur substantially degrades the architectural record.",
+        "A04Y": "Preferred and acceptable as the clear, detailed view of the house despite ordinary centered framing and hard light."
+      },
+      "pairwise_preferences": [
+        {"first_id": "A04X", "second_id": "A04Y", "preference": "second"}
+      ],
+      "uncertainty": ["No face or eye evidence is visible, so eye quality was not assessed."],
+      "errors": []
+    },
+    {
+      "group_id": 5,
+      "readable_ids": ["A05X", "A05Y"],
+      "acceptable_keep_ids": ["A05X"],
+      "preferred_ids": ["A05X"],
+      "quality_findings_by_id": {
+        "A05X": "Autumn foliage, field fencing and distant buildings remain readable; the scene is busy, lacks a strong focal subject and shows modest softness or haze in fine detail.",
+        "A05Y": "Severe global defocus obscures foliage, fencing and distant structures; broad colors and scene layout remain recognizable."
+      },
+      "selection_reasons_by_id": {
+        "A05X": "Preferred and acceptable as the only version retaining usable scene detail, while its weak focal organization remains a visible quality limitation.",
+        "A05Y": "Not selected because heavy blur removes useful detail without preserving a distinct visible moment."
+      },
+      "pairwise_preferences": [
+        {"first_id": "A05X", "second_id": "A05Y", "preference": "first"}
+      ],
+      "uncertainty": ["Fine-detail sharpness is judged only from the supplied preview; no tiny RAW-level focus difference is inferred.", "No face or eye evidence is visible, so eye quality was not assessed."],
+      "errors": []
+    },
+    {
+      "group_id": 6,
+      "readable_ids": ["A06X", "A06Y"],
+      "acceptable_keep_ids": ["A06Y"],
+      "preferred_ids": ["A06Y"],
+      "quality_findings_by_id": {
+        "A06X": "The fence and vegetation are globally out of focus, and the pale fence is very bright with little tonal separation; no clear focal subject is established.",
+        "A06Y": "Fence grain, plants and shadows are visibly sharper, but the pale fence remains harshly bright and compositionally dominant; the scene has no strong focal subject."
+      },
+      "selection_reasons_by_id": {
+        "A06X": "Not selected because blur and weak tonal separation make it the less useful rendering.",
+        "A06Y": "Selected for required readable-group coverage and preferred for materially better detail; this coverage choice does not remove its exposure and composition defects."
+      },
+      "pairwise_preferences": [
+        {"first_id": "A06X", "second_id": "A06Y", "preference": "second"}
+      ],
+      "uncertainty": ["Both images are low-value compositions; the preference is based mainly on visible sharpness, not a strong subject moment.", "No face or eye evidence is visible, so eye quality was not assessed."],
+      "errors": []
+    }
+  ],
+  "review_uncertainty": [
+    "Judgments are based only on the supplied rendered previews and are model-generated proxy references, not human ground truth or personal preference.",
+    "The first group-5 render response exceeded the 100000-token tool output cap and could not be parsed; rerendering with a larger output allowance produced both images successfully."
+  ],
+  "errors": []
+}
