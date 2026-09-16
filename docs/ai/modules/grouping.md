@@ -4,7 +4,19 @@
 
 This module groups photos into review sets before scoring and write-back ranking.
 
-The current strategy is time split first, then optional visual merge.
+The current strategy is adjacent time AND perceptual-hash proximity.
+`grouping.time_gap_seconds` bounds adjacent capture-time gaps;
+`grouping.hash_threshold` is an integer Hamming-distance limit (0..64).
+Zero skips all hash reads and groups by time alone. Positive limits require
+both timestamps and both hashes; missing evidence splits the group.
+Comparisons use consecutive photos in stable capture-time order, not a group
+centroid or all-pairs test. Total group duration may exceed the adjacent gap.
+No semantic label or embedding similarity participates in grouping.
+
+Legacy `visual_similarity.enabled/hash_threshold` settings map to the new
+threshold only when `grouping.hash_threshold` is absent (disabled maps to 0).
+`max_merge_gap_minutes` and `embedding_similarity` no longer affect grouping.
+The retained CLI flag `--no-visual-merge` sets the new threshold to 0.
 
 ## Main Files
 
@@ -14,8 +26,8 @@ The current strategy is time split first, then optional visual merge.
 ## Responsibilities
 
 - read `DateTimeOriginal` values with cache support
-- split files into temporal groups
-- optionally merge adjacent groups using perceptual hash similarity
+- split at any adjacent time or enabled hash mismatch
+- cache successful 64-bit perceptual hashes for RAW previews and standard images
 - report progress for grouping phases
 
 ## Non-Goals
@@ -39,7 +51,7 @@ The current strategy is time split first, then optional visual merge.
 ## Invariants
 
 - file order inside the grouping result must be stable and time-oriented
-- visual merge is only attempted for adjacent groups
+- hash similarity never bypasses the time limit; embedding never bypasses either limit
 - missing EXIF timestamps must not crash grouping
 - bulk EXIF reads must use bounded batches so large libraries do not exceed the
   operating-system command-line limit
@@ -84,5 +96,5 @@ The current strategy is time split first, then optional visual merge.
 
 - EXIF reading still mixes bounded bulk `exiftool` calls and per-file fallback
   logic inside one module.
-- Visual merge depends on thumbnail extraction from RAW files, which can become expensive on large datasets.
-- Grouping policy is simple and practical, but scene-aware or burst-aware grouping has not been isolated into separate strategies yet.
+- Hash checks depend on preview extraction from RAW files, which can become expensive on large datasets.
+- Consecutive similarity can chain; semantic distinctions are deliberately outside the current user-defined grouping rule.

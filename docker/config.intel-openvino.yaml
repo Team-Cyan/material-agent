@@ -82,15 +82,8 @@ model_management:
 grouping:
   enabled: true
   time_gap_seconds: 30
-  visual_similarity:
-    enabled: true
-    hash_threshold: 10
-    max_merge_gap_minutes: 10
-  # Embedding-based grouping remains opt-in and its DINO model is not bundled
-  # in the default aesthetic-scoring image.
-  embedding_similarity:
-    enabled: false
-    threshold: 0.85
+  # 0 disables hash checks; positive values require time AND hash proximity.
+  hash_threshold: 10
   best_candidate_review:
     enabled: true
 

@@ -731,7 +731,7 @@ def test_review_runtime_rewrites_done_members_when_incremental_group_changes(mon
         assert summary["skipped_files"] == 0
 
 
-def test_review_runtime_uses_content_addressed_embedding_model_key(monkeypatch):
+def test_review_runtime_grouping_does_not_construct_embedding_loader(monkeypatch):
     from material_agent.app.review_runtime import build_review_job_executor
 
     cfg = _config("/tmp")
@@ -742,19 +742,15 @@ def test_review_runtime_uses_content_addressed_embedding_model_key(monkeypatch):
     captured = {}
 
     class _Grouper:
-        def __init__(self, _config, *, embedding_loader, embedding_model_key):
-            captured["embedding_loader"] = embedding_loader
-            captured["embedding_model_key"] = embedding_model_key
+        def __init__(self, _config, **kwargs):
+            captured.update(kwargs)
 
         def group(self, file_paths, *, state, progress):
             return [list(file_paths)]
 
     monkeypatch.setattr("material_agent.app.review_runtime.Grouper", _Grouper)
     monkeypatch.setattr("material_agent.app.review_runtime.make_client", lambda _config: object())
-    monkeypatch.setattr(
-        "material_agent.app.review_runtime.build_local_embedding_cache_key",
-        lambda _config: "embedding-cache-v2:content-digest",
-    )
+
 
     executor = build_review_job_executor(
         repository=MagicMock(),
@@ -765,8 +761,7 @@ def test_review_runtime_uses_content_addressed_embedding_model_key(monkeypatch):
     )
 
     assert executor.review_job.group_files(["/tmp/a.ARW"]) == [["/tmp/a.ARW"]]
-    assert captured["embedding_model_key"] == "embedding-cache-v2:content-digest"
-    assert callable(captured["embedding_loader"])
+    assert captured == {}
 
 
 def test_pipeline_routes_execution_through_review_run_service(monkeypatch):

@@ -4,7 +4,6 @@ from ..adapters.metadata.exiftool_xmp import ExifToolXMPWriter
 from ..adapters.progress import RichEventSink
 from ..app.job_executor import JobExecutor
 from ..app.jobs import ReviewPhotosJob
-from ..app.local_embedding_identity import build_local_embedding_cache_key
 from ..clients.base import make_client, make_fast_screening_port
 from ..domain.commentary import (
     CommentaryGenerator,
@@ -53,14 +52,6 @@ def build_review_job_executor(
         if callable(flush):
             flush()
 
-    def embedding_for_file(file_path: str) -> list[float] | None:
-        embedding_cfg = config.get("grouping", {}).get("embedding_similarity", {})
-        if not embedding_cfg.get("enabled", False) or not hasattr(client, "embed_image"):
-            return None
-        frame = decode_raw(file_path, config["preview"])
-        result = run_coro_sync(client.embed_image(frame.jpeg_bytes))
-        return result.get("vector")
-
     def group_files(file_paths: list[str]) -> list[list[str]]:
         if not file_paths:
             return []
@@ -68,15 +59,7 @@ def build_review_job_executor(
             # Grouper cache writes use the processed-state connection. Release
             # the runtime batch's writer lock before crossing that boundary.
             flush_runtime_writes()
-            embedding_enabled = bool(
-                config["grouping"].get("embedding_similarity", {}).get("enabled", False)
-            )
-            model_key = build_local_embedding_cache_key(config) if embedding_enabled else ""
-            return Grouper(
-                config["grouping"],
-                embedding_loader=embedding_for_file,
-                embedding_model_key=model_key,
-            ).group(file_paths, state=state, progress=progress)
+            return Grouper(config["grouping"]).group(file_paths, state=state, progress=progress)
         return [[file_path] for file_path in file_paths]
 
     def prepare_score(file_path: str) -> dict:

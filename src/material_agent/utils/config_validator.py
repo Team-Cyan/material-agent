@@ -480,6 +480,10 @@ def normalize_config(cfg: dict) -> dict:
     )
     visual_similarity.setdefault("hash_threshold", 10)
     visual_similarity.setdefault("max_merge_gap_minutes", 10)
+    grouping.setdefault(
+        "hash_threshold",
+        visual_similarity["hash_threshold"] if visual_similarity["enabled"] else 0,
+    )
     embedding_similarity = grouping.setdefault("embedding_similarity", {})
     embedding_similarity["enabled"] = _coerce_bool_like(embedding_similarity.get("enabled", False))
     embedding_similarity.setdefault("threshold", 0.85)
@@ -796,6 +800,9 @@ def validate_config(cfg: dict) -> None:
             "grouping.time_gap_seconds must be a number between 0 and 86400, "
             f"got: {time_gap_seconds!r}"
         )
+    threshold = grouping.get("hash_threshold", 0)
+    if isinstance(threshold, bool) or not isinstance(threshold, int) or not 0 <= threshold <= 64:
+        errors.append("grouping.hash_threshold must be an integer between 0 and 64")
     visual_similarity = grouping.get("visual_similarity", {})
     if not _is_valid_bool_like(visual_similarity.get("enabled", False)):
         errors.append(
@@ -844,10 +851,6 @@ def validate_config(cfg: dict) -> None:
             "grouping.embedding_similarity.threshold must be between -1 and 1, "
             f"got: {embedding_threshold!r}"
         )
-    if embedding_similarity.get("enabled", False) and not cfg.get("local", {}).get(
-        "embedding", {}
-    ).get("enabled", False):
-        errors.append("grouping.embedding_similarity requires local.embedding.enabled: true")
     xmp = cfg.get("xmp", {})
     if "write_mode" in xmp:
         errors.append(

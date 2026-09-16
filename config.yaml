@@ -126,14 +126,8 @@ inference:
 grouping:
   enabled: true
   time_gap_seconds: 30
-  visual_similarity:
-    enabled: true
-    hash_threshold: 10
-    max_merge_gap_minutes: 10
-  embedding_similarity:
-    # Opt-in until real-camera grouping calibration is complete.
-    enabled: false
-    threshold: 0.85
+  # Adjacent photos must meet both limits. 0 disables hash checks.
+  hash_threshold: 10
   best_candidate_review:
     # Only applies to real groups while grouping.enabled is true. When a group
     # has no keep and no hard rejection, preserve its best candidate for review.

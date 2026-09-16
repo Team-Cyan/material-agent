@@ -140,7 +140,7 @@ def configure_run_parser(parser) -> None:
         "--no-visual-merge",
         action="store_true",
         dest="no_visual_merge",
-        help="Disable visual similarity merge (faster restarts)",
+        help="Disable hash checks; group by time only",
     )
 
 

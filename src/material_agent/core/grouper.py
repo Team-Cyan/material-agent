@@ -15,10 +15,7 @@ class Grouper(_impl.Grouper):
         if not files:
             return []
         times = read_exif_datetimes(files, state=state, progress=progress)
-        groups = self._time_split(files, times)
-        if self.config["visual_similarity"]["enabled"]:
-            groups = self._visual_merge(groups, times, state=state, progress=progress)
-        return groups
+        return self._group_with_times(files, times, state=state, progress=progress)
 
 
 __all__ = [

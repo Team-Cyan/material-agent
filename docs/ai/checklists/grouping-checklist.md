@@ -1,6 +1,6 @@
 # Checklist: Grouping Changes
 
-Use this checklist before finalizing a change in time split, EXIF reading, or visual merge behavior.
+Use this checklist before finalizing a change in time/hash grouping or EXIF reading behavior.
 
 ## Scope Check
 
@@ -11,7 +11,9 @@ Use this checklist before finalizing a change in time split, EXIF reading, or vi
 
 - Is group ordering still stable?
 - Do missing EXIF timestamps degrade safely instead of failing the run?
-- If visual merge changed, is it still limited to adjacent groups unless the task explicitly expands that behavior?
+- Do positive hash limits require both adjacent time and hash proximity?
+- Does hash threshold 0 bypass all hash reads/cache access?
+- Can neither embedding similarity nor hash similarity bridge a time mismatch?
 - Did the change avoid adding disproportionate work to large dataset runs?
 
 ## Contract Check

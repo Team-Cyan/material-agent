@@ -206,124 +206,89 @@ def test_progress_failure_does_not_trigger_per_file_exif_fallback():
     single_read.assert_not_called()
 
 
-def test_visual_merge_reuses_cached_hashes_between_runs():
-    files = ["/a.arw", "/b.arw", "/c.arw", "/d.arw"]
+@pytest.mark.parametrize(
+    "threshold,seconds,hashes,expected",
+    [
+        (8, [0, 2, 4, 6], [0, 0, 64, 64], [[0, 1], [2, 3]]),
+        (0, [0, 2, 4, 6], [0, 0, 64, 64], [[0, 1, 2, 3]]),
+        (8, [0, 10, 21], [0, 0, 0], [[0, 1], [2]]),
+        (8, [0, 2, 4], [0, 8, 17], [[0, 1], [2]]),
+        (8, [0, 2, 4], [0, None, 0], [[0], [1], [2]]),
+        (8, [0, 8, 16], [0, 8, 16], [[0, 1, 2]]),
+    ],
+)
+def test_time_and_hash_contract(threshold, seconds, hashes, expected):
+    from datetime import timedelta
+
+    files = [f"/{i}.arw" for i in range(len(seconds))]
     times = {
-        "/a.arw": datetime(2024, 1, 1, 10, 0, 0),
-        "/b.arw": datetime(2024, 1, 1, 10, 0, 10),
-        "/c.arw": datetime(2024, 1, 1, 10, 0, 50),
-        "/d.arw": datetime(2024, 1, 1, 10, 1, 0),
+        f: datetime(2024, 1, 1) + timedelta(seconds=t) for f, t in zip(files, seconds, strict=True)
     }
+    values = {
+        f: None if n is None else imagehash.hex_to_hash(f"{(1 << n) - 1:016x}")
+        for f, n in zip(files, hashes, strict=True)
+    }
+    config = _cfg(True)
+    config.update(time_gap_seconds=10, hash_threshold=threshold)
+    config["embedding_similarity"]["enabled"] = True
+    with (
+        patch("material_agent.core.grouper.read_exif_datetimes", return_value=times),
+        patch.object(Grouper, "_hash_file", side_effect=values.get) as hashing,
+    ):
+        groups = Grouper(
+            config, embedding_loader=lambda _: pytest.fail("embedding must not run")
+        ).group(files)
+    assert groups == [[files[i] for i in group] for group in expected]
+    if threshold == 0:
+        hashing.assert_not_called()
 
-    class _State:
-        def __init__(self):
-            self.cache = {}
 
-        def get_visual_hash_cache(self, file_paths):
-            return {
-                file_path: self.cache[file_path]
-                for file_path in file_paths
-                if file_path in self.cache
-            }
+def test_hash_cache_covers_within_time_group_and_reuses_results():
+    files = ["/a.arw", "/b.arw"]
+    times = dict.fromkeys(files, datetime(2024, 1, 1))
+
+    class State:
+        cache = {}
+
+        def get_visual_hash_cache(self, paths):
+            return self.cache
 
         def set_visual_hash_cache(self, entries):
             self.cache.update(entries)
 
-    state = _State()
-    hash_calls: list[str] = []
-
-    def _fake_hash(file_path: str):
-        hash_calls.append(file_path)
-        if file_path in {"/b.arw", "/c.arw"}:
-            return imagehash.hex_to_hash("0" * 16)
-        return imagehash.hex_to_hash("f" * 16)
-
-    with patch("material_agent.core.grouper.read_exif_datetimes", return_value=times):
-        with patch.object(Grouper, "_hash_file", side_effect=_fake_hash):
-            groups = Grouper(_cfg(visual_enabled=True)).group(files, state=state)
-
-    assert groups == [["/a.arw", "/b.arw", "/c.arw", "/d.arw"]]
-    assert hash_calls == ["/b.arw", "/c.arw"]
-    assert state.cache == {
-        "/b.arw": "0000000000000000",
-        "/c.arw": "0000000000000000",
-    }
-
-    hash_calls.clear()
-    with patch("material_agent.core.grouper.read_exif_datetimes", return_value=times):
-        with patch.object(
-            Grouper, "_hash_file", side_effect=AssertionError("hash should be cached")
-        ):
-            groups = Grouper(_cfg(visual_enabled=True)).group(files, state=state)
-
-    assert groups == [["/a.arw", "/b.arw", "/c.arw", "/d.arw"]]
-    assert hash_calls == []
+    state = State()
+    with (
+        patch("material_agent.core.grouper.read_exif_datetimes", return_value=times),
+        patch.object(
+            Grouper, "_hash_file", return_value=imagehash.hex_to_hash("0" * 16)
+        ) as hashing,
+    ):
+        assert Grouper(_cfg(True)).group(files, state) == [files]
+        assert hashing.call_count == 2
+        assert Grouper(_cfg(True)).group(files, state) == [files]
+        assert hashing.call_count == 2
 
 
-def test_embedding_similarity_merges_hash_miss_and_reuses_cache():
-    files = ["/a.arw", "/b.arw"]
-    times = {
-        "/a.arw": datetime(2024, 1, 1, 10, 0, 0),
-        "/b.arw": datetime(2024, 1, 1, 10, 1, 0),
-    }
-    config = _cfg(visual_enabled=True)
-    config["embedding_similarity"] = {"enabled": True, "threshold": 0.9}
+def test_zero_threshold_never_accesses_hash_cache():
+    from unittest.mock import Mock
 
-    class _State:
-        def __init__(self):
-            self.embeddings = {}
+    files = ["a", "b"]
+    state = Mock()
+    config = _cfg(True)
+    config["hash_threshold"] = 0
+    with patch(
+        "material_agent.core.grouper.read_exif_datetimes",
+        return_value=dict.fromkeys(files, datetime(2024, 1, 1)),
+    ):
+        assert Grouper(config).group(files, state) == [files]
+    state.get_visual_hash_cache.assert_not_called()
+    state.set_visual_hash_cache.assert_not_called()
 
-        def get_visual_hash_cache(self, file_paths):
-            return {}
 
-        def set_visual_hash_cache(self, entries):
-            pass
-
-        def get_embedding_cache(self, file_paths, model_key):
-            return {
-                file_path: self.embeddings[file_path]
-                for file_path in file_paths
-                if file_path in self.embeddings
-            }
-
-        def set_embedding_cache(self, entries, model_key):
-            self.embeddings.update(entries)
-
-    state = _State()
-    calls = []
-
-    def embedding_loader(file_path):
-        calls.append(file_path)
-        return [1.0, 0.0] if file_path == "/a.arw" else [0.95, 0.05]
-
-    with patch("material_agent.core.grouper.read_exif_datetimes", return_value=times):
-        with patch.object(
-            Grouper,
-            "_hash_file",
-            side_effect=[imagehash.hex_to_hash("0" * 16), imagehash.hex_to_hash("f" * 16)],
-        ):
-            groups = Grouper(
-                config,
-                embedding_loader=embedding_loader,
-                embedding_model_key="fixture-v1",
-            ).group(files, state=state)
-
-    assert groups == [["/a.arw", "/b.arw"]]
-    assert calls == ["/a.arw", "/b.arw"]
-    assert set(state.embeddings) == set(files)
-
-    calls.clear()
-    with patch("material_agent.core.grouper.read_exif_datetimes", return_value=times):
-        with patch.object(
-            Grouper,
-            "_hash_file",
-            side_effect=[imagehash.hex_to_hash("0" * 16), imagehash.hex_to_hash("f" * 16)],
-        ):
-            groups = Grouper(
-                config,
-                embedding_loader=lambda path: calls.append(path),
-                embedding_model_key="fixture-v1",
-            ).group(files, state=state)
-
-    assert groups == [["/a.arw", "/b.arw"]]
-    assert calls == []
+def test_standard_image_hash_reads_existing_fixture_without_raw_decode():
+    from pathlib import Path
+    source = Path(__file__).parent / 'fixtures/local_benchmark/ui-screenshot.png'
+    with patch('material_agent.domain.grouper.rawpy.imread', side_effect=AssertionError('not RAW')):
+        result = Grouper._hash_file(str(source))
+    assert result is not None
+    assert result.hash.size == 64

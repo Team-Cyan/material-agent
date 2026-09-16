@@ -102,6 +102,7 @@ def apply_run_overrides(config: dict, args) -> dict:
             config["scorers"][name]["enabled"] = name in enabled
     if getattr(args, "no_visual_merge", False):
         config["grouping"]["visual_similarity"]["enabled"] = False
+        config["grouping"]["hash_threshold"] = 0
     return config
 
 

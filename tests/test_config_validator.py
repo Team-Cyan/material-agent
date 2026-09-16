@@ -939,3 +939,27 @@ def test_validate_config_rejects_unsupported_fixed_modes(
         validate_config(cfg)
 
     assert expected in capsys.readouterr().out
+
+
+@pytest.mark.parametrize('value', [-1, 65, True, 1.5, '10'])
+def test_grouping_hash_threshold_validation(value, capsys):
+    config = _minimal_config()
+    config['grouping'] = {'hash_threshold': value}
+    with pytest.raises(SystemExit):
+        validate_config(normalize_config(config))
+    assert 'grouping.hash_threshold' in capsys.readouterr().out
+
+
+def test_grouping_legacy_migration_and_explicit_zero():
+    legacy = {'visual_similarity': {'enabled': True, 'hash_threshold': 7}}
+    assert normalize_config({'grouping': legacy})['grouping']['hash_threshold'] == 7
+    assert normalize_config({'grouping': {'hash_threshold': 0, **legacy}})['grouping']['hash_threshold'] == 0
+    assert normalize_config({'grouping': {'visual_similarity': {'enabled': False, 'hash_threshold': 7}}})['grouping']['hash_threshold'] == 0
+
+
+def test_no_visual_merge_flag_sets_time_only_mode():
+    from types import SimpleNamespace
+    from material_agent.commands.scoring import apply_run_overrides
+    config = normalize_config({'grouping': {'hash_threshold': 10}})
+    result = apply_run_overrides(config, SimpleNamespace(no_visual_merge=True, input_dir="/tmp"))
+    assert result['grouping']['hash_threshold'] == 0
