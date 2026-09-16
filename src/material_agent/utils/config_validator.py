@@ -86,6 +86,7 @@ _MAPPING_SECTION_PATHS = (
     ("screening",),
     ("screening", "musiq"),
     ("focus_integrity",),
+    ("focus_integrity", "selective_refinement"),
     ("portrait_face_eye",),
     ("decision_policy",),
     ("decision_policy", "hard_reject"),
@@ -475,9 +476,7 @@ def normalize_config(cfg: dict) -> dict:
     grouping["enabled"] = _coerce_bool_like(grouping.get("enabled", False))
     grouping.setdefault("time_gap_seconds", 30)
     visual_similarity = grouping.setdefault("visual_similarity", {})
-    visual_similarity["enabled"] = _coerce_bool_like(
-        visual_similarity.get("enabled", False)
-    )
+    visual_similarity["enabled"] = _coerce_bool_like(visual_similarity.get("enabled", False))
     visual_similarity.setdefault("hash_threshold", 10)
     visual_similarity.setdefault("max_merge_gap_minutes", 10)
     grouping.setdefault(
@@ -505,7 +504,9 @@ def normalize_config(cfg: dict) -> dict:
     selected_review_value = (
         canonical_review_value
         if canonical_review_present
-        else legacy_review_value if legacy_review_present else True
+        else legacy_review_value
+        if legacy_review_present
+        else True
     )
     best_candidate_review["enabled"] = _coerce_bool_like(selected_review_value)
     grouping.pop("group_guard", None)
@@ -543,6 +544,15 @@ def normalize_config(cfg: dict) -> dict:
     normalized["focus_integrity"].setdefault("roi_expand_ratio", 0.12)
     normalized["focus_integrity"].setdefault("eye_roi_ratio", 0.16)
     normalized["focus_integrity"].setdefault("global_blur_reject_below", 0.25)
+    refinement = normalized["focus_integrity"].setdefault("selective_refinement", {})
+    refinement["enabled"] = _coerce_bool_like(refinement.get("enabled", False))
+    for key, value in {
+        "max_candidates": 2,
+        "max_seconds": 5.0,
+        "score_gap": 0.5,
+        "focus_max_size": 3072,
+    }.items():
+        refinement.setdefault(key, value)
 
     normalized["portrait_face_eye"] = copy.deepcopy(normalized.get("portrait_face_eye", {}))
     normalized["portrait_face_eye"]["enabled"] = _coerce_bool_like(
@@ -575,13 +585,14 @@ def normalize_config(cfg: dict) -> dict:
         and legacy_revision != canonical_revision
     ):
         raise ValueError(
-            "Conflicting configuration values for "
-            "scoring.cache_revision and score_policy.revision"
+            "Conflicting configuration values for scoring.cache_revision and score_policy.revision"
         )
     selected_revision = (
         canonical_revision
         if canonical_revision_present
-        else legacy_revision if legacy_revision_present else None
+        else legacy_revision
+        if legacy_revision_present
+        else None
     )
     if selected_revision is not None:
         score_policy["revision"] = selected_revision
@@ -693,8 +704,7 @@ def validate_config(cfg: dict) -> None:
     focus_integrity = cfg.get("focus_integrity", {})
     if not _is_valid_bool_like(focus_integrity.get("enabled", False)):
         errors.append(
-            "focus_integrity.enabled must be a boolean, "
-            f"got: {focus_integrity.get('enabled')!r}"
+            f"focus_integrity.enabled must be a boolean, got: {focus_integrity.get('enabled')!r}"
         )
     if focus_integrity.get("mode") not in {"preview_proxy", "subject_roi"}:
         errors.append(
@@ -711,6 +721,24 @@ def validate_config(cfg: dict) -> None:
             "focus_integrity.global_blur_reject_below must be a number between 0 and 10, "
             f"got: {blur_threshold!r}"
         )
+    refinement = focus_integrity.get("selective_refinement", {})
+    if not _is_valid_bool_like(refinement.get("enabled", False)):
+        errors.append("focus_integrity.selective_refinement.enabled must be a boolean")
+    for key, minimum, maximum, integral in (
+        ("max_candidates", 0, 8, True),
+        ("max_seconds", 0, 60, False),
+        ("score_gap", 0, 10, False),
+        ("focus_max_size", 64, 4096, True),
+    ):
+        value = refinement.get(key)
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, int if integral else int | float)
+            or not minimum <= value <= maximum
+        ):
+            errors.append(
+                f"focus_integrity.selective_refinement.{key} must be between {minimum} and {maximum}"
+            )
     portrait_face_eye = cfg.get("portrait_face_eye", {})
     if not _is_valid_bool_like(portrait_face_eye.get("enabled", False)):
         errors.append(
@@ -787,9 +815,7 @@ def validate_config(cfg: dict) -> None:
         )
     grouping = cfg.get("grouping", {})
     if not _is_valid_bool_like(grouping.get("enabled", False)):
-        errors.append(
-            f"grouping.enabled must be a boolean, got: {grouping.get('enabled')!r}"
-        )
+        errors.append(f"grouping.enabled must be a boolean, got: {grouping.get('enabled')!r}")
     time_gap_seconds = grouping.get("time_gap_seconds")
     if (
         not isinstance(time_gap_seconds, int | float)

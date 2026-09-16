@@ -93,6 +93,33 @@ other scenes retain scores/stars/ranks. The returned count counts quality update
 No rescore action writes photo metadata. The score/output cache revision changes
 with this policy to invalidate terminal results produced by the old fallback.
 
+## Evidence applicability and optional refinement
+
+`meta.face_eye_evidence` distinguishes measured `observed`, unresolved `unknown`,
+and explicitly supported `not_applicable`. No face detection means unknown, not
+poor eyes or a back-view assertion. A back-view/silhouette context needs label,
+finite confidence >= 0.9, source, evidence and an evidence_type of
+`visual_annotation` or `model_visual_context`. Measured eye ROIs take precedence
+if context conflicts. Generic subject/clarity/sharpness scores no longer create
+an eye usability signal; rescore ignores legacy `preview_proxy` eye signals.
+Unknown/not-applicable is persisted in metadata rather than encoded as a zero.
+
+`focus_integrity.selective_refinement` is opt-in (default disabled until quality
+and latency acceptance). It schedules one pass for close top candidates,
+insufficient focus resolution, or unknown portrait eye evidence. Defaults are
+2 candidates/group, 5 seconds to schedule new work, score gap 0.5, and a 3072-edge
+focus image; validated caps are 8 candidates, 60 seconds and 4096 pixels. RAW
+half-size decode remains read-only. Record actual focus dimensions; if the new
+observation has no greater pixel area, retain baseline evidence and record
+`no_resolution_gain`. Never equate a RAW source with a better observation.
+
+Keep pre-refinement scores/signals and trigger/outcome/elapsed-budget metadata.
+Failed, exhausted or unresolved candidates carry `review_required`; retries are
+not recursive and cached attempted candidates do not repeat the pass. The elapsed
+time bound stops starting new callbacks, not a running synchronous decode.
+Coverage finalization runs after refinement without inflating the resulting score.
+This is local implementation evidence, not proof of improved selection quality.
+
 ## Typical Safe Changes
 
 - tweak score combination logic

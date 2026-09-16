@@ -88,6 +88,13 @@ class RescoreService:
                 file_signals, scene=scene, config=aesthetic_calibration
             )
 
+            # Legacy generic clarity proxies are not evidence of eye usability.
+            file_signals = [
+                signal
+                for signal in file_signals
+                if signal.get("signal_key") != "portrait_face_eye_usability"
+                or signal.get("source") == "eye_roi"
+            ]
             summary = summarize_signals(file_signals, scene=scene, config=config)
             summaries_by_group.setdefault(row["group_id"] or row["file_path"], []).append(
                 {

@@ -88,3 +88,28 @@ suite reports **46 passed**. `make check` passed. Tests intercept copy/replace a
 writer calls or use in-memory packets; the only filesystem test state is SQLite.
 Log: `.local/review-2026-09-16-coverage/ledger-tests.log`. Professional-app and
 physical-sidecar verification remains pending separately.
+
+## Continuation batch: applicability and opt-in refinement
+
+Eye evidence now distinguishes observed, unknown and context-supported
+not-applicable. Generic low clarity is no longer an eye usability measurement,
+including legacy rescore signals. One-pass refinement records triggers, original
+scores/signals, attempt/time/size bounds, unresolved review requirements and
+failure outcomes. Defaults remain disabled pending quality/latency acceptance.
+
+The real-data self-review read six existing public RAW fixtures without writing
+media: half-size RAW focus images were all smaller than or equal to the baseline
+observation, while scores changed. Added a no-resolution-gain guard instead of
+replacing evidence merely because its source says RAW. Source SHA-256 values were
+unchanged. Decode-only timings were 0.014–0.069 seconds for the alternative path;
+this is not end-to-end model latency or selection accuracy. Local report:
+`.local/review-2026-09-16-coverage/raw-refinement.json`.
+
+Full guarded suite: **736 passed, 102 skipped in 18.71 s**. After requiring an
+explicit visual context evidence type, **17 focused tests passed**. `make check`
+passed. Log: `.local/review-2026-09-16-coverage/evidence-final-tests.log`.
+
+GPT acceptance preflight found no independent completion connector, supported API
+credential/base URL environment, or local .env file. Existing data is either
+single-image RAW format coverage, synthetic diagnostics, or action labels, not
+burst preference truth. Do not present these tests as independent GPT acceptance.

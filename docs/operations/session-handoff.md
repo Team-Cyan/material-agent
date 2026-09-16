@@ -12,9 +12,13 @@
 
 The current local work is tracked in [the audited full-plan status](2026-09-16-plan-status.md).
 Phase 1 inference unification, the first MobileCLIP comparison and the revised
-time/hash grouping are implemented. Automatic-preselection closure, evidence
-applicability/refinement, metadata import/ledger and external acceptance are
-not all complete. XMP protection/projection has local in-memory verification;
+time/hash grouping are implemented. Continuation batches implement readable-group
+keep coverage with separate quality/selection persistence, XMP projection-attempt
+ledger/rewrite receipts, and explicit evidence applicability plus opt-in bounded
+refinement. Six public RAWs did not gain focus resolution through half-size RAW
+decode; refinement remains disabled. GPT acceptance lacks a callable API channel
+and a frozen burst/preference reference set; external acceptance remains pending.
+XMP protection/projection has local in-memory verification;
 no actual XMP write, deployment or production review is authorized in this session.
 
 ## Maintained Runtime Boundary

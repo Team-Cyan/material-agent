@@ -49,7 +49,7 @@ _SCORE_CACHE_CONFIG_KEYS = (
     "output_language",
     "xmp",
 )
-_SCORE_PIPELINE_CACHE_REVISION = "2026-09-16-group-coverage-v1"
+_SCORE_PIPELINE_CACHE_REVISION = "2026-09-16-evidence-v1"
 _SCORE_RUNTIME_DISTRIBUTIONS = (
     "numpy",
     "opencv-python",

@@ -12,6 +12,7 @@ from ..domain.commentary import (
     split_group_commentary_sections,
 )
 from ..domain.grouper import Grouper
+from ..domain.evidence_refinement import NoRefinementGain, refine_group
 from ..domain.layered_decision import (
     apply_group_best_candidate_review,
     group_best_candidate_review_enabled,
@@ -163,6 +164,43 @@ def build_review_job_executor(
         if not group_results:
             return group_results
 
+        refinement_config = config.get("focus_integrity", {}).get("selective_refinement", {})
+
+        def refine_candidate(file_path, payload):
+            preview = {
+                **config["preview"],
+                "prefer_embedded": False,
+                "focus_max_size": refinement_config.get("focus_max_size", 3072),
+            }
+            frame = decode_raw(file_path, preview)
+            before_size = (payload.get("meta") or {}).get("focus_preview_size")
+            after_gray = getattr(frame, "focus_gray", None)
+            if before_size and after_gray is not None:
+                if int(after_gray.size) <= int(before_size[0]) * int(before_size[1]):
+                    raise NoRefinementGain()
+            bundle = run_coro_sync(
+                compute_scores(frame, client, config, fast_screening=fast_screening)
+            )
+            return {
+                **payload,
+                "score_total": bundle.total,
+                "scores": bundle.scores,
+                "meta": bundle.meta,
+                "scene": bundle.scene,
+                "scene_raw": bundle.scene_raw,
+                "instructions": bundle.instructions,
+                "decision": bundle.decision,
+                "decision_reasons": bundle.decision_reasons,
+                "screening_prior": bundle.screening_prior,
+                "visible_breakdown": bundle.visible_breakdown,
+                "policy_version": bundle.policy_version,
+                "signals": bundle.signals,
+                "skip_write": False,
+            }
+
+        group_results = refine_group(
+            group_results, config=refinement_config, refine=refine_candidate
+        )
         group_commentary = ""
         if commentary_enabled:
             group_commentary = run_coro_sync(

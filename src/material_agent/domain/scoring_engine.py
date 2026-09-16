@@ -13,6 +13,7 @@ from ..scorers.base import ScorerResult
 from ..scorers.exposure import ExposureScorer
 from ..scorers.sharpness import SharpnessScorer
 from .subject_focus import analyze_subject_focus
+from .evidence_refinement import face_eye_evidence
 from ..utils.constants import (
     ALL_ABBR,
     ALL_DIMS,
@@ -489,14 +490,9 @@ def _build_layered_signals(
             "model_version": "1" if "fast_score" in meta else None,
         },
     ]
+    meta["face_eye_evidence"] = face_eye_evidence(meta)
     if scene == "people" and config.get("portrait_face_eye", {}).get("enabled", False):
-        portrait_signal = (
-            subject_focus_meta.get("eye_focus_score")
-            if isinstance(subject_focus_meta, dict)
-            else None
-        )
-        if portrait_signal is None:
-            portrait_signal = _estimate_portrait_face_eye_usability(scores)
+        portrait_signal = meta["face_eye_evidence"]["value"]
         if portrait_signal is not None:
             signals.append(
                 {
@@ -561,6 +557,9 @@ def _build_frame_meta(frame: RawFrame, config: dict) -> dict:
         "preview_source": getattr(frame, "preview_source", "unknown"),
         "focus_assessment": getattr(frame, "focus_assessment", "preview_proxy"),
     }
+    focus_gray = getattr(frame, "focus_gray", None)
+    if focus_gray is not None:
+        meta["focus_preview_size"] = [int(focus_gray.shape[1]), int(focus_gray.shape[0])]
     original_size = getattr(frame, "original_size", None)
     preview_size = getattr(frame, "preview_size", None)
     if original_size is not None:
@@ -592,6 +591,7 @@ def _merge_backend_meta(meta: dict, raw_scores: dict) -> None:
         "_aesthetic",
         "_embedding",
         "_face",
+        "_subject_context",
         "_timing",
     ):
         value = raw_scores.get(key)
@@ -622,10 +622,6 @@ def _focus_confidence(meta: dict) -> float:
     if ratio >= 3:
         return 0.45
     return 0.65
-
-
-def _estimate_portrait_face_eye_usability(scores: dict[str, float]) -> float | None:
-    return _mean_known([scores.get("subject"), scores.get("clarity"), scores.get("sharpness")])
 
 
 def _mean_known(values: list[float | None]) -> float | None:

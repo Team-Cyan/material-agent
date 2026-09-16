@@ -2,6 +2,13 @@
 
 ## Completed
 
+- implemented readable-group keep coverage without quality/score inflation,
+  separate quality/selection metadata through cache and rescore, and projection
+  attempt ledgers for ordinary XMP/rewrite outcomes
+- implemented observed/unknown/context-supported not-applicable eye evidence and
+  opt-in bounded refinement; real RAW decode checks found no resolution gain on
+  six public fixtures, so refinement remains disabled pending acceptance
+
 - implemented nonzero XMP rating protection and exact keep/reject keyword
   projection with in-memory compatibility checks and ordinary-write ownership
   receipts; physical sidecar/software round trips remain unverified

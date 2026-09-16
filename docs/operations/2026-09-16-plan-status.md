@@ -30,10 +30,10 @@ are permitted local verification; they are not physical interoperability proof.
 | D03 missing/zero rating and keywords | Implemented locally in this continuation | Ordinary write and rewrite protect nonzero ratings; malformed/duplicate declarations fail; exact visible keep/reject projection; 36 no-write policy/integration tests |
 | D03 import/effective/write ledger | Implemented for projection attempts locally | Versioned imported/requested/planned/effective fields, unknown authorship, nonzero conflicts and field outcomes; independent append-only ledger survives processed errors; rewrite persists receipts and scalar ownership. External change watching and crash reconciliation are not implemented |
 | D04 professional-software handoff | Unverified | No actual Bridge/Camera Raw/Photoshop or Capture One readback/writeback matrix has been run here; real XMP writes remain outside current authorization |
-| D05 evidence applicability and selective refinement | Partial | Existing face/eye safeguards and bounded previews exist. No complete explicit applicability/context contract or trigger/budget/termination loop for selective refinement was found in the current domain/client path |
+| D05 evidence applicability and selective refinement | Implemented locally; refinement opt-in | Explicit observed/unknown/context-supported not_applicable; generic eye proxies removed. One-pass candidate/time/size bounds, baseline retention, no-resolution-gain guard and review reasons tested. Six real public RAWs show no larger half-size focus image, so refinement stays disabled pending quality acceptance |
 | D06 remaining model experiments/fusion | Not executed | TOPIQ/MUSIQ/MediaPipe/other candidates need separate frozen task-relevant datasets and resource comparisons. Stanford40 action labels do not validate technical quality or personal preference. No production fusion added |
 | D07 state/container resilience | Existing implementation, target revalidation outstanding | Appdata paths and state tests exist. No live backup/restore/container recreation or library-relocation migration was performed here; keep those separate from local code proof |
-| D08 GPT proxy acceptance | Protocol prepared, not executed as a full benchmark | Existing public labels and two image error inspections are not a blinded proxy acceptance report. Need a frozen relevant review subset, explicit model/channel record, reference rubric, order reversal and baseline comparison |
+| D08 GPT proxy acceptance | Not executed; channel/data gap verified | No callable model-completion connector, API key/base URL environment, or local .env was available in this continuation. Six public RAWs lack burst preference labels; Stanford40 is action classification. Need a relevant frozen subset and independent model judgments with order reversal and baseline comparison |
 
 ## Work completed in this continuation
 
@@ -72,9 +72,9 @@ Verification:
 2. Projection-attempt preview/import/effective-result and per-field ledger are
    locally implemented, including rewrite, conflicts and partial batch failure.
    Actual sidecar/software round trips and crash reconciliation remain unverified.
-3. Add explicit unknown versus context-supported not-applicable evidence and
-   bounded selective-refinement triggers. Do not fabricate back-view/silhouette
-   evidence from a missing face detection.
+3. Evidence applicability and bounded optional refinement are implemented. Keep
+   refinement disabled until a relevant quality/latency benchmark supports it;
+   a RAW half-size decode is not automatically a higher-resolution observation.
 4. Freeze a quality/preselection proxy evaluation subset and rubric; run the
    blinded/order-reversal comparison and persist `model_generated` judgments.
 5. Run further model candidates individually only against a matching frozen

@@ -152,9 +152,16 @@ focus_integrity:
   roi_expand_ratio: 0.12
   eye_roi_ratio: 0.16
   global_blur_reject_below: 0.25
+  selective_refinement:
+    # Opt in after a task-relevant quality/latency comparison.
+    enabled: false
+    max_candidates: 2
+    max_seconds: 5.0
+    score_gap: 0.5
+    focus_max_size: 3072
 
 portrait_face_eye:
-  # Disabled by default until a face/eye ROI model is wired into the pipeline.
+  # Opt in after task-relevant eye-ROI acceptance; unknown evidence is not scored.
   enabled: false
 
 scorers:
