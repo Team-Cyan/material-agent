@@ -10,6 +10,9 @@ Use this checklist before finalizing a change in sidecar writing or rewrite beha
 ## Behavior Check
 
 - Are non-machine user keywords still preserved?
+- Are existing nonzero ratings preserved, including old AI ratings and -1?
+- Do malformed/duplicate ratings stop the write?
+- Are only the two exact selection keywords replaced?
 - Are generated `pj:*` tags kept out of normal `dc:subject` keywords?
 - Are generated `pj:*` tags still present in `xmp:Identifier` for machine
   traceability?
@@ -33,7 +36,8 @@ Use this checklist before finalizing a change in sidecar writing or rewrite beha
 
 - Run `pytest tests/test_writer.py`
 - When ExifTool is available, confirm the generated sidecar reads back
-  `XMP:Rating`.
+  `XMP:Rating` (a stdin-only readback can verify packet generation without
+  writing a sidecar, but does not prove an existing-file update or app round trip).
 - If processed rows are involved, also run `pytest tests/test_state.py`
 
 ## Docs Check

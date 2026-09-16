@@ -45,6 +45,7 @@ class RewriteXmpService:
                 try:
                     if _path_identity(xmp_path) is not None:
                         _reject_symbolic_link(xmp_path)
+                        self.writer.rating_write_allowed(xmp_path)
                         self.writer._read_non_pj_subject_tags(xmp_path)
                         self.writer._read_non_pj_identifier_tags(xmp_path)
                         self.writer._read_non_pj_hierarchical_subject_tags(xmp_path)

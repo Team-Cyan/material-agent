@@ -1,4 +1,5 @@
 import logging
+import re
 import shutil
 import subprocess
 import xml.etree.ElementTree as ET
@@ -19,6 +20,7 @@ _XMP_NS = {
 _CREATOR_TOOL = "Team-Cyan material-agent"
 _MACHINE_TAG_PREFIX = "pj:"
 _MAX_XMP_BYTES = 16 * 1024 * 1024
+_SELECTION_KEYWORDS = {"material-agent:keep", "material-agent:reject"}
 
 
 class ExifToolXMPWriter:
@@ -104,6 +106,9 @@ class ExifToolXMPWriter:
             return existing_names[uppercase.name]
         return lowercase
 
+    def rating_write_allowed(self, xmp_path: str | Path) -> bool:
+        return _rating_write_allowed(_read_xmp_root(xmp_path))
+
     def _read_ai_scalar_fields(self, xmp_path: str | Path) -> dict[str, str | None]:
         try:
             root = _read_xmp_root(xmp_path)
@@ -146,7 +151,8 @@ class ExifToolXMPWriter:
         temp_path = xmp_path.with_name(f".{xmp_path.stem}.clear-{uuid4().hex}.xmp")
         try:
             shutil.copy2(xmp_path, temp_path)
-            preserved = self._read_non_pj_subject_tags(temp_path)
+            preserved = [tag for tag in self._read_non_pj_subject_tags(temp_path)
+                         if tag not in _SELECTION_KEYWORDS]
             preserved_identifiers = self._read_non_pj_identifier_tags(temp_path)
             preserved_hierarchical = self._read_non_pj_hierarchical_subject_tags(temp_path)
             current_fields = self._read_ai_scalar_fields(temp_path)
@@ -213,7 +219,7 @@ class ExifToolXMPWriter:
         try:
             if source_identity is not None:
                 shutil.copy2(xmp_path, temp_path)
-                self._update_existing_xmp(
+                projection = self._update_existing_xmp(
                     temp_path,
                     rating=rating,
                     subject_tags=subject_tags,
@@ -230,9 +236,12 @@ class ExifToolXMPWriter:
                     instructions,
                     description,
                 )
+                projection = {"rating": "written", "requested_rating": rating,
+                              "effective_rating": rating, "keywords": "written"}
             if _path_identity(xmp_path) != source_identity:
                 raise RuntimeError(f"XMP changed during write; refusing to overwrite: {xmp_path}")
             temp_path.replace(xmp_path)
+            return projection
         except Exception:
             temp_path.unlink(missing_ok=True)
             raise
@@ -245,19 +254,21 @@ class ExifToolXMPWriter:
         subject_tags: list[str],
         instructions: str,
         description: str,
-    ) -> None:
+    ) -> dict:
         """Update owned fields while retaining every unrelated XMP namespace."""
 
         _validate_material_rating(rating)
         xmp_path = Path(xmp_path)
-        preserved = self._read_non_pj_subject_tags(xmp_path)
+        root = _read_xmp_root(xmp_path)
+        rating_allowed = _rating_write_allowed(root)
+        preserved = _project_selection_keywords(self._read_non_pj_subject_tags(xmp_path), subject_tags)
         preserved_identifiers = self._read_non_pj_identifier_tags(xmp_path)
         preserved_hierarchical = self._read_non_pj_hierarchical_subject_tags(xmp_path)
         identifier_tags = _dedupe(preserved_identifiers + _dedupe(subject_tags))
         metadata_date = self._xmp_timestamp()
         cmd = [
             "exiftool",
-            f"-XMP-xmp:Rating={rating}",
+            *([f"-XMP-xmp:Rating={rating}"] if rating_allowed else []),
             f"-XMP-photoshop:Instructions={instructions}",
             f"-XMP-dc:Description-x-default={description}",
             f"-XMP-xmp:CreatorTool={_CREATOR_TOOL}",
@@ -275,6 +286,10 @@ class ExifToolXMPWriter:
         result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=30)
         if result.returncode != 0:
             raise RuntimeError(f"exiftool failed: {result.stderr}")
+        return {"rating": "written" if rating_allowed else "preserved_nonzero",
+                "requested_rating": rating,
+                "effective_rating": rating if rating_allowed else _xmp_scalar_value(root, "xmp", "Rating"),
+                "keywords": "written"}
 
     def _write_minimal_xmp(
         self,
@@ -318,6 +333,7 @@ class ExifToolXMPWriter:
         metadata_date = self._xmp_timestamp()
         document_id = f"xmp.did:{uuid4()}"
         instance_id = f"xmp.iid:{uuid4()}"
+        subject_tags = _project_selection_keywords(subject_tags, identifier_tags)
         subject_xml = _rdf_bag_xml("dc:subject", subject_tags)
         identifier_xml = _rdf_bag_xml("xmp:Identifier", identifier_tags)
         hierarchical_xml = _rdf_bag_xml("lr:hierarchicalSubject", hierarchical_subject_tags)
@@ -363,6 +379,45 @@ def _dedupe(values: list[str]) -> list[str]:
         seen.add(value)
         result.append(value)
     return result
+
+
+def _rating_write_allowed(root: ET.Element) -> bool:
+    """Only missing or explicitly numeric-zero ratings may be filled.
+
+    Reject conflicting/duplicate declarations, empty values, nested content and
+    malformed scalar values instead of silently treating them as unrated.
+    """
+    qualified = f"{{{_XMP_NS['xmp']}}}Rating"
+    values = []
+    for node in root.iter():
+        if qualified in node.attrib:
+            values.append(node.attrib[qualified])
+        if node.tag == qualified:
+            if len(node):
+                raise ValueError("Malformed nested XMP Rating")
+            values.append(node.text or "")
+    if not values:
+        return True
+    if len(values) != 1:
+        raise ValueError("Ambiguous duplicate XMP Rating")
+    value = values[0].strip()
+    if not re.fullmatch(r"[+-]?[0-9]+(?:\.0+)?", value):
+        raise ValueError("Malformed XMP Rating; refusing metadata write")
+    # String comparison avoids parsing unbounded-size integers from input XML.
+    integer = value.split(".", 1)[0].lstrip("+-")
+    return not integer.strip("0")
+
+
+def _project_selection_keywords(preserved: list[str], identifiers: list[str]) -> list[str]:
+    decisions = {tag.removeprefix("pj:decision=") for tag in identifiers
+                 if tag.startswith("pj:decision=")}
+    if not decisions:
+        return _dedupe(preserved)
+    if len(decisions) != 1 or not decisions <= {"keep", "review", "reject"}:
+        raise ValueError("Invalid or ambiguous selection decision")
+    decision = next(iter(decisions))
+    keyword = "material-agent:reject" if decision == "reject" else "material-agent:keep"
+    return _dedupe([tag for tag in preserved if tag not in _SELECTION_KEYWORDS] + [keyword])
 
 
 def _read_xmp_root(xmp_path: str | Path) -> ET.Element:

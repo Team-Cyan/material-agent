@@ -278,7 +278,7 @@ def build_review_job_executor(
         # Do not enter it while the runtime connection owns SQLite's writer
         # lock from a deferred event batch.
         flush_runtime_writes()
-        writer.write(
+        write_record = writer.write(
             file_path,
             rating=star,
             subject_tags=subject_tags,
@@ -286,6 +286,10 @@ def build_review_job_executor(
             description=description,
         )
 
+        if isinstance(write_record, dict):
+            score_payload["xmp_projection"] = write_record
+            meta = {**meta, "xmp_projection": write_record}
+        rating_owned = not isinstance(write_record, dict) or write_record.get("rating") == "written"
         if state is not None:
             commentary_issues, commentary_shooting = split_group_commentary_sections(
                 group_commentary,
@@ -311,7 +315,7 @@ def build_review_job_executor(
                 commentary_shooting=commentary_shooting,
                 commentary_post=post_commentary,
                 xmp_payload={
-                    "rating": star,
+                    **({"rating": star} if rating_owned else {}),
                     "instructions": xmp_instructions,
                     "description": description,
                 },

@@ -53,7 +53,10 @@ while preserving user-authored metadata when possible.
 - generated `pj:*` tags should be deterministic for the same score payload
 - generated `pj:*` tags should be stored in `xmp:Identifier`, not normal
   `dc:subject` keywords, so DAM apps do not show machine data as user keywords
-- `dc:subject` should contain only preserved user-authored keywords by default
+- `dc:subject` preserves user keywords and projects exactly one of
+  `material-agent:keep` / `material-agent:reject` when a recognized decision
+  is present; `review` projects conservatively to keep. Only these two exact
+  keywords are replaced; similarly prefixed human keywords are preserved.
 - new sidecars should write `dc:description` as `rdf:Alt` with `xml:lang="x-default"`
 - new sidecars should include `xmp:CreatorTool`, `xmp:MetadataDate`, `xmp:ModifyDate`, `xmpMM:DocumentID`, and `xmpMM:InstanceID`
 - new sidecars should write a standard XMP packet header and an explicit
@@ -76,6 +79,14 @@ while preserving user-authored metadata when possible.
   and refuse to overwrite a sidecar created or changed after the operation began
 - existing symbolic-link sidecars are rejected rather than atomically replacing
   the link itself and silently changing its ownership semantics
+- Ordinary updates and rewrites fill only a missing or explicit zero rating.
+  All nonzero ratings, including previous AI values and external -1, are left
+  untouched. Empty, malformed, nested or duplicate ratings fail closed before
+  invoking ExifTool; rewrite dry-run validates this policy too.
+- Successful ordinary writes return a projection receipt with requested/effective
+  rating and written/preserved status. Review persistence stores this separately
+  from the AI score and omits preserved ratings from AI-owned scalar fields.
+  This does not infer human authorship from an existing nonzero rating.
 - XMP output must stay compatible with ExifTool writes and rewrite flows
 - `reset-ai` must not touch XMP unless the operator passes `--clear-xmp`
 - legacy processed rows without an owned XMP payload may clear deterministic
@@ -124,8 +135,16 @@ while preserving user-authored metadata when possible.
   fields remains fixture-matrix evidence rather than an assumed guarantee.
 - A Capture One human-rating round trip needs separate AI and effective-rating
   ownership. The current writer can preserve user-modified scalar fields during
-  explicit AI reset, but ordinary review/rewrite paths still emit the current
-  AI rating and must not be promoted as a bidirectional workflow yet.
+  explicit AI reset. Ordinary review/rewrite now protect nonzero ratings and
+  project visible selection keywords, with in-memory compatibility checks.
+  Real software round trips and a complete import/write ledger remain unverified.
 - DaVinci Resolve compatibility is not guaranteed by this module. The target is
   standards-based XMP that common DAM/photo tools can read; Resolve should be
   verified with a real fixture matrix before claiming support.
+
+## Current verification boundary
+
+The 2026-09-16 projection slice is verified with in-memory XML and intercepted
+ExifTool commands, without writing XMP or source media. See
+[full-plan status](../../operations/2026-09-16-plan-status.md). These tests do not
+replace an authorized physical sidecar or professional-software round trip.
