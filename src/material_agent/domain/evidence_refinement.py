@@ -113,13 +113,15 @@ def refine_group(results: list[tuple[str, dict]], *, config: dict, refine, clock
                 value = float(candidate["score_total"])
                 if not math.isfinite(value):
                     raise ValueError("non-finite refined score")
-                result = candidate
-                record["status"] = "completed"
                 after_meta = candidate.get("meta") or {}
                 after = after_meta.get("face_eye_evidence") or face_eye_evidence(after_meta)
                 record["review_required"] = (
                     payload.get("scene") == "people" and after["status"] == "unknown"
                 )
+                # Publish only after the whole candidate has passed validation.
+                # A later metadata failure must retain the original score/evidence.
+                result = dict(candidate)
+                record["status"] = "completed"
             except NoRefinementGain:
                 record.update(status="no_resolution_gain", review_required=True)
             except Exception as error:

@@ -66,50 +66,50 @@ class RewriteXmpService:
                         progress.on_phase_advance()
                 continue
 
-            boosted = bool(row["group_boosted"])
-            subject_tags = self.writer.build_subject_tags(
-                score=row["total_score"],
-                rank=row["group_rank"],
-                group_size=row["group_size"],
-                group_id=row["group_id"],
-                boosted=boosted,
-                decision=row["decision"],
-            )
-            if row["scene"]:
-                subject_tags.append(f"pj:scene={scene_label(row['scene'], output_language)}")
-
-            visible_breakdown = {}
-            if row["visible_breakdown_json"]:
-                import json
-
-                visible_breakdown = json.loads(row["visible_breakdown_json"])
-            if visible_breakdown:
-                instructions = build_visible_breakdown_instructions(
-                    visible_breakdown, output_language=output_language
-                )
-            else:
-                db_scores = {dim: row[f"score_{dim}"] for dim in VISION_DIMS}
-                db_scores["exposure"] = row["score_exposure"]
-                db_scores["sharpness"] = row["score_sharpness"]
-                instructions = build_xmp_instructions(
-                    {dim: score for dim, score in db_scores.items() if score is not None},
-                    output_language=output_language,
-                )
-
-            parts = [
-                part
-                for part in [row["commentary_group_issues"], row["commentary_shooting"]]
-                if part
-            ]
-            group_commentary = "\n".join(parts)
-            post_commentary = row["commentary_post"] or ""
-            description = (
-                f"{rank_description(row['group_rank'], row['group_size'], output_language)}\n\n"
-                f"{group_commentary}\n\n{post_commentary}"
-            ).strip()
-
             receipt = None
             try:
+                boosted = bool(row["group_boosted"])
+                subject_tags = self.writer.build_subject_tags(
+                    score=row["total_score"],
+                    rank=row["group_rank"],
+                    group_size=row["group_size"],
+                    group_id=row["group_id"],
+                    boosted=boosted,
+                    decision=row["decision"],
+                )
+                if row["scene"]:
+                    subject_tags.append(f"pj:scene={scene_label(row['scene'], output_language)}")
+
+                visible_breakdown = {}
+                if row["visible_breakdown_json"]:
+                    import json
+
+                    visible_breakdown = json.loads(row["visible_breakdown_json"])
+                if visible_breakdown:
+                    instructions = build_visible_breakdown_instructions(
+                        visible_breakdown, output_language=output_language
+                    )
+                else:
+                    db_scores = {dim: row[f"score_{dim}"] for dim in VISION_DIMS}
+                    db_scores["exposure"] = row["score_exposure"]
+                    db_scores["sharpness"] = row["score_sharpness"]
+                    instructions = build_xmp_instructions(
+                        {dim: score for dim, score in db_scores.items() if score is not None},
+                        output_language=output_language,
+                    )
+
+                parts = [
+                    part
+                    for part in [row["commentary_group_issues"], row["commentary_shooting"]]
+                    if part
+                ]
+                group_commentary = "\n".join(parts)
+                post_commentary = row["commentary_post"] or ""
+                description = (
+                    f"{rank_description(row['group_rank'], row['group_size'], output_language)}\n\n"
+                    f"{group_commentary}\n\n{post_commentary}"
+                ).strip()
+
                 receipt = self._rewrite_xmp_atomically(
                     xmp_path=xmp_path,
                     rating=row["star_rating"],

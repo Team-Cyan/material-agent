@@ -184,3 +184,15 @@ def test_no_resolution_gain_retains_original_quality():
     assert refined["score_total"] == 7
     assert refined["meta"]["refinement"]["status"] == "no_resolution_gain"
     assert refined["meta"]["refinement"]["review_required"] is True
+
+
+def test_invalid_refined_evidence_rolls_back_entire_candidate():
+    original = candidate(7)
+    invalid = {**candidate(1), "meta": {"face_eye_evidence": {"invalid": True}}}
+    result = refine_group(
+        [("a", original)], config={"enabled": True}, refine=Mock(return_value=invalid)
+    )[0][1]
+    assert result["meta"]["refinement"]["status"] == "failed"
+    assert result["score_total"] == 7
+    assert result["scores"] == original["scores"]
+    assert "refinement" not in invalid["meta"]

@@ -182,3 +182,28 @@ def test_review_records_failure_receipt_and_dry_run_only_plans(monkeypatch):
         executor.review_job.write_file("virtual.arw", payload, rank=1, group_id="g", group_size=1)
     assert state.record_xmp_projection.call_args.args[1]["status"] == "failed"
     state.mark_done.assert_not_called()
+
+
+def test_rewrite_malformed_stored_payload_does_not_abort_batch(tmp_path, monkeypatch):
+    repo = SQLiteProcessedRepository(tmp_path)
+    try:
+        repo.conn.executemany(
+            "INSERT INTO processed(file_path,status,total_score,star_rating,group_rank,group_size,decision,visible_breakdown_json) "
+            "VALUES (?,'done',2,1,1,1,'keep',?)",
+            [("a", "not-json"), ("b", "{}")],
+        )
+        repo.conn.commit()
+        service = rewrite.RewriteXmpService(repository=repo)
+        writer = Mock(return_value=xmp.finish_projection(plan()))
+        monkeypatch.setattr(service, "_rewrite_xmp_atomically", writer)
+        assert service.run(str(tmp_path), dry_run=False) == {"ok": 1, "err": 1}
+        writer.assert_called_once()
+        receipts = [
+            (r[0], json.loads(r[1])["status"])
+            for r in repo.conn.execute(
+                "SELECT file_path,receipt_json FROM xmp_projection_ledger ORDER BY id"
+            )
+        ]
+        assert receipts == [("a", "failed"), ("b", "committed")]
+    finally:
+        repo.close()
