@@ -1,0 +1,34 @@
+{
+  "reference_source": "model_generated",
+  "groups": [
+    {
+      "group": 1,
+      "scores": [
+        6.25,
+        6.25,
+        6.25
+      ],
+      "unique_preview_hashes": 3,
+      "top1": "g1i1",
+      "top1_in_both_preferred_sets": true,
+      "order_agreement": true,
+      "pairwise_ties_per_panel": 3,
+      "system_reject_count": 0
+    },
+    {
+      "group": 2,
+      "scores": [
+        6.97,
+        6.97,
+        6.97
+      ],
+      "unique_preview_hashes": 3,
+      "top1": "g2i1",
+      "top1_in_both_preferred_sets": true,
+      "order_agreement": true,
+      "pairwise_ties_per_panel": 3,
+      "system_reject_count": 0
+    }
+  ],
+  "note": "All pairs are ties. No strict-preference accuracy denominator; no model promotion."
+}

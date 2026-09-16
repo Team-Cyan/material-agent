@@ -1,0 +1,133 @@
+{
+  "schema": "material-agent.preselection-rubric.v1",
+  "panel": "B",
+  "groups": [
+    {
+      "group_id": "B1",
+      "readable_ids": [
+        "B11",
+        "B12",
+        "B13"
+      ],
+      "acceptable_keep_ids": [
+        "B11",
+        "B12",
+        "B13"
+      ],
+      "preferred_ids": [
+        "B11",
+        "B12",
+        "B13"
+      ],
+      "quality_findings_by_id": {
+        "B11": [
+          "Tree trunk, branches, distant rock and ground detail are visibly readable without an obvious focus or motion defect.",
+          "Strong sunlight and deep shade produce a dark central trunk and foreground, while the bright path remains largely readable.",
+          "The centered trunk dominates the frame and partially obscures the distant landscape, but the composition still has clear depth and environmental context."
+        ],
+        "B12": [
+          "Tree trunk, branches, distant rock and ground detail are visibly readable without an obvious focus or motion defect.",
+          "Strong sunlight and deep shade produce a dark central trunk and foreground, while the bright path remains largely readable.",
+          "The centered trunk dominates the frame and partially obscures the distant landscape, but the composition still has clear depth and environmental context."
+        ],
+        "B13": [
+          "Tree trunk, branches, distant rock and ground detail are visibly readable without an obvious focus or motion defect.",
+          "Strong sunlight and deep shade produce a dark central trunk and foreground, while the bright path remains largely readable.",
+          "The centered trunk dominates the frame and partially obscures the distant landscape, but the composition still has clear depth and environmental context."
+        ]
+      },
+      "selection_reasons_by_id": {
+        "B11": "Acceptable keep because it is readable and shows the same usable landscape moment as the other candidates; no visible defect establishes a disadvantage.",
+        "B12": "Acceptable keep because it is readable and shows the same usable landscape moment as the other candidates; no visible defect establishes a disadvantage.",
+        "B13": "Acceptable keep because it is readable and shows the same usable landscape moment as the other candidates; no visible defect establishes a disadvantage."
+      },
+      "pairwise_preferences": [
+        {
+          "first_id": "B11",
+          "second_id": "B12",
+          "preference": "tie"
+        },
+        {
+          "first_id": "B11",
+          "second_id": "B13",
+          "preference": "tie"
+        },
+        {
+          "first_id": "B12",
+          "second_id": "B13",
+          "preference": "tie"
+        }
+      ],
+      "uncertainty": [
+        "The three rendered previews appear near-identical in framing, exposure, focus and moment.",
+        "The supplied preview resolution is insufficient to infer tiny detail or RAW-level focus differences, so no single candidate is preferred."
+      ],
+      "errors": []
+    },
+    {
+      "group_id": "B2",
+      "readable_ids": [
+        "B21",
+        "B22",
+        "B23"
+      ],
+      "acceptable_keep_ids": [
+        "B21",
+        "B22",
+        "B23"
+      ],
+      "preferred_ids": [
+        "B21",
+        "B22",
+        "B23"
+      ],
+      "quality_findings_by_id": {
+        "B21": [
+          "The person, face, smile and interaction with the rope structure are clearly visible, with no obvious motion failure.",
+          "The face is moderately soft at preview scale and crossed by a loose strand of hair, but the expression remains readable.",
+          "Dappled sunlight creates strong local contrast and very bright trousers, while the face and clothing retain useful visible detail.",
+          "The rope foreground frames the subject and supports the play-structure context, though its dense knots compete for attention."
+        ],
+        "B22": [
+          "The person, face, smile and interaction with the rope structure are clearly visible, with no obvious motion failure.",
+          "The face is moderately soft at preview scale and crossed by a loose strand of hair, but the expression remains readable.",
+          "Dappled sunlight creates strong local contrast and very bright trousers, while the face and clothing retain useful visible detail.",
+          "The rope foreground frames the subject and supports the play-structure context, though its dense knots compete for attention."
+        ],
+        "B23": [
+          "The person, face, smile and interaction with the rope structure are clearly visible, with no obvious motion failure.",
+          "The face is moderately soft at preview scale and crossed by a loose strand of hair, but the expression remains readable.",
+          "Dappled sunlight creates strong local contrast and very bright trousers, while the face and clothing retain useful visible detail.",
+          "The rope foreground frames the subject and supports the play-structure context, though its dense knots compete for attention."
+        ]
+      },
+      "selection_reasons_by_id": {
+        "B21": "Acceptable keep because it preserves the same readable smiling portrait moment and visible interaction as the other candidates; no reliable visible difference separates it.",
+        "B22": "Acceptable keep because it preserves the same readable smiling portrait moment and visible interaction as the other candidates; no reliable visible difference separates it.",
+        "B23": "Acceptable keep because it preserves the same readable smiling portrait moment and visible interaction as the other candidates; no reliable visible difference separates it."
+      },
+      "pairwise_preferences": [
+        {
+          "first_id": "B21",
+          "second_id": "B22",
+          "preference": "tie"
+        },
+        {
+          "first_id": "B21",
+          "second_id": "B23",
+          "preference": "tie"
+        },
+        {
+          "first_id": "B22",
+          "second_id": "B23",
+          "preference": "tie"
+        }
+      ],
+      "uncertainty": [
+        "The three rendered previews appear near-identical in expression, pose, framing, exposure and focus.",
+        "The supplied preview resolution does not support a reliable ranking of small facial-detail or sharpness differences, so no single candidate is preferred."
+      ],
+      "errors": []
+    }
+  ]
+}

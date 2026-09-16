@@ -1,0 +1,52 @@
+{
+  "license": "CC-BY-SA-4.0",
+  "source": "https://www.hdrplusdata.org/dataset.html",
+  "split": "new evaluation events, no tuning",
+  "images": [
+    {
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106_subset/bursts/0006_20160722_115157_431/payload_N000.dng",
+      "sha256": "9744f7c309c7aa278d470e497126ae58da439910f46c4c09f3021b76586689d9",
+      "size": 6356788,
+      "event": "0006_20160722_115157_431",
+      "file": "payload_N000.dng"
+    },
+    {
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106_subset/bursts/0006_20160722_115157_431/payload_N001.dng",
+      "sha256": "1addfecd85941998c716234bebdeff49b0c4db200aeb80890a42d8cdbe229eb0",
+      "size": 6357852,
+      "event": "0006_20160722_115157_431",
+      "file": "payload_N001.dng"
+    },
+    {
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106_subset/bursts/0006_20160722_115157_431/payload_N002.dng",
+      "sha256": "6d71dce885e463ff93d44161e527ef4b54ec6d753de8e95c6355b9a5e8731a03",
+      "size": 6357806,
+      "event": "0006_20160722_115157_431",
+      "file": "payload_N002.dng"
+    },
+    {
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106_subset/bursts/0006_20160727_185921_651/payload_N000.dng",
+      "sha256": "37a82a206537cc63af0446fdcf0a65f6f47b97b9440c413df554c0f53deb5ed3",
+      "size": 7364102,
+      "event": "0006_20160727_185921_651",
+      "file": "payload_N000.dng"
+    },
+    {
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106_subset/bursts/0006_20160727_185921_651/payload_N001.dng",
+      "sha256": "afed7d4eebcada0035249c6b7a96e7e627a04a0ae5f99d75929d58537d26ec73",
+      "size": 7363162,
+      "event": "0006_20160727_185921_651",
+      "file": "payload_N001.dng"
+    },
+    {
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106_subset/bursts/0006_20160727_185921_651/payload_N002.dng",
+      "sha256": "6d061c1a6d9afab76c35e789f1833bfef8c44f212b2f526d71f8e40f6e7c4338",
+      "size": 7362774,
+      "event": "0006_20160727_185921_651",
+      "file": "payload_N002.dng"
+    }
+  ],
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "attribution": "Samuel W. Hasinoff et al., Burst photography for high dynamic range and low-light imaging on mobile cameras, SIGGRAPH Asia 2016",
+  "rubric_sha256": "08308ae486c2085a7dc5723d5b5d0c64558b7d8205a2eb0c67f152f42dbd9ed2"
+}

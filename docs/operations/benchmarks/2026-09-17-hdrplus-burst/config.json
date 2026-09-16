@@ -1,0 +1,361 @@
+{
+  "backend": "local",
+  "output_language": "zh",
+  "log_level": "info",
+  "commentary_enabled": false,
+  "raw_extensions": [
+    "ARW",
+    "CR3",
+    "NEF",
+    "RAF",
+    "DNG",
+    "ORF",
+    "RW2"
+  ],
+  "legacy": {
+    "enabled": false
+  },
+  "local": {
+    "semantic": {
+      "enabled": false,
+      "enforce_available": false,
+      "cache_revision": "mobileclip2-s0-dfndr2b-v1",
+      "model_name": "MobileCLIP2-S0",
+      "pretrained": "dfndr2b",
+      "device": "cpu",
+      "min_confidence": 0.3
+    },
+    "quality": {
+      "enabled": false,
+      "enforce_available": false,
+      "cache_revision": "quality-priors-v1",
+      "device": "cpu",
+      "policy_version": "quality-priors-v1",
+      "metrics": {
+        "brisque": {
+          "enabled": true,
+          "role": "reject_prior",
+          "lower_better": true,
+          "raw_min": 0.0,
+          "raw_max": 100.0,
+          "weight": 0.5
+        },
+        "niqe": {
+          "enabled": true,
+          "role": "reject_prior",
+          "lower_better": true,
+          "raw_min": 0.0,
+          "raw_max": 10.0,
+          "weight": 0.5
+        },
+        "musiq": {
+          "enabled": false,
+          "role": "quality",
+          "lower_better": false,
+          "raw_min": 0.0,
+          "raw_max": 100.0,
+          "weight": 1.0
+        },
+        "nima": {
+          "enabled": false,
+          "role": "aesthetic",
+          "lower_better": false,
+          "raw_min": 0.0,
+          "raw_max": 10.0,
+          "weight": 0.5
+        },
+        "clipiqa+": {
+          "enabled": false,
+          "role": "aesthetic",
+          "lower_better": false,
+          "raw_min": 0.0,
+          "raw_max": 1.0,
+          "weight": 0.5
+        }
+      }
+    },
+    "aesthetic": {
+      "enabled": false,
+      "enforce_available": false,
+      "runtime": "openvino",
+      "model_name": "nima-aesthetic-mobilenet",
+      "model_version": "litert-community-15308061",
+      "device": "CPU",
+      "model_path": "",
+      "compiled_cache_dir": "~/.material-agent/openvino-cache",
+      "calibration": {
+        "enabled": true,
+        "policy_version": "target-affine-v1",
+        "minimum_label_count": 20,
+        "minimum_target_confidence": 0.6,
+        "pivot": 5.5,
+        "profiles": {}
+      },
+      "result_cache_size": 256,
+      "performance_hint": "THROUGHPUT",
+      "batch_size": 1,
+      "max_in_flight": 8,
+      "infer_requests": "auto"
+    },
+    "embedding": {
+      "enabled": false,
+      "enforce_available": false,
+      "runtime": "transformers",
+      "model_name": "facebook/dinov2-small",
+      "model_revision": "ed25f3a31f01632728cabb09d1542f84ab7b0056",
+      "device": "cpu",
+      "model_path": "",
+      "processor_path": "",
+      "compiled_cache_dir": "~/.material-agent/openvino-cache",
+      "result_cache_size": 256,
+      "performance_hint": "THROUGHPUT",
+      "batch_size": 1,
+      "max_in_flight": 8,
+      "infer_requests": "auto",
+      "allow_batch_fallback": true
+    },
+    "face": {
+      "enabled": false,
+      "enforce_available": false,
+      "cache_revision": "face-landmarker-v1",
+      "model_asset_path": "~/.material-agent/models/face_landmarker.task",
+      "num_faces": 5,
+      "min_detection_confidence": 0.5
+    },
+    "detection": {
+      "enabled": false,
+      "enforce_available": false,
+      "runtime": "openvino",
+      "model_name": "ssd-mobilenet-v1-12",
+      "model_version": "onnxmodelzoo-opset12",
+      "device": "CPU",
+      "fallback_device": "CPU",
+      "model_path": "",
+      "face_model_path": "",
+      "compiled_cache_dir": "~/.material-agent/openvino-cache",
+      "input_size": 320,
+      "score_threshold": 0.3,
+      "max_results": 10,
+      "face_score_threshold": 0.6
+    }
+  },
+  "inference": {
+    "runtime": "openvino",
+    "device": "CPU",
+    "fallback_device": "CPU",
+    "model_cache_dir": "~/.material-agent/models",
+    "provider_tags": [
+      "intel-openvino",
+      "cpu"
+    ],
+    "enforce_available": false
+  },
+  "grouping": {
+    "enabled": true,
+    "time_gap_seconds": 30,
+    "hash_threshold": 10,
+    "best_candidate_review": {
+      "enabled": true
+    },
+    "visual_similarity": {
+      "enabled": false,
+      "hash_threshold": 10,
+      "max_merge_gap_minutes": 10
+    },
+    "embedding_similarity": {
+      "enabled": false,
+      "threshold": 0.85
+    }
+  },
+  "preview": {
+    "prefer_embedded": true,
+    "max_size": 1024,
+    "focus_max_size": 2048,
+    "jpeg_quality": 85
+  },
+  "focus_integrity": {
+    "enabled": true,
+    "mode": "subject_roi",
+    "downscale_warning_ratio": 3.0,
+    "roi_expand_ratio": 0.12,
+    "eye_roi_ratio": 0.16,
+    "global_blur_reject_below": 0.25,
+    "selective_refinement": {
+      "enabled": false,
+      "max_candidates": 2,
+      "max_seconds": 5.0,
+      "score_gap": 0.5,
+      "focus_max_size": 3072
+    }
+  },
+  "portrait_face_eye": {
+    "enabled": false
+  },
+  "scorers": {
+    "exposure": {
+      "enabled": true,
+      "weight": 0.25,
+      "min_score": 0.0,
+      "overexpose_threshold": 0.02,
+      "overexpose_hard_limit": 2.0,
+      "underexpose_threshold": 0.2,
+      "underexpose_hard_limit": 2.0
+    },
+    "sharpness": {
+      "enabled": true,
+      "weight": 0.2,
+      "min_score": 0.0,
+      "min_variance": 50,
+      "max_variance": 1000
+    },
+    "subject": {
+      "enabled": true
+    },
+    "composition": {
+      "enabled": true
+    },
+    "lighting": {
+      "enabled": true
+    },
+    "color": {
+      "enabled": true
+    },
+    "clarity": {
+      "enabled": true
+    },
+    "depth": {
+      "enabled": true
+    },
+    "mood": {
+      "enabled": true
+    }
+  },
+  "score_policy": {
+    "revision": "score-policy-v2"
+  },
+  "screening": {
+    "enabled": false,
+    "backend": "musiq",
+    "tier1_threshold": 0.5,
+    "tier2_threshold": 0.25,
+    "musiq": {
+      "metric": "musiq",
+      "device": "cpu",
+      "score_divisor": 10.0,
+      "python_bin": "~/.material-agent/musiq-venv/bin/python",
+      "helper_timeout_seconds": 120.0
+    }
+  },
+  "review_pipeline": {
+    "score_prefetch_window": 2
+  },
+  "decision_policy": {
+    "keep_threshold": 7.5,
+    "review_threshold": 5.5,
+    "hard_reject": {
+      "technical_quality_below": 1.5,
+      "subject_focus_below": 1.5
+    }
+  },
+  "screening_policy": {
+    "weight": 0.1
+  },
+  "scene_profiles": {
+    "default": {
+      "aesthetic_weights": {
+        "subject_moment": 0.2169,
+        "composition": 0.2048,
+        "lighting": 0.1928,
+        "color": 0.1687,
+        "depth_separation": 0.0964,
+        "mood_story": 0.1205
+      }
+    },
+    "people": {
+      "aesthetic_weights": {
+        "subject_moment": 0.35,
+        "composition": 0.1875,
+        "lighting": 0.1875,
+        "color": 0.125,
+        "depth_separation": 0.0625,
+        "mood_story": 0.0875
+      }
+    },
+    "sports": {
+      "aesthetic_weights": {
+        "subject_moment": 0.3333,
+        "composition": 0.1733,
+        "lighting": 0.16,
+        "color": 0.1067,
+        "depth_separation": 0.0933,
+        "mood_story": 0.1333
+      }
+    },
+    "landscape": {
+      "aesthetic_weights": {
+        "subject_moment": 0.0909,
+        "composition": 0.25,
+        "lighting": 0.2273,
+        "color": 0.2045,
+        "depth_separation": 0.1364,
+        "mood_story": 0.0909
+      }
+    },
+    "city": {
+      "aesthetic_weights": {
+        "subject_moment": 0.1136,
+        "composition": 0.25,
+        "lighting": 0.2045,
+        "color": 0.1591,
+        "depth_separation": 0.1364,
+        "mood_story": 0.1364
+      }
+    },
+    "indoor": {
+      "aesthetic_weights": {
+        "subject_moment": 0.2353,
+        "composition": 0.2,
+        "lighting": 0.2353,
+        "color": 0.1647,
+        "depth_separation": 0.0588,
+        "mood_story": 0.1059
+      }
+    },
+    "detail": {
+      "aesthetic_weights": {
+        "subject_moment": 0.2439,
+        "composition": 0.2439,
+        "lighting": 0.1951,
+        "color": 0.1951,
+        "depth_separation": 0.061,
+        "mood_story": 0.061
+      }
+    },
+    "animals": {
+      "aesthetic_weights": {
+        "subject_moment": 0.359,
+        "composition": 0.1795,
+        "lighting": 0.1795,
+        "color": 0.1282,
+        "depth_separation": 0.0641,
+        "mood_story": 0.0897
+      }
+    },
+    "other": {
+      "aesthetic_weights": {
+        "subject_moment": 0.2169,
+        "composition": 0.2048,
+        "lighting": 0.1928,
+        "color": 0.1687,
+        "depth_separation": 0.0964,
+        "mood_story": 0.1205
+      }
+    }
+  },
+  "model_management": {
+    "selection_enabled": false,
+    "registry_dir": "~/.material-agent/models",
+    "catalog_path": ""
+  },
+  "xmp": {}
+}

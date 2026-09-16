@@ -1,0 +1,572 @@
+[
+  {
+    "group": 1,
+    "results": {
+      "g1i1": {
+        "score_total": 6.25,
+        "scores": {
+          "sharpness": 6.976274227878272,
+          "exposure": 6.227094477686014,
+          "subject": 5.47,
+          "composition": 6.91,
+          "lighting": 4.59,
+          "color": 5.32,
+          "clarity": 6.38,
+          "depth": 6.35,
+          "mood": 5.42
+        },
+        "decision": "keep",
+        "decision_reasons": [
+          "group_coverage_fallback"
+        ],
+        "scene": "other",
+        "meta": {
+          "preview_source": "raw_postprocess",
+          "focus_assessment": "subject_roi_preview",
+          "focus_preview_size": [
+            1518,
+            2024
+          ],
+          "original_size": [
+            4048,
+            3036
+          ],
+          "preview_size": [
+            768,
+            1023
+          ],
+          "preview_downscale_ratio": 3.957,
+          "overexpose_ratio": 0.0059147421798631476,
+          "underexpose_ratio": 0.04830945544151189,
+          "luma_p5": 0.04313725605607033,
+          "luma_p50": 0.12156862765550613,
+          "luma_p95": 0.5647059082984924,
+          "luma_span": 0.5215686522424221,
+          "exposure_scene": "other",
+          "laplacian_variance": 712.7460516484358,
+          "scoring_mode": "heuristic",
+          "runtime": "cpu",
+          "runtime_components": [
+            "cpu"
+          ],
+          "configured_runtime": "cpu",
+          "timing": {
+            "local_heuristic_seconds": 0.03555
+          },
+          "subject_focus": {
+            "mode": "subject_roi",
+            "score": 8.6837,
+            "global_blur_score": 10.0,
+            "subject_focus_score": 8.6837,
+            "eye_focus_score": null,
+            "global_laplacian_variance": 1134.65006,
+            "subject_laplacian_variance": 1054.214084,
+            "eye_laplacian_variances": [],
+            "face_bbox": null,
+            "bbox": [
+              0.191239,
+              0.292177,
+              0.786439,
+              0.887377
+            ],
+            "source": "saliency_fallback",
+            "confidence": 0.35,
+            "global_blur_guard_failed": false,
+            "timing_seconds": 0.022587
+          },
+          "face_eye_evidence": {
+            "version": 1,
+            "status": "unknown",
+            "value": null,
+            "source": "unavailable",
+            "reason": "no_reliable_eye_measurement_or_context"
+          },
+          "quality_assessment": {
+            "version": 1,
+            "decision": "review",
+            "reasons": []
+          },
+          "selection": {
+            "version": 1,
+            "decision": "keep",
+            "role": "group_coverage",
+            "reasons": [
+              "group_coverage_fallback"
+            ]
+          }
+        },
+        "jpeg_sha256": "5aea46f2d22270f1139e54eb5e824b272aa879727277ed97900246f62be014e3",
+        "seconds": 0.07913274993188679
+      },
+      "g1i2": {
+        "score_total": 6.25,
+        "scores": {
+          "sharpness": 6.9687991542563,
+          "exposure": 6.227094477686014,
+          "subject": 5.48,
+          "composition": 6.91,
+          "lighting": 4.59,
+          "color": 5.32,
+          "clarity": 6.38,
+          "depth": 6.35,
+          "mood": 5.42
+        },
+        "decision": "review",
+        "decision_reasons": [],
+        "scene": "other",
+        "meta": {
+          "preview_source": "raw_postprocess",
+          "focus_assessment": "subject_roi_preview",
+          "focus_preview_size": [
+            1518,
+            2024
+          ],
+          "original_size": [
+            4048,
+            3036
+          ],
+          "preview_size": [
+            768,
+            1023
+          ],
+          "preview_downscale_ratio": 3.957,
+          "overexpose_ratio": 0.005927470267188009,
+          "underexpose_ratio": 0.04824326938742261,
+          "luma_p5": 0.04313725605607033,
+          "luma_p50": 0.12156862765550613,
+          "luma_p95": 0.5647059082984924,
+          "luma_span": 0.5215686522424221,
+          "exposure_scene": "other",
+          "laplacian_variance": 712.0359196543485,
+          "scoring_mode": "heuristic",
+          "runtime": "cpu",
+          "runtime_components": [
+            "cpu"
+          ],
+          "configured_runtime": "cpu",
+          "timing": {
+            "local_heuristic_seconds": 0.022776
+          },
+          "subject_focus": {
+            "mode": "subject_roi",
+            "score": 8.6846,
+            "global_blur_score": 10.0,
+            "subject_focus_score": 8.6846,
+            "eye_focus_score": null,
+            "global_laplacian_variance": 1137.342373,
+            "subject_laplacian_variance": 1057.749165,
+            "eye_laplacian_variances": [],
+            "face_bbox": null,
+            "bbox": [
+              0.191108,
+              0.291755,
+              0.786308,
+              0.886955
+            ],
+            "source": "saliency_fallback",
+            "confidence": 0.35,
+            "global_blur_guard_failed": false,
+            "timing_seconds": 0.015487
+          },
+          "face_eye_evidence": {
+            "version": 1,
+            "status": "unknown",
+            "value": null,
+            "source": "unavailable",
+            "reason": "no_reliable_eye_measurement_or_context"
+          },
+          "quality_assessment": {
+            "version": 1,
+            "decision": "review",
+            "reasons": []
+          },
+          "selection": {
+            "version": 1,
+            "decision": "review",
+            "role": "quality_policy",
+            "reasons": []
+          }
+        },
+        "jpeg_sha256": "f6c43a69289527bde4ae69d9ca838e226861d69219f07e5a8b8f369eb172f3f3",
+        "seconds": 0.05197308398783207
+      },
+      "g1i3": {
+        "score_total": 6.25,
+        "scores": {
+          "sharpness": 6.9656080232128375,
+          "exposure": 6.227094477686014,
+          "subject": 5.47,
+          "composition": 6.91,
+          "lighting": 4.59,
+          "color": 5.32,
+          "clarity": 6.38,
+          "depth": 6.35,
+          "mood": 5.42
+        },
+        "decision": "review",
+        "decision_reasons": [],
+        "scene": "other",
+        "meta": {
+          "preview_source": "raw_postprocess",
+          "focus_assessment": "subject_roi_preview",
+          "focus_preview_size": [
+            1518,
+            2024
+          ],
+          "original_size": [
+            4048,
+            3036
+          ],
+          "preview_size": [
+            768,
+            1023
+          ],
+          "preview_downscale_ratio": 3.957,
+          "overexpose_ratio": 0.005932561502117953,
+          "underexpose_ratio": 0.048392188009123496,
+          "luma_p5": 0.04313725605607033,
+          "luma_p50": 0.12156862765550613,
+          "luma_p95": 0.5647059082984924,
+          "luma_span": 0.5215686522424221,
+          "exposure_scene": "other",
+          "laplacian_variance": 711.7327622052195,
+          "scoring_mode": "heuristic",
+          "runtime": "cpu",
+          "runtime_components": [
+            "cpu"
+          ],
+          "configured_runtime": "cpu",
+          "timing": {
+            "local_heuristic_seconds": 0.022195
+          },
+          "subject_focus": {
+            "mode": "subject_roi",
+            "score": 8.6723,
+            "global_blur_score": 10.0,
+            "subject_focus_score": 8.6723,
+            "eye_focus_score": null,
+            "global_laplacian_variance": 1135.54609,
+            "subject_laplacian_variance": 1041.823602,
+            "eye_laplacian_variances": [],
+            "face_bbox": null,
+            "bbox": [
+              0.192276,
+              0.29156,
+              0.787476,
+              0.88676
+            ],
+            "source": "saliency_fallback",
+            "confidence": 0.35,
+            "global_blur_guard_failed": false,
+            "timing_seconds": 0.015436
+          },
+          "face_eye_evidence": {
+            "version": 1,
+            "status": "unknown",
+            "value": null,
+            "source": "unavailable",
+            "reason": "no_reliable_eye_measurement_or_context"
+          },
+          "quality_assessment": {
+            "version": 1,
+            "decision": "review",
+            "reasons": []
+          },
+          "selection": {
+            "version": 1,
+            "decision": "review",
+            "role": "quality_policy",
+            "reasons": []
+          }
+        },
+        "jpeg_sha256": "54401f4e4943d3376d38b2b47912da6ae9f82edf5b0040be7e61f21b2cfc0c24",
+        "seconds": 0.05089383292943239
+      }
+    }
+  },
+  {
+    "group": 2,
+    "results": {
+      "g2i1": {
+        "score_total": 6.97,
+        "scores": {
+          "sharpness": 7.014812961738526,
+          "exposure": 8.733333573558113,
+          "subject": 5.95,
+          "composition": 6.84,
+          "lighting": 5.8,
+          "color": 5.57,
+          "clarity": 6.5,
+          "depth": 6.24,
+          "mood": 5.87
+        },
+        "decision": "keep",
+        "decision_reasons": [
+          "group_coverage_fallback"
+        ],
+        "scene": "other",
+        "meta": {
+          "preview_source": "raw_postprocess",
+          "focus_assessment": "subject_roi_preview",
+          "focus_preview_size": [
+            2024,
+            1518
+          ],
+          "original_size": [
+            4048,
+            3036
+          ],
+          "preview_size": [
+            1023,
+            768
+          ],
+          "preview_downscale_ratio": 3.957,
+          "overexpose_ratio": 0.004165902981427175,
+          "underexpose_ratio": 0.0027034457478005867,
+          "luma_p5": 0.08235294371843338,
+          "luma_p50": 0.2666666805744171,
+          "luma_p95": 0.6431372761726379,
+          "luma_span": 0.5607843324542046,
+          "exposure_scene": "other",
+          "laplacian_variance": 716.40723136516,
+          "scoring_mode": "heuristic",
+          "runtime": "cpu",
+          "runtime_components": [
+            "cpu"
+          ],
+          "configured_runtime": "cpu",
+          "timing": {
+            "local_heuristic_seconds": 0.023294
+          },
+          "subject_focus": {
+            "mode": "subject_roi",
+            "score": 8.7573,
+            "global_blur_score": 10.0,
+            "subject_focus_score": 8.7573,
+            "eye_focus_score": null,
+            "global_laplacian_variance": 1335.452835,
+            "subject_laplacian_variance": 1346.267112,
+            "eye_laplacian_variances": [],
+            "face_bbox": null,
+            "bbox": [
+              0.309315,
+              0.174436,
+              0.904515,
+              0.769636
+            ],
+            "source": "saliency_fallback",
+            "confidence": 0.35,
+            "global_blur_guard_failed": false,
+            "timing_seconds": 0.012381
+          },
+          "face_eye_evidence": {
+            "version": 1,
+            "status": "unknown",
+            "value": null,
+            "source": "unavailable",
+            "reason": "no_reliable_eye_measurement_or_context"
+          },
+          "quality_assessment": {
+            "version": 1,
+            "decision": "review",
+            "reasons": []
+          },
+          "selection": {
+            "version": 1,
+            "decision": "keep",
+            "role": "group_coverage",
+            "reasons": [
+              "group_coverage_fallback"
+            ]
+          }
+        },
+        "jpeg_sha256": "06e101e8e9828ae384fb79b2bc1f69078ce99b0127b33cdbfddab570a745cbf8",
+        "seconds": 0.05050729191862047
+      },
+      "g2i2": {
+        "score_total": 6.97,
+        "scores": {
+          "sharpness": 7.005334297688978,
+          "exposure": 8.733333573558113,
+          "subject": 5.95,
+          "composition": 6.84,
+          "lighting": 5.8,
+          "color": 5.57,
+          "clarity": 6.5,
+          "depth": 6.24,
+          "mood": 5.87
+        },
+        "decision": "review",
+        "decision_reasons": [],
+        "scene": "other",
+        "meta": {
+          "preview_source": "raw_postprocess",
+          "focus_assessment": "subject_roi_preview",
+          "focus_preview_size": [
+            2024,
+            1518
+          ],
+          "original_size": [
+            4048,
+            3036
+          ],
+          "preview_size": [
+            1023,
+            768
+          ],
+          "preview_downscale_ratio": 3.957,
+          "overexpose_ratio": 0.0041862679211469534,
+          "underexpose_ratio": 0.0027276291137178234,
+          "luma_p5": 0.08235294371843338,
+          "luma_p50": 0.2666666805744171,
+          "luma_p95": 0.6431372761726379,
+          "luma_span": 0.5607843324542046,
+          "exposure_scene": "other",
+          "laplacian_variance": 715.5067582804529,
+          "scoring_mode": "heuristic",
+          "runtime": "cpu",
+          "runtime_components": [
+            "cpu"
+          ],
+          "configured_runtime": "cpu",
+          "timing": {
+            "local_heuristic_seconds": 0.022719
+          },
+          "subject_focus": {
+            "mode": "subject_roi",
+            "score": 8.7513,
+            "global_blur_score": 10.0,
+            "subject_focus_score": 8.7513,
+            "eye_focus_score": null,
+            "global_laplacian_variance": 1337.299488,
+            "subject_laplacian_variance": 1339.266998,
+            "eye_laplacian_variances": [],
+            "face_bbox": null,
+            "bbox": [
+              0.308386,
+              0.174636,
+              0.903586,
+              0.769836
+            ],
+            "source": "saliency_fallback",
+            "confidence": 0.35,
+            "global_blur_guard_failed": false,
+            "timing_seconds": 0.013113
+          },
+          "face_eye_evidence": {
+            "version": 1,
+            "status": "unknown",
+            "value": null,
+            "source": "unavailable",
+            "reason": "no_reliable_eye_measurement_or_context"
+          },
+          "quality_assessment": {
+            "version": 1,
+            "decision": "review",
+            "reasons": []
+          },
+          "selection": {
+            "version": 1,
+            "decision": "review",
+            "role": "quality_policy",
+            "reasons": []
+          }
+        },
+        "jpeg_sha256": "e9dad412cc76aee0a978ce6569175570cbf17d92baacdaece18f387a03dd402d",
+        "seconds": 0.049002416897565126
+      },
+      "g2i3": {
+        "score_total": 6.97,
+        "scores": {
+          "sharpness": 6.94117780758059,
+          "exposure": 8.733333573558113,
+          "subject": 5.95,
+          "composition": 6.84,
+          "lighting": 5.79,
+          "color": 5.57,
+          "clarity": 6.49,
+          "depth": 6.24,
+          "mood": 5.87
+        },
+        "decision": "review",
+        "decision_reasons": [],
+        "scene": "other",
+        "meta": {
+          "preview_source": "raw_postprocess",
+          "focus_assessment": "subject_roi_preview",
+          "focus_preview_size": [
+            2024,
+            1518
+          ],
+          "original_size": [
+            4048,
+            3036
+          ],
+          "preview_size": [
+            1023,
+            768
+          ],
+          "preview_downscale_ratio": 3.957,
+          "overexpose_ratio": 0.004174812642554578,
+          "underexpose_ratio": 0.0027810870804822418,
+          "luma_p5": 0.08235294371843338,
+          "luma_p50": 0.2666666805744171,
+          "luma_p95": 0.6431372761726379,
+          "luma_span": 0.5607843324542046,
+          "exposure_scene": "other",
+          "laplacian_variance": 709.4118917201561,
+          "scoring_mode": "heuristic",
+          "runtime": "cpu",
+          "runtime_components": [
+            "cpu"
+          ],
+          "configured_runtime": "cpu",
+          "timing": {
+            "local_heuristic_seconds": 0.023706
+          },
+          "subject_focus": {
+            "mode": "subject_roi",
+            "score": 8.7603,
+            "global_blur_score": 10.0,
+            "subject_focus_score": 8.7603,
+            "eye_focus_score": null,
+            "global_laplacian_variance": 1328.3912,
+            "subject_laplacian_variance": 1343.667282,
+            "eye_laplacian_variances": [],
+            "face_bbox": null,
+            "bbox": [
+              0.306651,
+              0.171876,
+              0.901851,
+              0.767076
+            ],
+            "source": "saliency_fallback",
+            "confidence": 0.35,
+            "global_blur_guard_failed": false,
+            "timing_seconds": 0.01336
+          },
+          "face_eye_evidence": {
+            "version": 1,
+            "status": "unknown",
+            "value": null,
+            "source": "unavailable",
+            "reason": "no_reliable_eye_measurement_or_context"
+          },
+          "quality_assessment": {
+            "version": 1,
+            "decision": "review",
+            "reasons": []
+          },
+          "selection": {
+            "version": 1,
+            "decision": "review",
+            "role": "quality_policy",
+            "reasons": []
+          }
+        },
+        "jpeg_sha256": "610ecbaad89f4471b75616e60aa08bbcf83b42a62adadd1179101bd08cb33cc0",
+        "seconds": 0.05250508291646838
+      }
+    }
+  }
+]

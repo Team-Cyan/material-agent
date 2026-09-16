@@ -1,0 +1,32 @@
+[
+  {
+    "event": "0006_20160722_115157_431",
+    "file": "payload_N000.dng",
+    "thumbnail": "LibRawNoThumbnailError"
+  },
+  {
+    "event": "0006_20160722_115157_431",
+    "file": "payload_N001.dng",
+    "thumbnail": "LibRawNoThumbnailError"
+  },
+  {
+    "event": "0006_20160722_115157_431",
+    "file": "payload_N002.dng",
+    "thumbnail": "LibRawNoThumbnailError"
+  },
+  {
+    "event": "0006_20160727_185921_651",
+    "file": "payload_N000.dng",
+    "thumbnail": "LibRawNoThumbnailError"
+  },
+  {
+    "event": "0006_20160727_185921_651",
+    "file": "payload_N001.dng",
+    "thumbnail": "LibRawNoThumbnailError"
+  },
+  {
+    "event": "0006_20160727_185921_651",
+    "file": "payload_N002.dng",
+    "thumbnail": "LibRawNoThumbnailError"
+  }
+]

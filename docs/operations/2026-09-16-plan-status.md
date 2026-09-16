@@ -1,7 +1,7 @@
 # Audited implementation status, 2026-09-16
 
 This separates the completed bounded inference task from the broader product
-plan in the September 14 design decisions. Status is based on current code and
+plan in the September 14 design decisions. Updated through the September 17 review continuation. Status is based on current code and
 local tests, not on the roadmap's historical deployment summaries.
 
 ## Current product rule and execution boundary
@@ -12,9 +12,9 @@ all-pairs or same-action veto. The previous strict semantic grouping requirement
 has been superseded by the user; do not treat it as unfinished implementation.
 The broader distinction between image quality and selection role still matters.
 
-Preserve the dirty checkout. No commit, push, deployment, production review,
-photo/XMP write, private-host mutation or existing-database migration has been
-performed in this continuation. In-memory XML and mocked command construction
+Local commits are authorized and have been made in reviewed batches. No push,
+deployment, production review, source-photo/XMP write, private-host mutation or
+existing-database migration has been performed in this continuation. In-memory XML and mocked command construction
 are permitted local verification; they are not physical interoperability proof.
 
 ## Completion audit
@@ -30,12 +30,12 @@ are permitted local verification; they are not physical interoperability proof.
 | D03 missing/zero rating and keywords | Implemented locally in this continuation | Ordinary write and rewrite protect nonzero ratings; malformed/duplicate declarations fail; exact visible keep/reject projection; 36 no-write policy/integration tests |
 | D03 import/effective/write ledger | Implemented for projection attempts locally | Versioned imported/requested/planned/effective fields, unknown authorship, nonzero conflicts and field outcomes; independent append-only ledger survives processed errors; rewrite persists receipts and scalar ownership. External change watching and crash reconciliation are not implemented |
 | D04 professional-software handoff | Unverified | No actual Bridge/Camera Raw/Photoshop or Capture One readback/writeback matrix has been run here; real XMP writes remain outside current authorization |
-| D05 evidence applicability and selective refinement | Implemented locally; refinement opt-in | Explicit observed/unknown/context-supported not_applicable; generic eye proxies removed. One-pass candidate/time/size bounds, baseline retention, no-resolution-gain guard and review reasons tested. Six real public RAWs show no larger half-size focus image, so refinement stays disabled pending quality acceptance |
+| D05 evidence applicability and selective refinement | Implemented locally; refinement opt-in | Observed/unknown implemented; context-supported not_applicable is a consumer contract with no local context producer. Generic eye proxies removed. One-pass candidate/time/size bounds, baseline retention, no-resolution-gain guard and review reasons tested. Six real public RAWs show no larger half-size focus image, so refinement stays disabled pending quality acceptance |
 | D06 remaining model experiments/fusion | Not executed | TOPIQ/MUSIQ/MediaPipe/other candidates need separate frozen task-relevant datasets and resource comparisons. Stanford40 action labels do not validate technical quality or personal preference. No production fusion added |
 | D07 state/container resilience | Existing implementation, target revalidation outstanding | Appdata paths and state tests exist. No live backup/restore/container recreation or library-relocation migration was performed here; keep those separate from local code proof |
-| D08 GPT proxy acceptance | Controlled pilot complete; full acceptance pending | Two fresh-context Codex panels each viewed 12 controlled candidates. Baseline and reversed-order preferences agree 6/6; zero false rejects among 6 proxy-acceptable candidates per panel. Real event-disjoint burst holdout and missing case categories remain unverified. [Report](benchmarks/2026-09-16-codex-blind-pilot/report.md) |
+| D08 GPT proxy acceptance | Controlled pilot complete; full acceptance pending | Two fresh-context Codex panels each viewed 12 controlled candidates. Baseline and reversed-order preferences agree 6/6; zero false rejects among 6 proxy-acceptable candidates per panel. Two new HDR+ event groups were evaluated on September 17 with tied blind preferences; default RAW hashing fails for their missing thumbnails. Larger event holdout and missing case categories remain unverified. [Report](benchmarks/2026-09-16-codex-blind-pilot/report.md) |
 
-## Work completed in this continuation
+## Historical September 16 projection batch
 
 `exiftool_xmp.py` now checks all rating declarations before building an update.
 Only missing or numeric-zero values permit a Rating argument. Any nonzero
@@ -56,7 +56,7 @@ metadata, and omits an untouched external rating from `xmp_payload_json`'s
 AI-owned fields. The receipt is emitted only after atomic replacement succeeds.
 This is not a claim that an existing rating was authored by a human.
 
-Verification:
+Verification for that historical batch (not the latest suite):
 
 - `PYTHONPATH="$PWD/tests" PYTEST_PLUGINS=inference_readonly_guard uv run --no-sync pytest -q tests/test_xmp_projection_policy.py`: **36 passed**.
 - Full guarded suite: **703 passed, 102 skipped in 19.58 s**. Source/XMP-writing
@@ -77,9 +77,9 @@ Verification:
    a RAW half-size decode is not automatically a higher-resolution observation.
 4. Rubric v1 is frozen; see [acceptance preflight](2026-09-16-preselection-acceptance-preflight.md).
    The controlled pilot and opposite-order Codex reviews are complete; the real
-   burst holdout remains unavailable. Photo Triage is
-   task-relevant but its official download service failed this access check.
-   Run blinded/order-reversal comparison only after those inputs are available.
+   burst acceptance remains incomplete. A September 17 HDR+ real-burst subset
+   adds new-event evaluation; see the follow-up report linked below. Photo Triage
+   remains task-relevant but its official download service failed the access check.
 5. Run further model candidates individually only against a matching frozen
    benchmark. Personal ranker training still requires genuine preference labels.
 6. Separately authorize and verify professional-software round trips and target
@@ -88,3 +88,10 @@ Verification:
 The plan is therefore **not fully complete**. The original inference task is
 complete; the broader business closure and external acceptance remain explicit
 work items rather than being hidden behind a generic “production ready” label.
+
+## September 17 follow-up
+
+See [review and real-burst evidence](2026-09-17-follow-up-validation.md) for shared
+rewrite preflight, conservative refinement guards, actual context-producer limits,
+new public data, and the latest dated verification. Earlier test counts above are
+historical batch evidence and must not be read as the current total.

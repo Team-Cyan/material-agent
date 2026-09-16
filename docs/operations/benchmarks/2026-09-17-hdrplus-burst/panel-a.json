@@ -1,0 +1,124 @@
+{
+  "schema": "material-agent.preselection-rubric.v1",
+  "panel": "A",
+  "groups": [
+    {
+      "group_id": "A1",
+      "readable_ids": [
+        "A11",
+        "A12",
+        "A13"
+      ],
+      "acceptable_keep_ids": [
+        "A11",
+        "A12",
+        "A13"
+      ],
+      "preferred_ids": [
+        "A11",
+        "A12",
+        "A13"
+      ],
+      "quality_findings_by_id": {
+        "A11": {
+          "evidence": "Readable landscape frame with a sharply defined central tree, visible bark and foliage detail, a saturated blue sky, and preserved sunlit rock detail.",
+          "defects": "Deep foreground and trunk shadows obscure some detail; the large tree is tightly cropped at the top.",
+          "uncertainty": "No visible preview-level distinction in focus, exposure, composition, or moment from A12 and A13."
+        },
+        "A12": {
+          "evidence": "Readable landscape frame with a sharply defined central tree, visible bark and foliage detail, a saturated blue sky, and preserved sunlit rock detail.",
+          "defects": "Deep foreground and trunk shadows obscure some detail; the large tree is tightly cropped at the top.",
+          "uncertainty": "No visible preview-level distinction in focus, exposure, composition, or moment from A11 and A13."
+        },
+        "A13": {
+          "evidence": "Readable landscape frame with a sharply defined central tree, visible bark and foliage detail, a saturated blue sky, and preserved sunlit rock detail.",
+          "defects": "Deep foreground and trunk shadows obscure some detail; the large tree is tightly cropped at the top.",
+          "uncertainty": "No visible preview-level distinction in focus, exposure, composition, or moment from A11 and A12."
+        }
+      },
+      "selection_reasons_by_id": {
+        "A11": "Acceptable keep and co-preferred because no reliable visible quality difference separates it from the other two candidates.",
+        "A12": "Acceptable keep and co-preferred because no reliable visible quality difference separates it from the other two candidates.",
+        "A13": "Acceptable keep and co-preferred because no reliable visible quality difference separates it from the other two candidates."
+      },
+      "pairwise_preferences": [
+        {
+          "first_id": "A11",
+          "second_id": "A12",
+          "preference": "tie"
+        },
+        {
+          "first_id": "A11",
+          "second_id": "A13",
+          "preference": "tie"
+        },
+        {
+          "first_id": "A12",
+          "second_id": "A13",
+          "preference": "tie"
+        }
+      ],
+      "uncertainty": "The three supplied previews appear effectively identical. Tiny RAW-level focus, motion, or tonal differences cannot be inferred from these previews.",
+      "errors": []
+    },
+    {
+      "group_id": "A2",
+      "readable_ids": [
+        "A21",
+        "A22",
+        "A23"
+      ],
+      "acceptable_keep_ids": [
+        "A21",
+        "A22",
+        "A23"
+      ],
+      "preferred_ids": [
+        "A21",
+        "A22",
+        "A23"
+      ],
+      "quality_findings_by_id": {
+        "A21": {
+          "evidence": "Readable environmental portrait with a clear smiling expression, visible eyes and facial features, and adequate subject and rope detail.",
+          "defects": "The foreground rope network and central post make the composition busy; directional light leaves part of the face in shadow and creates a bright patch on the trousers.",
+          "uncertainty": "No visible preview-level distinction in focus, exposure, composition, expression, or pose from A22 and A23."
+        },
+        "A22": {
+          "evidence": "Readable environmental portrait with a clear smiling expression, visible eyes and facial features, and adequate subject and rope detail.",
+          "defects": "The foreground rope network and central post make the composition busy; directional light leaves part of the face in shadow and creates a bright patch on the trousers.",
+          "uncertainty": "No visible preview-level distinction in focus, exposure, composition, expression, or pose from A21 and A23."
+        },
+        "A23": {
+          "evidence": "Readable environmental portrait with a clear smiling expression, visible eyes and facial features, and adequate subject and rope detail.",
+          "defects": "The foreground rope network and central post make the composition busy; directional light leaves part of the face in shadow and creates a bright patch on the trousers.",
+          "uncertainty": "No visible preview-level distinction in focus, exposure, composition, expression, or pose from A21 and A22."
+        }
+      },
+      "selection_reasons_by_id": {
+        "A21": "Acceptable keep and co-preferred because the visible portrait moment is good and no reliable quality difference separates it from the other two candidates.",
+        "A22": "Acceptable keep and co-preferred because the visible portrait moment is good and no reliable quality difference separates it from the other two candidates.",
+        "A23": "Acceptable keep and co-preferred because the visible portrait moment is good and no reliable quality difference separates it from the other two candidates."
+      },
+      "pairwise_preferences": [
+        {
+          "first_id": "A21",
+          "second_id": "A22",
+          "preference": "tie"
+        },
+        {
+          "first_id": "A21",
+          "second_id": "A23",
+          "preference": "tie"
+        },
+        {
+          "first_id": "A22",
+          "second_id": "A23",
+          "preference": "tie"
+        }
+      ],
+      "uncertainty": "The three supplied previews appear effectively identical. Tiny RAW-level focus, motion, eye-detail, or tonal differences cannot be inferred from these previews.",
+      "errors": []
+    }
+  ]
+}
