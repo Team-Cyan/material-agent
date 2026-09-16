@@ -1,67 +1,23 @@
 # AGENTS.md
 
-This file is the repository entrypoint for coding agents.
+Repository entrypoint for coding agents. Keep reusable guidance in `docs/ai/` and `.agents/` as thin routing helpers.
 
-Keep this file short. Treat it as a table of contents, not the full knowledge base.
+## Task Routing
 
-## Read Order
+- Read `docs/ai/shared-context.md` once for repository working rules, then the smallest relevant contract in `docs/ai/modules/` and its code/tests.
+- New to the product: `docs/ai/project-overview.md`; setup and commands: `README.md`.
+- Unclear ownership or a cross-module change: `docs/ai/architecture/module-boundaries.md`.
+- Hardware providers, Docker, or inference: `docs/ai/inference-runtime.md`; local scoring/embedding model choices: `docs/ai/model-selection.md`.
+- Planning or project status: `docs/roadmap.md`. Resume unfinished work from `docs/operations/session-handoff.md` only when relevant.
+- Repeated workflows and review aids: `docs/ai/README.md`. Select a matching playbook or checklist; do not load every layer for every task.
 
-For most tasks, read in this order:
+Retain relevant instructions, findings, and authorization already in context. Read plans and historical specs only when the task depends on their decisions.
 
-1. `docs/ai/project-overview.md`
-2. `docs/roadmap.md`
-3. The smallest relevant file under `docs/ai/modules/`
-4. `docs/operations/session-handoff.md` only if the task depends on recent unfinished work
-5. A matching playbook, checklist, spec, or plan only when the task shape clearly needs it
-6. `docs/ai/inference-runtime.md` for hardware-provider, Docker, or model-runtime work
+## Project Boundaries
 
-Do not start by reading every module doc, every playbook, or every historical plan.
+- The default backend is local. Preserve CPU fallback and prioritize Intel OpenVINO / ONNX Runtime for acceleration; do not reintroduce Ollama or OMLX as a default dependency.
+- Keep secrets in ignored local files. The public repository owns application code and generic deployment contracts; private-machine control belongs outside it, as defined in `docs/ai/project-overview.md`.
+- Preserve unrelated worktree changes and user photo metadata. Use dry-run defaults for destructive or external operations, checking each command's actual side effects: `run --dry-run` still writes runtime job state.
+- Editing does not authorize committing, pushing, publishing, or operating live services. Follow the user's existing scope and applicable operator workflow.
 
-## Repository Model
-
-- `AGENTS.md`: thin agent entrypoint
-- `docs/ai/`: OpenAI-aligned documentation entry layer
-- `.agents/`: repo-local agent assets and harness navigation
-- `docs/roadmap.md`: current repository state and next work
-- `docs/operations/`: operator workflows and handoff notes
-- `docs/`: human-facing runbooks and architecture guides
-
-## Working Rules
-
-- Keep AI-facing docs in English.
-- Reply to the human user in their preferred language.
-- Prefer small, well-bounded sessions.
-- Work on one owning module at a time when possible.
-- Keep `.agents/` thin; keep durable knowledge in `docs/`.
-- Update the most relevant AI doc when repository behavior or safe-edit guidance materially changes.
-
-## Safety
-
-- Keep secrets in gitignored local files.
-- Do not commit credentials, tokens, or cookies.
-- Prefer dry-run defaults for destructive or external side-effect operations.
-
-## Project-Specific Notes
-
-- `docs/ai/` is the canonical AI workspace in this repository.
-- `material-agent` is NAS-first and local-runtime-first.
-- Do not reintroduce Ollama or OMLX as a default dependency.
-- Prioritize Intel OpenVINO / ONNX Runtime for the first accelerated path.
-- If another AI-specific file conflicts with `docs/ai/`, prefer `docs/ai/`.
-
-## Useful Docs
-
-- `docs/ai/project-overview.md`
-- `docs/ai/inference-runtime.md`
-- `docs/ai/reference-repos.md`
-- `docs/roadmap.md`
-- `docs/operations/session-handoff.md`
-- `.agents/README.md`
-- `.agents/codex.md`
-- `.agents/harness-engineering.md`
-- `docs/ai/README.md`
-- `docs/ai/modules/*.md`
-- `docs/ai/playbooks/*.md`
-- `docs/ai/templates/*.md`
-- `docs/module-map.md`
-- `docs/harness-runbook.md`
+`docs/ai/` owns reusable AI guidance. Resolve documentation conflicts by checking the relevant contract and current code; fix stale guidance without silently weakening a safety invariant.

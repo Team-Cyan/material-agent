@@ -9,14 +9,11 @@ Keep request-layer tuning and end-to-end output evaluation separate.
 - `omlx-benchmark` answers: is the request path stable, compatible, and reasonably fast?
 - `omlx-harness` answers: does the real review pipeline produce believable output on real sample photos?
 
-## Read Order
+## Task Routing
 
-1. `docs/ai/project-overview.md`
-2. `docs/ai/modules/omlx-runtime.md`
-3. `docs/ai/modules/omlx-harness.md`
-4. `docs/ai/playbooks/tune-omlx-harness.md`
-5. `docs/ai/checklists/omlx-harness-checklist.md`
-6. `docs/harness-runbook.md`
+Follow `AGENTS.md` for repository rules. For request-layer work, read `docs/ai/modules/omlx-runtime.md`; for pipeline output evaluation, read `docs/ai/modules/omlx-harness.md`. Use the matching command in `docs/harness-runbook.md`, and consult the playbook or checklist only for relevant risks.
+
+This is the legacy OMLX comparison path. Local production evaluation uses `docs/ai/modules/local-benchmark.md`; do not select OMLX merely because a task mentions model tuning or a harness.
 
 ## When To Use Benchmark
 
@@ -36,7 +33,7 @@ Use `omlx-harness` when changing:
 - model profiles
 - commentary quality guards
 - prompt wording that affects real outputs
-- runtime alignment for the default production path
+- runtime alignment for the explicitly selected OMLX comparison path
 
 ## Working Rules
 

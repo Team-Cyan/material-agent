@@ -13,6 +13,6 @@ This directory contains the repository's durable documentation layers.
 
 ## Reading Strategy
 
-- Start with `docs/ai/project-overview.md` for agent work.
-- Read `docs/roadmap.md` before broad repo changes.
+- Start with `AGENTS.md` for agent work and follow its task-specific route.
+- Use `docs/ai/project-overview.md` for orientation and `docs/roadmap.md` for planning, project status, or work that depends on roadmap decisions.
 - Read `docs/operations/session-handoff.md` only when unfinished work or context carry-over matters.

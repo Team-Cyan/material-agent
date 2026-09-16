@@ -49,7 +49,7 @@ Encoding these patterns reduces improvisation and makes sub-agent tasks more con
 
 ### Checklists are meant for closure, not planning
 
-Checklists should be consulted near the end of a task to reduce regressions and forgotten verifications.
+Consult applicable checklist items near the end of a task when they help cover material risks and required verification. The checklist format is optional and does not require every example check for every change.
 
 They should not replace module contracts or playbooks.
 

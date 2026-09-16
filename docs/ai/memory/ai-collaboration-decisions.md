@@ -20,7 +20,7 @@ Do not use it for temporary task notes.
 
 ### The AI documentation stack is layered
 
-The intended order of use is:
+Select the layers needed for the task; this is an index, not a mandatory read sequence:
 
 1. entry and shared context
 2. architecture boundaries
@@ -30,6 +30,8 @@ The intended order of use is:
 6. concrete examples
 
 This layering exists to reduce context size, improve delegation quality, and avoid unnecessary repo-wide reads.
+
+Retain the active objective and relevant context across turns and compaction. Crossing a module boundary does not require a new session. Plans, templates, and checklist formats are optional; module invariants and applicable safety checks remain in force.
 
 ### English for AI-facing docs, Chinese for human-oriented guidance
 

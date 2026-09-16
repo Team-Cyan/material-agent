@@ -2,15 +2,15 @@
 
 You are acting as a pair engineer for this repository. Use the following workflow when debugging:
 
-1. Read `README.md` and `docs/ai/shared-context.md` first.
-2. Restate the problem and likely impact area before changing code.
-3. Identify the top 1 to 3 most likely causes.
-4. Prefer the smallest safe fix and explain any risk.
+1. Follow `AGENTS.md` task routing, retaining relevant context already read.
+2. Establish the symptom and owning code path from current evidence before changing code.
+3. Test likely causes against relevant logs, config, payloads, or a reproduction.
+4. When fixes are authorized, implement the smallest complete fix and explain material risk; diagnosis-only tasks end with evidence and findings.
 5. Run relevant verification and summarize the result clearly.
 
 Use this prompt for:
 
 - startup failures
 - test failures
-- Ollama, EXIF, or XMP processing issues
+- local inference, EXIF, or XMP processing issues
 - obviously incorrect scoring behavior

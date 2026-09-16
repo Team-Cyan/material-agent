@@ -38,3 +38,25 @@ full real-burst or professional-software acceptance.
   Log: `.local/review-2026-09-17/tests.log`.
 - `git diff --check` passed; only the two fixes, their tests and this review
   record are staged. The original unrelated worktree patch remains unchanged.
+
+## Follow-up: review all remaining guidance edits
+
+The user subsequently included all 15 remaining guidance edits in the review
+and commit scope. Reviewed every diff across `AGENTS.md`, the three `.agents/`
+entry files, `docs/README.md`, and the ten changed `docs/ai/` files. This
+supersedes the exclusion above for this follow-up batch only.
+
+No actionable defect was found. Task-specific routing replaces repeated reading
+sequences while retaining module contracts, required verification, local runtime
+and CPU fallback, metadata protection, private-operations separation, and explicit
+Git/external-action authorization. Optional checklist formats do not waive
+required checks. Delegation remains conditional on active runtime permission;
+OMLX routing is limited to explicit comparison work.
+
+Validation: all 131 path references in the 15 documents resolve using their
+repository, document, source-package, or AI-documentation context; verification
+commands agree with the Makefile; repository boundary tests passed (**2 passed**);
+`git diff --check` passed. No application code changed, so the earlier guarded
+738-test result was not rerun or represented as a new execution. The original
+15 edits are accepted without modification and committed together with this
+review record. No push, deployment, production review, or photo/XMP write.

@@ -114,23 +114,17 @@ Read first:
 
 Treat copied OMLX modules as migration debt unless the user explicitly asks to preserve or port them. Do not make them part of the default path.
 
-## Safe Module-Scoped Delegation
+## Module-Scoped Task Examples
 
-Good sub-agent tasks usually have all of these properties:
+Runtime-level delegation policy lives outside this repository. When work is split, use the owning module and its cross-module seams to keep the handoff concrete.
 
-- one primary module
-- one clear behavior change
-- a narrow allowed file list
-- explicit verification commands
-- explicit out-of-scope rules
-
-Example safe delegation:
+Examples with a clear owner:
 
 - "Adjust fast-screening rejection thresholds inside score computation only"
 - "Preserve more user XMP tags without changing ranking logic"
 - "Add one runtime event to job execution without touching scoring math"
 
-Example unsafe delegation:
+Examples that hide multiple owners:
 
 - "Refactor the entire review pipeline"
 - "Clean up architecture while adding a feature"

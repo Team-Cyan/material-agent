@@ -1,23 +1,9 @@
 # Harness Engineering Entry
 
-Use this entry when the task is specifically about OMLX harness work instead of general repository changes.
+Use this route only for explicit OMLX benchmark or comparison-harness work. Follow `AGENTS.md` for repository rules; local-backend evaluation uses `docs/ai/modules/local-benchmark.md`.
 
-Read in this order:
+- Request stability, schema, or latency: `docs/ai/modules/omlx-runtime.md` and the matching command in `docs/harness-runbook.md`.
+- Real-sample output quality: `docs/ai/modules/omlx-harness.md` and `docs/ai/playbooks/tune-omlx-harness.md`.
+- Workflow and review aids: `docs/ai/harness-workflow.md` and relevant items in `docs/ai/checklists/omlx-harness-checklist.md`.
 
-1. `docs/ai/shared-context.md`
-2. `docs/ai/architecture/module-boundaries.md`
-3. `docs/ai/modules/omlx-runtime.md`
-4. `docs/ai/modules/omlx-harness.md`
-5. `docs/ai/playbooks/tune-omlx-harness.md`
-6. `docs/ai/checklists/omlx-harness-checklist.md`
-7. `docs/harness-runbook.md`
-
-Working rules:
-
-- keep benchmark and harness responsibilities separate
-- use `omlx-benchmark` for request-layer stability, schema, and latency tuning
-- use `omlx-harness` for real-sample output quality, commentary quality, and default-model decisions
-- prefer small fixed sample sets so before/after comparisons stay meaningful
-- avoid broad refactors while tuning harness behavior; edit the owning module and the thinnest wiring layer only
-
-If this file conflicts with `docs/ai/`, prefer `docs/ai/`.
+Read only the route needed. Keep sample sets fixed for before/after comparisons, preserve the benchmark/harness distinction, and edit the owning module plus necessary wiring. OMLX comparison work does not change the local production default.

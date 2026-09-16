@@ -1,6 +1,6 @@
 # Sub-Agent Task Template
 
-Use this template when delegating a narrow task to a sub-agent.
+Optional template for a bounded independent task when delegation is useful and permitted by the active runtime. Using the template does not require spawning a worker.
 
 Keep the task module-scoped. Do not send the whole repository unless the change genuinely crosses boundaries.
 
@@ -45,6 +45,8 @@ Keep the task module-scoped. Do not send the whole repository unless the change 
 - preserve existing architecture style
 - keep the change additive and minimal
 - do not refactor unrelated modules
+- other agents may be editing concurrently; preserve their changes and keep ownership within the allowed files
+- return findings, changed paths, verification results, and unresolved issues; the controller owns integration and final verification
 
 ## Acceptance Checks
 

@@ -32,18 +32,9 @@ This repository uses:
 
 ## Start Here
 
-For most tasks, read:
+Follow `AGENTS.md` for task routing and `docs/ai/shared-context.md` for working rules already in scope. Select the owning module and add architecture, runtime, or model-selection context only when the task needs it. Icon work uses `docs/ai/icon-design.md` for geometry, palette, export, and validation.
 
-1. `docs/ai/project-overview.md`
-2. `docs/ai/shared-context.md`
-3. `docs/ai/architecture/module-boundaries.md`
-4. `docs/ai/inference-runtime.md` for hardware, model runtime, or Docker work
-5. `docs/ai/model-selection.md` for local scoring, embedding, and model choice work
-6. `docs/ai/icon-design.md` for the current icon geometry, palette, export, and
-   validation standard
-7. The smallest relevant file under `docs/ai/modules/`
-
-Do not start by reading every historical OMLX plan copied from `material-judge`.
+Roadmap, handoff, and historical OMLX plans are conditional context. Their recorded state needs checking against the current checkout or runtime before it supports a current-state claim.
 
 ## High-Value Human Docs
 
