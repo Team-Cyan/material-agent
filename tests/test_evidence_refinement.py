@@ -125,8 +125,9 @@ def test_refinement_config_has_hard_bounds(field, value, capsys):
     assert f"selective_refinement.{field}" in capsys.readouterr().out
 
 
-@pytest.mark.parametrize("larger", [True, False])
-def test_runtime_refines_using_bounded_raw_preview_before_group_selection(monkeypatch, larger):
+@pytest.mark.parametrize("case", ["larger", "smaller", "missing_before", "missing_after"])
+def test_runtime_refines_using_bounded_raw_preview_before_group_selection(monkeypatch, case):
+    larger = case == "larger"
     from material_agent.app import review_runtime
 
     config = normalize_config(
@@ -138,7 +139,9 @@ def test_runtime_refines_using_bounded_raw_preview_before_group_selection(monkey
     monkeypatch.setattr(review_runtime, "make_client", lambda _: object())
     monkeypatch.setattr(review_runtime, "make_fast_screening_port", lambda _: None)
     decoder = Mock(
-        return_value=SimpleNamespace(focus_gray=np.zeros((24, 24) if larger else (8, 8)))
+        return_value=SimpleNamespace(
+            focus_gray=None if case == "missing_after" else np.zeros((24, 24) if larger else (8, 8))
+        )
     )
     monkeypatch.setattr(review_runtime, "decode_raw", decoder)
 
@@ -160,7 +163,8 @@ def test_runtime_refines_using_bounded_raw_preview_before_group_selection(monkey
         repository=Mock(), config=config, state=Mock(), progress=Mock(), dry_run=True
     )
     original = candidate()
-    original["meta"]["focus_preview_size"] = [16, 16]
+    if case != "missing_before":
+        original["meta"]["focus_preview_size"] = [16, 16]
     rows = executor.review_job.finalize_group([("a", original)], group_id="g")
     assert decoder.call_args.args[1]["prefer_embedded"] is False
     assert decoder.call_args.args[1]["focus_max_size"] == 3072

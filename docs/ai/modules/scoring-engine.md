@@ -103,6 +103,9 @@ finite confidence >= 0.9, source, evidence and an evidence_type of
 if context conflicts. Generic subject/clarity/sharpness scores no longer create
 an eye usability signal; rescore ignores legacy `preview_proxy` eye signals.
 Unknown/not-applicable is persisted in metadata rather than encoded as a zero.
+The current local adapters do not produce `_subject_context`: supported context
+is a consumption contract, not automatic back-view or silhouette recognition.
+Without an explicit producer, retain unknown; never infer context from no face.
 
 `focus_integrity.selective_refinement` is opt-in (default disabled until quality
 and latency acceptance). It schedules one pass for close top candidates,
@@ -110,7 +113,8 @@ insufficient focus resolution, or unknown portrait eye evidence. Defaults are
 2 candidates/group, 5 seconds to schedule new work, score gap 0.5, and a 3072-edge
 focus image; validated caps are 8 candidates, 60 seconds and 4096 pixels. RAW
 half-size decode remains read-only. Record actual focus dimensions; if the new
-observation has no greater pixel area, retain baseline evidence and record
+observation has no greater pixel area, or either comparison input is missing,
+retain baseline evidence and record
 `no_resolution_gain`. Never equate a RAW source with a better observation.
 
 Keep pre-refinement scores/signals and trigger/outcome/elapsed-budget metadata.

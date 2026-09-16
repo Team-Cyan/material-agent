@@ -60,3 +60,23 @@ commands agree with the Makefile; repository boundary tests passed (**2 passed**
 738-test result was not rerun or represented as a new execution. The original
 15 edits are accepted without modification and committed together with this
 review record. No push, deployment, production review, or photo/XMP write.
+
+## Second follow-up: preflight parity and refinement evidence
+
+Three new regression cases failed before the fixes: dry-run accepted both a
+malformed stored row and a valid row (`ok=2, err=0`); missing old focus dimensions
+or missing new focus pixels replaced score 5 with score 1 instead of retaining
+baseline. Rewrite now shares pure per-row preparation and the writer's projection
+preview validation. Dry-run reports one failure and one success, calls no writer,
+and creates no projection receipts. Execution retains per-file failure isolation.
+Refinement requires both comparison inputs and strictly greater positive pixel
+area; missing/no-gain inputs retain baseline with `no_resolution_gain`.
+
+The normal decoder always supplies focus pixels, but `RawFrame` permits omission
+and old/cached/custom metadata may lack dimensions. The guard deliberately handles
+these boundaries without claiming they were observed on the six new DNGs.
+
+Focused tests: **51 passed, 8 skipped**. Full guarded suite: **741 passed,
+102 skipped in 19.91 s**; log `.local/hdrplus-evaluation/tests.log`. Ruff and
+`git diff --check` passed. See the separate follow-up validation report for public
+data evidence and remaining capability limits.

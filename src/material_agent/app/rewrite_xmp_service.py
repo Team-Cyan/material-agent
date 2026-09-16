@@ -45,12 +45,8 @@ class RewriteXmpService:
 
             if dry_run:
                 try:
-                    if _path_identity(xmp_path) is not None:
-                        _reject_symbolic_link(xmp_path)
-                        self.writer.rating_write_allowed(xmp_path)
-                        self.writer._read_non_pj_subject_tags(xmp_path)
-                        self.writer._read_non_pj_identifier_tags(xmp_path)
-                        self.writer._read_non_pj_hierarchical_subject_tags(xmp_path)
+                    prepared = self._prepare_projection(row, output_language)
+                    self.writer.preview_projection(xmp_path, **prepared)
                 except Exception as error:
                     print(f"ERROR validating {xmp_path}: {error}")
                     err += 1
@@ -68,54 +64,11 @@ class RewriteXmpService:
 
             receipt = None
             try:
-                boosted = bool(row["group_boosted"])
-                subject_tags = self.writer.build_subject_tags(
-                    score=row["total_score"],
-                    rank=row["group_rank"],
-                    group_size=row["group_size"],
-                    group_id=row["group_id"],
-                    boosted=boosted,
-                    decision=row["decision"],
-                )
-                if row["scene"]:
-                    subject_tags.append(f"pj:scene={scene_label(row['scene'], output_language)}")
-
-                visible_breakdown = {}
-                if row["visible_breakdown_json"]:
-                    import json
-
-                    visible_breakdown = json.loads(row["visible_breakdown_json"])
-                if visible_breakdown:
-                    instructions = build_visible_breakdown_instructions(
-                        visible_breakdown, output_language=output_language
-                    )
-                else:
-                    db_scores = {dim: row[f"score_{dim}"] for dim in VISION_DIMS}
-                    db_scores["exposure"] = row["score_exposure"]
-                    db_scores["sharpness"] = row["score_sharpness"]
-                    instructions = build_xmp_instructions(
-                        {dim: score for dim, score in db_scores.items() if score is not None},
-                        output_language=output_language,
-                    )
-
-                parts = [
-                    part
-                    for part in [row["commentary_group_issues"], row["commentary_shooting"]]
-                    if part
-                ]
-                group_commentary = "\n".join(parts)
-                post_commentary = row["commentary_post"] or ""
-                description = (
-                    f"{rank_description(row['group_rank'], row['group_size'], output_language)}\n\n"
-                    f"{group_commentary}\n\n{post_commentary}"
-                ).strip()
+                prepared = self._prepare_projection(row, output_language)
 
                 receipt = self._rewrite_xmp_atomically(
                     xmp_path=xmp_path,
-                    rating=row["star_rating"],
-                    subject_tags=subject_tags,
-                    instructions=instructions,
-                    description=description,
+                    **prepared,
                 )
                 if isinstance(receipt, dict):
                     with self._open_repository(input_dir) as repository:
@@ -129,8 +82,8 @@ class RewriteXmpService:
                                     if receipt.get("rating") == "written"
                                     else {}
                                 ),
-                                "instructions": instructions,
-                                "description": description,
+                                "instructions": prepared["instructions"],
+                                "description": prepared["description"],
                             },
                         )
                 ok += 1
@@ -159,6 +112,53 @@ class RewriteXmpService:
                     progress.on_phase_advance()
 
         return {"ok": ok, "err": err}
+
+    def _prepare_projection(self, row, output_language: str) -> dict:
+        boosted = bool(row["group_boosted"])
+        subject_tags = self.writer.build_subject_tags(
+            score=row["total_score"],
+            rank=row["group_rank"],
+            group_size=row["group_size"],
+            group_id=row["group_id"],
+            boosted=boosted,
+            decision=row["decision"],
+        )
+        if row["scene"]:
+            subject_tags.append(f"pj:scene={scene_label(row['scene'], output_language)}")
+
+        visible_breakdown = {}
+        if row["visible_breakdown_json"]:
+            import json
+
+            visible_breakdown = json.loads(row["visible_breakdown_json"])
+        if visible_breakdown:
+            instructions = build_visible_breakdown_instructions(
+                visible_breakdown, output_language=output_language
+            )
+        else:
+            db_scores = {dim: row[f"score_{dim}"] for dim in VISION_DIMS}
+            db_scores["exposure"] = row["score_exposure"]
+            db_scores["sharpness"] = row["score_sharpness"]
+            instructions = build_xmp_instructions(
+                {dim: score for dim, score in db_scores.items() if score is not None},
+                output_language=output_language,
+            )
+
+        parts = [
+            part for part in [row["commentary_group_issues"], row["commentary_shooting"]] if part
+        ]
+        group_commentary = "\n".join(parts)
+        post_commentary = row["commentary_post"] or ""
+        description = (
+            f"{rank_description(row['group_rank'], row['group_size'], output_language)}\n\n"
+            f"{group_commentary}\n\n{post_commentary}"
+        ).strip()
+        return {
+            "rating": row["star_rating"],
+            "subject_tags": subject_tags,
+            "instructions": instructions,
+            "description": description,
+        }
 
     def _rewrite_xmp_atomically(
         self,

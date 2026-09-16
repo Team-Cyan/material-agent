@@ -172,3 +172,8 @@ The 2026-09-16 projection slice is verified with in-memory XML and intercepted
 ExifTool commands, without writing XMP or source media. See
 [full-plan status](../../operations/2026-09-16-plan-status.md). These tests do not
 replace an authorized physical sidecar or professional-software round trip.
+
+Rewrite preflight and execution share side-effect-free stored-payload preparation
+and projection validation. A malformed row counts as an error and does not stop
+subsequent rows. Dry-run does not write a projection ledger receipt or sidecar;
+filesystem changes after preflight can still cause execution to fail.

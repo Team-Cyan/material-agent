@@ -175,9 +175,11 @@ def build_review_job_executor(
             frame = decode_raw(file_path, preview)
             before_size = (payload.get("meta") or {}).get("focus_preview_size")
             after_gray = getattr(frame, "focus_gray", None)
-            if before_size and after_gray is not None:
-                if int(after_gray.size) <= int(before_size[0]) * int(before_size[1]):
-                    raise NoRefinementGain()
+            if not before_size or after_gray is None:
+                raise NoRefinementGain()
+            before_area = int(before_size[0]) * int(before_size[1])
+            if before_area <= 0 or int(after_gray.size) <= before_area:
+                raise NoRefinementGain()
             bundle = run_coro_sync(
                 compute_scores(frame, client, config, fast_screening=fast_screening)
             )

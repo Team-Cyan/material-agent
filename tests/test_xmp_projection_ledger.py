@@ -184,7 +184,8 @@ def test_review_records_failure_receipt_and_dry_run_only_plans(monkeypatch):
     state.mark_done.assert_not_called()
 
 
-def test_rewrite_malformed_stored_payload_does_not_abort_batch(tmp_path, monkeypatch):
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_rewrite_malformed_stored_payload_does_not_abort_batch(tmp_path, monkeypatch, dry_run):
     repo = SQLiteProcessedRepository(tmp_path)
     try:
         repo.conn.executemany(
@@ -196,14 +197,17 @@ def test_rewrite_malformed_stored_payload_does_not_abort_batch(tmp_path, monkeyp
         service = rewrite.RewriteXmpService(repository=repo)
         writer = Mock(return_value=xmp.finish_projection(plan()))
         monkeypatch.setattr(service, "_rewrite_xmp_atomically", writer)
-        assert service.run(str(tmp_path), dry_run=False) == {"ok": 1, "err": 1}
-        writer.assert_called_once()
+        assert service.run(str(tmp_path), dry_run=dry_run) == {"ok": 1, "err": 1}
+        if dry_run:
+            writer.assert_not_called()
+        else:
+            writer.assert_called_once()
         receipts = [
             (r[0], json.loads(r[1])["status"])
             for r in repo.conn.execute(
                 "SELECT file_path,receipt_json FROM xmp_projection_ledger ORDER BY id"
             )
         ]
-        assert receipts == [("a", "failed"), ("b", "committed")]
+        assert receipts == ([] if dry_run else [("a", "failed"), ("b", "committed")])
     finally:
         repo.close()
