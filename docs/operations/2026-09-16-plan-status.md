@@ -75,8 +75,10 @@ Verification:
 3. Evidence applicability and bounded optional refinement are implemented. Keep
    refinement disabled until a relevant quality/latency benchmark supports it;
    a RAW half-size decode is not automatically a higher-resolution observation.
-4. Freeze a quality/preselection proxy evaluation subset and rubric; run the
-   blinded/order-reversal comparison and persist `model_generated` judgments.
+4. Rubric v1 is frozen; see [acceptance preflight](2026-09-16-preselection-acceptance-preflight.md).
+   Image subset and independent GPT channel remain unavailable. Photo Triage is
+   task-relevant but its official download service failed this access check.
+   Run blinded/order-reversal comparison only after those inputs are available.
 5. Run further model candidates individually only against a matching frozen
    benchmark. Personal ranker training still requires genuine preference labels.
 6. Separately authorize and verify professional-software round trips and target

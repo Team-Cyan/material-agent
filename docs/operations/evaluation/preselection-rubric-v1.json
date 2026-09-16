@@ -1,0 +1,26 @@
+{
+  "schema": "material-agent.preselection-rubric.v1",
+  "version": 1,
+  "reference_source": "model_generated",
+  "task": "Review the supplied photo candidates within each provided group. Judge observable quality separately from which photos should be retained for human review.",
+  "grouping_contract": "Groups are supplied by configurable adjacent capture-time continuity AND perceptual-hash proximity. Hash threshold zero disables hash checking. Do not replace this grouping rule with semantic or action-based grouping.",
+  "instructions": [
+    "Use only visible image evidence and the neutral image IDs. No system scores, model names, quality labels, filenames, or previous reviewer answers are supplied.",
+    "Select at least one keep in every group with readable photos, even when all are low quality. Explain coverage selection separately from observable quality defects. Do not increase a quality score because a photo must be kept.",
+    "Return no selected best or reject label for an unreadable-only group; report the decoding/input error.",
+    "Assess visible subject focus, exposure, composition, subject moment and obvious defects. Do not infer tiny RAW focus differences from insufficient previews.",
+    "Missing eye or face evidence is unknown. Back-view or silhouette not_applicable requires explicit visible supporting context; report the evidence and uncertainty.",
+    "Allow ties, multiple acceptable keeps and abstention on uncertain pairwise preferences. Preserve distinct visible moments when useful, while retaining the supplied group boundaries.",
+    "Return JSON only. For each group provide group_id, readable_ids, acceptable_keep_ids, preferred_ids, quality_findings_by_id, selection_reasons_by_id, pairwise_preferences, uncertainty and errors. Pairwise entries must contain first_id, second_id and preference of first, second, tie or unknown. Cite IDs only from the request."
+  ],
+  "evaluation": {
+    "split_unit": "capture_event",
+    "initial_target": {"images": [100, 200], "groups": [20, 40]},
+    "order_check": "Independent second request for each group with reversed image order and fresh neutral IDs; do not expose the first answer.",
+    "controls": ["singleton", "all_low_quality", "all_decode_error", "back_view", "silhouette", "multiple_people", "small_face", "occlusion", "blur", "different_dishes_or_actions_with_close_capture_times"],
+    "metrics": ["readable_group_keep_coverage", "group_top1_in_acceptable_preferred_set", "pairwise_preference_agreement", "acceptable_keep_false_reject_rate", "extra_keep_rate", "order_reversal_agreement", "abstention_rate", "latency"],
+    "baseline": "Frozen current full scoring and group-selection policy. Client-only mean dimension scores are not a substitute for the production selection policy.",
+    "provenance": ["input_sha256", "rubric_sha256", "capture_event_split", "grouping_parameters", "preview_transform_version", "provider", "model_revision", "request_order", "raw_response", "reference_source"],
+    "limitations": "GPT judgments are model_generated proxy references, not human ground truth or personal preferences. Synthetic controls and action-classification data cannot establish real burst-selection accuracy. Do not tune on held-out events."
+  }
+}

@@ -113,3 +113,15 @@ GPT acceptance preflight found no independent completion connector, supported AP
 credential/base URL environment, or local .env file. Existing data is either
 single-image RAW format coverage, synthetic diagnostics, or action labels, not
 burst preference truth. Do not present these tests as independent GPT acceptance.
+
+
+## Acceptance preparation record
+
+Frozen [rubric v1](evaluation/preselection-rubric-v1.json) and recorded
+[data/channel preflight](2026-09-16-preselection-acceptance-preflight.md).
+Reviewed against the current time/hash rule, separate quality/coverage, explicit
+unknowns, event-disjoint holdout and independent order reversal. JSON parses and
+its SHA-256 is recorded. No frozen image manifest or GPT result is claimed.
+Photo Triage's official project page is task-relevant; its linked download host
+failed both HTTPS and HTTP access. No remote image evaluation or download occurred.
+The 15 original unrelated dirty files still match the starting patch byte for byte.
