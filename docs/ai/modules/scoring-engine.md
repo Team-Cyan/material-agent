@@ -106,7 +106,7 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 - The module bridges RAW decoding, screening, model invocation, and policy summarization, so it is one of the densest files in the codebase.
 - The config contract is powerful but implicit; many scoring changes require careful reading of config normalization and constants.
 - The current VLM path is useful for structured scene/dimension scoring and explanation, but future culling improvements should be benchmarked as ranking work rather than assuming a larger VLM is the best main scorer.
-- Any learned scorer experiment should compare against the current `MUSIQ + VLM` path with group top-1 and pairwise preference metrics before replacing production scoring.
+- Learned experiments compare against the current heuristic baseline and the enabled Intel SSD/YuNet + NIMA path, using group top-1, pairwise preference and false-reject metrics. MUSIQ + VLM is not the default baseline.
 - Subject and eye focus are still measured from a bounded embedded preview, not
   a full-resolution RAW crop. The recorded provenance must remain explicit; a
   future ambiguous-candidate pass may add true sensor-resolution ROI decoding.

@@ -39,8 +39,9 @@ loads lazily and must preserve the service-free heuristic fallback.
 - Missing packages or weights produce explicit fallback metadata unless the
   block's `enforce_available` flag is true.
 - Configured runtime and actual runtime are different provenance fields.
-- Model signals do not alter the default total-score policy without a versioned
-  calibration and promotion report.
+- Enabled NIMA already supplies `overall_aesthetic` to the existing layered
+  policy. Other candidate signals must not enter fusion without a versioned
+  calibration/promotion report. Shared execution changes preserve these semantics.
 - Reject priors, quality scores, and aesthetic scores remain separate roles.
 - Non-photo detection must not depend only on IQA/aesthetic output.
 - Embedding vectors are used transiently and are not written into benchmark
@@ -49,6 +50,22 @@ loads lazily and must preserve the service-free heuristic fallback.
 - Detection precedes subject-focus measurement. If no confident object or face
   is found, spectral-residual saliency supplies a deterministic ROI without an
   additional learned model.
+
+## Shared execution
+
+NIMA, SSD and OpenVINO embeddings share `openvino_session.py`; declarations,
+asset snapshots and result cache helpers live in `inference_contract.py`.
+Execution metadata is additive; no SQLite schema migration is required.
+Optional adapters remain model-specific and explicitly record missing evidence.
+See [Phase 1 readiness](../../operations/2026-09-15-inference-unification-readiness.md).
+
+OpenCLIP retains one normalized text-feature bank per runtime instance, keyed
+by its immutable model object, device and exact ordered prompts. Banks above
+256 prompts or 65,536 characters bypass retention. A different bank replaces
+the previous one; there is no disk cache. Runtime initialization and inference
+are protected against concurrent duplicate work. Model weights/preprocessing,
+normalization and the probability calculation remain unchanged. See the
+[200-image CPU comparison](../../operations/2026-09-15-mobileclip-stanford40-experiment.md).
 
 ## OpenVINO Model Bundles
 

@@ -15,6 +15,21 @@ The first target is 11th-generation Intel integrated-GPU-class hardware. The imp
 - Do not assume Apple Metal GPU passthrough inside normal Linux containers.
 - Do not train or fine-tune a full vision backbone before local labels exist.
 
+## Shared native lifecycle (Phase 1)
+
+NIMA, SSD and OpenVINO embeddings now execute through
+`adapters/models/openvino_session.py::OpenVinoSession`. Model-specific
+preprocessing/output semantics remain declared by their adapters. The shared
+contract supplies bounded execution, owned compiled-cache eviction, actual
+readback, explicit fallback and versioned execution facts. CPU remains the
+baseline; YuNet and optional package adapters retain separate, explicit
+capabilities. See the [implementation and readiness report](../operations/2026-09-15-inference-unification-readiness.md)
+for parity scope, compatibility, cache behavior and the Phase 2 matrix.
+
+The interface sketch below describes a broader application abstraction, not an
+additional implemented vendor runtime or a claim that all optional models share
+one execution engine.
+
 ## Runtime Abstraction
 
 The application should talk to one local inference interface:

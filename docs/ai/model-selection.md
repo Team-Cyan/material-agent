@@ -32,7 +32,15 @@ IQA models. Focus confirmation is the exception: resized previews are only a
 cheap proxy for obvious blur, while eye focus or micro-shake on 30MP+ captures
 needs a later high-resolution ROI pass on selected candidates.
 
-## Default Stack
+## Current baseline versus candidate stack
+
+The generic profile uses heuristics; the Intel profile enables native OpenVINO
+SSD plus OpenCV YuNet and native OpenVINO NIMA on CPU. Other learned blocks are
+opt-in. The table below is a candidate architecture, not the deployed default.
+See [Phase 1 parity and Phase 2 readiness](../operations/2026-09-15-inference-unification-readiness.md)
+for the current execution inventory and experiment gates.
+
+## Candidate Stack
 
 | Block | Default model | Why |
 | --- | --- | --- |

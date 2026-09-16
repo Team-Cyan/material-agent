@@ -10,10 +10,12 @@
 
 ## Current Focus
 
-The local scoring runtime, grouping pipeline, Web operator, model management,
-and full-library dry-run path are implemented. The remaining product work is
-limited to real preference-label calibration, Capture One interoperability,
-and separately authorized XMP promotion.
+The current local work is tracked in [the audited full-plan status](2026-09-16-plan-status.md).
+Phase 1 inference unification, the first MobileCLIP comparison and the revised
+time/hash grouping are implemented. Automatic-preselection closure, evidence
+applicability/refinement, metadata import/ledger and external acceptance are
+not all complete. XMP protection/projection has local in-memory verification;
+no actual XMP write, deployment or production review is authorized in this session.
 
 ## Maintained Runtime Boundary
 
@@ -41,7 +43,8 @@ and separately authorized XMP promotion.
 
 ## Next Work
 
-1. Review grouping-enabled score/photo outliers with `review-scores`.
-2. Compare group-size and rank distributions with the singleton baseline.
-3. Keep deployment and NAS mutations outside this repository and require
-   separate operator authorization.
+Follow the ordered backlog in the audited status. Preserve the user's latest
+adjacent time AND hash grouping rule (threshold 0 means time only). Historical
+semantic substitutability rules no longer gate grouping. Keep source photos and
+XMP read-only, and do not resume the historical production review/deployment
+workflow merely because older evidence below or elsewhere mentions it.

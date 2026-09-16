@@ -2,6 +2,22 @@
 
 ## Completed
 
+- implemented nonzero XMP rating protection and exact keep/reject keyword
+  projection with in-memory compatibility checks and ordinary-write ownership
+  receipts; physical sidecar/software round trips remain unverified
+
+- adopted configurable adjacent time AND hash grouping; hash threshold 0 selects
+  time-only mode, without cross-gap or embedding-based merges
+
+- downloaded and verified the official Stanford40 action dataset for isolated
+  evaluation; completed the pinned MobileCLIP2-S0 200-image CPU comparison and
+  bounded text-feature caching with exact probability parity, with no production promotion; see
+  [experiment evidence and limits](operations/2026-09-15-mobileclip-stanford40-experiment.md)
+- unified native NIMA, SSD and embedding execution with versioned provenance,
+  bounded caches and covered CPU parity; see
+  [Phase 1 readiness and Phase 2 experiment matrix](operations/2026-09-15-inference-unification-readiness.md)
+  for verification limits and remaining evaluation inputs
+
 - forked `material-agent` from `material-judge`
 - renamed the Python package, CLI, launcher names, and runtime work directory
 - switched the default config to `backend: local`
@@ -124,6 +140,9 @@
   and an isolated Unraid source-overlay smoke pass complete the release gate
 
 ## In Progress
+
+- complete the broader preselection, evidence applicability/refinement and
+  metadata import/ledger plan; see [audited status](operations/2026-09-16-plan-status.md)
 
 - Capture One XMP interoperability design and real-application round-trip
   validation; the standards-based contract is documented, while application
