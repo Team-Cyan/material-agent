@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 
 from ..utils.constants import AESTHETIC_DIMS
 
@@ -161,31 +162,61 @@ def group_best_candidate_review_enabled(config: dict) -> bool:
 def apply_group_best_candidate_review(
     results: list[tuple[str, dict]], *, enabled: bool = True
 ) -> list[tuple[str, dict]]:
-    if not enabled or not results:
-        return results
-    if any(payload.get("decision") in {"keep", "review"} for _, payload in results):
-        return results
-    eligible = [
-        (file_path, payload)
-        for file_path, payload in results
-        if payload.get("decision") == "reject" and not payload.get("decision_reasons")
-    ]
-    if not eligible:
-        return results
+    """Separate quality from selection; preserve one readable candidate per group.
 
-    ranked = sorted(
-        eligible,
-        key=lambda item: float(item[1].get("score_total", item[1].get("total_score", 0.0)) or 0.0),
-        reverse=True,
-    )
-    best_file, best_payload = ranked[0]
-    updated_payload = dict(best_payload)
-    updated_payload["decision"] = "review"
-    updated_payload["decision_reasons"] = ["group_best_candidate_review"]
-    return [
-        (file_path, updated_payload if file_path == best_file else payload)
-        for file_path, payload in results
-    ]
+    The historical function/config name remains a compatibility alias. A coverage
+    choice is now an explicit keep, without changing scores or defect evidence.
+    Only scored payloads participate: decode failures must remain errors.
+    """
+    updated = []
+    eligible = []
+    for file_path, payload in results:
+        meta = dict(payload.get("meta") or {})
+        quality = meta.get("quality_assessment")
+        if not isinstance(quality, dict) or quality.get("version") != 1:
+            quality = {
+                "version": 1,
+                "decision": payload.get("decision"),
+                "reasons": list(payload.get("decision_reasons") or []),
+            }
+        try:
+            score = float(payload.get("score_total", payload.get("total_score")))
+        except TypeError, ValueError:
+            score = float("nan")
+        if (
+            payload.get("status") in {"error", "failed"}
+            or quality.get("decision") not in {"keep", "review", "reject"}
+            or not math.isfinite(score)
+        ):
+            updated.append((file_path, payload))
+            continue
+        meta["quality_assessment"] = quality
+        meta["selection"] = {
+            "version": 1,
+            "decision": quality["decision"],
+            "role": "quality_policy",
+            "reasons": list(quality["reasons"]),
+        }
+        result = {
+            **payload,
+            "meta": meta,
+            "decision": quality["decision"],
+            "decision_reasons": list(quality["reasons"]),
+        }
+        updated.append((file_path, result))
+        eligible.append((score, file_path, result))
+    if enabled and eligible and not any(p[2]["decision"] == "keep" for p in eligible):
+        # Stable path tie-break makes replay/input ordering irrelevant.
+        _, _, best = min(eligible, key=lambda p: (-p[0], p[1]))
+        best["decision"] = "keep"
+        best["decision_reasons"] = [*best["decision_reasons"], "group_coverage_fallback"]
+        best["meta"]["selection"] = {
+            "version": 1,
+            "decision": "keep",
+            "role": "group_coverage",
+            "reasons": ["group_coverage_fallback"],
+        }
+    return updated
 
 
 def _average(values: list[float | None]) -> float | None:

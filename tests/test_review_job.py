@@ -712,3 +712,42 @@ def test_singleton_pipeline_can_emit_one_write_stage_for_the_whole_run(tmp_path)
         ).fetchall()
     ]
     assert stages == ["group", "score", "comment", "write", "finalize"]
+
+
+def test_group_coverage_excludes_decode_errors_and_persists_in_artifacts(tmp_path):
+    from material_agent.domain.layered_decision import apply_group_best_candidate_review
+
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    session = SessionService(repo).create_session(
+        kind=SessionKind.CLI, input_root="/fixture", config_snapshot={}
+    )
+    job = JobService(repo).create_job(
+        session_id=session, job_type=JobType.REVIEW_PHOTOS, initial_stage=JobStage.DISCOVER
+    )
+
+    def score(path):
+        if path.startswith("error"):
+            raise ValueError("decode failed")
+        return {"score_total": 0.5, "decision": "reject", "decision_reasons": ["blur"]}
+
+    review = ReviewPhotosJob(
+        repository=repo,
+        event_sink=_NullEventSink(),
+        group_files=lambda _: [["error1", "error2"], ["ok", "error3"]],
+        score_file=score,
+        finalize_group=lambda rows, **_: apply_group_best_candidate_review(rows),
+        write_file=lambda *_, **__: None,
+        write_outputs=False,
+    )
+    result = JobExecutor(review).run(job, ["error1", "error2", "ok", "error3"])
+    assert result["error_files"] == 3 and result["written_files"] == 0
+    assert result["simulated_files"] == 1
+    artifacts = repo.conn.execute(
+        "SELECT metadata_json FROM artifacts WHERE kind='score_payload'"
+    ).fetchall()
+    payloads = [json.loads(row[0]) for row in artifacts]
+    assert len(payloads) == 1
+    assert payloads[0]["decision"] == "keep"
+    assert payloads[0]["meta"]["quality_assessment"]["decision"] == "reject"
+    assert payloads[0]["score_total"] == 0.5
+    repo.close()

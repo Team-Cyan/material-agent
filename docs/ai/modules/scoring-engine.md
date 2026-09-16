@@ -72,6 +72,27 @@ It owns score assembly, early rejection paths, scene-aware exposure rescoring, a
 - whole-frame sharpness is an early catastrophic-blur guard, not a substitute
   for subject focus
 
+## Group selection contract
+
+Group finalization records versioned `meta.quality_assessment` (original decision
+and defect reasons) independently from `meta.selection` (decision, role, reasons).
+The compatibility `decision` is the selection result. With grouping and
+`best_candidate_review.enabled` enabled, every group containing scored readable
+photos has at least one explicit keep. If quality policy kept none, the highest
+finite score is retained with role `group_coverage` and reason
+`group_coverage_fallback`; ties use file path order. Existing review results and
+hard-defect reasons do not block coverage. Scores, stars and original defects
+remain unchanged. Decode failures/unscored payloads do not participate.
+Refinalization starts from stored quality, so an old fallback is not treated as
+an independent quality keep. Disabled grouping/fallback retains quality decisions.
+
+Rescore persists both facts in `score_metadata_json` and preserves other model
+metadata. Scene-filtered rescore recomputes only selected quality assessments,
+but reconciles selection across their full stored groups when coverage is enabled;
+other scenes retain scores/stars/ranks. The returned count counts quality updates.
+No rescore action writes photo metadata. The score/output cache revision changes
+with this policy to invalidate terminal results produced by the old fallback.
+
 ## Typical Safe Changes
 
 - tweak score combination logic

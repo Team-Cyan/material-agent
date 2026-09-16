@@ -1,4 +1,5 @@
 import tempfile
+import json
 
 import pytest
 
@@ -16,65 +17,68 @@ class _Args:
         self.dir = d
 
 
-def test_group_best_candidate_review_promotes_a_singleton_when_enabled():
+def test_group_coverage_keeps_defective_best_without_changing_quality():
     results = [
         (
-            "/fake/only.arw",
-            {"score_total": 4.2, "decision": "reject", "decision_reasons": []},
-        )
-    ]
-
-    updated = apply_group_best_candidate_review(results, enabled=True)
-
-    assert updated[0][1]["decision"] == "review"
-    assert updated[0][1]["decision_reasons"] == ["group_best_candidate_review"]
-
-
-def test_group_best_candidate_review_leaves_a_singleton_when_disabled():
-    results = [
-        (
-            "/fake/only.arw",
-            {"score_total": 4.2, "decision": "reject", "decision_reasons": []},
-        )
-    ]
-
-    assert apply_group_best_candidate_review(results, enabled=False) == results
-
-
-def test_group_best_candidate_review_promotes_best_of_multiple_candidates():
-    results = [
-        ("/fake/a.arw", {"score_total": 4.2, "decision": "reject", "decision_reasons": []}),
-        ("/fake/b.arw", {"score_total": 5.1, "decision": "reject", "decision_reasons": []}),
-    ]
-
-    updated = apply_group_best_candidate_review(results, enabled=True)
-
-    assert updated[0][1]["decision"] == "reject"
-    assert updated[1][1]["decision"] == "review"
-    assert updated[1][1]["decision_reasons"] == ["group_best_candidate_review"]
-
-
-def test_group_best_candidate_review_ignores_hard_reject_and_promotes_soft_reject():
-    results = [
-        (
-            "/fake/hard.arw",
+            "a",
             {
-                "score_total": 6.0,
+                "score_total": 1.0,
+                "star_rating": 1,
                 "decision": "reject",
                 "decision_reasons": ["subject_focus_below_threshold"],
             },
         ),
         (
-            "/fake/soft.arw",
-            {"score_total": 4.0, "decision": "reject", "decision_reasons": []},
+            "b",
+            {
+                "score_total": 0.0,
+                "star_rating": 0,
+                "decision": "reject",
+                "decision_reasons": ["technical_quality_below_threshold"],
+            },
         ),
     ]
+    updated = apply_group_best_candidate_review(results)
+    best = updated[0][1]
+    assert best["decision"] == "keep"
+    assert best["score_total"] == 1.0 and best["star_rating"] == 1
+    assert best["meta"]["quality_assessment"]["decision"] == "reject"
+    assert best["meta"]["quality_assessment"]["reasons"] == ["subject_focus_below_threshold"]
+    assert best["meta"]["selection"]["role"] == "group_coverage"
+    assert updated[1][1]["decision"] == "reject"
+    assert results[0][1]["decision"] == "reject"  # no input mutation
+    assert apply_group_best_candidate_review(updated) == updated
 
-    updated = apply_group_best_candidate_review(results, enabled=True)
 
-    assert updated[0][1]["decision"] == "reject"
-    assert updated[1][1]["decision"] == "review"
-    assert updated[1][1]["decision_reasons"] == ["group_best_candidate_review"]
+@pytest.mark.parametrize("decision", ["reject", "review", "keep"])
+def test_group_coverage_singleton_and_disabled(decision):
+    results = [("a", {"score_total": 4.2, "decision": decision, "decision_reasons": []})]
+    assert apply_group_best_candidate_review(results)[0][1]["decision"] == "keep"
+    assert apply_group_best_candidate_review(results, enabled=False)[0][1]["decision"] == decision
+
+
+def test_group_coverage_does_not_select_errors_or_invalid_scores():
+    errors = [
+        ("a", {"status": "error", "decision": "reject", "score_total": 9}),
+        ("b", {"decision": "reject", "score_total": float("nan")}),
+        ("c", {"status": "error"}),
+    ]
+    assert apply_group_best_candidate_review(errors) == errors
+    mixed = apply_group_best_candidate_review(
+        errors + [("d", {"score_total": 0, "decision": "reject", "decision_reasons": ["blur"]})]
+    )
+    assert mixed[-1][1]["decision"] == "keep"
+
+
+def test_group_coverage_recomputes_cached_choice_and_breaks_ties_by_path():
+    first = apply_group_best_candidate_review(
+        [("b", {"score_total": 2, "decision": "reject", "decision_reasons": []})]
+    )
+    combined = first + [("a", {"score_total": 2, "decision": "reject", "decision_reasons": []})]
+    updated = dict(apply_group_best_candidate_review(combined))
+    assert updated["a"]["decision"] == "keep"
+    assert updated["b"]["decision"] == "reject"
+    assert updated["b"]["decision_reasons"] == []
 
 
 def test_group_best_candidate_review_requires_grouping_and_its_own_switch():
@@ -185,11 +189,7 @@ def test_rescore_falls_back_to_default():
         )
         s.conn.commit()
 
-        cfg = {
-            "scene_profiles": {
-                "default": {"aesthetic_weights": {"composition": 1.0}}
-            }
-        }
+        cfg = {"scene_profiles": {"default": {"aesthetic_weights": {"composition": 1.0}}}}
         cmd_rescore(_Args(d), cfg)
 
         row = s.conn.execute(
@@ -396,3 +396,106 @@ def test_rescore_scene_filter_preserves_existing_group_rank_without_full_group_c
         assert row[2] == 2
         assert city_row[0] == 0.0
         assert city_row[1] == 1
+
+
+def test_filtered_rescore_preserves_group_coverage_and_metadata(tmp_path):
+    from material_agent.app.rescore_service import RescoreService
+    from material_agent.adapters.state.processed_sqlite import SQLiteProcessedRepository
+
+    repo = SQLiteProcessedRepository(tmp_path / "fixture.db")
+    try:
+        repo.conn.executemany(
+            "INSERT INTO processed (file_path,status,scene,group_id,group_rank,total_score,"
+            "star_rating,decision,decision_reasons,score_metadata_json,score_metadata_version) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            [
+                ("a", "done", "people", "g", 1, 8.0, 4, "keep", "[]", '{"runtime":"fixture"}', 1),
+                (
+                    "b",
+                    "done",
+                    "city",
+                    "g",
+                    2,
+                    3.0,
+                    2,
+                    "reject",
+                    '["blur"]',
+                    '{"runtime":"other"}',
+                    1,
+                ),
+                ("error", "error", "people", "errors", None, None, None, None, None, None, None),
+            ],
+        )
+        repo.conn.execute(
+            "INSERT INTO score_signals (file_path,stage,signal_key,value) VALUES (?,?,?,?)",
+            ("a", "technical", "technical_quality", 0.0),
+        )
+        repo.conn.commit()
+        count = RescoreService(repo).run(
+            scene_filters=["people"],
+            scene_profiles={},
+            decision_policy={},
+            screening_policy={},
+            grouping_config={"enabled": True},
+        )
+        rows = {r["file_path"]: r for r in repo.conn.execute("SELECT * FROM processed")}
+        assert count == 1  # count quality evaluations, not unchanged group context
+        assert rows["a"]["decision"] == "reject"
+        assert rows["b"]["decision"] == "keep"
+        assert rows["b"]["total_score"] == 3.0 and rows["b"]["star_rating"] == 2
+        assert rows["b"]["group_rank"] == 2
+        meta = json.loads(rows["b"]["score_metadata_json"])
+        assert meta["runtime"] == "other"
+        assert meta["quality_assessment"]["decision"] == "reject"
+        assert meta["quality_assessment"]["reasons"] == ["blur"]
+        assert meta["selection"]["role"] == "group_coverage"
+        assert rows["error"]["decision"] is None and rows["error"]["status"] == "error"
+        # A second pass retains the original quality evidence rather than learning
+        # the coverage keep as an independent quality keep.
+        RescoreService(repo).run(
+            scene_filters=["people"],
+            scene_profiles={},
+            decision_policy={},
+            screening_policy={},
+            grouping_config={"enabled": True},
+        )
+        again = repo.conn.execute(
+            "SELECT score_metadata_json FROM processed WHERE file_path='b'"
+        ).fetchone()
+        assert json.loads(again[0]) == meta
+    finally:
+        repo.close()
+
+
+def test_group_selection_survives_processed_cache_round_trip(tmp_path):
+    from material_agent.adapters.state.processed_sqlite import SQLiteProcessedRepository
+
+    # A text placeholder supplies a file fingerprint without writing photo data.
+    path = tmp_path / "fingerprint.txt"
+    path.write_text("fixture")
+    repo = SQLiteProcessedRepository(tmp_path / "fixture.db", score_cache_key="fixture")
+    payload = apply_group_best_candidate_review(
+        [(str(path), {"score_total": 0.5, "decision": "reject", "decision_reasons": ["blur"]})]
+    )[0][1]
+    try:
+        repo.mark_done(
+            str(path),
+            total_score=0.5,
+            star_rating=0,
+            group_boosted=False,
+            scores={},
+            metadata=payload["meta"],
+            group_info={},
+            decision=payload["decision"],
+            decision_reasons=payload["decision_reasons"],
+        )
+        cached = repo.get_cached_score_payload(str(path))
+        assert cached["decision"] == "keep"
+        assert cached["meta"]["quality_assessment"]["decision"] == "reject"
+        assert cached["meta"]["selection"]["role"] == "group_coverage"
+        disabled = apply_group_best_candidate_review([(str(path), cached)], enabled=False)[0][1]
+        assert disabled["decision"] == "reject"
+        assert disabled["decision_reasons"] == ["blur"]
+        assert disabled["score_total"] == 0.5
+    finally:
+        repo.close()

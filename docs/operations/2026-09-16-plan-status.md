@@ -26,7 +26,7 @@ are permitted local verification; they are not physical interoperability proof.
 | Phase 1 Gate 3 | Complete | Candidate matrix and evaluation protocol delivered; this gate never required implementing every candidate |
 | Revised grouping | Implemented | Both domain and compatibility entrypoints use adjacent time/hash; zero bypasses reads; embedding and cross-time merges removed; normalized legacy config and CLI compatibility tested |
 | First additional model experiment | Complete as diagnostic | MobileCLIP: fixed 200-image Stanford40 test subset, 84.5% top-1 / 97% top-5, text cache p95 0.393 to 0.120 s, 8,000 probabilities identical |
-| D01 / retained per-group preselection closure | Partial | `apply_group_best_candidate_review` only promotes rejects without decision reasons to review; all-defect readable groups can still lack a keep/review. Group role, quality and final selection are not fully independent persisted concepts |
+| D01 / retained per-group preselection closure | Implemented locally | Readable scored groups retain an explicit keep, including all-defect groups; error-only groups remain errors. Versioned quality/selection metadata persists through cache and rescore; no score/star inflation. Grouping/fallback switches remain supported |
 | D03 missing/zero rating and keywords | Implemented locally in this continuation | Ordinary write and rewrite protect nonzero ratings; malformed/duplicate declarations fail; exact visible keep/reject projection; 36 no-write policy/integration tests |
 | D03 import/effective/write ledger | Partial | Ordinary review now stores requested/effective projection facts and does not claim preserved ratings as AI-owned. General import history, per-field failure/skip ledger and rewrite receipt persistence remain incomplete |
 | D04 professional-software handoff | Unverified | No actual Bridge/Camera Raw/Photoshop or Capture One readback/writeback matrix has been run here; real XMP writes remain outside current authorization |
@@ -66,9 +66,9 @@ Verification:
 
 ## Ordered remaining work
 
-1. Finish independent per-group recommendation/quality/result modeling and
-   readable-group fallback under the revised time/hash grouping, including
-   all-low-quality and all-decode-error cases. Do not restore semantic grouping.
+1. Per-group coverage and quality/selection persistence are implemented and locally
+   tested. Continue acceptance against task-relevant frozen preselection samples;
+   do not restore semantic grouping.
 2. Complete metadata preview/import/effective-result and per-field write ledger,
    including rewrite receipts, conflicts and partial failure. Keep fixtures in
    memory until actual XMP writes are separately authorized.

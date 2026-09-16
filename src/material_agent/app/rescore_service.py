@@ -34,6 +34,14 @@ class RescoreService:
         filtered_mode = bool(scene_filters)
 
         rows = self.repository.fetch_rescore_rows(scene_filters=scene_filters)
+        selected_paths = {row["file_path"] for row in rows}
+        if filtered_mode and best_candidate_review_enabled:
+            affected_groups = {row["group_id"] for row in rows if row["group_id"]}
+            rows = [
+                row
+                for row in self.repository.fetch_rescore_rows()
+                if row["file_path"] in selected_paths or row["group_id"] in affected_groups
+            ]
         signal_rows = self.repository.fetch_signal_rows()
         signals_by_file: dict[str, list[dict]] = {}
         for row in signal_rows:
@@ -51,6 +59,24 @@ class RescoreService:
 
         summaries_by_group: dict[str, list[dict]] = {}
         for row in rows:
+            meta = self.repository._load_json_dict(row["score_metadata_json"])
+            if row["file_path"] not in selected_paths:
+                summaries_by_group.setdefault(row["group_id"] or row["file_path"], []).append(
+                    {
+                        **dict(row),
+                        "meta": meta,
+                        "decision_reasons": self.repository._load_json_list(
+                            row["decision_reasons"]
+                        ),
+                        "visible_breakdown": self.repository._load_json_dict(
+                            row["visible_breakdown_json"]
+                        ),
+                    }
+                )
+                continue
+            # A fresh policy evaluation supersedes the previous quality/selection facts.
+            meta.pop("quality_assessment", None)
+            meta.pop("selection", None)
             scene = row["scene"] or "other"
             file_signals = signals_by_file.get(
                 row["file_path"]
@@ -66,6 +92,7 @@ class RescoreService:
             summaries_by_group.setdefault(row["group_id"] or row["file_path"], []).append(
                 {
                     "file_path": row["file_path"],
+                    "meta": meta,
                     "group_id": row["group_id"],
                     "group_rank": row["group_rank"],
                     "total_score": summary.total_score,
@@ -79,38 +106,21 @@ class RescoreService:
             )
 
         updates: list[dict] = []
-        if filtered_mode:
-            for items in summaries_by_group.values():
-                for item in items:
-                    updates.append(
-                        {
-                            **item,
-                            "decision_reasons": json.dumps(
-                                item["decision_reasons"], ensure_ascii=False
-                            ),
-                            "visible_breakdown_json": json.dumps(
-                                item["visible_breakdown"], ensure_ascii=False
-                            ),
-                        }
-                    )
-            if updates:
-                self.repository.update_rejudge_batch(updates)
-            return len(updates)
-
         for group_id, items in summaries_by_group.items():
-            ranked = sorted(items, key=lambda item: float(item["total_score"]), reverse=True)
+            ranked = sorted(items, key=lambda item: float(item["total_score"] or 0.0), reverse=True)
             ranked_pairs = [(item["file_path"], item) for item in ranked]
             ranked_pairs = apply_group_best_candidate_review(
                 ranked_pairs, enabled=best_candidate_review_enabled
             )
             ranked_pairs = sorted(
-                ranked_pairs, key=lambda item: float(item[1]["total_score"]), reverse=True
+                ranked_pairs, key=lambda item: float(item[1]["total_score"] or 0.0), reverse=True
             )
             for rank, (_, item) in enumerate(ranked_pairs, start=1):
                 updates.append(
                     {
                         **item,
-                        "group_rank": rank,
+                        "group_rank": item["group_rank"] if filtered_mode else rank,
+                        "score_metadata_json": json.dumps(item.get("meta", {}), ensure_ascii=False),
                         "decision_reasons": json.dumps(
                             item["decision_reasons"], ensure_ascii=False
                         ),
@@ -122,4 +132,4 @@ class RescoreService:
 
         if updates:
             self.repository.update_rejudge_batch(updates)
-        return len(updates)
+        return sum(item["file_path"] in selected_paths for item in updates)

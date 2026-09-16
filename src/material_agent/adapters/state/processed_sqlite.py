@@ -679,7 +679,9 @@ class SQLiteProcessedRepository:
                 screening_prior=:screening_prior,
                 visible_breakdown_json=:visible_breakdown_json,
                 policy_version=:policy_version,
-                group_rank=:group_rank
+                group_rank=:group_rank,
+                score_metadata_json=:score_metadata_json,
+                score_metadata_version=1
             WHERE file_path=:file_path
             """,
             updates,
@@ -688,7 +690,9 @@ class SQLiteProcessedRepository:
 
     def fetch_rescore_rows(self, *, scene_filters: list[str] | None = None) -> list[sqlite3.Row]:
         query = (
-            "SELECT file_path, scene, group_id, group_rank, group_size, score_exposure, score_sharpness, "
+            "SELECT file_path, scene, group_id, group_rank, group_size, total_score, star_rating, "
+            "decision, decision_reasons, screening_prior, visible_breakdown_json, policy_version, "
+            "score_metadata_json, score_exposure, score_sharpness, "
             + ", ".join(f"score_{d}" for d in VISION_DIMS)
             + " FROM processed WHERE status IN ('done','scored')"
         )

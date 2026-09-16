@@ -49,3 +49,25 @@ See [the audited plan status](2026-09-16-plan-status.md). These commits do not
 complete per-group fallback/persistence, the full metadata import/rewrite ledger,
 selective refinement, blinded GPT acceptance, other candidate model experiments
 or professional-software/target-host validation. No push or release is implied.
+
+## Continuation batch: readable-group coverage
+
+Reviewed the selection boundary separately from quality scoring. Replaced the
+reason-free reject-to-review fallback with explicit keep coverage, including
+all-defect and review-only groups. Numeric scores and stars remain untouched;
+versioned quality/selection records persist in existing score metadata. Decode
+errors and invalid scores cannot become fallback candidates. Stable tie breaking
+and cached refinalization preserve the original quality decision.
+
+Self-review found two integration needs: scene-filtered rescore must reconcile
+selection against unchanged group members, and old terminal output caches must
+be invalidated. Both are addressed; nonselected scenes retain scores/stars/ranks.
+Read legacy metadata through tolerant JSON decoders and preserve existing runtime
+provenance. Grouping and the compatibility fallback switch remain respected.
+
+Verification: full guarded regression **710 passed, 102 skipped in 22.34 s**;
+after adding processed-cache round-trip coverage and tolerant legacy reads,
+focused scoring/job/pipeline/state tests **59 passed, 14 skipped**. `make check`
+passed. Evidence: `.local/review-2026-09-16-coverage/tests.log` and original dirty
+patch beside it. All-error and mixed-error group tests use virtual paths; cache
+fingerprinting uses a text placeholder. No photo/XMP files were written.
