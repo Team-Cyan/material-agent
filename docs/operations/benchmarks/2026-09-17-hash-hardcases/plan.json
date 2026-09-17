@@ -1,0 +1,181 @@
+{
+  "config_sha256": "040425b33053c22409f96822c1622e4f197bfd02f8b396877568c6f63941fe84",
+  "source": "http://vision.stanford.edu/Datasets/40actions.html",
+  "sources": [
+    {
+      "id": "cutting_vegetables_004.jpg",
+      "label": "cutting_vegetables",
+      "split": "train",
+      "sha256": "3f82e297aa22af904905a0eb78ad48e99579aff52b06d1bf7e5b3ae38451908e"
+    },
+    {
+      "id": "cutting_vegetables_005.jpg",
+      "label": "cutting_vegetables",
+      "split": "train",
+      "sha256": "81212861b20e7ea3181241d03f6b2909717180725211b8339aaaed1ca754c812"
+    },
+    {
+      "id": "cutting_vegetables_006.jpg",
+      "label": "cutting_vegetables",
+      "split": "train",
+      "sha256": "7e8111a42a1d8b2671009de267dc1224f5b77b27e6713203507525e5e3d5ed78"
+    },
+    {
+      "id": "cutting_vegetables_009.jpg",
+      "label": "cutting_vegetables",
+      "split": "train",
+      "sha256": "2c6b9adaf13615fd12c257d4c01217ca2f0b106f0e23e58565f24cdb48128414"
+    },
+    {
+      "id": "cutting_vegetables_001.jpg",
+      "label": "cutting_vegetables",
+      "split": "test",
+      "sha256": "42fb3f99f55a207317436202fbf6b26677ef9a9b161ace38c0fa0630612a12c2"
+    },
+    {
+      "id": "cutting_vegetables_002.jpg",
+      "label": "cutting_vegetables",
+      "split": "test",
+      "sha256": "5047a330ca4548e238897c199f9b849a8571b8a9017fdae8ae19975d1c26d47a"
+    },
+    {
+      "id": "cutting_vegetables_003.jpg",
+      "label": "cutting_vegetables",
+      "split": "test",
+      "sha256": "48b620e36b9152ee5ef9ef22177b24a1a1ba67b15276aca889b513f32523485d"
+    },
+    {
+      "id": "cutting_vegetables_007.jpg",
+      "label": "cutting_vegetables",
+      "split": "test",
+      "sha256": "b04cd3444ba28ce21a15883ffbf3d4cc33344bb761694d3b6ace50c57595467e"
+    },
+    {
+      "id": "cooking_001.jpg",
+      "label": "cooking",
+      "split": "train",
+      "sha256": "2b2e332b9de1855fe638b612616b335a470770f99ca6dfa58ed6e1a8385b80cd"
+    },
+    {
+      "id": "cooking_004.jpg",
+      "label": "cooking",
+      "split": "train",
+      "sha256": "62921333d3aecddc5276d313e0f93eb07467402457c089e9ecec331f57763d35"
+    },
+    {
+      "id": "cooking_005.jpg",
+      "label": "cooking",
+      "split": "train",
+      "sha256": "0f73f5d3a42d0a4a1fbb8f47ed2acefc1a2ad29960a8a4653ab9e70130abc560"
+    },
+    {
+      "id": "cooking_010.jpg",
+      "label": "cooking",
+      "split": "train",
+      "sha256": "3fb22f588bdeddb56e8def2fac25ce4464625f4e567777a482d913006c438b3c"
+    },
+    {
+      "id": "cooking_002.jpg",
+      "label": "cooking",
+      "split": "test",
+      "sha256": "a317659ab9b2c407c2e64b5582682bd2e3a9b75a08ed00dac9a1d3952bd44598"
+    },
+    {
+      "id": "cooking_003.jpg",
+      "label": "cooking",
+      "split": "test",
+      "sha256": "73a2544bb72ae0cc8781db04aec3850dd094db8af5cacb0e7fab7af91ca7763b"
+    },
+    {
+      "id": "cooking_006.jpg",
+      "label": "cooking",
+      "split": "test",
+      "sha256": "2490543108aa23e5169be3f989674a393d052e66a785376ee8e60a3e085e9cb7"
+    },
+    {
+      "id": "cooking_007.jpg",
+      "label": "cooking",
+      "split": "test",
+      "sha256": "df15e5e41dd2233c7cb3f74b52aaf31e0f21d794750fb096f52ec43a00a208e8"
+    },
+    {
+      "id": "washing_dishes_001.jpg",
+      "label": "washing_dishes",
+      "split": "train",
+      "sha256": "b49f77f23ab8bc9c26b8fa8b5af6eb7b7f0e3c3dcb0d2abf882c1f8d33f29ea2"
+    },
+    {
+      "id": "washing_dishes_004.jpg",
+      "label": "washing_dishes",
+      "split": "train",
+      "sha256": "bd2e21343fe26a6b29d51e347cbccf0718c669c0b1a5757a4d24de4668eb3f88"
+    },
+    {
+      "id": "washing_dishes_005.jpg",
+      "label": "washing_dishes",
+      "split": "train",
+      "sha256": "3d62c0a54f20721fdc598819c5008483404f55f0fc32c1876175f2448070837f"
+    },
+    {
+      "id": "washing_dishes_006.jpg",
+      "label": "washing_dishes",
+      "split": "train",
+      "sha256": "866729b71713f75d5d197380bea3e360449d66d372dbacec2c8b36e107cf4178"
+    },
+    {
+      "id": "washing_dishes_002.jpg",
+      "label": "washing_dishes",
+      "split": "test",
+      "sha256": "b3ebe706098c32f6c72614806dbd440c286fa9c7651065bcaf36127beae5d36d"
+    },
+    {
+      "id": "washing_dishes_003.jpg",
+      "label": "washing_dishes",
+      "split": "test",
+      "sha256": "e5de38d09053eb3c62d956347da7038456b19070456e4492d6e7857952effa1c"
+    },
+    {
+      "id": "washing_dishes_007.jpg",
+      "label": "washing_dishes",
+      "split": "test",
+      "sha256": "9218e6552d23c9fc36ee2ef8745ce8ac73cabb6d0e4fab82efb17a44863b0db2"
+    },
+    {
+      "id": "washing_dishes_009.jpg",
+      "label": "washing_dishes",
+      "split": "test",
+      "sha256": "c25baf9650a6811e0c2415ab6cb1dd5bc3280570348b77984f74769f2d2be71f"
+    }
+  ],
+  "selection": "first four lexicographic IDs per class and official split, before scoring",
+  "variants": [
+    "phash",
+    "equalized_phash",
+    "dhash"
+  ],
+  "threshold": 10,
+  "time_gap_seconds": 10,
+  "synthetic_separation_seconds": 5,
+  "positive_transforms": {
+    "display_brightness": [
+      0.125,
+      0.5,
+      2,
+      8
+    ],
+    "detail_loss": [
+      "near_black",
+      "near_white"
+    ]
+  },
+  "negative_transforms": {
+    "replace_center_with_other_class": [
+      0.3,
+      0.6
+    ]
+  },
+  "hash_input": "decode the exact JPEG bytes passed to scoring, then production 256px thumbnail",
+  "negative_label": "different central content by construction; no human photographic preference ground truth",
+  "partition": "official train calibration and official test holdout; no tuning",
+  "constraints": "in-memory transformed pixels only; original files immutable; no DB/writer"
+}

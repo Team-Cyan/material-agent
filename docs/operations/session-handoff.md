@@ -72,3 +72,11 @@ from this fixture. Before implementing normalized hashing, obtain labeled rapid
 same-background/different-action or dish negatives and clipped controls; version
 the persisted hash-cache identity and preserve zero-threshold no-read behavior.
 The candidate remains offline only; see the exposure report and raw ablation.
+
+The new [synthetic hard-case report](benchmarks/2026-09-17-hash-hardcases/report.md)
+and runnable script cover 192 derived pairs with final keep/reject. Equalized
+pHash improves holdout brightness splits (16 -> 12 of 48) but still merges 11/24
+central-content changes and loses one distinct original through reject. Uniform
+detail-loss cases all split and receive singleton coverage keep. Keep production
+unchanged; natural same-background action/dish changes and more real exposure
+sequences remain missing. Synthetic origin labels are not photographic truth.

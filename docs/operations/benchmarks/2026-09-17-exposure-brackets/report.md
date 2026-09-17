@@ -111,3 +111,8 @@ include clipped/near-featureless controls and camera/preview variation, and
 freeze calibration and holdout events. A change also needs versioned hash-cache
 identity and compatibility tests so old pHash entries cannot be mixed with new
 normalized hashes. Keep the existing time gate and threshold-zero bypass.
+
+The subsequent [fixed-background synthetic stress test](../2026-09-17-hash-hardcases/report.md)
+adds harder controls and final selection outcomes. Equalization still merges
+11/24 central-content replacements on holdout, causing one distinct-content
+reject, so the easy-negative result above must not be used as a promotion gate.

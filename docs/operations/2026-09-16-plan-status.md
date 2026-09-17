@@ -120,3 +120,12 @@ It passes the existing 200 positive/450 easy negative pairs, but these negatives
 represent only 18 different-event comparisons and do not cover rapid dish/action
 changes. No hash algorithm/default is changed; hard-negative labels and hash-cache
 versioning are prerequisites for promotion.
+
+A frozen [synthetic hard-case test](benchmarks/2026-09-17-hash-hardcases/report.md)
+now covers 192 pairs from 24 source JPEGs, including fixed-background content
+replacement and severe detail loss, with final quality/selection outcomes. On
+holdout, equalization reduces brightness splits 16/48 -> 12/48 but leaves 11/24
+content-change false merges and one resulting distinct-content reject. All
+24 unrecognizable detail-loss frames remain singleton coverage keeps. This
+confirms an acceptance gap; it does not authorize an exception or hash promotion.
+The reusable read-only-image runner is `scripts/benchmark_hash_hardcases.py`.
