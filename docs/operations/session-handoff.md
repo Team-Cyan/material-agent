@@ -80,3 +80,20 @@ central-content changes and loses one distinct original through reject. Uniform
 detail-loss cases all split and receive singleton coverage keep. Keep production
 unchanged; natural same-background action/dish changes and more real exposure
 sequences remain missing. Synthetic origin labels are not photographic truth.
+
+A bounded retry of the original B-panel task was attempted after the account
+reported ordinaryUsageAllowed=true. It produced no new group file or diagnostic
+response and was interrupted rather than repeatedly replaced/polled. The older
+quota error remains the last explicit failure; current cause is unconfirmed.
+B groups 18–20 remain unjudged. Do not label this retry a fresh quota rejection.
+
+September 18 continuation: [real MPII Cooking 2 transitions](benchmarks/2026-09-18-cooking-hashes/report.md)
+now cover 25 frozen pairs/38 frames across first official attribute-train/test
+sequences. Holdout distinct-action false merges are 5/10 current pHash, 3/10
+equalized, 10/10 dHash, each causing final reject of one distinct action. Equalized
+hash newly merges move-to-peel (12 -> 8 bits over 4.082 seconds), so lower total
+errors do not make it uniformly superior. Natural negatives now exist; do not
+repeat acquisition or claim this evidence is missing. Full broader acceptance,
+independent remaining panel groups and the unresolved severe-loss product choice
+remain. Reproducer: `scripts/benchmark_cooking_hashes.py`; source videos/archives
+stay local under provider scientific-use/no-redistribution terms.

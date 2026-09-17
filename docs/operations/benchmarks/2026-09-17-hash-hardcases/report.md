@@ -102,3 +102,8 @@ set of real exposure-adjustment sequences still lack independent grouping labels
 Maintain existing time AND hash semantics, threshold-zero bypass and conservative
 missing/detail-insufficient behavior. No time-only exception has been accepted.
 A replacement hash also requires cache revision separation before implementation.
+
+The subsequent [real cooking-video check](../2026-09-18-cooking-hashes/report.md)
+adds natural action boundaries using official annotations. It separately finds
+5/10 current-pHash and 3/10 equalized-pHash false merges on the small holdout,
+including a new equalization regression. Synthetic results above remain synthetic.

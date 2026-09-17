@@ -129,3 +129,28 @@ content-change false merges and one resulting distinct-content reject. All
 24 unrecognizable detail-loss frames remain singleton coverage keeps. This
 confirms an acceptance gap; it does not authorize an exception or hash promotion.
 The reusable read-only-image runner is `scripts/benchmark_hash_hardcases.py`.
+
+## September 18 real action-transition check
+
+[Two official MPII Cooking 2 videos](benchmarks/2026-09-18-cooking-hashes/report.md)
+now add 25 frozen real-video pairs/38 unique frames, separate from synthetic
+exposure tests. On ten held-out distinct-action boundaries, pHash/equalized
+pHash/dHash merge 5/3/10 and each merge loses a distinct action through final
+reject. Equalization also introduces a new move-to-peel merge that baseline
+avoids. The candidates are not uniformly better and remain unpromoted. This
+closes the absence of any natural action negative, not full product acceptance.
+
+Local reproducible runners, frozen inputs and final selection evidence are
+committed in reviewed batches. The unresolved work is now:
+
+- Independent B-panel groups 18–20: bounded restoration retry produced no result
+  or new error and was interrupted. Last explicit failure was quota; current
+  retry cause is unknown. Do not substitute main-context judgments.
+- Exposure-robust grouping: candidates improve some positives but fail real and
+  synthetic action negatives. A new candidate must have broader independent
+  evaluation and preserve time/hash and hash-cache compatibility contracts.
+- Completely unrecognizable exposure frames: no time-only exception is approved;
+  current conservative split/coverage behavior remains.
+- Personal preference labels, automatic context-producer acceptance, actual
+  professional-software XMP round trips and authorized target-machine verification
+  remain distinct requirements, not implied by these experiments.

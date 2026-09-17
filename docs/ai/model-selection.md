@@ -205,3 +205,9 @@ keep their signals out of default score fusion until broader calibration.
 - MediaPipe Face Landmarker: https://developers.google.com/edge/mediapipe/solutions/vision/face_landmarker
 - BRIA RMBG-2.0: https://huggingface.co/briaai/RMBG-2.0
 - BiRefNet: https://huggingface.co/ZhengPeng7/BiRefNet
+
+Exposure-tolerant grouping candidates remain offline: the
+[real cooking-transition comparison](../operations/benchmarks/2026-09-18-cooking-hashes/report.md)
+shows that grayscale histogram equalization helps some exposure pairs but can
+introduce new action merges. Neither equalized pHash nor dHash is a validated
+replacement. Do not change hash-cache semantics without an explicit revision.

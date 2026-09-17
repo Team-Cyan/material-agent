@@ -1,0 +1,14 @@
+[
+  {
+    "sequence": "s07-d72",
+    "url": "https://datasets.d2.mpi-inf.mpg.de/MPII-Cooking-2/videos/s07-d72-cam-002.avi",
+    "bytes": 19839824,
+    "sha256": "2d56fe960f1fcf78a970aefb53b9cf51b43064d47ff15dbb1019da852a597134"
+  },
+  {
+    "sequence": "s22-d23",
+    "url": "https://datasets.d2.mpi-inf.mpg.de/MPII-Cooking-2/videos/s22-d23-cam-002.avi",
+    "bytes": 39468178,
+    "sha256": "53c201e259a09f51b60f8aa5fa7c02c7b769ae6c90cfe29e793112c6494f5bec"
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "dataset": "MPII Cooking 2",
+  "license": "scientific use only; no redistribution",
+  "selection": "first lexicographic sequence in official attribute train and test split, before images/scoring",
+  "videos": [
+    "s07-d72",
+    "s22-d23"
+  ],
+  "pair_rule": "first ten chronologically adjacent distinct-action segment boundaries with interior observations <=10s apart and first ten same-segment pairs <=10s apart; freeze frame indices from official annotations before scoring",
+  "variants": [
+    "phash",
+    "equalized_phash",
+    "dhash"
+  ],
+  "threshold": 10,
+  "time_gate_seconds": 10,
+  "split": {
+    "s07-d72": "calibration",
+    "s22-d23": "holdout"
+  },
+  "limits": {
+    "max_download_bytes": 100000000
+  }
+}
