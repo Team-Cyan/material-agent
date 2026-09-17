@@ -199,12 +199,21 @@ class Grouper:
                     img = source.convert("RGB")
             except OSError, ValueError:
                 with rawpy.imread(file_path) as raw:
-                    thumb = raw.extract_thumb()
-                    if thumb.format == rawpy.ThumbFormat.JPEG:
-                        with Image.open(io.BytesIO(thumb.data)) as source:
-                            img = source.convert("RGB")
+                    try:
+                        thumb = raw.extract_thumb()
+                    except rawpy.LibRawNoThumbnailError, rawpy.LibRawUnsupportedThumbnailError:
+                        # Preserve the fast thumbnail path; decode only when the
+                        # RAW has no usable embedded preview. Successful hashes
+                        # use the existing cache, and failures still split groups.
+                        img = Image.fromarray(
+                            raw.postprocess(use_camera_wb=True, output_bps=8, half_size=True)
+                        )
                     else:
-                        img = Image.fromarray(thumb.data)
+                        if thumb.format == rawpy.ThumbFormat.JPEG:
+                            with Image.open(io.BytesIO(thumb.data)) as source:
+                                img = source.convert("RGB")
+                        else:
+                            img = Image.fromarray(thumb.data)
             img.thumbnail((256, 256))
             return imagehash.phash(img)
         except Exception:

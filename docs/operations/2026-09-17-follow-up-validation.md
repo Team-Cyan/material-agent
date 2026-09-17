@@ -106,3 +106,22 @@ as 100%. No quality-improvement or model-promotion claim follows.
 
 Local review/fix commits only. No push, deployment, production review, private-host
 operation, source-image modification or XMP write occurred.
+
+## Subsequent hash fallback batch
+
+The missing-thumbnail limitation above was reproduced and then fixed in a
+separate batch. Missing/unsupported RAW thumbnails now fall back to half-size
+postprocess; valid embedded thumbnails and standard images retain their original
+path. Four regressions cover fallback/cache reuse, decode failure and embedded
+preview parity. Full guarded suite: **745 passed, 102 skipped in 20.63 s**.
+The six real DNGs now form two groups at unchanged 30-second / 10-bit thresholds.
+Cold grouping took 1.1604 s including EXIF/decode; a fully cached rerun took
+0.000110 s. All source SHA-256 values remained unchanged. Local evidence:
+`.local/hdrplus-evaluation/hash-fallback-benchmark.json`.
+
+The user raised an additional exposure-adjustment case. In-memory display-RGB
+brightness scaling on two real sources gave pHash distances <=10 at factors
+1/4 through 4, but distance 22 at factor 16 after clipping. These are synthetic
+diagnostics, not physical exposure-stop or noise equivalence. Extreme exposure
+changes can still split an event and retain a defective singleton for coverage.
+No threshold or grouping semantics were changed to conceal this limitation.

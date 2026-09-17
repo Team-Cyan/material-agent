@@ -96,5 +96,14 @@ The retained CLI flag `--no-visual-merge` sets the new threshold to 0.
 
 - EXIF reading still mixes bounded bulk `exiftool` calls and per-file fallback
   logic inside one module.
-- Hash checks depend on preview extraction from RAW files, which can become expensive on large datasets.
+- Hashing preserves the standard-image and embedded-preview fast paths. Missing or
+  unsupported RAW thumbnails use one read-only half-size postprocess with camera
+  white balance and 8-bit output, then the same 256-pixel thumbnail and 64-bit
+  pHash. Successful results use the existing cache; failed decoding stays missing.
+  Threshold zero bypasses all hash/decode work. Half-size decoding can be expensive
+  on large sensors and must be profiled rather than treated as a free fallback.
+- pHash tolerates some exposure variation but not arbitrary clipping or lost
+  detail. A failed exposure-only match can create a singleton with coverage keep;
+  quality rejection and selection retention remain separate. Do not widen the
+  threshold or bypass hashing silently to hide this limitation.
 - Consecutive similarity can chain; semantic distinctions are deliberately outside the current user-defined grouping rule.

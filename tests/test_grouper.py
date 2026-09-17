@@ -292,3 +292,62 @@ def test_standard_image_hash_reads_existing_fixture_without_raw_decode():
         result = Grouper._hash_file(str(source))
     assert result is not None
     assert result.hash.size == 64
+
+
+@pytest.mark.parametrize("error_name", ["LibRawNoThumbnailError", "LibRawUnsupportedThumbnailError"])
+def test_raw_hash_falls_back_to_half_size_decode_and_caches(monkeypatch, error_name):
+    from unittest.mock import MagicMock, Mock
+    import numpy as np
+    from material_agent.domain import grouper
+
+    raw = MagicMock()
+    raw.__enter__.return_value = raw
+    raw.extract_thumb.side_effect = getattr(grouper.rawpy, error_name)()
+    rgb = np.random.default_rng(0).integers(0, 256, (32, 48, 3), dtype=np.uint8)
+    raw.postprocess.return_value = rgb
+    monkeypatch.setattr(grouper.Image, "open", Mock(side_effect=OSError("RAW")))
+    monkeypatch.setattr(grouper.rawpy, "imread", Mock(return_value=raw))
+    files = ["a.dng", "b.dng"]
+    times = dict.fromkeys(files, datetime(2024, 1, 1))
+    state = Mock()
+    cache = {}
+    state.get_visual_hash_cache.side_effect = lambda _: cache.copy()
+    state.set_visual_hash_cache.side_effect = cache.update
+    instance = grouper.Grouper({"time_gap_seconds": 30, "hash_threshold": 10})
+    assert instance._group_with_times(files, times, state=state) == [files]
+    assert len(cache) == 2
+    assert raw.postprocess.call_count == 2
+    raw.postprocess.assert_called_with(use_camera_wb=True, output_bps=8, half_size=True)
+    assert instance._group_with_times(files, times, state=state) == [files]
+    assert raw.postprocess.call_count == 2
+
+
+def test_raw_hash_decode_failure_remains_missing(monkeypatch):
+    from unittest.mock import MagicMock, Mock
+    from material_agent.domain import grouper
+
+    raw = MagicMock()
+    raw.__enter__.return_value = raw
+    raw.extract_thumb.side_effect = grouper.rawpy.LibRawNoThumbnailError()
+    raw.postprocess.side_effect = RuntimeError("unreadable raw")
+    monkeypatch.setattr(grouper.Image, "open", Mock(side_effect=OSError("RAW")))
+    monkeypatch.setattr(grouper.rawpy, "imread", Mock(return_value=raw))
+    assert grouper.Grouper._hash_file("broken.dng") is None
+    raw.postprocess.assert_called_once()
+
+
+def test_raw_embedded_thumbnail_hash_does_not_postprocess(monkeypatch):
+    from unittest.mock import MagicMock, Mock
+    from types import SimpleNamespace
+    import numpy as np
+    from PIL import Image
+    from material_agent.domain import grouper
+
+    rgb = np.random.default_rng(42).integers(0, 256, (32, 48, 3), dtype=np.uint8)
+    raw = MagicMock()
+    raw.__enter__.return_value = raw
+    raw.extract_thumb.return_value = SimpleNamespace(format=grouper.rawpy.ThumbFormat.BITMAP, data=rgb)
+    monkeypatch.setattr(grouper.Image, "open", Mock(side_effect=OSError("RAW")))
+    monkeypatch.setattr(grouper.rawpy, "imread", Mock(return_value=raw))
+    assert grouper.Grouper._hash_file("embedded.dng") == imagehash.phash(Image.fromarray(rgb))
+    raw.postprocess.assert_not_called()
