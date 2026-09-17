@@ -2,10 +2,10 @@
 
 ## Completed
 
-- fixed missing-thumbnail RAW hashing and completed a bounded 100-frame HDR+
-  TOPIQ/MUSIQ/MediaPipe/refinement comparison; no candidate promotion. Blind
-  evaluation remains partial (A 20/20, B 17/20), with unstable order preferences;
-  see [current evidence](operations/benchmarks/2026-09-17-hdrplus-holdout/report.md)
+- fixed missing-thumbnail RAW hashing and completed bounded HDR+ model comparisons,
+  independent opposite-order panels and whole-sequence cooking diagnostics;
+  no candidate is promoted. See the [current ledger](operations/2026-09-16-plan-status.md)
+  for acceptance limits and the next product decisions
 - reproduced the exposure-correction grouping limitation on real CR2s; current
   hash threshold can split a subsecond exposure bracket and keep the bad singleton;
   see [counterexample](operations/benchmarks/2026-09-17-exposure-brackets/report.md)

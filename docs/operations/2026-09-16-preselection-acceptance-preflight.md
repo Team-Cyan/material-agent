@@ -1,5 +1,9 @@
 # Preselection acceptance preflight
 
+Current progress and next actions: [single task ledger](2026-09-16-plan-status.md).
+Dated experiment results below retain their historical scope.
+
+
 The controlled Codex diagnostic pilot is now complete after quota restoration:
 both independent panels viewed all 12 candidates and agreed with each other and
 the default full-scoring baseline on 6/6 controlled pairs. See the

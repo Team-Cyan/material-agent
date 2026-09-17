@@ -76,6 +76,10 @@ or reintroduce semantic merging from these results.
 
 ## Reproduction and verification
 
+The invocation below is historical for runner `a90e3ef`. The current runner
+requires a frozen plan; use the [sequence protocol](../2026-09-18-cooking-sequences/report.md)
+for a current command that also reproduces these pair results.
+
 Download the two official URLs in `videos.json` into a local directory, keeping
 original bytes unchanged. With the repository environment:
 

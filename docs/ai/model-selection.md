@@ -1,5 +1,9 @@
 # Local Model Selection
 
+Current progress and next actions: [single task ledger](../operations/2026-09-16-plan-status.md).
+Dated experiment results below retain their historical scope.
+
+
 This document records the current local-model architecture for `material-agent`.
 It is based on the latest model search plus local Apple M4 smoke tests on
 Python 3.14.

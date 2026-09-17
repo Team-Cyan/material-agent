@@ -1,156 +1,76 @@
-# Audited implementation status, 2026-09-16
+# Current implementation and acceptance status
 
-This separates the completed bounded inference task from the broader product
-plan in the September 14 design decisions. Updated through the September 17 review continuation. Status is based on current code and
-local tests, not on the roadmap's historical deployment summaries.
+Single status entrypoint, updated September 18, 2026. The dated filename is
+retained for existing links. Historical reports preserve their original results;
+this page, rather than appended handoff logs, defines current work and next steps.
 
-## Current product rule and execution boundary
+## Rules and authorization
 
-Grouping is consecutive capture-time proximity AND perceptual-hash proximity.
-`grouping.hash_threshold: 0` bypasses hashing. There is no semantic, embedding,
-all-pairs or same-action veto. The previous strict semantic grouping requirement
-has been superseded by the user; do not treat it as unfinished implementation.
-The broader distinction between image quality and selection role still matters.
+Grouping remains adjacent capture-time proximity AND adjacent pHash proximity;
+`hash_threshold: 0` selects time only. Chains are allowed. No semantic/action
+veto, all-pairs constraint, default hash replacement or severe-exposure exception
+has been approved. Quality and selection remain separate; readable groups can
+retain a quality-reject for coverage without score inflation.
 
-Local commits are authorized and have been made in reviewed batches. No push,
-deployment, production review, source-photo/XMP write, private-host mutation or
-existing-database migration has been performed in this continuation. In-memory XML and mocked command construction
-are permitted local verification; they are not physical interoperability proof.
+Local experiments, fixes, verification and reviewed local commits are authorized.
+Push, deployment, private-host operations, production review and actual photo/XMP
+writes remain excluded. Synthetic, video, real RAW, model proxy and human evidence
+must be distinguished. Historical external operations do not expand this scope.
 
-## Completion audit
+## Task ledger
 
-| Plan area | Current status | Concrete evidence / remaining work |
-| --- | --- | --- |
-| Phase 1 Gate 0/1 | Complete | Actual-path inventory and approved migration seam in `2026-09-15-inference-unification-gates-0-1.md` |
-| Phase 1 Gate 2 | Complete for covered local baseline | Shared native OpenVINO lifecycle, bounded caches, provenance, real CPU parity and state compatibility; see readiness report |
-| Phase 1 Gate 3 | Complete | Candidate matrix and evaluation protocol delivered; this gate never required implementing every candidate |
-| Revised grouping | Implemented | Both domain and compatibility entrypoints use adjacent time/hash; zero bypasses reads; embedding and cross-time merges removed; normalized legacy config and CLI compatibility tested |
-| First additional model experiment | Complete as diagnostic | MobileCLIP: fixed 200-image Stanford40 test subset, 84.5% top-1 / 97% top-5, text cache p95 0.393 to 0.120 s, 8,000 probabilities identical |
-| D01 / retained per-group preselection closure | Implemented locally | Readable scored groups retain an explicit keep, including all-defect groups; error-only groups remain errors. Versioned quality/selection metadata persists through cache and rescore; no score/star inflation. Grouping/fallback switches remain supported |
-| D03 missing/zero rating and keywords | Implemented locally in this continuation | Ordinary write and rewrite protect nonzero ratings; malformed/duplicate declarations fail; exact visible keep/reject projection; 36 no-write policy/integration tests |
-| D03 import/effective/write ledger | Implemented for projection attempts locally | Versioned imported/requested/planned/effective fields, unknown authorship, nonzero conflicts and field outcomes; independent append-only ledger survives processed errors; rewrite persists receipts and scalar ownership. External change watching and crash reconciliation are not implemented |
-| D04 professional-software handoff | Unverified | No actual Bridge/Camera Raw/Photoshop or Capture One readback/writeback matrix has been run here; real XMP writes remain outside current authorization |
-| D05 evidence applicability and selective refinement | Implemented locally; refinement opt-in | Observed/unknown implemented; context-supported not_applicable is a consumer contract with no local context producer. Generic eye proxies removed. One-pass candidate/time/size bounds, baseline retention, no-resolution-gain guard and review reasons tested. The later 100-frame holdout has 18 larger-focus completions and 22 no-gain attempts; ranking gain remains unproven and refinement stays disabled |
-| D06 remaining model experiments/fusion | Three candidates compared diagnostically | TOPIQ/MUSIQ/MediaPipe ran on 100 frozen HDR+ frames. Resource results are recorded; unstable proxy references fail the promotion gate. No fusion/default change; personal ranker still lacks personal labels |
-| D07 state/container resilience | Existing implementation, target revalidation outstanding | Appdata paths and state tests exist. No live backup/restore/container recreation or library-relocation migration was performed here; keep those separate from local code proof |
-| D08 GPT proxy acceptance | Controlled pilot complete; full acceptance pending | Two fresh-context Codex panels each viewed 12 controlled candidates. Baseline and reversed-order preferences agree 6/6; zero false rejects among 6 proxy-acceptable candidates per panel. Missing-thumbnail hashing is fixed in accad08. A larger 20-event/100-frame holdout has A 20/20 and B 17/20 panels; quota blocks the last three groups and order agreement is poor. Full acceptance and missing case categories remain unverified. [Report](benchmarks/2026-09-16-codex-blind-pilot/report.md) |
+Status vocabulary: **Pending**, **In progress**, **Implemented**, **Accepted
+locally**, **Blocked**. Local acceptance never implies target-machine deployment
+or photographic product acceptance. No implementation task is currently running.
 
-## Historical September 16 projection batch
+| Item | Status | Commit / evidence / checks | Next action or blocker |
+| --- | --- | --- | --- |
+| Phase 1 Gate 0/1/2/3 | Accepted locally, bounded scope | [Actual-path gates](2026-09-15-inference-unification-gates-0-1.md), [readiness](2026-09-15-inference-unification-readiness.md); shared native lifecycle, CPU parity, compatibility and candidate matrix | No repeat migration. Target provider/hardware acceptance is separate |
+| Adjacent time/hash and missing-thumbnail RAWs | Implemented; business acceptance incomplete | `accad08`; four RAW regressions; last guarded full suite 745 passed/102 skipped | Preserve rule. Full sequences expose action-coverage loss; see decision below |
+| Group coverage / quality-selection persistence | Implemented | [Implementation audit history](2026-09-17-follow-up-validation.md); `2c6ec47` includes reviewed refinement/rewrite guards | Per-group keep works, but is not per-action coverage; no score inflation |
+| XMP policy / projection-attempt ledger | Implemented locally | `2c6ec47` and linked audit; missing/zero rating rules, protected nonzero values, malformed/duplicate failures, rewrite preflight, append-only outcomes | External watching/crash reconciliation and professional software readback remain unverified |
+| Evidence applicability / opt-in refinement | Implemented; not promoted | Observed/unknown contracts and conservative no-gain guard; 100-frame run had 18 completed/22 no-gain/60 untriggered observations | No demonstrated ranking gain; keep disabled. No automatic back-view/silhouette producer or accepted context dataset |
+| TOPIQ / MUSIQ / MediaPipe experiments | Accepted locally as diagnostics only | `74998da`; [100-frame comparison](benchmarks/2026-09-17-hdrplus-holdout/report.md), [completed proxy results](benchmarks/2026-09-18-hdrplus-completed/report.md) | Freeze negative promotion conclusion; do not rerun/fuse by default |
+| Independent HDR+ A/B proxy evaluation | Execution complete; acceptance gate failed | `4b76ce8`; both panels 20/20; prior responses unchanged; 1/20 preferred-set agreement, 7 stable strict pairs vs minimum 30 | Quota blocker resolved. References remain unstable; no human-accuracy or product-acceptance claim |
+| Exposure and action hard negatives | Accepted locally as diagnostic evidence | `5caaacb`, `2811b9d`, `a90e3ef`; [real RAW](benchmarks/2026-09-17-exposure-brackets/report.md), [synthetic](benchmarks/2026-09-17-hash-hardcases/report.md), [video pairs](benchmarks/2026-09-18-cooking-hashes/report.md) | Current candidates fail some known controls. Do not tune these inspected inputs further |
+| Whole-sequence closure / reproducible runner | Accepted locally | `4b76ce8`; [sequence report](benchmarks/2026-09-18-cooking-sequences/report.md); 29 focused tests, 2 boundary tests, Ruff, source hashes, 25-pair exact parity and runner/plan fingerprints | No algorithm promoted; decision boundary below |
+| Personal ranker / automatic context acceptance | Blocked on reference data | Action labels and order-sensitive model proxies cannot establish personal preference or reliable back-view/silhouette applicability | Obtain suitable independent labels before model integration/training |
+| Professional-software and target recovery acceptance | Blocked on external inputs/authorization | [Concrete execution plan](2026-09-17-external-acceptance-plan.md) | Identify scratch write scope/software and separately authorized target operator/appdata scope; do not execute now |
 
-`exiftool_xmp.py` now checks all rating declarations before building an update.
-Only missing or numeric-zero values permit a Rating argument. Any nonzero
-integer value is preserved, including an earlier AI value or external -1.
-Empty, malformed, nested or duplicate declarations stop the file before the
-ExifTool command. The existing atomic-copy/identity-check/replace path remains.
+## Converged grouping result and required decisions
 
-Recognized `pj:decision=keep|review|reject` values produce exactly one visible
-`material-agent:keep|reject` keyword; review maps to conservative keep without
-changing its quality rating. Other keywords, including similarly prefixed
-values, are preserved. Detailed provenance remains in `xmp:Identifier`.
-Calls without a selection decision preserve existing visible selection tags.
-Explicit AI tag cleanup also removes the two owned keywords.
+The real exposure pair is 0.34 seconds apart with pHash distance 24; threshold 10
+splits it and singleton coverage retains the dark quality-reject. Equalization
+reduces that pair to distance 4, but introduces a move-to-peel false merge in a
+real video. Synthetic controls also show different-content false merges.
 
-An ordinary successful write returns requested/effective rating and projection
-status. Review persistence keeps the AI score unchanged, stores the receipt in
-metadata, and omits an untouched external rating from `xmp_payload_json`'s
-AI-owned fields. The receipt is emitted only after atomic replacement succeeds.
-This is not a claim that an existing rating was authored by a human.
+On the full 121-frame sampled video window, current pHash creates seven groups
+and retains only 2/12 represented action classes; equalization retains 3/12,
+dHash 1/12. Labels are metrics only. This demonstrates the difference between
+correct implementation of adjacent links and the business wish to retain all
+different actions. The wide, dark video's low quality scores and group-level
+selection contribute to the losses; it is not camera-burst quality ground truth.
 
-Verification for that historical batch (not the latest suite):
+Existing candidates are **not promoted**. No additional algorithm experiment is
+prepared in this batch. The next change requires a clear product decision:
 
-- `PYTHONPATH="$PWD/tests" PYTEST_PLUGINS=inference_readonly_guard uv run --no-sync pytest -q tests/test_xmp_projection_policy.py`: **36 passed**.
-- Full guarded suite: **703 passed, 102 skipped in 19.58 s**. Source/XMP-writing
-  tests were not executed through their writes; optional missing dependencies
-  also account for skips. Log: `.local/phase2-mobileclip/xmp-projection-regression.log`.
-- Ruff checks passed. No source photo or XMP was created or modified.
+1. Is the current adjacent-link definition authoritative even when different
+   actions connect, or should a new visual group constraint be designed? A new
+   constraint is not an unapproved restoration of semantic grouping.
+2. When exposure destroys correspondence evidence, keep conservative split/
+   coverage, or explicitly allow a time-only exception with false-merge risk?
+   Previous `continue` messages do not select an exception.
 
-## Ordered remaining work
+Until then, retain existing behavior. Any subsequently authorized candidate needs
+one frozen hypothesis, bounded resources, explicit admission/rejection criteria,
+a fresh broader event/subject evaluation, and hash-cache revision separation.
+Do not keep rotating algorithms on the inspected holdouts.
 
-1. Per-group coverage and quality/selection persistence are implemented and locally
-   tested. Continue acceptance against task-relevant frozen preselection samples;
-   do not restore semantic grouping.
-2. Projection-attempt preview/import/effective-result and per-field ledger are
-   locally implemented, including rewrite, conflicts and partial batch failure.
-   Actual sidecar/software round trips and crash reconciliation remain unverified.
-3. Evidence applicability and bounded optional refinement are implemented. Keep
-   refinement disabled until a relevant quality/latency benchmark supports it;
-   a RAW half-size decode is not automatically a higher-resolution observation.
-4. Rubric v1 is frozen; see [acceptance preflight](2026-09-16-preselection-acceptance-preflight.md).
-   The controlled pilot and opposite-order Codex reviews are complete; the real
-   burst acceptance remains incomplete. A September 17 HDR+ real-burst subset
-   adds new-event evaluation; see the follow-up report linked below. Photo Triage
-   remains task-relevant but its official download service failed the access check.
-5. Run further model candidates individually only against a matching frozen
-   benchmark. Personal ranker training still requires genuine preference labels.
-6. Separately authorize and verify professional-software round trips and target
-   hardware/storage operations. Do not label these complete from local tests.
+## Verification limits
 
-The plan is therefore **not fully complete**. The original inference task is
-complete; the broader business closure and external acceptance remain explicit
-work items rather than being hidden behind a generic “production ready” label.
-
-## September 17 follow-up
-
-See [review and real-burst evidence](2026-09-17-follow-up-validation.md) for shared
-rewrite preflight, conservative refinement guards, actual context-producer limits,
-new public data, and the latest dated verification. Earlier test counts above are
-historical batch evidence and must not be read as the current total.
-
-## September 17 expanded holdout and exposure counterexample
-
-See the [100-frame comparison](benchmarks/2026-09-17-hdrplus-holdout/report.md)
-for raw proxy responses, frozen model/resource plans and negative promotion
-results. Latest guarded suite: **745 passed, 102 skipped**. All hashes are
-available after the RAW fallback; one event still correctly splits on a real
-five-hour EXIF discontinuity. No automatic back-view/silhouette producer exists.
-
-The [real CR2 exposure counterexample](benchmarks/2026-09-17-exposure-brackets/report.md)
-reproduces a 0.34-second pair with hash distance 24: default threshold 10 splits
-it and keeps the dark quality-reject as a singleton. Threshold 24 or zero merges
-this pair and rejects the dark frame, but neither is a validated new default.
-Exposure-tolerant hash alternatives need labeled same/different-scene controls;
-a time-only exception is an unresolved product choice.
-
-[External acceptance steps](2026-09-17-external-acceptance-plan.md) are prepared;
-professional-software writeback and target-host recovery remain unexecuted.
-
-The follow-up hash ablation makes histogram-equalized pHash a candidate:
-the exposure pair distance falls from 24 to 4 at unchanged threshold 10.
-It passes the existing 200 positive/450 easy negative pairs, but these negatives
-represent only 18 different-event comparisons and do not cover rapid dish/action
-changes. No hash algorithm/default is changed; hard-negative labels and hash-cache
-versioning are prerequisites for promotion.
-
-A frozen [synthetic hard-case test](benchmarks/2026-09-17-hash-hardcases/report.md)
-now covers 192 pairs from 24 source JPEGs, including fixed-background content
-replacement and severe detail loss, with final quality/selection outcomes. On
-holdout, equalization reduces brightness splits 16/48 -> 12/48 but leaves 11/24
-content-change false merges and one resulting distinct-content reject. All
-24 unrecognizable detail-loss frames remain singleton coverage keeps. This
-confirms an acceptance gap; it does not authorize an exception or hash promotion.
-The reusable read-only-image runner is `scripts/benchmark_hash_hardcases.py`.
-
-## September 18 real action-transition check
-
-[Two official MPII Cooking 2 videos](benchmarks/2026-09-18-cooking-hashes/report.md)
-now add 25 frozen real-video pairs/38 unique frames, separate from synthetic
-exposure tests. On ten held-out distinct-action boundaries, pHash/equalized
-pHash/dHash merge 5/3/10 and each merge loses a distinct action through final
-reject. Equalization also introduces a new move-to-peel merge that baseline
-avoids. The candidates are not uniformly better and remain unpromoted. This
-closes the absence of any natural action negative, not full product acceptance.
-
-Local reproducible runners, frozen inputs and final selection evidence are
-committed in reviewed batches. The unresolved work is now:
-
-- Independent B-panel groups 18–20: bounded restoration retry produced no result
-  or new error and was interrupted. Last explicit failure was quota; current
-  retry cause is unknown. Do not substitute main-context judgments.
-- Exposure-robust grouping: candidates improve some positives but fail real and
-  synthetic action negatives. A new candidate must have broader independent
-  evaluation and preserve time/hash and hash-cache compatibility contracts.
-- Completely unrecognizable exposure frames: no time-only exception is approved;
-  current conservative split/coverage behavior remains.
-- Personal preference labels, automatic context-producer acceptance, actual
-  professional-software XMP round trips and authorized target-machine verification
-  remain distinct requirements, not implied by these experiments.
+Latest production-code full guarded suite remains **745 passed, 102 skipped**
+from `accad08`; this is historical full-suite evidence, not a new full run.
+`4b76ce8` changes isolated benchmark code/tests and evidence, with **29 focused
+checks**, **2 repository-boundary checks**, Ruff and exact real-data parity.
+Source photo/video bytes were verified unchanged. No actual XMP write, live
+service operation, deployment or push occurred in these continuation batches.
