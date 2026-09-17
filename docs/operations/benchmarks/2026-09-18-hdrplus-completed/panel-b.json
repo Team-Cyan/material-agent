@@ -1,0 +1,2306 @@
+{
+  "reference_source": "model_generated",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "groups": [
+    {
+      "group": 1,
+      "response": {
+        "group_id": "B01",
+        "source": "model_generated",
+        "readable_ids": [
+          "B011",
+          "B012",
+          "B013",
+          "B014",
+          "B015"
+        ],
+        "acceptable_keep_ids": [
+          "B011",
+          "B012",
+          "B013",
+          "B014",
+          "B015"
+        ],
+        "preferred_ids": [
+          "B013"
+        ],
+        "quality_findings_by_id": {
+          "B011": [
+            "Sharp, well-exposed landscape with strong depth from the river foreground; very similar to the rest of the burst."
+          ],
+          "B012": [
+            "Sharp and evenly exposed; near-identical framing with a slightly less pleasing shoreline balance than B013."
+          ],
+          "B013": [
+            "Sharp, clean exposure and the best-balanced river bend, shoreline, and mountain placement in this near-identical burst."
+          ],
+          "B014": [
+            "Sharp and readable with good color; composition is nearly identical, with marginally less foreground flow than B013."
+          ],
+          "B015": [
+            "Sharp and well exposed; useful duplicate but offers no clearly distinct moment."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B011": [
+            "Acceptable alternate because visible quality differences are extremely small."
+          ],
+          "B012": [
+            "Acceptable alternate because it preserves the same clear landscape without a visible defect."
+          ],
+          "B013": [
+            "Preferred for marginally stronger compositional balance; retain as the representative frame."
+          ],
+          "B014": [
+            "Acceptable alternate; no material defect, though redundant with B013."
+          ],
+          "B015": [
+            "Acceptable alternate; no material defect, though redundant with B013."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B011",
+            "second_id": "B012",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B011",
+            "second_id": "B013",
+            "preference": "second"
+          },
+          {
+            "first_id": "B011",
+            "second_id": "B014",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B011",
+            "second_id": "B015",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B012",
+            "second_id": "B013",
+            "preference": "second"
+          },
+          {
+            "first_id": "B012",
+            "second_id": "B014",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B012",
+            "second_id": "B015",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B013",
+            "second_id": "B014",
+            "preference": "first"
+          },
+          {
+            "first_id": "B013",
+            "second_id": "B015",
+            "preference": "first"
+          },
+          {
+            "first_id": "B014",
+            "second_id": "B015",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": [
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Differences are subtle at preview resolution; preference is mainly compositional."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 2,
+      "response": {
+        "group_id": "B02",
+        "source": "model_generated",
+        "readable_ids": [
+          "B021",
+          "B022",
+          "B023",
+          "B024",
+          "B025"
+        ],
+        "acceptable_keep_ids": [
+          "B021",
+          "B022",
+          "B023",
+          "B024",
+          "B025"
+        ],
+        "preferred_ids": [
+          "B024"
+        ],
+        "quality_findings_by_id": {
+          "B021": [
+            "Readable and apparently sharp street scene; deep building shadows are underexposed."
+          ],
+          "B022": [
+            "Readable, near-identical frame with good tower detail; deep shadows lose detail."
+          ],
+          "B023": [
+            "Readable and sharp at preview scale; dark foreground and facades reduce tonal balance."
+          ],
+          "B024": [
+            "Readable and apparently sharp; marginally clearest overall rendering of the same scene despite dark shadows."
+          ],
+          "B025": [
+            "Readable, near-identical frame; strong sky and tower detail but underexposed side buildings."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B021": [
+            "Acceptable alternate with no unique defect beyond the shared shadow exposure issue."
+          ],
+          "B022": [
+            "Acceptable alternate; almost indistinguishable from adjacent frames."
+          ],
+          "B023": [
+            "Acceptable alternate; preserves the same street moment."
+          ],
+          "B024": [
+            "Preferred by a small margin for overall clarity; retain as representative."
+          ],
+          "B025": [
+            "Acceptable alternate; no decisive quality loss versus the preferred frame."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B021",
+            "second_id": "B022",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B021",
+            "second_id": "B023",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B021",
+            "second_id": "B024",
+            "preference": "second"
+          },
+          {
+            "first_id": "B021",
+            "second_id": "B025",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B022",
+            "second_id": "B023",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B022",
+            "second_id": "B024",
+            "preference": "second"
+          },
+          {
+            "first_id": "B022",
+            "second_id": "B025",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B023",
+            "second_id": "B024",
+            "preference": "second"
+          },
+          {
+            "first_id": "B023",
+            "second_id": "B025",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B024",
+            "second_id": "B025",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "multiple_people",
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Near-identical previews make the small preference low confidence; fine RAW detail cannot be compared."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 3,
+      "response": {
+        "group_id": "B03",
+        "source": "model_generated",
+        "readable_ids": [
+          "B031",
+          "B032",
+          "B033",
+          "B034",
+          "B035"
+        ],
+        "acceptable_keep_ids": [
+          "B031",
+          "B032",
+          "B033",
+          "B034",
+          "B035"
+        ],
+        "preferred_ids": [
+          "B034"
+        ],
+        "quality_findings_by_id": {
+          "B031": [
+            "Atmospheric dusk city-and-coast view; foreground buildings are heavily underexposed and corners are very dark."
+          ],
+          "B032": [
+            "Readable and stable; near-identical dusk view with lost shadow detail and strong corner darkening."
+          ],
+          "B033": [
+            "Readable with a clear skyline silhouette; deep shadows obscure much of the foreground."
+          ],
+          "B034": [
+            "Best marginal balance of sky, coastline, and city detail in the burst, though still dark with strong vignetting."
+          ],
+          "B035": [
+            "Readable and nearly identical; foreground remains very dark with limited building detail."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B031": [
+            "Acceptable alternate because the scene remains clear and differences are minimal."
+          ],
+          "B032": [
+            "Acceptable alternate; preserves the same dusk moment."
+          ],
+          "B033": [
+            "Acceptable alternate; no decisive additional defect."
+          ],
+          "B034": [
+            "Preferred for marginally better tonal and coastline definition."
+          ],
+          "B035": [
+            "Acceptable alternate; redundant but visibly usable."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B031",
+            "second_id": "B032",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B031",
+            "second_id": "B033",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B031",
+            "second_id": "B034",
+            "preference": "second"
+          },
+          {
+            "first_id": "B031",
+            "second_id": "B035",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B032",
+            "second_id": "B033",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B032",
+            "second_id": "B034",
+            "preference": "second"
+          },
+          {
+            "first_id": "B032",
+            "second_id": "B035",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B033",
+            "second_id": "B034",
+            "preference": "second"
+          },
+          {
+            "first_id": "B033",
+            "second_id": "B035",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B034",
+            "second_id": "B035",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "The dark treatment may be intentional dusk mood; RAW shadow recoverability is unknown."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 4,
+      "response": {
+        "group_id": "B04",
+        "source": "model_generated",
+        "readable_ids": [
+          "B041",
+          "B042",
+          "B043",
+          "B044",
+          "B045"
+        ],
+        "acceptable_keep_ids": [
+          "B041",
+          "B042",
+          "B043",
+          "B044",
+          "B045"
+        ],
+        "preferred_ids": [
+          "B042"
+        ],
+        "quality_findings_by_id": {
+          "B041": [
+            "Readable desert landscape, but direct sun is clipped and much of the rocky foreground is underexposed."
+          ],
+          "B042": [
+            "Same severe dynamic-range limitation; marginally more usable foreground definition at preview scale."
+          ],
+          "B043": [
+            "Readable and near-identical; blown sun and deep shadow obscure texture."
+          ],
+          "B044": [
+            "Readable with stable framing; extreme highlight and shadow loss remain."
+          ],
+          "B045": [
+            "Readable and near-identical; no distinct moment, with the same clipped sun and dark terrain."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B041": [
+            "Acceptable coverage alternate despite shared exposure defects."
+          ],
+          "B042": [
+            "Preferred as the least weak representative because foreground texture appears marginally clearer."
+          ],
+          "B043": [
+            "Acceptable coverage alternate; no uniquely worse defect."
+          ],
+          "B044": [
+            "Acceptable coverage alternate; essentially tied with adjacent frames."
+          ],
+          "B045": [
+            "Acceptable coverage alternate; essentially tied with adjacent frames."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B041",
+            "second_id": "B042",
+            "preference": "second"
+          },
+          {
+            "first_id": "B041",
+            "second_id": "B043",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B041",
+            "second_id": "B044",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B041",
+            "second_id": "B045",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B042",
+            "second_id": "B043",
+            "preference": "first"
+          },
+          {
+            "first_id": "B042",
+            "second_id": "B044",
+            "preference": "first"
+          },
+          {
+            "first_id": "B042",
+            "second_id": "B045",
+            "preference": "first"
+          },
+          {
+            "first_id": "B043",
+            "second_id": "B044",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B043",
+            "second_id": "B045",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B044",
+            "second_id": "B045",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": [
+          "all_low_quality",
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Preference is weak because all frames share nearly identical exposure and composition; RAW recovery is unknown."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 5,
+      "response": {
+        "group_id": "B05",
+        "source": "model_generated",
+        "readable_ids": [
+          "B051",
+          "B052",
+          "B053",
+          "B054",
+          "B055"
+        ],
+        "acceptable_keep_ids": [
+          "B051",
+          "B052",
+          "B053",
+          "B054",
+          "B055"
+        ],
+        "preferred_ids": [
+          "B054"
+        ],
+        "quality_findings_by_id": {
+          "B051": [
+            "Readable gate and trees, but most of the intended foreground subject is severely underexposed."
+          ],
+          "B052": [
+            "Near-identical readable frame; shadow detail is largely lost across the gate and paving."
+          ],
+          "B053": [
+            "Stable and apparently sharp, but the central gate merges into deep shadow."
+          ],
+          "B054": [
+            "Marginally clearest foliage and stone rendering, while still substantially underexposed."
+          ],
+          "B055": [
+            "Readable duplicate; dark foreground and gate have little tonal separation."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B051": [
+            "Acceptable coverage alternate despite shared exposure defect."
+          ],
+          "B052": [
+            "Acceptable coverage alternate; no clearly distinct disadvantage."
+          ],
+          "B053": [
+            "Acceptable coverage alternate; no clearly distinct disadvantage."
+          ],
+          "B054": [
+            "Preferred as the least weak representative due to marginally better visible separation."
+          ],
+          "B055": [
+            "Acceptable coverage alternate; nearly tied with the other frames."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B051",
+            "second_id": "B052",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B051",
+            "second_id": "B053",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B051",
+            "second_id": "B054",
+            "preference": "second"
+          },
+          {
+            "first_id": "B051",
+            "second_id": "B055",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B052",
+            "second_id": "B053",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B052",
+            "second_id": "B054",
+            "preference": "second"
+          },
+          {
+            "first_id": "B052",
+            "second_id": "B055",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B053",
+            "second_id": "B054",
+            "preference": "second"
+          },
+          {
+            "first_id": "B053",
+            "second_id": "B055",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B054",
+            "second_id": "B055",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "all_low_quality",
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "All previews are nearly identical and RAW shadow recovery is unknown."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 6,
+      "response": {
+        "group_id": "B06",
+        "source": "model_generated",
+        "readable_ids": [
+          "B061",
+          "B062",
+          "B063",
+          "B064",
+          "B065"
+        ],
+        "acceptable_keep_ids": [
+          "B061",
+          "B062",
+          "B063",
+          "B064",
+          "B065"
+        ],
+        "preferred_ids": [
+          "B064"
+        ],
+        "quality_findings_by_id": {
+          "B061": [
+            "Sharp-looking twilight lake scene with an intentional tree-and-mountain silhouette; shadows contain little detail by design."
+          ],
+          "B062": [
+            "Clean readable silhouette with a balanced pink reflection; near-identical to adjacent frames."
+          ],
+          "B063": [
+            "Readable and stable; attractive sky gradient, with the same dark foreground treatment."
+          ],
+          "B064": [
+            "Strongest marginal balance of pink reflection, mountain outline, and framing tree in this burst."
+          ],
+          "B065": [
+            "Readable near-duplicate with no obvious defect; tonal differences are minimal."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B061": [
+            "Acceptable alternate; intentional silhouette remains visually effective."
+          ],
+          "B062": [
+            "Acceptable alternate; very close to the preferred frame."
+          ],
+          "B063": [
+            "Acceptable alternate; no visible defect distinguishes it."
+          ],
+          "B064": [
+            "Preferred for marginally richer reflection and overall tonal balance."
+          ],
+          "B065": [
+            "Acceptable alternate; highly redundant but visually sound."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B061",
+            "second_id": "B062",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B061",
+            "second_id": "B063",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B061",
+            "second_id": "B064",
+            "preference": "second"
+          },
+          {
+            "first_id": "B061",
+            "second_id": "B065",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B062",
+            "second_id": "B063",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B062",
+            "second_id": "B064",
+            "preference": "second"
+          },
+          {
+            "first_id": "B062",
+            "second_id": "B065",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B063",
+            "second_id": "B064",
+            "preference": "second"
+          },
+          {
+            "first_id": "B063",
+            "second_id": "B065",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B064",
+            "second_id": "B065",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "silhouette",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Fine sharpness differences cannot be established from these near-identical previews."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 7,
+      "response": {
+        "group_id": "B07",
+        "source": "model_generated",
+        "readable_ids": [
+          "B071",
+          "B072",
+          "B073",
+          "B074",
+          "B075"
+        ],
+        "acceptable_keep_ids": [
+          "B071",
+          "B072",
+          "B073",
+          "B074",
+          "B075"
+        ],
+        "preferred_ids": [
+          "B073"
+        ],
+        "quality_findings_by_id": {
+          "B071": [
+            "Readable buffet-table record with adequate overall sharpness; warm indoor cast and flat frontal lighting reduce appeal."
+          ],
+          "B072": [
+            "Near-identical readable frame; table contents are clear, with the same warm cast and utilitarian composition."
+          ],
+          "B073": [
+            "Marginally clearest rendering of the central serving plate and dishes; lighting remains flat and warm."
+          ],
+          "B074": [
+            "Readable and stable; near-identical arrangement with no distinct moment."
+          ],
+          "B075": [
+            "Readable and near-identical; slight softness at preview scale is possible but not decisive."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B071": [
+            "Acceptable documentary alternate; all key table elements remain visible."
+          ],
+          "B072": [
+            "Acceptable alternate; no material defect beyond shared lighting limitations."
+          ],
+          "B073": [
+            "Preferred for marginally better central detail and clarity."
+          ],
+          "B074": [
+            "Acceptable alternate; effectively tied with most of the burst."
+          ],
+          "B075": [
+            "Acceptable alternate; any softness difference is too small to justify exclusion."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B071",
+            "second_id": "B072",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B071",
+            "second_id": "B073",
+            "preference": "second"
+          },
+          {
+            "first_id": "B071",
+            "second_id": "B074",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B071",
+            "second_id": "B075",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B072",
+            "second_id": "B073",
+            "preference": "second"
+          },
+          {
+            "first_id": "B072",
+            "second_id": "B074",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B072",
+            "second_id": "B075",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B073",
+            "second_id": "B074",
+            "preference": "first"
+          },
+          {
+            "first_id": "B073",
+            "second_id": "B075",
+            "preference": "first"
+          },
+          {
+            "first_id": "B074",
+            "second_id": "B075",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": [
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Sharpness differences are subtle at preview resolution."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 8,
+      "response": {
+        "group_id": "B08",
+        "source": "model_generated",
+        "readable_ids": [
+          "B081",
+          "B082",
+          "B083",
+          "B084",
+          "B085"
+        ],
+        "acceptable_keep_ids": [
+          "B081",
+          "B082",
+          "B083",
+          "B084",
+          "B085"
+        ],
+        "preferred_ids": [
+          "B084"
+        ],
+        "quality_findings_by_id": {
+          "B081": [
+            "Sharp, well-exposed hiking scene; person is small in frame and the face is hidden by hat angle/shadow."
+          ],
+          "B082": [
+            "Readable and near-identical; strong environmental context, with no usable eye detail at this scale."
+          ],
+          "B083": [
+            "Sharp-looking scene with clear red clothing separation; face remains occluded and very small."
+          ],
+          "B084": [
+            "Best marginal subject posture and separation while retaining the strong diagonal trail context."
+          ],
+          "B085": [
+            "Readable near-duplicate; subject remains small and facial detail cannot be judged."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B081": [
+            "Acceptable alternate because the hiking action and environment are clear."
+          ],
+          "B082": [
+            "Acceptable alternate; the lack of face detail is a scene-scale limitation, not evidence of bad eyes."
+          ],
+          "B083": [
+            "Acceptable alternate with useful environmental coverage."
+          ],
+          "B084": [
+            "Preferred for marginally stronger subject posture and placement."
+          ],
+          "B085": [
+            "Acceptable alternate; highly redundant but visibly sound."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B081",
+            "second_id": "B082",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B081",
+            "second_id": "B083",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B081",
+            "second_id": "B084",
+            "preference": "second"
+          },
+          {
+            "first_id": "B081",
+            "second_id": "B085",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B082",
+            "second_id": "B083",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B082",
+            "second_id": "B084",
+            "preference": "second"
+          },
+          {
+            "first_id": "B082",
+            "second_id": "B085",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B083",
+            "second_id": "B084",
+            "preference": "second"
+          },
+          {
+            "first_id": "B083",
+            "second_id": "B085",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B084",
+            "second_id": "B085",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "small_face",
+          "occlusion",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Eyes and facial expression are unknown because the face is tiny and shaded/occluded in every preview."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 9,
+      "response": {
+        "group_id": "B09",
+        "source": "model_generated",
+        "readable_ids": [
+          "B091",
+          "B092",
+          "B093",
+          "B094",
+          "B095"
+        ],
+        "acceptable_keep_ids": [
+          "B091",
+          "B092",
+          "B093",
+          "B094",
+          "B095"
+        ],
+        "preferred_ids": [
+          "B094"
+        ],
+        "quality_findings_by_id": {
+          "B091": [
+            "Readable twilight trail landscape with a smooth sky gradient; foreground is dark but retains context."
+          ],
+          "B092": [
+            "Near-identical clean landscape; distant sunlit ridge and trail lead the eye effectively."
+          ],
+          "B093": [
+            "Readable and apparently sharp; subtle shadow detail is limited at preview scale."
+          ],
+          "B094": [
+            "Marginally strongest separation in the distant ridge and best overall dusk tonal balance."
+          ],
+          "B095": [
+            "Readable near-duplicate with no clear defect; very small tonal differences only."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B091": [
+            "Acceptable alternate; strong composition and readable scene."
+          ],
+          "B092": [
+            "Acceptable alternate; nearly tied with the preferred frame."
+          ],
+          "B093": [
+            "Acceptable alternate; no decisive defect."
+          ],
+          "B094": [
+            "Preferred for marginally clearer ridge light and tonal separation."
+          ],
+          "B095": [
+            "Acceptable alternate; highly redundant but visually sound."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B091",
+            "second_id": "B092",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B091",
+            "second_id": "B093",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B091",
+            "second_id": "B094",
+            "preference": "second"
+          },
+          {
+            "first_id": "B091",
+            "second_id": "B095",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B092",
+            "second_id": "B093",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B092",
+            "second_id": "B094",
+            "preference": "second"
+          },
+          {
+            "first_id": "B092",
+            "second_id": "B095",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B093",
+            "second_id": "B094",
+            "preference": "second"
+          },
+          {
+            "first_id": "B093",
+            "second_id": "B095",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B094",
+            "second_id": "B095",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Preference rests on very small preview-level tonal differences; fine RAW detail is unknown."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 10,
+      "response": {
+        "group_id": "B10",
+        "source": "model_generated",
+        "readable_ids": [
+          "B101",
+          "B102",
+          "B103",
+          "B104",
+          "B105"
+        ],
+        "acceptable_keep_ids": [
+          "B101",
+          "B102",
+          "B103",
+          "B104",
+          "B105"
+        ],
+        "preferred_ids": [
+          "B104"
+        ],
+        "quality_findings_by_id": {
+          "B101": [
+            "Readable architectural interior, but most of the nave is severely underexposed while the bright dome band clips."
+          ],
+          "B102": [
+            "Near-identical frame with visible arch detail; extreme dynamic range leaves large areas nearly black."
+          ],
+          "B103": [
+            "Readable and apparently stable; stained glass is visible but surrounding structure loses shadow detail."
+          ],
+          "B104": [
+            "Marginally clearest arch ornament and window rendering, though the scene remains very underexposed overall."
+          ],
+          "B105": [
+            "Readable near-duplicate; clipped dome band and deep shadows remain the dominant defects."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B101": [
+            "Acceptable coverage alternate because the architectural subject remains identifiable."
+          ],
+          "B102": [
+            "Acceptable coverage alternate; no uniquely worse defect."
+          ],
+          "B103": [
+            "Acceptable coverage alternate; essentially tied with adjacent frames."
+          ],
+          "B104": [
+            "Preferred as the least weak representative due to marginally better visible ornament detail."
+          ],
+          "B105": [
+            "Acceptable coverage alternate; highly redundant but readable."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B101",
+            "second_id": "B102",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B101",
+            "second_id": "B103",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B101",
+            "second_id": "B104",
+            "preference": "second"
+          },
+          {
+            "first_id": "B101",
+            "second_id": "B105",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B102",
+            "second_id": "B103",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B102",
+            "second_id": "B104",
+            "preference": "second"
+          },
+          {
+            "first_id": "B102",
+            "second_id": "B105",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B103",
+            "second_id": "B104",
+            "preference": "second"
+          },
+          {
+            "first_id": "B103",
+            "second_id": "B105",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B104",
+            "second_id": "B105",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "all_low_quality",
+          "multiple_people",
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Preference is low confidence because all frames are near-identical and RAW shadow/highlight recoverability is unknown."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 11,
+      "response": {
+        "group_id": 11,
+        "readable_ids": [
+          "B111",
+          "B112",
+          "B113",
+          "B114",
+          "B115"
+        ],
+        "acceptable_keep_ids": [
+          "B114",
+          "B115"
+        ],
+        "preferred_ids": [
+          "B115"
+        ],
+        "observed_categories": {
+          "near_identical": "All five show nearly the same harbor, tower, ships, and cloud arrangement with only subtle framing/exposure differences.",
+          "exposure_problem": "The foreground shore and pier/building masses are deeply shadowed with little visible detail in every frame."
+        },
+        "quality_findings_by_id": {
+          "B111": [
+            "Readable and apparently sharp at preview scale.",
+            "Dramatic cloud color is preserved, but the foreground and right building are very dark."
+          ],
+          "B112": [
+            "Readable and apparently sharp at preview scale.",
+            "Very similar to B111; dark foreground dominates and the frame is slightly less luminous than the strongest options."
+          ],
+          "B113": [
+            "Readable and apparently sharp at preview scale.",
+            "Balanced harbor framing, though foreground shadows remain heavily blocked."
+          ],
+          "B114": [
+            "Readable and apparently sharp at preview scale.",
+            "Good separation of the warm horizon from the dark cloud bank; foreground remains underexposed."
+          ],
+          "B115": [
+            "Readable and apparently sharp at preview scale.",
+            "Strongest visible warm sky and water reflection while retaining cloud detail; foreground remains underexposed."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B111": "Not selected because B114/B115 preserve the same moment with slightly stronger visible light and color.",
+          "B112": "Not selected because it is near-identical and slightly dimmer than the preferred frame.",
+          "B113": "Not selected because it adds no distinct moment and is marginally less vivid than B114/B115.",
+          "B114": "Acceptable alternate for its balanced cloud and harbor rendering.",
+          "B115": "Preferred for the strongest visible horizon glow and reflection within an otherwise near-identical sequence."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B111",
+            "second_id": "B112",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B111",
+            "second_id": "B113",
+            "preference": "second"
+          },
+          {
+            "first_id": "B111",
+            "second_id": "B114",
+            "preference": "second"
+          },
+          {
+            "first_id": "B111",
+            "second_id": "B115",
+            "preference": "second"
+          },
+          {
+            "first_id": "B112",
+            "second_id": "B113",
+            "preference": "second"
+          },
+          {
+            "first_id": "B112",
+            "second_id": "B114",
+            "preference": "second"
+          },
+          {
+            "first_id": "B112",
+            "second_id": "B115",
+            "preference": "second"
+          },
+          {
+            "first_id": "B113",
+            "second_id": "B114",
+            "preference": "second"
+          },
+          {
+            "first_id": "B113",
+            "second_id": "B115",
+            "preference": "second"
+          },
+          {
+            "first_id": "B114",
+            "second_id": "B115",
+            "preference": "second"
+          }
+        ],
+        "uncertainty": [
+          "Differences are subtle at preview resolution; tiny RAW focus or shadow-detail differences cannot be inferred."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 12,
+      "response": {
+        "group_id": 12,
+        "readable_ids": [
+          "B121",
+          "B122",
+          "B123",
+          "B124",
+          "B125"
+        ],
+        "acceptable_keep_ids": [
+          "B124",
+          "B125"
+        ],
+        "preferred_ids": [
+          "B125"
+        ],
+        "observed_categories": {
+          "near_identical": "All five are nearly identical records of the same framed painting from the same frontal position.",
+          "exposure_problem": "A bright gallery-light reflection runs across the upper glazing in every frame, reducing evenness and partially distracting from the artwork."
+        },
+        "quality_findings_by_id": {
+          "B121": [
+            "Readable with the full frame visible.",
+            "Slight perspective skew and a bright reflection across the upper glass."
+          ],
+          "B122": [
+            "Readable with the full frame visible.",
+            "Near-identical to B121; glare remains prominent and the framing is fractionally less even than the strongest options."
+          ],
+          "B123": [
+            "Readable and reasonably centered.",
+            "Upper glazing reflection and mild perspective distortion remain visible."
+          ],
+          "B124": [
+            "Readable, centered, and apparently sharp at preview scale.",
+            "Glare remains but the frame edges appear relatively even."
+          ],
+          "B125": [
+            "Readable, centered, and apparently sharp at preview scale.",
+            "Slightly strongest overall alignment and clarity; upper glare remains unavoidable in this sequence."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B121": "Not selected because later frames provide marginally more even alignment of the artwork.",
+          "B122": "Not selected because it adds no distinct content and is marginally weaker in alignment.",
+          "B123": "Not selected because B124/B125 offer the same view with slightly cleaner framing.",
+          "B124": "Acceptable alternate due to centered, even presentation of the full artwork.",
+          "B125": "Preferred for marginally strongest visible alignment and clarity among near-identical frames."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B121",
+            "second_id": "B122",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B121",
+            "second_id": "B123",
+            "preference": "second"
+          },
+          {
+            "first_id": "B121",
+            "second_id": "B124",
+            "preference": "second"
+          },
+          {
+            "first_id": "B121",
+            "second_id": "B125",
+            "preference": "second"
+          },
+          {
+            "first_id": "B122",
+            "second_id": "B123",
+            "preference": "second"
+          },
+          {
+            "first_id": "B122",
+            "second_id": "B124",
+            "preference": "second"
+          },
+          {
+            "first_id": "B122",
+            "second_id": "B125",
+            "preference": "second"
+          },
+          {
+            "first_id": "B123",
+            "second_id": "B124",
+            "preference": "second"
+          },
+          {
+            "first_id": "B123",
+            "second_id": "B125",
+            "preference": "second"
+          },
+          {
+            "first_id": "B124",
+            "second_id": "B125",
+            "preference": "tie"
+          }
+        ],
+        "uncertainty": [
+          "Differences are extremely small at preview scale; the apparent alignment/clarity advantage may not persist at full resolution."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 13,
+      "response": {
+        "group_id": 13,
+        "readable_ids": [
+          "B131",
+          "B132",
+          "B133",
+          "B134",
+          "B135"
+        ],
+        "acceptable_keep_ids": [
+          "B132",
+          "B134"
+        ],
+        "preferred_ids": [
+          "B134"
+        ],
+        "observed_categories": {
+          "multiple_people": "Many visitors are visible throughout the museum atrium in every frame.",
+          "near_identical": "The camera position and architectural composition are effectively unchanged; only visitor positions shift slightly.",
+          "exposure_problem": "The right foreground and several visitors are rendered as very dark shapes while the glass roof is much brighter."
+        },
+        "quality_findings_by_id": {
+          "B131": [
+            "Readable and structurally sharp at preview scale.",
+            "Strong roof geometry, but deep right-side shadows and a central column obscure parts of the scene; some walking visitors show mild motion blur."
+          ],
+          "B132": [
+            "Readable and apparently sharp at preview scale.",
+            "Visitor spacing is comparatively clean around the central sculptures; shadows remain heavy."
+          ],
+          "B133": [
+            "Readable and near-identical in framing.",
+            "Some visitor overlap and deep silhouettes on the right reduce clarity."
+          ],
+          "B134": [
+            "Readable and apparently sharp at preview scale.",
+            "The red-shirted visitor has a relatively clear stance and the central walkway is comparatively legible; dark right side persists."
+          ],
+          "B135": [
+            "Readable and near-identical in framing.",
+            "The foreground crowd arrangement is slightly busier and several people merge into dark shapes."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B131": "Not selected because visitor placement is less clean and offers no distinct architectural coverage.",
+          "B132": "Acceptable alternate for relatively clear spacing around the sculpture displays.",
+          "B133": "Not selected because it adds no distinct moment and has more distracting visitor overlap.",
+          "B134": "Preferred for the clearest visible visitor moment and comparatively legible central walkway.",
+          "B135": "Not selected because the foreground crowd reads as slightly more congested than B134."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B131",
+            "second_id": "B132",
+            "preference": "second"
+          },
+          {
+            "first_id": "B131",
+            "second_id": "B133",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B131",
+            "second_id": "B134",
+            "preference": "second"
+          },
+          {
+            "first_id": "B131",
+            "second_id": "B135",
+            "preference": "second"
+          },
+          {
+            "first_id": "B132",
+            "second_id": "B133",
+            "preference": "first"
+          },
+          {
+            "first_id": "B132",
+            "second_id": "B134",
+            "preference": "second"
+          },
+          {
+            "first_id": "B132",
+            "second_id": "B135",
+            "preference": "first"
+          },
+          {
+            "first_id": "B133",
+            "second_id": "B134",
+            "preference": "second"
+          },
+          {
+            "first_id": "B133",
+            "second_id": "B135",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B134",
+            "second_id": "B135",
+            "preference": "first"
+          }
+        ],
+        "uncertainty": [
+          "Visitor differences are subtle and no single human subject is clearly designated; preference is based on overall scene legibility.",
+          "Tiny focus differences cannot be judged from the previews."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 14,
+      "response": {
+        "group_id": 14,
+        "readable_ids": [
+          "B141",
+          "B142",
+          "B143",
+          "B144",
+          "B145"
+        ],
+        "acceptable_keep_ids": [
+          "B144",
+          "B145"
+        ],
+        "preferred_ids": [
+          "B144",
+          "B145"
+        ],
+        "observed_categories": {
+          "near_identical": "All five show effectively the same pose, framing, wave state, and rocky coastline.",
+          "small_face": "The full-body subject occupies a modest portion of the wide landscape frame, leaving facial detail limited at preview scale.",
+          "exposure_problem": "Harsh overhead light and the hat cast substantial shadow across the subject's face while bright clothing and surf approach highlight clipping."
+        },
+        "quality_findings_by_id": {
+          "B141": [
+            "Readable, with a stable full-body pose and level horizon.",
+            "Facial detail is limited by distance and hat shadow; harsh contrast is visible."
+          ],
+          "B142": [
+            "Readable and near-identical to B141.",
+            "Subject and coastline appear sharp at preview scale, though facial shadow remains."
+          ],
+          "B143": [
+            "Readable and well composed as an environmental portrait.",
+            "No clear moment advantage over adjacent frames; face remains small and shadowed."
+          ],
+          "B144": [
+            "Readable and apparently sharp at preview scale.",
+            "Clean subject outline and balanced placement against surf and rocks; facial shadow persists."
+          ],
+          "B145": [
+            "Readable and apparently sharp at preview scale.",
+            "Essentially tied with B144 in pose, framing, and visible image quality."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B141": "Not selected because B144/B145 provide the same coverage with marginally cleaner visible rendering.",
+          "B142": "Not selected because it adds no distinct pose or wave moment over the tied preferred frames.",
+          "B143": "Not selected because it is near-identical without a visible advantage.",
+          "B144": "Preferred as one of two indistinguishable strongest environmental portraits.",
+          "B145": "Preferred as tied with B144; both preserve the same strong pose and scene coverage."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B141",
+            "second_id": "B142",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B141",
+            "second_id": "B143",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B141",
+            "second_id": "B144",
+            "preference": "second"
+          },
+          {
+            "first_id": "B141",
+            "second_id": "B145",
+            "preference": "second"
+          },
+          {
+            "first_id": "B142",
+            "second_id": "B143",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B142",
+            "second_id": "B144",
+            "preference": "second"
+          },
+          {
+            "first_id": "B142",
+            "second_id": "B145",
+            "preference": "second"
+          },
+          {
+            "first_id": "B143",
+            "second_id": "B144",
+            "preference": "second"
+          },
+          {
+            "first_id": "B143",
+            "second_id": "B145",
+            "preference": "second"
+          },
+          {
+            "first_id": "B144",
+            "second_id": "B145",
+            "preference": "tie"
+          }
+        ],
+        "uncertainty": [
+          "The preferred pair is visually indistinguishable at supplied preview resolution; full-resolution focus or eye state cannot be verified."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 15,
+      "response": {
+        "group_id": 15,
+        "readable_ids": [
+          "B151",
+          "B152",
+          "B153",
+          "B154",
+          "B155"
+        ],
+        "acceptable_keep_ids": [
+          "B154",
+          "B155"
+        ],
+        "preferred_ids": [
+          "B154",
+          "B155"
+        ],
+        "observed_categories": {
+          "near_identical": "All five preserve the same fence, hill, sky, and surrounding foliage with no meaningful scene change.",
+          "exposure_problem": "The shaded foreground fence and enclosing foliage are close to black with limited detail, creating a very high-contrast frame around the bright hill."
+        },
+        "quality_findings_by_id": {
+          "B151": [
+            "Readable and apparently sharp at preview scale.",
+            "Strong natural framing, though the dark foreground and border foliage lose substantial detail."
+          ],
+          "B152": [
+            "Readable and near-identical to B151.",
+            "Bright hill is clear; shaded fence and foliage remain heavily blocked."
+          ],
+          "B153": [
+            "Readable with stable composition.",
+            "No clear visible advantage over adjacent frames; high contrast remains."
+          ],
+          "B154": [
+            "Readable and apparently sharp at preview scale.",
+            "The sunlit hill and tree line look marginally clean while preserving the enclosing foliage composition."
+          ],
+          "B155": [
+            "Readable and apparently sharp at preview scale.",
+            "Effectively tied with B154 in composition, exposure, and detail."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B151": "Not selected because the later tied pair provides equivalent coverage with marginally cleaner visible rendering.",
+          "B152": "Not selected because it is redundant and lacks a visible advantage.",
+          "B153": "Not selected because it adds no distinct moment or composition.",
+          "B154": "Preferred as one of two visually tied strongest records of the scene.",
+          "B155": "Preferred as tied with B154; both retain the same useful landscape coverage."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B151",
+            "second_id": "B152",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B151",
+            "second_id": "B153",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B151",
+            "second_id": "B154",
+            "preference": "second"
+          },
+          {
+            "first_id": "B151",
+            "second_id": "B155",
+            "preference": "second"
+          },
+          {
+            "first_id": "B152",
+            "second_id": "B153",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B152",
+            "second_id": "B154",
+            "preference": "second"
+          },
+          {
+            "first_id": "B152",
+            "second_id": "B155",
+            "preference": "second"
+          },
+          {
+            "first_id": "B153",
+            "second_id": "B154",
+            "preference": "second"
+          },
+          {
+            "first_id": "B153",
+            "second_id": "B155",
+            "preference": "second"
+          },
+          {
+            "first_id": "B154",
+            "second_id": "B155",
+            "preference": "tie"
+          }
+        ],
+        "uncertainty": [
+          "The five previews are extremely similar; full-resolution detail or focus differences are unknown."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 16,
+      "response": {
+        "group_id": 16,
+        "readable_ids": [
+          "B161",
+          "B162",
+          "B163",
+          "B164",
+          "B165"
+        ],
+        "acceptable_keep_ids": [
+          "B164"
+        ],
+        "preferred_ids": [
+          "B164"
+        ],
+        "observed_categories": {
+          "all_low_quality": "Every frame has severe shadow loss across roughly the lower half, making the courtyard facade and garden hard to read.",
+          "exposure_problem": "Bright clouds are retained but the shaded architecture and foreground are strongly underexposed in all five images.",
+          "near_identical": "Composition and cloud/building arrangement are effectively unchanged across the group."
+        },
+        "quality_findings_by_id": {
+          "B161": [
+            "Readable, with apparently stable architectural edges.",
+            "Severe underexposure obscures most lower-facade and garden detail."
+          ],
+          "B162": [
+            "Readable and near-identical to B161.",
+            "Large shadow regions are close to black; no visible recovery advantage."
+          ],
+          "B163": [
+            "Readable, but the courtyard remains extremely dark.",
+            "The sky-to-building contrast overwhelms detail in the intended architecture."
+          ],
+          "B164": [
+            "Readable and apparently sharp at preview scale.",
+            "Marginally clearer tonal separation on the upper adobe wall, but the lower half remains severely underexposed."
+          ],
+          "B165": [
+            "Readable and near-identical to adjacent frames.",
+            "Deep shadows erase facade and garden detail; no distinct moment or composition benefit."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B161": "Not selected because B164 offers marginally clearer upper-wall tonality for the same coverage.",
+          "B162": "Not selected because it is redundant and equally affected by severe shadow loss.",
+          "B163": "Not selected because it adds no distinct coverage and remains heavily underexposed.",
+          "B164": "Selected as the required coverage keep for a readable all-low-quality group; it has the clearest visible upper-wall separation, not an absence of defects.",
+          "B165": "Not selected because it has no visible advantage over B164."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B161",
+            "second_id": "B162",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B161",
+            "second_id": "B163",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B161",
+            "second_id": "B164",
+            "preference": "second"
+          },
+          {
+            "first_id": "B161",
+            "second_id": "B165",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B162",
+            "second_id": "B163",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B162",
+            "second_id": "B164",
+            "preference": "second"
+          },
+          {
+            "first_id": "B162",
+            "second_id": "B165",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B163",
+            "second_id": "B164",
+            "preference": "second"
+          },
+          {
+            "first_id": "B163",
+            "second_id": "B165",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B164",
+            "second_id": "B165",
+            "preference": "first"
+          }
+        ],
+        "uncertainty": [
+          "B164's tonal advantage is slight at preview resolution; all frames remain visibly low quality due to exposure."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 17,
+      "response": {
+        "group_id": "17",
+        "readable_ids": [
+          "B171",
+          "B172",
+          "B173",
+          "B174",
+          "B175"
+        ],
+        "acceptable_keep_ids": [
+          "B173"
+        ],
+        "preferred_ids": [
+          "B173"
+        ],
+        "quality_findings_by_id": {
+          "B171": [
+            "Night scene is readable, but deep shadows lose detail and strong high-ISO chroma/luminance noise covers the frame."
+          ],
+          "B172": [
+            "Night scene is readable, but deep shadows lose detail and strong high-ISO chroma/luminance noise covers the frame."
+          ],
+          "B173": [
+            "Night scene is readable, but deep shadows lose detail and strong high-ISO chroma/luminance noise covers the frame; visible detail is marginally more coherent than in the alternatives."
+          ],
+          "B174": [
+            "Night scene is readable, but deep shadows lose detail and strong high-ISO chroma/luminance noise covers the frame."
+          ],
+          "B175": [
+            "Night scene is readable, but deep shadows lose detail and strong high-ISO chroma/luminance noise covers the frame."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B171": [
+            "Near-identical to B173 without a visible coverage benefit."
+          ],
+          "B172": [
+            "Near-identical to B173 without a visible coverage benefit."
+          ],
+          "B173": [
+            "Coverage keep for this readable but low-quality group; it has the most coherent visible rendering of the cactus and gravel by a very small margin."
+          ],
+          "B174": [
+            "Near-identical to B173 without a visible coverage benefit."
+          ],
+          "B175": [
+            "Near-identical to B173 without a visible coverage benefit."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B171",
+            "second_id": "B172",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B171",
+            "second_id": "B173",
+            "preference": "second"
+          },
+          {
+            "first_id": "B171",
+            "second_id": "B174",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B171",
+            "second_id": "B175",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B172",
+            "second_id": "B173",
+            "preference": "second"
+          },
+          {
+            "first_id": "B172",
+            "second_id": "B174",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B172",
+            "second_id": "B175",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B173",
+            "second_id": "B174",
+            "preference": "first"
+          },
+          {
+            "first_id": "B173",
+            "second_id": "B175",
+            "preference": "first"
+          },
+          {
+            "first_id": "B174",
+            "second_id": "B175",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": [
+          "all_low_quality",
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Differences among the five previews are extremely small; the B173 preference is low confidence.",
+          "No face or eye evidence is visible, so related quality is unknown."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 18,
+      "response": {
+        "group_id": "18",
+        "readable_ids": [
+          "B181",
+          "B182",
+          "B183",
+          "B184",
+          "B185"
+        ],
+        "acceptable_keep_ids": [
+          "B185"
+        ],
+        "preferred_ids": [
+          "B185"
+        ],
+        "quality_findings_by_id": {
+          "B181": [
+            "Demolition scene is in usable focus and the central building is well exposed; foreground and right-side tree shadows contain little detail."
+          ],
+          "B182": [
+            "Demolition scene is in usable focus and the central building is well exposed; foreground and right-side tree shadows contain little detail."
+          ],
+          "B183": [
+            "Demolition scene is in usable focus and the central building is well exposed; foreground and right-side tree shadows contain little detail."
+          ],
+          "B184": [
+            "Demolition scene is in usable focus and the central building is well exposed; foreground and right-side tree shadows contain little detail."
+          ],
+          "B185": [
+            "Demolition scene is in usable focus and the central building is well exposed; foreground and right-side tree shadows contain little detail."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B181": [
+            "Near-identical framing to B185; the water spray is slightly less visually distinct."
+          ],
+          "B182": [
+            "Near-identical framing to B185; the water spray is slightly less visually distinct."
+          ],
+          "B183": [
+            "Near-identical framing to B185; the water spray is slightly less visually distinct."
+          ],
+          "B184": [
+            "Near-identical framing to B185; the visible action is good but marginally less clear."
+          ],
+          "B185": [
+            "Best visible action moment: the water jet forms the clearest continuous arc across the demolition subject while retaining the same usable framing."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B181",
+            "second_id": "B182",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B181",
+            "second_id": "B183",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B181",
+            "second_id": "B184",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B181",
+            "second_id": "B185",
+            "preference": "second"
+          },
+          {
+            "first_id": "B182",
+            "second_id": "B183",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B182",
+            "second_id": "B184",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B182",
+            "second_id": "B185",
+            "preference": "second"
+          },
+          {
+            "first_id": "B183",
+            "second_id": "B184",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B183",
+            "second_id": "B185",
+            "preference": "second"
+          },
+          {
+            "first_id": "B184",
+            "second_id": "B185",
+            "preference": "second"
+          }
+        ],
+        "observed_categories": [
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Differences are limited to subtle water-spray timing at preview scale; the B185 preference is modest.",
+          "No face or eye evidence is visible, so related quality is unknown."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 19,
+      "response": {
+        "group_id": "19",
+        "readable_ids": [
+          "B191",
+          "B192",
+          "B193",
+          "B194",
+          "B195"
+        ],
+        "acceptable_keep_ids": [
+          "B193"
+        ],
+        "preferred_ids": [
+          "B193"
+        ],
+        "quality_findings_by_id": {
+          "B191": [
+            "Wide park scene is readable with usable distant detail, but the foreground and left side are substantially underexposed."
+          ],
+          "B192": [
+            "Wide park scene is readable with usable distant detail, but the foreground and left side are substantially underexposed."
+          ],
+          "B193": [
+            "Wide park scene is readable with usable distant detail, but the foreground and left side are substantially underexposed."
+          ],
+          "B194": [
+            "Wide park scene is readable with usable distant detail, but the foreground and left side are substantially underexposed."
+          ],
+          "B195": [
+            "Wide park scene is readable with usable distant detail, but the foreground and left side are substantially underexposed."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B191": [
+            "Near-identical to B193 with no distinct visible moment or coverage benefit."
+          ],
+          "B192": [
+            "Near-identical to B193 with no distinct visible moment or coverage benefit."
+          ],
+          "B193": [
+            "Coverage keep for the readable group; the alternatives are visually indistinguishable at preview scale."
+          ],
+          "B194": [
+            "Near-identical to B193 with no distinct visible moment or coverage benefit."
+          ],
+          "B195": [
+            "Near-identical to B193 with no distinct visible moment or coverage benefit."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B191",
+            "second_id": "B192",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B191",
+            "second_id": "B193",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B191",
+            "second_id": "B194",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B191",
+            "second_id": "B195",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B192",
+            "second_id": "B193",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B192",
+            "second_id": "B194",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B192",
+            "second_id": "B195",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B193",
+            "second_id": "B194",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B193",
+            "second_id": "B195",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B194",
+            "second_id": "B195",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": [
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "No reliable quality or moment difference is visible among the five previews; B193 is an arbitrary coverage representative rather than a quality winner.",
+          "People are distant and faces or eyes cannot be assessed."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 20,
+      "response": {
+        "group_id": "20",
+        "readable_ids": [
+          "B201",
+          "B202",
+          "B203",
+          "B204",
+          "B205"
+        ],
+        "acceptable_keep_ids": [
+          "B201"
+        ],
+        "preferred_ids": [
+          "B201"
+        ],
+        "quality_findings_by_id": {
+          "B201": [
+            "Patio scene is barely readable, with severe underexposure, extensive shadow loss and dense chroma/luminance noise across the frame."
+          ],
+          "B202": [
+            "Patio scene is barely readable, with severe underexposure, extensive shadow loss and dense chroma/luminance noise across the frame."
+          ],
+          "B203": [
+            "Patio scene is barely readable, with severe underexposure, extensive shadow loss and dense chroma/luminance noise across the frame."
+          ],
+          "B204": [
+            "Patio scene is barely readable, with severe underexposure, extensive shadow loss and dense chroma/luminance noise across the frame."
+          ],
+          "B205": [
+            "Patio scene is barely readable, with severe underexposure, extensive shadow loss and dense chroma/luminance noise across the frame."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "B201": [
+            "Coverage keep for this readable but uniformly low-quality group; no reliable visible advantage separates the frames."
+          ],
+          "B202": [
+            "Near-identical to B201 with no distinct visible moment or coverage benefit."
+          ],
+          "B203": [
+            "Near-identical to B201 with no distinct visible moment or coverage benefit."
+          ],
+          "B204": [
+            "Near-identical to B201 with no distinct visible moment or coverage benefit."
+          ],
+          "B205": [
+            "Near-identical to B201 with no distinct visible moment or coverage benefit."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "B201",
+            "second_id": "B202",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B201",
+            "second_id": "B203",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B201",
+            "second_id": "B204",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B201",
+            "second_id": "B205",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B202",
+            "second_id": "B203",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B202",
+            "second_id": "B204",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B202",
+            "second_id": "B205",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B203",
+            "second_id": "B204",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B203",
+            "second_id": "B205",
+            "preference": "tie"
+          },
+          {
+            "first_id": "B204",
+            "second_id": "B205",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": [
+          "all_low_quality",
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "The five previews are effectively indistinguishable under severe noise; B201 is an arbitrary coverage representative rather than a quality winner.",
+          "No face or eye evidence is visible, so related quality is unknown."
+        ],
+        "errors": []
+      }
+    }
+  ]
+}

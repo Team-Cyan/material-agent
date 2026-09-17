@@ -1,0 +1,2088 @@
+{
+  "frame_rate": 29.4,
+  "annotation_sha256": "3019d20a8ee198f03b76d6fc23e8f8c44aa931c8eb91d4df3df8d192753268fb",
+  "plan_sha256": "54b509d31cccec5bc66008209637a1b9d03401a4ff8446388e8eabe44370d417",
+  "sequences": [
+    {
+      "sequence": "s07-d72",
+      "frame_count": 1852,
+      "samples": [
+        {
+          "frame": 0,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 29,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 59,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 88,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 118,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 147,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 176,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 206,
+          "actions": [
+            "enterV"
+          ],
+          "segments": [
+            0
+          ]
+        },
+        {
+          "frame": 235,
+          "actions": [
+            "enterV"
+          ],
+          "segments": [
+            0
+          ]
+        },
+        {
+          "frame": 265,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 294,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            1
+          ]
+        },
+        {
+          "frame": 323,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            1
+          ]
+        },
+        {
+          "frame": 353,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            1
+          ]
+        },
+        {
+          "frame": 382,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            1
+          ]
+        },
+        {
+          "frame": 412,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            1
+          ]
+        },
+        {
+          "frame": 441,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 470,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            2
+          ]
+        },
+        {
+          "frame": 500,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            2
+          ]
+        },
+        {
+          "frame": 529,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            2
+          ]
+        },
+        {
+          "frame": 559,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            2
+          ]
+        },
+        {
+          "frame": 588,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            2
+          ]
+        },
+        {
+          "frame": 617,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            2
+          ]
+        },
+        {
+          "frame": 647,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            2
+          ]
+        },
+        {
+          "frame": 676,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            2
+          ]
+        },
+        {
+          "frame": 706,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            2
+          ]
+        },
+        {
+          "frame": 735,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 764,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            3
+          ]
+        },
+        {
+          "frame": 794,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            3
+          ]
+        },
+        {
+          "frame": 823,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            3
+          ]
+        },
+        {
+          "frame": 853,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            3
+          ]
+        },
+        {
+          "frame": 882,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 911,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 941,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 970,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1000,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1029,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1058,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1088,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1117,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1147,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1176,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1205,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1235,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1264,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1294,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1323,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1352,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1382,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1411,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1441,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1470,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1499,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1529,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1558,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1588,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1617,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1646,
+          "actions": [
+            "pourV"
+          ],
+          "segments": [
+            5
+          ]
+        },
+        {
+          "frame": 1676,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1705,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1735,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1764,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1793,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1823,
+          "actions": [],
+          "segments": []
+        }
+      ]
+    },
+    {
+      "sequence": "s22-d23",
+      "frame_count": 3701,
+      "samples": [
+        {
+          "frame": 0,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 29,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 59,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 88,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 118,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 147,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 176,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 206,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 235,
+          "actions": [
+            "enterV"
+          ],
+          "segments": [
+            6085
+          ]
+        },
+        {
+          "frame": 265,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 294,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 323,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6086
+          ]
+        },
+        {
+          "frame": 353,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6086
+          ]
+        },
+        {
+          "frame": 382,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6086
+          ]
+        },
+        {
+          "frame": 412,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6086
+          ]
+        },
+        {
+          "frame": 441,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6086
+          ]
+        },
+        {
+          "frame": 470,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6086
+          ]
+        },
+        {
+          "frame": 500,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6086
+          ]
+        },
+        {
+          "frame": 529,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 559,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 588,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 617,
+          "actions": [
+            "washV"
+          ],
+          "segments": [
+            6087
+          ]
+        },
+        {
+          "frame": 647,
+          "actions": [
+            "washV"
+          ],
+          "segments": [
+            6087
+          ]
+        },
+        {
+          "frame": 676,
+          "actions": [
+            "washV"
+          ],
+          "segments": [
+            6087
+          ]
+        },
+        {
+          "frame": 706,
+          "actions": [
+            "washV"
+          ],
+          "segments": [
+            6087
+          ]
+        },
+        {
+          "frame": 735,
+          "actions": [
+            "washV"
+          ],
+          "segments": [
+            6087
+          ]
+        },
+        {
+          "frame": 764,
+          "actions": [
+            "washV"
+          ],
+          "segments": [
+            6087
+          ]
+        },
+        {
+          "frame": 794,
+          "actions": [
+            "washV"
+          ],
+          "segments": [
+            6087
+          ]
+        },
+        {
+          "frame": 823,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 853,
+          "actions": [
+            "moveV"
+          ],
+          "segments": [
+            6088
+          ]
+        },
+        {
+          "frame": 882,
+          "actions": [
+            "dryV"
+          ],
+          "segments": [
+            6089
+          ]
+        },
+        {
+          "frame": 911,
+          "actions": [
+            "dryV"
+          ],
+          "segments": [
+            6089
+          ]
+        },
+        {
+          "frame": 941,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 970,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6090
+          ]
+        },
+        {
+          "frame": 1000,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6090
+          ]
+        },
+        {
+          "frame": 1029,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6090
+          ]
+        },
+        {
+          "frame": 1058,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6090
+          ]
+        },
+        {
+          "frame": 1088,
+          "actions": [
+            "closeV"
+          ],
+          "segments": [
+            6091
+          ]
+        },
+        {
+          "frame": 1117,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1147,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1176,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1205,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1235,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1264,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1294,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1323,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1352,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1382,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1411,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1441,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1470,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1499,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1529,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6092
+          ]
+        },
+        {
+          "frame": 1558,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1588,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1617,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6093
+          ]
+        },
+        {
+          "frame": 1646,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6093
+          ]
+        },
+        {
+          "frame": 1676,
+          "actions": [
+            "take outV"
+          ],
+          "segments": [
+            6093
+          ]
+        },
+        {
+          "frame": 1705,
+          "actions": [
+            "cut off endsV"
+          ],
+          "segments": [
+            6094
+          ]
+        },
+        {
+          "frame": 1735,
+          "actions": [
+            "cut off endsV"
+          ],
+          "segments": [
+            6094
+          ]
+        },
+        {
+          "frame": 1764,
+          "actions": [
+            "cut off endsV"
+          ],
+          "segments": [
+            6094
+          ]
+        },
+        {
+          "frame": 1793,
+          "actions": [
+            "cut off endsV"
+          ],
+          "segments": [
+            6094
+          ]
+        },
+        {
+          "frame": 1823,
+          "actions": [
+            "moveV"
+          ],
+          "segments": [
+            6095
+          ]
+        },
+        {
+          "frame": 1852,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1882,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1911,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1940,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 1970,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 1999,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2029,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2058,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2087,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2117,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2146,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2176,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2205,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2234,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2264,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2293,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2323,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2352,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2381,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2411,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2440,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2470,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2499,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2528,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2558,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2587,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2617,
+          "actions": [
+            "peelV"
+          ],
+          "segments": [
+            6096
+          ]
+        },
+        {
+          "frame": 2646,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 2675,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 2705,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 2734,
+          "actions": [
+            "moveV"
+          ],
+          "segments": [
+            6098
+          ]
+        },
+        {
+          "frame": 2764,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 2793,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 2822,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 2852,
+          "actions": [
+            "throw in garbageV"
+          ],
+          "segments": [
+            6099
+          ]
+        },
+        {
+          "frame": 2881,
+          "actions": [
+            "throw in garbageV"
+          ],
+          "segments": [
+            6099
+          ]
+        },
+        {
+          "frame": 2911,
+          "actions": [
+            "throw in garbageV"
+          ],
+          "segments": [
+            6099
+          ]
+        },
+        {
+          "frame": 2940,
+          "actions": [
+            "throw in garbageV"
+          ],
+          "segments": [
+            6099
+          ]
+        },
+        {
+          "frame": 2969,
+          "actions": [
+            "throw in garbageV"
+          ],
+          "segments": [
+            6099
+          ]
+        },
+        {
+          "frame": 2999,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 3028,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 3058,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 3087,
+          "actions": [
+            "cut apartV"
+          ],
+          "segments": [
+            6100
+          ]
+        },
+        {
+          "frame": 3116,
+          "actions": [
+            "cut apartV"
+          ],
+          "segments": [
+            6100
+          ]
+        },
+        {
+          "frame": 3146,
+          "actions": [
+            "cut apartV"
+          ],
+          "segments": [
+            6100
+          ]
+        },
+        {
+          "frame": 3175,
+          "actions": [
+            "cut apartV"
+          ],
+          "segments": [
+            6100
+          ]
+        },
+        {
+          "frame": 3205,
+          "actions": [
+            "cut apartV"
+          ],
+          "segments": [
+            6100
+          ]
+        },
+        {
+          "frame": 3234,
+          "actions": [
+            "cut diceV"
+          ],
+          "segments": [
+            6101
+          ]
+        },
+        {
+          "frame": 3263,
+          "actions": [
+            "cut diceV"
+          ],
+          "segments": [
+            6101
+          ]
+        },
+        {
+          "frame": 3293,
+          "actions": [
+            "cut diceV"
+          ],
+          "segments": [
+            6101
+          ]
+        },
+        {
+          "frame": 3322,
+          "actions": [
+            "cut diceV"
+          ],
+          "segments": [
+            6101
+          ]
+        },
+        {
+          "frame": 3352,
+          "actions": [
+            "cut diceV"
+          ],
+          "segments": [
+            6101
+          ]
+        },
+        {
+          "frame": 3381,
+          "actions": [
+            "cut diceV"
+          ],
+          "segments": [
+            6101
+          ]
+        },
+        {
+          "frame": 3410,
+          "actions": [
+            "cut diceV"
+          ],
+          "segments": [
+            6101
+          ]
+        },
+        {
+          "frame": 3440,
+          "actions": [
+            "cut diceV"
+          ],
+          "segments": [
+            6101
+          ]
+        },
+        {
+          "frame": 3469,
+          "actions": [
+            "scratch offV"
+          ],
+          "segments": [
+            6102
+          ]
+        },
+        {
+          "frame": 3499,
+          "actions": [],
+          "segments": []
+        },
+        {
+          "frame": 3528,
+          "actions": [],
+          "segments": []
+        }
+      ]
+    }
+  ],
+  "pairs": [
+    {
+      "kind": "same_segment",
+      "frames": [
+        284,
+        398
+      ],
+      "annotations": [
+        1,
+        1
+      ],
+      "actions": [
+        [
+          "take outV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s07-d72-01",
+      "sequence": "s07-d72",
+      "split": "calibration",
+      "seconds": [
+        9.659863945578232,
+        13.537414965986395
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        468,
+        615
+      ],
+      "annotations": [
+        2,
+        2
+      ],
+      "actions": [
+        [
+          "take outV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s07-d72-02",
+      "sequence": "s07-d72",
+      "split": "calibration",
+      "seconds": [
+        15.918367346938776,
+        20.918367346938776
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        779,
+        847
+      ],
+      "annotations": [
+        3,
+        3
+      ],
+      "actions": [
+        [
+          "take outV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s07-d72-03",
+      "sequence": "s07-d72",
+      "split": "calibration",
+      "seconds": [
+        26.496598639455783,
+        28.80952380952381
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        1214,
+        1361
+      ],
+      "annotations": [
+        5,
+        5
+      ],
+      "actions": [
+        [
+          "pourV"
+        ],
+        [
+          "pourV"
+        ]
+      ],
+      "id": "s07-d72-04",
+      "sequence": "s07-d72",
+      "split": "calibration",
+      "seconds": [
+        41.292517006802726,
+        46.292517006802726
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        227,
+        284
+      ],
+      "annotations": [
+        0,
+        1
+      ],
+      "actions": [
+        [
+          "enterV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s07-d72-05",
+      "sequence": "s07-d72",
+      "split": "calibration",
+      "seconds": [
+        7.72108843537415,
+        9.659863945578232
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        320,
+        467
+      ],
+      "annotations": [
+        6086,
+        6086
+      ],
+      "actions": [
+        [
+          "take outV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s22-d23-01",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        10.884353741496598,
+        15.8843537414966
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        613,
+        760
+      ],
+      "annotations": [
+        6087,
+        6087
+      ],
+      "actions": [
+        [
+          "washV"
+        ],
+        [
+          "washV"
+        ]
+      ],
+      "id": "s22-d23-02",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        20.850340136054424,
+        25.850340136054424
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        957,
+        1044
+      ],
+      "annotations": [
+        6090,
+        6090
+      ],
+      "actions": [
+        [
+          "take outV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s22-d23-03",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        32.55102040816327,
+        35.51020408163266
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        1134,
+        1281
+      ],
+      "annotations": [
+        6092,
+        6092
+      ],
+      "actions": [
+        [
+          "take outV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s22-d23-04",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        38.57142857142858,
+        43.57142857142858
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        1617,
+        1666
+      ],
+      "annotations": [
+        6093,
+        6093
+      ],
+      "actions": [
+        [
+          "take outV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s22-d23-05",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        55.0,
+        56.66666666666667
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        1717,
+        1796
+      ],
+      "annotations": [
+        6094,
+        6094
+      ],
+      "actions": [
+        [
+          "cut off endsV"
+        ],
+        [
+          "cut off endsV"
+        ]
+      ],
+      "id": "s22-d23-06",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        58.40136054421769,
+        61.08843537414966
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        1956,
+        2103
+      ],
+      "annotations": [
+        6096,
+        6096
+      ],
+      "actions": [
+        [
+          "peelV"
+        ],
+        [
+          "peelV"
+        ]
+      ],
+      "id": "s22-d23-07",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        66.53061224489797,
+        71.53061224489797
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        2842,
+        2974
+      ],
+      "annotations": [
+        6099,
+        6099
+      ],
+      "actions": [
+        [
+          "throw in garbageV"
+        ],
+        [
+          "throw in garbageV"
+        ]
+      ],
+      "id": "s22-d23-08",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        96.66666666666667,
+        101.15646258503402
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        3097,
+        3215
+      ],
+      "annotations": [
+        6100,
+        6100
+      ],
+      "actions": [
+        [
+          "cut apartV"
+        ],
+        [
+          "cut apartV"
+        ]
+      ],
+      "id": "s22-d23-09",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        105.34013605442178,
+        109.35374149659864
+      ]
+    },
+    {
+      "kind": "same_segment",
+      "frames": [
+        3245,
+        3392
+      ],
+      "annotations": [
+        6101,
+        6101
+      ],
+      "actions": [
+        [
+          "cut diceV"
+        ],
+        [
+          "cut diceV"
+        ]
+      ],
+      "id": "s22-d23-10",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        110.37414965986395,
+        115.37414965986395
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        231,
+        320
+      ],
+      "annotations": [
+        6085,
+        6086
+      ],
+      "actions": [
+        [
+          "enterV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s22-d23-11",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        7.857142857142858,
+        10.884353741496598
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        504,
+        613
+      ],
+      "annotations": [
+        6086,
+        6087
+      ],
+      "actions": [
+        [
+          "take outV"
+        ],
+        [
+          "washV"
+        ]
+      ],
+      "id": "s22-d23-12",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        17.142857142857142,
+        20.850340136054424
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        800,
+        855
+      ],
+      "annotations": [
+        6087,
+        6088
+      ],
+      "actions": [
+        [
+          "washV"
+        ],
+        [
+          "moveV"
+        ]
+      ],
+      "id": "s22-d23-13",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        27.2108843537415,
+        29.081632653061227
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        904,
+        957
+      ],
+      "annotations": [
+        6089,
+        6090
+      ],
+      "actions": [
+        [
+          "dryV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s22-d23-14",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        30.74829931972789,
+        32.55102040816327
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        1088,
+        1134
+      ],
+      "annotations": [
+        6091,
+        6092
+      ],
+      "actions": [
+        [
+          "closeV"
+        ],
+        [
+          "take outV"
+        ]
+      ],
+      "id": "s22-d23-15",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        37.006802721088434,
+        38.57142857142858
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        1666,
+        1717
+      ],
+      "annotations": [
+        6093,
+        6094
+      ],
+      "actions": [
+        [
+          "take outV"
+        ],
+        [
+          "cut off endsV"
+        ]
+      ],
+      "id": "s22-d23-16",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        56.66666666666667,
+        58.40136054421769
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        1796,
+        1832
+      ],
+      "annotations": [
+        6094,
+        6095
+      ],
+      "actions": [
+        [
+          "cut off endsV"
+        ],
+        [
+          "moveV"
+        ]
+      ],
+      "id": "s22-d23-17",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        61.08843537414966,
+        62.31292517006803
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        1836,
+        1956
+      ],
+      "annotations": [
+        6095,
+        6096
+      ],
+      "actions": [
+        [
+          "moveV"
+        ],
+        [
+          "peelV"
+        ]
+      ],
+      "id": "s22-d23-18",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        62.44897959183674,
+        66.53061224489797
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        2720,
+        2842
+      ],
+      "annotations": [
+        6098,
+        6099
+      ],
+      "actions": [
+        [
+          "moveV"
+        ],
+        [
+          "throw in garbageV"
+        ]
+      ],
+      "id": "s22-d23-19",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        92.5170068027211,
+        96.66666666666667
+      ]
+    },
+    {
+      "kind": "different_action",
+      "frames": [
+        2974,
+        3097
+      ],
+      "annotations": [
+        6099,
+        6100
+      ],
+      "actions": [
+        [
+          "throw in garbageV"
+        ],
+        [
+          "cut apartV"
+        ]
+      ],
+      "id": "s22-d23-20",
+      "sequence": "s22-d23",
+      "split": "holdout",
+      "seconds": [
+        101.15646258503402,
+        105.34013605442178
+      ]
+    }
+  ],
+  "pair_parent_sha256": "fc49bb41ffc65f65343196c906eea075bd84dcb914016c06d0a3ac06fe73fb4c"
+}

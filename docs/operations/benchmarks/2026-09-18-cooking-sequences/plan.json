@@ -1,0 +1,33 @@
+{
+  "schema": "material-agent.cooking-sequence.v1",
+  "videos": [
+    "s07-d72",
+    "s22-d23"
+  ],
+  "parameters": {
+    "variants": [
+      "phash",
+      "equalized_phash",
+      "dhash"
+    ],
+    "hash_threshold": 10,
+    "time_gap_seconds": 10,
+    "preprocessing": {
+      "preview_max": 1024,
+      "jpeg_quality": 85,
+      "hash_max": 256
+    }
+  },
+  "sampling": {
+    "step_seconds": 1,
+    "through_second": 120,
+    "max_frames_per_video": 121,
+    "selection": "round(t * fps), starting t=0; stop at video end; whole sequence grouped once, annotations never gate grouping"
+  },
+  "fingerprints": {
+    "inputs": "d01bc5f73bd7232462987d85e06c92e5f653a0a1ea333283b4d1bdcb0f4fe0a7",
+    "manifest": "5b9051b5bcc66de4b978c06e90175149015b30c3604c85108348325e3b5b0cb0",
+    "config": "040425b33053c22409f96822c1622e4f197bfd02f8b396877568c6f63941fe84"
+  },
+  "decision": "Previously inspected videos; sequence diagnostic only, no new independent holdout claim; no candidate promotion."
+}
