@@ -77,3 +77,14 @@ verified during this preflight. This search is not a claim that none exists.
 
 Professional-software XMP round trips and target hardware/container restore tests
 remain separately unverified and outside this session's write/deployment scope.
+
+## September 17 continuation
+
+The [expanded HDR+ holdout](benchmarks/2026-09-17-hdrplus-holdout/report.md)
+contains 20 frozen events/100 frames. A completed 20 groups, B 17; the last three
+are blocked by a reported subagent usage limit. Exact preferred sets agree in
+1/17 overlapping groups and only seven strict pairs are order-stable. This fails
+the frozen minimum evidence gate, so neither model replacement nor refinement
+is promoted. Full product acceptance remains incomplete. The separate
+[real exposure bracket](benchmarks/2026-09-17-exposure-brackets/report.md) is a
+diagnostic counterexample, not additional blind holdout truth.

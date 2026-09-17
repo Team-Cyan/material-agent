@@ -42,14 +42,22 @@ for the current execution inventory and experiment gates.
 
 ## Candidate Stack
 
-| Block | Default model | Why |
+| Block | Candidate | Why |
 | --- | --- | --- |
 | Technical quality | Existing exposure/sharpness CV metrics plus BRISQUE/NIQE reject priors | Fast deterministic metrics remain the hard fallback; BRISQUE and NIQE are very fast CPU priors for screenshot/non-photo rejection, not final aesthetic rankers. |
 | No-reference quality | MUSIQ | Strong practical IQA baseline, available through PyIQA, works on Python 3.14 when fed resized previews. |
 | Aesthetic score | NIMA plus CLIPIQA+, fallback CLIPIQA | NIMA is fast; CLIPIQA+ adds perceptual/aesthetic sensitivity and kept screenshots at the bottom in the local benchmark with only a tiny learned-prompt weight. |
-| Grouping / similarity | DINOv2-small | Locally verified on Apple MPS, fast embeddings, good same-set nearest-neighbor behavior. |
+| Optional within-group similarity diagnostics | DINOv2-small | Historical embedding experiments; current grouping is adjacent time AND pHash and must not use embeddings as a merge gate. |
 | Scene / semantic tags | MobileCLIP2-S0 if available, otherwise MobileCLIP-S1 | Apple-oriented small CLIP family; MobileCLIP2-S0 is OpenCLIP-compatible and locally verified. |
 | Face / portrait signals | MediaPipe Face Landmarker | Python 3.14 runtime works with the official task asset; gives face/landmark structure without a heavy VLM. |
+
+## September 17 bounded comparison
+
+TOPIQ_NR, MUSIQ and MediaPipe were run independently on the frozen 100-frame
+HDR+ holdout. Runtime success does not authorize score fusion or default
+enablement; see the [holdout report](../operations/benchmarks/2026-09-17-hdrplus-holdout/report.md)
+for proxy agreement, resource measurements and promotion limits. YuNet remains
+the existing optional face localization path.
 
 ## Candidate Backlog
 

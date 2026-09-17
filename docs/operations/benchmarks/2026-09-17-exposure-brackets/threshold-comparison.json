@@ -1,0 +1,79 @@
+[
+  {
+    "hash_threshold": 0,
+    "time_gap_seconds": 10,
+    "groups": [
+      {
+        "262A2705.CR2": {
+          "score": 3.53,
+          "quality": "reject",
+          "selection": "reject"
+        },
+        "262A2707.CR2": {
+          "score": 6.43,
+          "quality": "review",
+          "selection": "keep"
+        }
+      },
+      {
+        "262A2706.CR2": {
+          "score": 5.98,
+          "quality": "review",
+          "selection": "keep"
+        }
+      }
+    ]
+  },
+  {
+    "hash_threshold": 10,
+    "time_gap_seconds": 10,
+    "groups": [
+      {
+        "262A2705.CR2": {
+          "score": 3.53,
+          "quality": "reject",
+          "selection": "keep"
+        }
+      },
+      {
+        "262A2707.CR2": {
+          "score": 6.43,
+          "quality": "review",
+          "selection": "keep"
+        }
+      },
+      {
+        "262A2706.CR2": {
+          "score": 5.98,
+          "quality": "review",
+          "selection": "keep"
+        }
+      }
+    ]
+  },
+  {
+    "hash_threshold": 24,
+    "time_gap_seconds": 10,
+    "groups": [
+      {
+        "262A2705.CR2": {
+          "score": 3.53,
+          "quality": "reject",
+          "selection": "reject"
+        },
+        "262A2707.CR2": {
+          "score": 6.43,
+          "quality": "review",
+          "selection": "keep"
+        }
+      },
+      {
+        "262A2706.CR2": {
+          "score": 5.98,
+          "quality": "review",
+          "selection": "keep"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,348 @@
+{
+  "reference_source": "model_generated",
+  "groups": [
+    {
+      "group": 1,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 2,
+      "stable_strict_pairs": 1,
+      "categories_A": [
+        "near_identical"
+      ],
+      "categories_B": [
+        "near_identical"
+      ]
+    },
+    {
+      "group": 2,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 3,
+      "stable_strict_pairs": 0,
+      "categories_A": [
+        "multiple_people",
+        "exposure_problem",
+        "near_identical"
+      ],
+      "categories_B": [
+        "multiple_people",
+        "exposure_problem",
+        "near_identical"
+      ]
+    },
+    {
+      "group": 3,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 3,
+      "stable_strict_pairs": 0,
+      "categories_A": [
+        "exposure_problem",
+        "near_identical"
+      ],
+      "categories_B": [
+        "exposure_problem",
+        "near_identical"
+      ]
+    },
+    {
+      "group": 4,
+      "preferred_set_order_agreement": true,
+      "preferred_set_overlap": true,
+      "pairwise_order_agreement": 7,
+      "stable_strict_pairs": 4,
+      "categories_A": [
+        "all_low_quality",
+        "exposure_problem",
+        "near_identical"
+      ],
+      "categories_B": [
+        "all_low_quality",
+        "exposure_problem",
+        "near_identical"
+      ]
+    },
+    {
+      "group": 5,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 3,
+      "stable_strict_pairs": 0,
+      "categories_A": [
+        "all_low_quality",
+        "exposure_problem",
+        "near_identical"
+      ],
+      "categories_B": [
+        "all_low_quality",
+        "exposure_problem",
+        "near_identical"
+      ]
+    },
+    {
+      "group": 6,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 2,
+      "stable_strict_pairs": 0,
+      "categories_A": [
+        "silhouette",
+        "near_identical"
+      ],
+      "categories_B": [
+        "silhouette",
+        "near_identical"
+      ]
+    },
+    {
+      "group": 7,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 2,
+      "stable_strict_pairs": 1,
+      "categories_A": [
+        "near_identical"
+      ],
+      "categories_B": [
+        "near_identical"
+      ]
+    },
+    {
+      "group": 8,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 3,
+      "stable_strict_pairs": 0,
+      "categories_A": [
+        "small_face",
+        "occlusion",
+        "near_identical"
+      ],
+      "categories_B": [
+        "small_face",
+        "occlusion",
+        "near_identical"
+      ]
+    },
+    {
+      "group": 9,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 3,
+      "stable_strict_pairs": 0,
+      "categories_A": [
+        "near_identical"
+      ],
+      "categories_B": [
+        "near_identical"
+      ]
+    },
+    {
+      "group": 10,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 3,
+      "stable_strict_pairs": 0,
+      "categories_A": [
+        "all_low_quality",
+        "multiple_people",
+        "exposure_problem",
+        "near_identical"
+      ],
+      "categories_B": [
+        "all_low_quality",
+        "multiple_people",
+        "exposure_problem",
+        "near_identical"
+      ]
+    },
+    {
+      "group": 11,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 2,
+      "stable_strict_pairs": 1,
+      "categories_A": {
+        "near_identical": "All five show the same harbor, tower, and sunset framing with only subtle tonal changes.",
+        "exposure_problem": "All retain very deep shadows across the beach and much of the harbor foreground."
+      },
+      "categories_B": {
+        "near_identical": "All five show nearly the same harbor, tower, ships, and cloud arrangement with only subtle framing/exposure differences.",
+        "exposure_problem": "The foreground shore and pier/building masses are deeply shadowed with little visible detail in every frame."
+      }
+    },
+    {
+      "group": 12,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 2,
+      "stable_strict_pairs": 0,
+      "categories_A": {
+        "near_identical": "All five depict the same framed painting from almost exactly the same position.",
+        "none": "No strong blur, clipping, subject obstruction, or other decisive defect is visible."
+      },
+      "categories_B": {
+        "near_identical": "All five are nearly identical records of the same framed painting from the same frontal position.",
+        "exposure_problem": "A bright gallery-light reflection runs across the upper glazing in every frame, reducing evenness and partially distracting from the artwork."
+      }
+    },
+    {
+      "group": 13,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 0,
+      "stable_strict_pairs": 0,
+      "categories_A": {
+        "multiple_people": "Many museum visitors are visible throughout every frame.",
+        "near_identical": "Architecture and camera framing are essentially constant; only visitor positions change subtly.",
+        "exposure_problem": "The right foreground and several visitors are rendered in deep shadow."
+      },
+      "categories_B": {
+        "multiple_people": "Many visitors are visible throughout the museum atrium in every frame.",
+        "near_identical": "The camera position and architectural composition are effectively unchanged; only visitor positions shift slightly.",
+        "exposure_problem": "The right foreground and several visitors are rendered as very dark shapes while the glass roof is much brighter."
+      }
+    },
+    {
+      "group": 14,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 2,
+      "stable_strict_pairs": 0,
+      "categories_A": {
+        "small_face": "The full-body environmental framing makes the face too small for reliable eye-detail assessment.",
+        "occlusion": "The hat casts visible shade over the upper face in every frame.",
+        "near_identical": "Pose, expression, subject placement, and coastline framing vary only minimally."
+      },
+      "categories_B": {
+        "near_identical": "All five show effectively the same pose, framing, wave state, and rocky coastline.",
+        "small_face": "The full-body subject occupies a modest portion of the wide landscape frame, leaving facial detail limited at preview scale.",
+        "exposure_problem": "Harsh overhead light and the hat cast substantial shadow across the subject's face while bright clothing and surf approach highlight clipping."
+      }
+    },
+    {
+      "group": 15,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 2,
+      "stable_strict_pairs": 0,
+      "categories_A": {
+        "near_identical": "All five use the same static fence, hill, sky, and tree framing.",
+        "exposure_problem": "Foreground fence and surrounding foliage lose substantial detail in deep shadow."
+      },
+      "categories_B": {
+        "near_identical": "All five preserve the same fence, hill, sky, and surrounding foliage with no meaningful scene change.",
+        "exposure_problem": "The shaded foreground fence and enclosing foliage are close to black with limited detail, creating a very high-contrast frame around the bright hill."
+      }
+    },
+    {
+      "group": 16,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 1,
+      "stable_strict_pairs": 0,
+      "categories_A": {
+        "near_identical": "All five repeat the same static architectural framing.",
+        "exposure_problem": "Most of the courtyard and lower facade are visibly crushed into deep shadow in every frame."
+      },
+      "categories_B": {
+        "all_low_quality": "Every frame has severe shadow loss across roughly the lower half, making the courtyard facade and garden hard to read.",
+        "exposure_problem": "Bright clouds are retained but the shaded architecture and foreground are strongly underexposed in all five images.",
+        "near_identical": "Composition and cloud/building arrangement are effectively unchanged across the group."
+      }
+    },
+    {
+      "group": 17,
+      "preferred_set_order_agreement": false,
+      "preferred_set_overlap": false,
+      "pairwise_order_agreement": 1,
+      "stable_strict_pairs": 0,
+      "categories_A": {
+        "all_low_quality": "Every frame shows severe high-noise night rendering and harsh, uneven illumination.",
+        "exposure_problem": "Foreground illumination is harsh while distant lights clip and surrounding foliage falls into deep shadow.",
+        "near_identical": "All five repeat the same garden view with only negligible visible changes."
+      },
+      "categories_B": [
+        "all_low_quality",
+        "exposure_problem",
+        "near_identical"
+      ]
+    }
+  ],
+  "panels": {
+    "A": {
+      "top1_preferred": 6,
+      "groups": 20,
+      "strict_pairs": 126,
+      "strict_correct": 50,
+      "reference_ties": 74,
+      "reference_unknown": 0,
+      "acceptable": 59,
+      "acceptable_rejected": 30,
+      "visible_retained": 52,
+      "extra_visible_retained": 23,
+      "explicit_keep_groups": 20
+    },
+    "B": {
+      "top1_preferred": 2,
+      "groups": 17,
+      "strict_pairs": 85,
+      "strict_correct": 25,
+      "reference_ties": 85,
+      "reference_unknown": 0,
+      "acceptable": 62,
+      "acceptable_rejected": 38,
+      "visible_retained": 37,
+      "extra_visible_retained": 13,
+      "explicit_keep_groups": 17
+    }
+  },
+  "missing_panel_groups": {
+    "A": [],
+    "B": [
+      18,
+      19,
+      20
+    ]
+  },
+  "stable_strict_pairs": [
+    {
+      "first": "g01i1",
+      "second": "g01i3",
+      "preferred": "g01i3"
+    },
+    {
+      "first": "g04i1",
+      "second": "g04i4",
+      "preferred": "g04i4"
+    },
+    {
+      "first": "g04i2",
+      "second": "g04i4",
+      "preferred": "g04i4"
+    },
+    {
+      "first": "g04i3",
+      "second": "g04i4",
+      "preferred": "g04i4"
+    },
+    {
+      "first": "g04i4",
+      "second": "g04i5",
+      "preferred": "g04i4"
+    },
+    {
+      "first": "g07i1",
+      "second": "g07i3",
+      "preferred": "g07i3"
+    },
+    {
+      "first": "g11i1",
+      "second": "g11i2",
+      "preferred": "g11i1"
+    }
+  ],
+  "preferred_set_agreement": 1,
+  "pairwise_agreement": 41
+}

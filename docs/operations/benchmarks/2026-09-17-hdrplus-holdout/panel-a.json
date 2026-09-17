@@ -1,0 +1,2228 @@
+{
+  "reference_source": "model_generated",
+  "model": "gpt-5.6-sol",
+  "reasoning_effort": "medium",
+  "groups": [
+    {
+      "group": 1,
+      "response": {
+        "group_id": "A01",
+        "readable_ids": [
+          "A011",
+          "A012",
+          "A013",
+          "A014",
+          "A015"
+        ],
+        "acceptable_keep_ids": [
+          "A011",
+          "A012",
+          "A013",
+          "A014",
+          "A015"
+        ],
+        "preferred_ids": [
+          "A014",
+          "A015"
+        ],
+        "quality_findings_by_id": {
+          "A011": [
+            "Clear, well-exposed mountain-and-river landscape; slightly softer/flatter than the strongest frames."
+          ],
+          "A012": [
+            "Clear, well-exposed landscape with good depth and no obvious defect."
+          ],
+          "A013": [
+            "Clear, well-exposed landscape; near-identical to the surrounding frames."
+          ],
+          "A014": [
+            "Best apparent crispness and tonal definition while preserving the same balanced composition."
+          ],
+          "A015": [
+            "Very clear and well exposed, with strong foreground texture and mountain detail."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A011": "Acceptable alternate; no visible failure.",
+          "A012": "Acceptable alternate; differences from peers are very small.",
+          "A013": "Acceptable alternate; differences from peers are very small.",
+          "A014": "Preferred for marginally stronger apparent detail and contrast.",
+          "A015": "Preferred tie because visible quality is essentially equal to A014."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A011",
+            "second_id": "A012",
+            "preference": "second"
+          },
+          {
+            "first_id": "A011",
+            "second_id": "A013",
+            "preference": "second"
+          },
+          {
+            "first_id": "A011",
+            "second_id": "A014",
+            "preference": "second"
+          },
+          {
+            "first_id": "A011",
+            "second_id": "A015",
+            "preference": "second"
+          },
+          {
+            "first_id": "A012",
+            "second_id": "A013",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A012",
+            "second_id": "A014",
+            "preference": "second"
+          },
+          {
+            "first_id": "A012",
+            "second_id": "A015",
+            "preference": "second"
+          },
+          {
+            "first_id": "A013",
+            "second_id": "A014",
+            "preference": "second"
+          },
+          {
+            "first_id": "A013",
+            "second_id": "A015",
+            "preference": "second"
+          },
+          {
+            "first_id": "A014",
+            "second_id": "A015",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": [
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Preview-scale differences among all five images are extremely small; tiny RAW focus differences cannot be resolved."
+        ],
+        "errors": [],
+        "reference_source": "model_generated"
+      }
+    },
+    {
+      "group": 2,
+      "response": {
+        "group_id": "A02",
+        "readable_ids": [
+          "A021",
+          "A022",
+          "A023",
+          "A024",
+          "A025"
+        ],
+        "acceptable_keep_ids": [
+          "A021",
+          "A022",
+          "A023",
+          "A024",
+          "A025"
+        ],
+        "preferred_ids": [
+          "A025"
+        ],
+        "quality_findings_by_id": {
+          "A021": [
+            "Readable street scene with stable architecture detail; deep foreground and building shadows are somewhat underexposed."
+          ],
+          "A022": [
+            "Readable and sharp street scene; dark shadow regions reduce visible detail."
+          ],
+          "A023": [
+            "Readable and sharp; tonal balance remains heavily weighted toward bright sky and dark street shadows."
+          ],
+          "A024": [
+            "Good detail and framing, with the same underexposed shadow issue."
+          ],
+          "A025": [
+            "Marginally strongest overall clarity and subject arrangement; shadows remain dark."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A021": "Acceptable near-duplicate with no unique visible failure.",
+          "A022": "Acceptable near-duplicate with no unique visible failure.",
+          "A023": "Acceptable near-duplicate with no unique visible failure.",
+          "A024": "Acceptable near-duplicate with no unique visible failure.",
+          "A025": "Preferred by a small margin for apparent clarity and clean pedestrian placement."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A021",
+            "second_id": "A022",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A021",
+            "second_id": "A023",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A021",
+            "second_id": "A024",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A021",
+            "second_id": "A025",
+            "preference": "second"
+          },
+          {
+            "first_id": "A022",
+            "second_id": "A023",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A022",
+            "second_id": "A024",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A022",
+            "second_id": "A025",
+            "preference": "second"
+          },
+          {
+            "first_id": "A023",
+            "second_id": "A024",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A023",
+            "second_id": "A025",
+            "preference": "second"
+          },
+          {
+            "first_id": "A024",
+            "second_id": "A025",
+            "preference": "second"
+          }
+        ],
+        "observed_categories": [
+          "multiple_people",
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "All five previews are extremely similar; the preference margin is weak and tiny focus differences are not resolvable."
+        ],
+        "errors": [],
+        "reference_source": "model_generated"
+      }
+    },
+    {
+      "group": 3,
+      "response": {
+        "group_id": "A03",
+        "readable_ids": [
+          "A031",
+          "A032",
+          "A033",
+          "A034",
+          "A035"
+        ],
+        "acceptable_keep_ids": [
+          "A031",
+          "A032",
+          "A033",
+          "A034",
+          "A035"
+        ],
+        "preferred_ids": [
+          "A033"
+        ],
+        "quality_findings_by_id": {
+          "A031": [
+            "Readable dusk coastal cityscape with pleasing sky detail; foreground buildings are substantially underexposed."
+          ],
+          "A032": [
+            "Readable and stable, but deep building shadows obscure detail."
+          ],
+          "A033": [
+            "Slightly stronger visible city-light and shoreline definition while retaining highlight detail."
+          ],
+          "A034": [
+            "Readable near-duplicate with dark foreground and no obvious unique defect."
+          ],
+          "A035": [
+            "Readable near-duplicate; foreground remains very dark and the scene is slightly flat at preview scale."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A031": "Acceptable alternate for the same dusk moment.",
+          "A032": "Acceptable alternate for the same dusk moment.",
+          "A033": "Preferred by a slight margin for visible shoreline and city-light definition.",
+          "A034": "Acceptable alternate; no decisive difference from peers.",
+          "A035": "Acceptable alternate; no decisive difference from peers."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A031",
+            "second_id": "A032",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A031",
+            "second_id": "A033",
+            "preference": "second"
+          },
+          {
+            "first_id": "A031",
+            "second_id": "A034",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A031",
+            "second_id": "A035",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A032",
+            "second_id": "A033",
+            "preference": "second"
+          },
+          {
+            "first_id": "A032",
+            "second_id": "A034",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A032",
+            "second_id": "A035",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A033",
+            "second_id": "A034",
+            "preference": "first"
+          },
+          {
+            "first_id": "A033",
+            "second_id": "A035",
+            "preference": "first"
+          },
+          {
+            "first_id": "A034",
+            "second_id": "A035",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": [
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Preview-scale differences are slight; shadow recoverability and tiny RAW sharpness differences cannot be established."
+        ],
+        "errors": [],
+        "reference_source": "model_generated"
+      }
+    },
+    {
+      "group": 4,
+      "response": {
+        "group_id": "A04",
+        "readable_ids": [
+          "A041",
+          "A042",
+          "A043",
+          "A044",
+          "A045"
+        ],
+        "acceptable_keep_ids": [
+          "A043",
+          "A044"
+        ],
+        "preferred_ids": [
+          "A044"
+        ],
+        "quality_findings_by_id": {
+          "A041": [
+            "Readable but strongly backlit; the sun is heavily clipped with flare, while much of the rocky foreground is underexposed."
+          ],
+          "A042": [
+            "Same severe highlight clipping and deep foreground shadows; composition is dominated by the bright sun."
+          ],
+          "A043": [
+            "Severely backlit, though marginally more usable foreground texture is visible than in the weakest frames."
+          ],
+          "A044": [
+            "Best of a low-quality set by a small margin for visible terrain definition; clipped sun and dark rocks remain major defects."
+          ],
+          "A045": [
+            "Readable but suffers the same blown sun, flare and blocked shadow detail."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A041": "Not selected because an almost identical frame offers slightly clearer terrain.",
+          "A042": "Not selected because an almost identical frame offers slightly clearer terrain.",
+          "A043": "Acceptable coverage keep for an otherwise low-quality group.",
+          "A044": "Preferred coverage keep for marginally stronger visible foreground definition.",
+          "A045": "Not selected because it provides no visible advantage over A043 or A044."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A041",
+            "second_id": "A042",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A041",
+            "second_id": "A043",
+            "preference": "second"
+          },
+          {
+            "first_id": "A041",
+            "second_id": "A044",
+            "preference": "second"
+          },
+          {
+            "first_id": "A041",
+            "second_id": "A045",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A042",
+            "second_id": "A043",
+            "preference": "second"
+          },
+          {
+            "first_id": "A042",
+            "second_id": "A044",
+            "preference": "second"
+          },
+          {
+            "first_id": "A042",
+            "second_id": "A045",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A043",
+            "second_id": "A044",
+            "preference": "second"
+          },
+          {
+            "first_id": "A043",
+            "second_id": "A045",
+            "preference": "first"
+          },
+          {
+            "first_id": "A044",
+            "second_id": "A045",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "all_low_quality",
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "All frames are very similar; the preference is a weak preview-scale judgment and RAW shadow latitude is unknown."
+        ],
+        "errors": [],
+        "reference_source": "model_generated"
+      }
+    },
+    {
+      "group": 5,
+      "response": {
+        "group_id": "A05",
+        "readable_ids": [
+          "A051",
+          "A052",
+          "A053",
+          "A054",
+          "A055"
+        ],
+        "acceptable_keep_ids": [
+          "A051"
+        ],
+        "preferred_ids": [
+          "A051"
+        ],
+        "quality_findings_by_id": {
+          "A051": [
+            "Readable gate-and-trees scene; severe underexposure obscures most of the gate, masonry and foliage, though this frame retains marginally more shadow detail."
+          ],
+          "A052": [
+            "Severely underexposed foreground and midground with little subject separation."
+          ],
+          "A053": [
+            "Severely underexposed and compositionally static; large dark areas obscure detail."
+          ],
+          "A054": [
+            "Severely underexposed gate and trees; no compensating visible moment or composition advantage."
+          ],
+          "A055": [
+            "Severely underexposed and nearly identical to the other frames."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A051": "Coverage keep for the readable group; marginally more visible masonry and foreground detail.",
+          "A052": "Not selected because A051 shows slightly more usable shadow detail.",
+          "A053": "Not selected because A051 shows slightly more usable shadow detail.",
+          "A054": "Not selected because A051 shows slightly more usable shadow detail.",
+          "A055": "Not selected because A051 shows slightly more usable shadow detail."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A051",
+            "second_id": "A052",
+            "preference": "first"
+          },
+          {
+            "first_id": "A051",
+            "second_id": "A053",
+            "preference": "first"
+          },
+          {
+            "first_id": "A051",
+            "second_id": "A054",
+            "preference": "first"
+          },
+          {
+            "first_id": "A051",
+            "second_id": "A055",
+            "preference": "first"
+          },
+          {
+            "first_id": "A052",
+            "second_id": "A053",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A052",
+            "second_id": "A054",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A052",
+            "second_id": "A055",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A053",
+            "second_id": "A054",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A053",
+            "second_id": "A055",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A054",
+            "second_id": "A055",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": [
+          "all_low_quality",
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "RAW shadow recoverability is unknown, and the apparent advantage of A051 is small at preview scale."
+        ],
+        "errors": [],
+        "reference_source": "model_generated"
+      }
+    },
+    {
+      "group": 6,
+      "response": {
+        "group_id": "A06",
+        "readable_ids": [
+          "A061",
+          "A062",
+          "A063",
+          "A064",
+          "A065"
+        ],
+        "acceptable_keep_ids": [
+          "A061",
+          "A062",
+          "A063",
+          "A064",
+          "A065"
+        ],
+        "preferred_ids": [
+          "A064",
+          "A065"
+        ],
+        "quality_findings_by_id": {
+          "A061": [
+            "Clear dusk lake landscape with intentional tree and ridge silhouettes; balanced pink sky reflection."
+          ],
+          "A062": [
+            "Clear and compositionally strong; visible differences from adjacent frames are minimal."
+          ],
+          "A063": [
+            "Good water texture, clean ridge outline and preserved sunset color."
+          ],
+          "A064": [
+            "Marginally strongest ridge and water definition with a clean silhouette composition."
+          ],
+          "A065": [
+            "Equally strong sunset color and silhouette balance; no obvious defect."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A061": "Acceptable near-duplicate with a complete visible moment.",
+          "A062": "Acceptable near-duplicate with a complete visible moment.",
+          "A063": "Acceptable alternate with strong color and texture.",
+          "A064": "Preferred for marginally stronger apparent definition.",
+          "A065": "Preferred tie for equally strong color and composition."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A061",
+            "second_id": "A062",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A061",
+            "second_id": "A063",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A061",
+            "second_id": "A064",
+            "preference": "second"
+          },
+          {
+            "first_id": "A061",
+            "second_id": "A065",
+            "preference": "second"
+          },
+          {
+            "first_id": "A062",
+            "second_id": "A063",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A062",
+            "second_id": "A064",
+            "preference": "second"
+          },
+          {
+            "first_id": "A062",
+            "second_id": "A065",
+            "preference": "second"
+          },
+          {
+            "first_id": "A063",
+            "second_id": "A064",
+            "preference": "second"
+          },
+          {
+            "first_id": "A063",
+            "second_id": "A065",
+            "preference": "second"
+          },
+          {
+            "first_id": "A064",
+            "second_id": "A065",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": [
+          "silhouette",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Silhouette is visibly supported by the dusk context; tiny sharpness differences remain uncertain at preview scale."
+        ],
+        "errors": [],
+        "reference_source": "model_generated"
+      }
+    },
+    {
+      "group": 7,
+      "response": {
+        "group_id": "A07",
+        "readable_ids": [
+          "A071",
+          "A072",
+          "A073",
+          "A074",
+          "A075"
+        ],
+        "acceptable_keep_ids": [
+          "A071",
+          "A072",
+          "A073",
+          "A074",
+          "A075"
+        ],
+        "preferred_ids": [
+          "A074"
+        ],
+        "quality_findings_by_id": {
+          "A071": [
+            "Readable indoor buffet scene with adequate detail; warm cast and mild low-light noise are visible."
+          ],
+          "A072": [
+            "Readable and stable, with slightly cleaner apparent detail than A071."
+          ],
+          "A073": [
+            "Readable near-duplicate; food and tableware remain adequately defined."
+          ],
+          "A074": [
+            "Marginally strongest overall brightness and detail across the table setting."
+          ],
+          "A075": [
+            "Readable and close in quality to A074, with no obvious unique defect."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A071": "Acceptable alternate documenting the same setup.",
+          "A072": "Acceptable alternate documenting the same setup.",
+          "A073": "Acceptable alternate documenting the same setup.",
+          "A074": "Preferred for marginally clearer, brighter rendering of the food and table.",
+          "A075": "Acceptable near-tie with A074."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A071",
+            "second_id": "A072",
+            "preference": "second"
+          },
+          {
+            "first_id": "A071",
+            "second_id": "A073",
+            "preference": "second"
+          },
+          {
+            "first_id": "A071",
+            "second_id": "A074",
+            "preference": "second"
+          },
+          {
+            "first_id": "A071",
+            "second_id": "A075",
+            "preference": "second"
+          },
+          {
+            "first_id": "A072",
+            "second_id": "A073",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A072",
+            "second_id": "A074",
+            "preference": "second"
+          },
+          {
+            "first_id": "A072",
+            "second_id": "A075",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A073",
+            "second_id": "A074",
+            "preference": "second"
+          },
+          {
+            "first_id": "A073",
+            "second_id": "A075",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A074",
+            "second_id": "A075",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Small brightness and sharpness differences may be preview rendering differences; no decisive subject-moment change is visible."
+        ],
+        "errors": [],
+        "reference_source": "model_generated"
+      }
+    },
+    {
+      "group": 8,
+      "response": {
+        "group_id": "A08",
+        "readable_ids": [
+          "A081",
+          "A082",
+          "A083",
+          "A084",
+          "A085"
+        ],
+        "acceptable_keep_ids": [
+          "A081",
+          "A082",
+          "A083",
+          "A084",
+          "A085"
+        ],
+        "preferred_ids": [
+          "A084"
+        ],
+        "quality_findings_by_id": {
+          "A081": [
+            "Clear environmental portrait of a hiker on granite; subject is small and the lowered head/hat obscures facial detail."
+          ],
+          "A082": [
+            "Clear and well exposed, with the same small, face-obscured subject moment."
+          ],
+          "A083": [
+            "Good terrain and subject detail; hiker remains small with no readable face evidence."
+          ],
+          "A084": [
+            "Marginally strongest apparent detail and a stable hiking pose within the environmental composition."
+          ],
+          "A085": [
+            "Clear near-duplicate with good terrain texture; no decisive facial evidence is visible."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A081": "Acceptable alternate preserving the same hiking moment.",
+          "A082": "Acceptable alternate preserving the same hiking moment.",
+          "A083": "Acceptable alternate with a slightly changed step/pole position.",
+          "A084": "Preferred for marginally clearer subject definition and stable pose.",
+          "A085": "Acceptable near-tie with A084."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A081",
+            "second_id": "A082",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A081",
+            "second_id": "A083",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A081",
+            "second_id": "A084",
+            "preference": "second"
+          },
+          {
+            "first_id": "A081",
+            "second_id": "A085",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A082",
+            "second_id": "A083",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A082",
+            "second_id": "A084",
+            "preference": "second"
+          },
+          {
+            "first_id": "A082",
+            "second_id": "A085",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A083",
+            "second_id": "A084",
+            "preference": "second"
+          },
+          {
+            "first_id": "A083",
+            "second_id": "A085",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A084",
+            "second_id": "A085",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "small_face",
+          "occlusion",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "Eye and face quality are unknown because the face is too small and obscured by the lowered head/hat; tiny focus differences cannot be resolved."
+        ],
+        "errors": [],
+        "reference_source": "model_generated"
+      }
+    },
+    {
+      "group": 9,
+      "response": {
+        "group_id": "A09",
+        "readable_ids": [
+          "A091",
+          "A092",
+          "A093",
+          "A094",
+          "A095"
+        ],
+        "acceptable_keep_ids": [
+          "A091",
+          "A092",
+          "A093",
+          "A094",
+          "A095"
+        ],
+        "preferred_ids": [
+          "A095"
+        ],
+        "quality_findings_by_id": {
+          "A091": [
+            "Clear dusk hillside landscape with attractive pink light; the right valley shadows are dark but contextually plausible."
+          ],
+          "A092": [
+            "Clear and well composed; near-identical to adjacent frames."
+          ],
+          "A093": [
+            "Good sky gradient and ridge color with adequate foreground path detail."
+          ],
+          "A094": [
+            "Clear near-duplicate with preserved dusk color and no obvious defect."
+          ],
+          "A095": [
+            "Marginally strongest apparent ridge definition and tonal separation across the scene."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A091": "Acceptable alternate capturing the same dusk landscape.",
+          "A092": "Acceptable alternate capturing the same dusk landscape.",
+          "A093": "Acceptable alternate with good ridge color.",
+          "A094": "Acceptable near-tie with the preferred frame.",
+          "A095": "Preferred by a small margin for ridge detail and tonal separation."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A091",
+            "second_id": "A092",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A091",
+            "second_id": "A093",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A091",
+            "second_id": "A094",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A091",
+            "second_id": "A095",
+            "preference": "second"
+          },
+          {
+            "first_id": "A092",
+            "second_id": "A093",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A092",
+            "second_id": "A094",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A092",
+            "second_id": "A095",
+            "preference": "second"
+          },
+          {
+            "first_id": "A093",
+            "second_id": "A094",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A093",
+            "second_id": "A095",
+            "preference": "second"
+          },
+          {
+            "first_id": "A094",
+            "second_id": "A095",
+            "preference": "second"
+          }
+        ],
+        "observed_categories": [
+          "near_identical"
+        ],
+        "uncertainty": [
+          "The five frames are extremely similar; preference rests on subtle preview-level tonal and detail differences."
+        ],
+        "errors": [],
+        "reference_source": "model_generated"
+      }
+    },
+    {
+      "group": 10,
+      "response": {
+        "group_id": "A10",
+        "readable_ids": [
+          "A101",
+          "A102",
+          "A103",
+          "A104",
+          "A105"
+        ],
+        "acceptable_keep_ids": [
+          "A104"
+        ],
+        "preferred_ids": [
+          "A104"
+        ],
+        "quality_findings_by_id": {
+          "A101": [
+            "Readable church interior with crisp central arch detail, but most of the interior is severely underexposed and the bright upper band is clipped."
+          ],
+          "A102": [
+            "Severe dynamic-range imbalance leaves large areas nearly black while the upper dome edge is overbright."
+          ],
+          "A103": [
+            "Readable architectural detail near the center, but extensive shadow loss limits the scene."
+          ],
+          "A104": [
+            "Best of the low-quality set by a small margin for visible stained-glass and arch detail; severe shadow loss and bright clipping remain."
+          ],
+          "A105": [
+            "Readable near-duplicate with blocked interior shadows and a clipped bright upper band."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A101": "Not selected because A104 retains marginally better visible architectural detail.",
+          "A102": "Not selected because A104 retains marginally better visible architectural detail.",
+          "A103": "Not selected because A104 retains marginally better visible architectural detail.",
+          "A104": "Coverage keep for an otherwise low-quality group; marginally strongest stained-glass and arch definition.",
+          "A105": "Not selected because it offers no clear advantage over A104."
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A101",
+            "second_id": "A102",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A101",
+            "second_id": "A103",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A101",
+            "second_id": "A104",
+            "preference": "second"
+          },
+          {
+            "first_id": "A101",
+            "second_id": "A105",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A102",
+            "second_id": "A103",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A102",
+            "second_id": "A104",
+            "preference": "second"
+          },
+          {
+            "first_id": "A102",
+            "second_id": "A105",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A103",
+            "second_id": "A104",
+            "preference": "second"
+          },
+          {
+            "first_id": "A103",
+            "second_id": "A105",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A104",
+            "second_id": "A105",
+            "preference": "first"
+          }
+        ],
+        "observed_categories": [
+          "all_low_quality",
+          "multiple_people",
+          "exposure_problem",
+          "near_identical"
+        ],
+        "uncertainty": [
+          "RAW shadow and highlight recoverability are unknown; people are too small and dark for any face or eye assessment."
+        ],
+        "errors": [],
+        "reference_source": "model_generated"
+      }
+    },
+    {
+      "group": 11,
+      "response": {
+        "group_id": 11,
+        "readable_ids": [
+          "A111",
+          "A112",
+          "A113",
+          "A114",
+          "A115"
+        ],
+        "acceptable_keep_ids": [
+          "A114",
+          "A115"
+        ],
+        "preferred_ids": [
+          "A114"
+        ],
+        "quality_findings_by_id": {
+          "A111": [
+            "Readable harbor sunset; deep foreground shadows lose detail, while the bright horizon remains controlled."
+          ],
+          "A112": [
+            "Near-identical framing; slightly flatter and darker-looking harbor detail than the strongest frame."
+          ],
+          "A113": [
+            "Readable and stable, but the lower foreground and left cloud mass remain very dark."
+          ],
+          "A114": [
+            "Best visible balance of warm horizon color, tower definition, and water reflection; foreground remains shadow-heavy."
+          ],
+          "A115": [
+            "Very close to A114 with good sky color and tower definition; minor visible differences are insufficient for a confident fine-focus judgment."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A111": [
+            "Covered by the stronger near-identical A114."
+          ],
+          "A112": [
+            "Covered by the stronger near-identical A114."
+          ],
+          "A113": [
+            "Covered by the stronger near-identical A114."
+          ],
+          "A114": [
+            "Preferred representative for the strongest visible color and tonal balance."
+          ],
+          "A115": [
+            "Acceptable alternate because visible quality is nearly tied with A114."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A111",
+            "second_id": "A112",
+            "preference": "first"
+          },
+          {
+            "first_id": "A111",
+            "second_id": "A113",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A111",
+            "second_id": "A114",
+            "preference": "second"
+          },
+          {
+            "first_id": "A111",
+            "second_id": "A115",
+            "preference": "second"
+          },
+          {
+            "first_id": "A112",
+            "second_id": "A113",
+            "preference": "second"
+          },
+          {
+            "first_id": "A112",
+            "second_id": "A114",
+            "preference": "second"
+          },
+          {
+            "first_id": "A112",
+            "second_id": "A115",
+            "preference": "second"
+          },
+          {
+            "first_id": "A113",
+            "second_id": "A114",
+            "preference": "second"
+          },
+          {
+            "first_id": "A113",
+            "second_id": "A115",
+            "preference": "second"
+          },
+          {
+            "first_id": "A114",
+            "second_id": "A115",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": {
+          "near_identical": "All five show the same harbor, tower, and sunset framing with only subtle tonal changes.",
+          "exposure_problem": "All retain very deep shadows across the beach and much of the harbor foreground."
+        },
+        "uncertainty": [
+          "Preview resolution does not support claims about tiny RAW focus differences; A114 and A115 are effectively tied."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 12,
+      "response": {
+        "group_id": 12,
+        "readable_ids": [
+          "A121",
+          "A122",
+          "A123",
+          "A124",
+          "A125"
+        ],
+        "acceptable_keep_ids": [
+          "A124",
+          "A125"
+        ],
+        "preferred_ids": [
+          "A124",
+          "A125"
+        ],
+        "quality_findings_by_id": {
+          "A121": [
+            "Readable full view of the framed painting; mild glare and low-contrast haze are visible on the glass."
+          ],
+          "A122": [
+            "Near-identical view with the frame fully included; mild glare remains visible."
+          ],
+          "A123": [
+            "Near-identical, readable museum documentation; no decisive visible advantage at preview size."
+          ],
+          "A124": [
+            "Stable, complete framing with comparatively even visible detail across the painting."
+          ],
+          "A125": [
+            "Stable, complete framing and detail essentially tied with A124."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A121": [
+            "Redundant with A124 and A125, which are at least as clear."
+          ],
+          "A122": [
+            "Redundant with A124 and A125, which are at least as clear."
+          ],
+          "A123": [
+            "Redundant with A124 and A125, with no distinct moment to preserve."
+          ],
+          "A124": [
+            "Acceptable representative with complete, stable framing."
+          ],
+          "A125": [
+            "Acceptable tied representative; visible differences from A124 are negligible."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A121",
+            "second_id": "A122",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A121",
+            "second_id": "A123",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A121",
+            "second_id": "A124",
+            "preference": "second"
+          },
+          {
+            "first_id": "A121",
+            "second_id": "A125",
+            "preference": "second"
+          },
+          {
+            "first_id": "A122",
+            "second_id": "A123",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A122",
+            "second_id": "A124",
+            "preference": "second"
+          },
+          {
+            "first_id": "A122",
+            "second_id": "A125",
+            "preference": "second"
+          },
+          {
+            "first_id": "A123",
+            "second_id": "A124",
+            "preference": "second"
+          },
+          {
+            "first_id": "A123",
+            "second_id": "A125",
+            "preference": "second"
+          },
+          {
+            "first_id": "A124",
+            "second_id": "A125",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": {
+          "near_identical": "All five depict the same framed painting from almost exactly the same position.",
+          "none": "No strong blur, clipping, subject obstruction, or other decisive defect is visible."
+        },
+        "uncertainty": [
+          "Subtle sharpness differences are below what can be judged reliably from these previews; A124 and A125 remain tied."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 13,
+      "response": {
+        "group_id": 13,
+        "readable_ids": [
+          "A131",
+          "A132",
+          "A133",
+          "A134",
+          "A135"
+        ],
+        "acceptable_keep_ids": [
+          "A133",
+          "A135"
+        ],
+        "preferred_ids": [
+          "A135"
+        ],
+        "quality_findings_by_id": {
+          "A131": [
+            "Readable wide museum interior; bright roof and architecture are clear, but the right side and foreground figures are heavily shadowed."
+          ],
+          "A132": [
+            "Near-identical architectural view; dark foreground silhouettes and busy visitor overlap reduce subject separation."
+          ],
+          "A133": [
+            "Stable view with a reasonably distributed visitor moment; the central sculpture remains dark against the interior."
+          ],
+          "A134": [
+            "Readable and stable, but visitor positions create slightly more overlap on the left side."
+          ],
+          "A135": [
+            "Strongest visible visitor spacing among the near-identical frames while retaining the architecture and sculpture context; shadows remain deep."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A131": [
+            "Redundant with later frames that show a cleaner visitor arrangement."
+          ],
+          "A132": [
+            "Redundant and has more distracting visitor overlap."
+          ],
+          "A133": [
+            "Acceptable alternate for its balanced crowd arrangement."
+          ],
+          "A134": [
+            "Covered by A133 and A135 without a clearly distinct useful moment."
+          ],
+          "A135": [
+            "Preferred representative for the cleanest visible spacing of moving visitors."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A131",
+            "second_id": "A132",
+            "preference": "first"
+          },
+          {
+            "first_id": "A131",
+            "second_id": "A133",
+            "preference": "second"
+          },
+          {
+            "first_id": "A131",
+            "second_id": "A134",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A131",
+            "second_id": "A135",
+            "preference": "second"
+          },
+          {
+            "first_id": "A132",
+            "second_id": "A133",
+            "preference": "second"
+          },
+          {
+            "first_id": "A132",
+            "second_id": "A134",
+            "preference": "second"
+          },
+          {
+            "first_id": "A132",
+            "second_id": "A135",
+            "preference": "second"
+          },
+          {
+            "first_id": "A133",
+            "second_id": "A134",
+            "preference": "first"
+          },
+          {
+            "first_id": "A133",
+            "second_id": "A135",
+            "preference": "second"
+          },
+          {
+            "first_id": "A134",
+            "second_id": "A135",
+            "preference": "second"
+          }
+        ],
+        "observed_categories": {
+          "multiple_people": "Many museum visitors are visible throughout every frame.",
+          "near_identical": "Architecture and camera framing are essentially constant; only visitor positions change subtly.",
+          "exposure_problem": "The right foreground and several visitors are rendered in deep shadow."
+        },
+        "uncertainty": [
+          "Crowd-placement preferences are modest and subjective; no reliable tiny focus distinction is visible."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 14,
+      "response": {
+        "group_id": 14,
+        "readable_ids": [
+          "A141",
+          "A142",
+          "A143",
+          "A144",
+          "A145"
+        ],
+        "acceptable_keep_ids": [
+          "A144",
+          "A145"
+        ],
+        "preferred_ids": [
+          "A144",
+          "A145"
+        ],
+        "quality_findings_by_id": {
+          "A141": [
+            "Readable environmental portrait with a natural standing pose; face is small and shaded by the hat."
+          ],
+          "A142": [
+            "Near-identical pose and framing; no obvious blur, but facial detail remains limited by scale and shade."
+          ],
+          "A143": [
+            "Readable and stable with controlled bright clothing and surf; near-identical to the surrounding frames."
+          ],
+          "A144": [
+            "Clean, stable portrait with good coastline context and a pleasant visible expression."
+          ],
+          "A145": [
+            "Essentially tied with A144 in expression, clarity, and composition."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A141": [
+            "Covered by later near-identical frames with no distinct moment to preserve."
+          ],
+          "A142": [
+            "Covered by later near-identical frames."
+          ],
+          "A143": [
+            "Covered by A144 and A145, which are visually at least as strong."
+          ],
+          "A144": [
+            "Preferred tied representative for stable framing and expression."
+          ],
+          "A145": [
+            "Preferred tied representative because no reliable visible distinction separates it from A144."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A141",
+            "second_id": "A142",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A141",
+            "second_id": "A143",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A141",
+            "second_id": "A144",
+            "preference": "second"
+          },
+          {
+            "first_id": "A141",
+            "second_id": "A145",
+            "preference": "second"
+          },
+          {
+            "first_id": "A142",
+            "second_id": "A143",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A142",
+            "second_id": "A144",
+            "preference": "second"
+          },
+          {
+            "first_id": "A142",
+            "second_id": "A145",
+            "preference": "second"
+          },
+          {
+            "first_id": "A143",
+            "second_id": "A144",
+            "preference": "second"
+          },
+          {
+            "first_id": "A143",
+            "second_id": "A145",
+            "preference": "second"
+          },
+          {
+            "first_id": "A144",
+            "second_id": "A145",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": {
+          "small_face": "The full-body environmental framing makes the face too small for reliable eye-detail assessment.",
+          "occlusion": "The hat casts visible shade over the upper face in every frame.",
+          "near_identical": "Pose, expression, subject placement, and coastline framing vary only minimally."
+        },
+        "uncertainty": [
+          "Eyes cannot be assessed reliably at this preview scale and under the hat shadow; subtle RAW focus differences are unknown."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 15,
+      "response": {
+        "group_id": 15,
+        "readable_ids": [
+          "A151",
+          "A152",
+          "A153",
+          "A154",
+          "A155"
+        ],
+        "acceptable_keep_ids": [
+          "A153",
+          "A155"
+        ],
+        "preferred_ids": [
+          "A153",
+          "A155"
+        ],
+        "quality_findings_by_id": {
+          "A151": [
+            "Readable landscape with a clear sunlit hill framed by trees; the foreground foliage is nearly black."
+          ],
+          "A152": [
+            "Near-identical composition and exposure, with good hill and sky detail but blocked foreground shadows."
+          ],
+          "A153": [
+            "Stable, clear representative with the strongest visible mid-scene definition among effectively identical views."
+          ],
+          "A154": [
+            "Readable and compositionally consistent; no meaningful distinct moment is visible."
+          ],
+          "A155": [
+            "Stable and clear, essentially tied with A153; deep foreground shadow remains the main defect."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A151": [
+            "Covered by the equally composed but slightly clearer tied representatives."
+          ],
+          "A152": [
+            "Covered by A153 and A155."
+          ],
+          "A153": [
+            "Preferred tied representative for visible hill and foliage definition."
+          ],
+          "A154": [
+            "Near-duplicate without a distinct advantage."
+          ],
+          "A155": [
+            "Preferred tied representative; no reliable difference separates it from A153."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A151",
+            "second_id": "A152",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A151",
+            "second_id": "A153",
+            "preference": "second"
+          },
+          {
+            "first_id": "A151",
+            "second_id": "A154",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A151",
+            "second_id": "A155",
+            "preference": "second"
+          },
+          {
+            "first_id": "A152",
+            "second_id": "A153",
+            "preference": "second"
+          },
+          {
+            "first_id": "A152",
+            "second_id": "A154",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A152",
+            "second_id": "A155",
+            "preference": "second"
+          },
+          {
+            "first_id": "A153",
+            "second_id": "A154",
+            "preference": "first"
+          },
+          {
+            "first_id": "A153",
+            "second_id": "A155",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A154",
+            "second_id": "A155",
+            "preference": "second"
+          }
+        ],
+        "observed_categories": {
+          "near_identical": "All five use the same static fence, hill, sky, and tree framing.",
+          "exposure_problem": "Foreground fence and surrounding foliage lose substantial detail in deep shadow."
+        },
+        "uncertainty": [
+          "Differences between A153 and A155 are too subtle for a confident preference at preview resolution."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 16,
+      "response": {
+        "group_id": 16,
+        "readable_ids": [
+          "A161",
+          "A162",
+          "A163",
+          "A164",
+          "A165"
+        ],
+        "acceptable_keep_ids": [
+          "A164",
+          "A165"
+        ],
+        "preferred_ids": [
+          "A165"
+        ],
+        "quality_findings_by_id": {
+          "A161": [
+            "Readable architectural view with dramatic clouds, but most of the lower courtyard is severely underexposed."
+          ],
+          "A162": [
+            "Near-identical and readable; building texture is visible while deep foreground shadows contain little detail."
+          ],
+          "A163": [
+            "Readable static composition; the bright cloud/building contrast is preserved but the courtyard remains blocked."
+          ],
+          "A164": [
+            "Acceptable representative with stable edges and slightly more usable upper-building definition."
+          ],
+          "A165": [
+            "Best visible building and cloud definition among the near-identical frames; lower half remains very dark."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A161": [
+            "Covered by later frames with marginally stronger visible building definition."
+          ],
+          "A162": [
+            "Covered by A164 and A165."
+          ],
+          "A163": [
+            "Near-duplicate without a distinct scene change or visible advantage."
+          ],
+          "A164": [
+            "Acceptable alternate representative of the architecture and cloud contrast."
+          ],
+          "A165": [
+            "Preferred representative for the clearest visible upper-building detail."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A161",
+            "second_id": "A162",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A161",
+            "second_id": "A163",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A161",
+            "second_id": "A164",
+            "preference": "second"
+          },
+          {
+            "first_id": "A161",
+            "second_id": "A165",
+            "preference": "second"
+          },
+          {
+            "first_id": "A162",
+            "second_id": "A163",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A162",
+            "second_id": "A164",
+            "preference": "second"
+          },
+          {
+            "first_id": "A162",
+            "second_id": "A165",
+            "preference": "second"
+          },
+          {
+            "first_id": "A163",
+            "second_id": "A164",
+            "preference": "second"
+          },
+          {
+            "first_id": "A163",
+            "second_id": "A165",
+            "preference": "second"
+          },
+          {
+            "first_id": "A164",
+            "second_id": "A165",
+            "preference": "second"
+          }
+        ],
+        "observed_categories": {
+          "near_identical": "All five repeat the same static architectural framing.",
+          "exposure_problem": "Most of the courtyard and lower facade are visibly crushed into deep shadow in every frame."
+        },
+        "uncertainty": [
+          "Small sharpness and shadow-detail differences cannot be established confidently from the previews."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 17,
+      "response": {
+        "group_id": 17,
+        "readable_ids": [
+          "A171",
+          "A172",
+          "A173",
+          "A174",
+          "A175"
+        ],
+        "acceptable_keep_ids": [
+          "A171",
+          "A172"
+        ],
+        "preferred_ids": [
+          "A171"
+        ],
+        "quality_findings_by_id": {
+          "A171": [
+            "Readable night garden scene, but strong chroma/luminance noise, harsh frontal illumination, and clipped background lights are visible."
+          ],
+          "A172": [
+            "Near-identical noisy night exposure; cactus and tree remain recognizable despite coarse color speckling."
+          ],
+          "A173": [
+            "Heavy noise and harsh lighting persist, with no distinct subject moment or composition advantage."
+          ],
+          "A174": [
+            "Readable but severely degraded by high noise, uneven illumination, and bright background clipping."
+          ],
+          "A175": [
+            "Readable near-duplicate with the same strong noise and exposure defects; no visible improvement over A171."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A171": [
+            "Coverage keep for an all-low-quality group; marginally least objectionable visible noise/tonal balance."
+          ],
+          "A172": [
+            "Acceptable alternate coverage keep because quality is close to A171."
+          ],
+          "A173": [
+            "Redundant and no cleaner than the selected coverage frames."
+          ],
+          "A174": [
+            "Redundant with equally severe noise and lighting defects."
+          ],
+          "A175": [
+            "Redundant and offers no distinct scene content."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A171",
+            "second_id": "A172",
+            "preference": "first"
+          },
+          {
+            "first_id": "A171",
+            "second_id": "A173",
+            "preference": "first"
+          },
+          {
+            "first_id": "A171",
+            "second_id": "A174",
+            "preference": "first"
+          },
+          {
+            "first_id": "A171",
+            "second_id": "A175",
+            "preference": "first"
+          },
+          {
+            "first_id": "A172",
+            "second_id": "A173",
+            "preference": "first"
+          },
+          {
+            "first_id": "A172",
+            "second_id": "A174",
+            "preference": "first"
+          },
+          {
+            "first_id": "A172",
+            "second_id": "A175",
+            "preference": "first"
+          },
+          {
+            "first_id": "A173",
+            "second_id": "A174",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A173",
+            "second_id": "A175",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A174",
+            "second_id": "A175",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": {
+          "all_low_quality": "Every frame shows severe high-noise night rendering and harsh, uneven illumination.",
+          "exposure_problem": "Foreground illumination is harsh while distant lights clip and surrounding foliage falls into deep shadow.",
+          "near_identical": "All five repeat the same garden view with only negligible visible changes."
+        },
+        "uncertainty": [
+          "The preferred ranking is weak because all frames share severe defects and differ only subtly."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 18,
+      "response": {
+        "group_id": 18,
+        "readable_ids": [
+          "A181",
+          "A182",
+          "A183",
+          "A184",
+          "A185"
+        ],
+        "acceptable_keep_ids": [
+          "A184",
+          "A185"
+        ],
+        "preferred_ids": [
+          "A185"
+        ],
+        "quality_findings_by_id": {
+          "A181": [
+            "Readable documentary view of demolition framed by trees; foreground tree shadows are deep, while the structure and water spray are clear."
+          ],
+          "A182": [
+            "Near-identical view with visible demolition detail and water spray; composition remains stable."
+          ],
+          "A183": [
+            "Readable and sharp at preview scale, with a slightly more developed spray arc than earlier frames."
+          ],
+          "A184": [
+            "Strong documentary moment with a clearly visible spray crossing the rubble and damaged building."
+          ],
+          "A185": [
+            "Strongest visible water-spray moment and clear structural detail; main subject remains well exposed."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A181": [
+            "Covered by later frames showing a stronger action moment."
+          ],
+          "A182": [
+            "Covered by A184 and A185."
+          ],
+          "A183": [
+            "Good but redundant transition between the selected stronger spray moments."
+          ],
+          "A184": [
+            "Acceptable alternate documenting a clear spray/action state."
+          ],
+          "A185": [
+            "Preferred for the strongest and most legible visible action moment."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A181",
+            "second_id": "A182",
+            "preference": "second"
+          },
+          {
+            "first_id": "A181",
+            "second_id": "A183",
+            "preference": "second"
+          },
+          {
+            "first_id": "A181",
+            "second_id": "A184",
+            "preference": "second"
+          },
+          {
+            "first_id": "A181",
+            "second_id": "A185",
+            "preference": "second"
+          },
+          {
+            "first_id": "A182",
+            "second_id": "A183",
+            "preference": "second"
+          },
+          {
+            "first_id": "A182",
+            "second_id": "A184",
+            "preference": "second"
+          },
+          {
+            "first_id": "A182",
+            "second_id": "A185",
+            "preference": "second"
+          },
+          {
+            "first_id": "A183",
+            "second_id": "A184",
+            "preference": "second"
+          },
+          {
+            "first_id": "A183",
+            "second_id": "A185",
+            "preference": "second"
+          },
+          {
+            "first_id": "A184",
+            "second_id": "A185",
+            "preference": "second"
+          }
+        ],
+        "observed_categories": {
+          "near_identical": "Camera framing is fixed while the visible water-spray action changes incrementally.",
+          "exposure_problem": "Foreground/right-side trees are very dark, though the demolition subject remains usable."
+        },
+        "uncertainty": [
+          "The water spray is the only strong visible moment change; fine structural sharpness differences are not reliable at preview scale."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 19,
+      "response": {
+        "group_id": 19,
+        "readable_ids": [
+          "A191",
+          "A192",
+          "A193",
+          "A194",
+          "A195"
+        ],
+        "acceptable_keep_ids": [
+          "A194",
+          "A195"
+        ],
+        "preferred_ids": [
+          "A195"
+        ],
+        "quality_findings_by_id": {
+          "A191": [
+            "Readable park landscape with geese and flowering grass; the large left foreground area is strongly underexposed."
+          ],
+          "A192": [
+            "Near-identical scene with clear central trees and field, but blocked shadows remain on the left."
+          ],
+          "A193": [
+            "Stable and readable, with no decisive subject-motion or composition change."
+          ],
+          "A194": [
+            "Acceptable representative with clear central tree detail and visible geese across the field."
+          ],
+          "A195": [
+            "Best visible balance of central field/tree definition among the near-identical views; left shadow remains heavy."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A191": [
+            "Covered by later near-identical frames with marginally stronger visible mid-scene definition."
+          ],
+          "A192": [
+            "Covered by A194 and A195."
+          ],
+          "A193": [
+            "Redundant with no distinct animal or human moment to preserve."
+          ],
+          "A194": [
+            "Acceptable alternate representative of the field and geese."
+          ],
+          "A195": [
+            "Preferred representative for the strongest overall visible mid-scene rendering."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A191",
+            "second_id": "A192",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A191",
+            "second_id": "A193",
+            "preference": "second"
+          },
+          {
+            "first_id": "A191",
+            "second_id": "A194",
+            "preference": "second"
+          },
+          {
+            "first_id": "A191",
+            "second_id": "A195",
+            "preference": "second"
+          },
+          {
+            "first_id": "A192",
+            "second_id": "A193",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A192",
+            "second_id": "A194",
+            "preference": "second"
+          },
+          {
+            "first_id": "A192",
+            "second_id": "A195",
+            "preference": "second"
+          },
+          {
+            "first_id": "A193",
+            "second_id": "A194",
+            "preference": "second"
+          },
+          {
+            "first_id": "A193",
+            "second_id": "A195",
+            "preference": "second"
+          },
+          {
+            "first_id": "A194",
+            "second_id": "A195",
+            "preference": "second"
+          }
+        ],
+        "observed_categories": {
+          "near_identical": "All five repeat the same wide park view with only tiny subject-position differences.",
+          "exposure_problem": "The left tree canopy and foreground grass lose substantial detail in shadow."
+        },
+        "uncertainty": [
+          "Geese and distant people are too small for confident moment-level distinctions; the A194/A195 ranking is slight."
+        ],
+        "errors": []
+      }
+    },
+    {
+      "group": 20,
+      "response": {
+        "group_id": 20,
+        "readable_ids": [
+          "A201",
+          "A202",
+          "A203",
+          "A204",
+          "A205"
+        ],
+        "acceptable_keep_ids": [
+          "A201",
+          "A202"
+        ],
+        "preferred_ids": [
+          "A201"
+        ],
+        "quality_findings_by_id": {
+          "A201": [
+            "Barely readable night patio scene; severe multicolored noise and underexposure obscure most detail."
+          ],
+          "A202": [
+            "Near-identical very dark frame with severe chroma noise; furniture and doorway remain only weakly legible."
+          ],
+          "A203": [
+            "Severely noisy and underexposed, with no distinct subject moment or clearer structural detail."
+          ],
+          "A204": [
+            "Readable only at a coarse scene level; heavy noise and crushed shadows dominate."
+          ],
+          "A205": [
+            "Near-identical low-quality night view with severe noise and minimal usable detail."
+          ]
+        },
+        "selection_reasons_by_id": {
+          "A201": [
+            "Coverage keep for an all-low-quality group; marginally clearest visible furniture and doorway structure."
+          ],
+          "A202": [
+            "Acceptable alternate coverage keep because visible quality is close to A201."
+          ],
+          "A203": [
+            "Redundant and no cleaner than selected coverage frames."
+          ],
+          "A204": [
+            "Redundant with the same severe defects."
+          ],
+          "A205": [
+            "Redundant and offers no distinct visible content."
+          ]
+        },
+        "pairwise_preferences": [
+          {
+            "first_id": "A201",
+            "second_id": "A202",
+            "preference": "first"
+          },
+          {
+            "first_id": "A201",
+            "second_id": "A203",
+            "preference": "first"
+          },
+          {
+            "first_id": "A201",
+            "second_id": "A204",
+            "preference": "first"
+          },
+          {
+            "first_id": "A201",
+            "second_id": "A205",
+            "preference": "first"
+          },
+          {
+            "first_id": "A202",
+            "second_id": "A203",
+            "preference": "first"
+          },
+          {
+            "first_id": "A202",
+            "second_id": "A204",
+            "preference": "first"
+          },
+          {
+            "first_id": "A202",
+            "second_id": "A205",
+            "preference": "first"
+          },
+          {
+            "first_id": "A203",
+            "second_id": "A204",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A203",
+            "second_id": "A205",
+            "preference": "tie"
+          },
+          {
+            "first_id": "A204",
+            "second_id": "A205",
+            "preference": "tie"
+          }
+        ],
+        "observed_categories": {
+          "all_low_quality": "Every frame is severely underexposed and covered by coarse multicolored noise.",
+          "exposure_problem": "Most of the patio and furniture are lost in deep shadow, with only small light sources visible.",
+          "near_identical": "All five show the same fixed night patio view without a distinct scene change."
+        },
+        "uncertainty": [
+          "The ranking is weak because severe noise and darkness dominate every frame."
+        ],
+        "errors": []
+      }
+    }
+  ]
+}

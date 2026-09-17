@@ -1,0 +1,17 @@
+[
+  {
+    "file": "torch-cache/hub/pyiqa/musiq_koniq_ckpt-e95806b9.pth",
+    "size": 108610983,
+    "sha256": "e95806b9eae5f3814c410f574ba8e552362bd5bc63d758ed5b97860f5d6185aa"
+  },
+  {
+    "file": "torch-cache/hub/pyiqa/cfanet_nr_koniq_res50-9a73138b.pth",
+    "size": 181196009,
+    "sha256": "9a73138beb3748dd6a83365610ac88fa1cd53225342c77fc9ed44a3be461354c"
+  },
+  {
+    "file": "hf-cache/hub/models--timm--resnet50.a1_in1k/snapshots/767268603ca0cb0bfe326fa87277f19c419566ef/model.safetensors",
+    "size": 102469840,
+    "sha256": "773525d5821de224f8f30c33377b7a795d7863e08522698200d3217d3f2a41bb"
+  }
+]

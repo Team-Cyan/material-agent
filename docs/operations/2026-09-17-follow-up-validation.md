@@ -125,3 +125,11 @@ brightness scaling on two real sources gave pHash distances <=10 at factors
 diagnostics, not physical exposure-stop or noise equivalence. Extreme exposure
 changes can still split an event and retain a defective singleton for coverage.
 No threshold or grouping semantics were changed to conceal this limitation.
+
+## Expanded evidence
+
+The [100-frame holdout](benchmarks/2026-09-17-hdrplus-holdout/report.md) now records
+three candidate experiments and partial opposite-order blind evaluation. A
+[real CR2 bracket](benchmarks/2026-09-17-exposure-brackets/report.md) reproduces
+the exposure split/coverage interaction without synthetic timestamps. The
+latest audited status supersedes the earlier remaining-work list above.

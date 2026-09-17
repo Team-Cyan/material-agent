@@ -15,18 +15,20 @@ Phase 1 inference unification, the first MobileCLIP comparison and the revised
 time/hash grouping are implemented. Continuation batches implement readable-group
 keep coverage with separate quality/selection persistence, XMP projection-attempt
 ledger/rewrite receipts, and explicit evidence applicability plus opt-in bounded
-refinement. Six public RAWs did not gain focus resolution through half-size RAW
-decode; refinement remains disabled. GPT acceptance uses fresh-context Codex subagents, not a required external API.
-Both initial panels hit usage limits, then completed after quota restoration.
-The [controlled pilot](benchmarks/2026-09-16-codex-blind-pilot/report.md) shows 6/6
-preference agreement across both panels and the default baseline. Real burst
-acceptance and external verification remain pending. The September 17
-[follow-up](2026-09-17-follow-up-validation.md) adds two new HDR+ burst events:
-both blind panels return ties; default hashing cannot read their missing RAW
-thumbnails, while time-only grouping produces two groups. This is diagnostic
-evidence, not full acceptance. Context-supported not_applicable has no local
-producer yet. Latest guarded suite: 741 passed, 102 skipped; reviewed fixes
-are committed locally.
+refinement. The expanded [100-frame holdout](benchmarks/2026-09-17-hdrplus-holdout/report.md)
+ran TOPIQ, MUSIQ, MediaPipe and optional refinement without promotion. A completed
+20/20 blind groups; B completed 17/20 and hit quota again on the replacement
+agent. Resume B groups 18–20 without reading A/score evidence. Only seven strict
+pairs are currently order-stable, below the frozen minimum of 30. Do not fit
+thresholds to these unstable proxy judgments. Refinement has 18 completed
+larger-focus observations but no proven ranking benefit; it remains disabled.
+RAW hashing without embedded thumbnails is fixed in accad08. Latest guarded
+suite: 745 passed, 102 skipped. Context-supported not_applicable still lacks a
+local producer. The [real exposure counterexample](benchmarks/2026-09-17-exposure-brackets/report.md)
+shows a 0.34-second pair splitting at default hash threshold 10 (distance 24),
+then singleton coverage keeps a quality-reject. No threshold/exception change
+was made; an exposure-specific policy choice and a balanced negative control
+set remain outstanding. The external acceptance plan is prepared separately.
 XMP protection/projection has local in-memory verification;
 no actual XMP write, deployment or production review is authorized in this session.
 

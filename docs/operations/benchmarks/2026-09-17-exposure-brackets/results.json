@@ -1,0 +1,313 @@
+{
+  "scope": "real CR2 EXIF and default hash, no synthetic times or thresholds",
+  "hashes": {
+    "262A2705.CR2": "cdce34916766c721",
+    "262A2706.CR2": "c58e38e33762c72c",
+    "262A2707.CR2": "818e1ce175b3d4cd"
+  },
+  "distances": {
+    "262A2705.CR2/262A2706.CR2": 14,
+    "262A2705.CR2/262A2707.CR2": 24,
+    "262A2706.CR2/262A2707.CR2": 18
+  },
+  "times": {
+    "262A2705.CR2": "2016-12-17 13:09:29",
+    "262A2706.CR2": "2016-12-17 13:10:19",
+    "262A2707.CR2": "2016-12-17 13:09:29"
+  },
+  "groups": [
+    [
+      "262A2705.CR2"
+    ],
+    [
+      "262A2707.CR2"
+    ],
+    [
+      "262A2706.CR2"
+    ]
+  ],
+  "results": {
+    "262A2705.CR2": {
+      "score_total": 3.53,
+      "scores": {
+        "sharpness": 3.1436357034210243,
+        "exposure": 6.2,
+        "subject": 3.49,
+        "composition": 6.41,
+        "lighting": 0.99,
+        "color": 4.98,
+        "clarity": 4.76,
+        "depth": 5.52,
+        "mood": 3.83
+      },
+      "scene": "other",
+      "decision": "keep",
+      "decision_reasons": [
+        "group_coverage_fallback"
+      ],
+      "meta": {
+        "preview_source": "embedded",
+        "focus_assessment": "subject_roi_preview",
+        "focus_preview_size": [
+          2048,
+          1365
+        ],
+        "original_size": [
+          5796,
+          3870
+        ],
+        "preview_size": [
+          1024,
+          682
+        ],
+        "preview_downscale_ratio": 5.66,
+        "overexpose_ratio": 0.0002061950146627566,
+        "underexpose_ratio": 0.3012852822580645,
+        "luma_p5": 0.01568627543747425,
+        "luma_p50": 0.05098039284348488,
+        "luma_p95": 0.2862745225429535,
+        "luma_span": 0.27058824710547924,
+        "exposure_scene": "other",
+        "laplacian_variance": 348.6453918249973,
+        "scoring_mode": "heuristic",
+        "runtime": "cpu",
+        "runtime_components": [
+          "cpu"
+        ],
+        "configured_runtime": "cpu",
+        "timing": {
+          "local_heuristic_seconds": 0.022684
+        },
+        "subject_focus": {
+          "mode": "subject_roi",
+          "score": 5.4983,
+          "global_blur_score": 4.3151,
+          "subject_focus_score": 5.4983,
+          "eye_focus_score": null,
+          "global_laplacian_variance": 459.936549,
+          "subject_laplacian_variance": 564.683559,
+          "eye_laplacian_variances": [],
+          "face_bbox": null,
+          "bbox": [
+            0.153848,
+            0.117917,
+            0.749048,
+            0.713117
+          ],
+          "source": "saliency_fallback",
+          "confidence": 0.35,
+          "global_blur_guard_failed": false,
+          "timing_seconds": 0.013445
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        }
+      }
+    },
+    "262A2707.CR2": {
+      "score_total": 6.43,
+      "scores": {
+        "sharpness": 3.1952593777557774,
+        "exposure": 6.08425277217742,
+        "subject": 5.98,
+        "composition": 6.94,
+        "lighting": 6.69,
+        "color": 7.06,
+        "clarity": 5.86,
+        "depth": 6.4,
+        "mood": 6.72
+      },
+      "scene": "other",
+      "decision": "keep",
+      "decision_reasons": [
+        "group_coverage_fallback"
+      ],
+      "meta": {
+        "preview_source": "embedded",
+        "focus_assessment": "subject_roi_preview",
+        "focus_preview_size": [
+          2048,
+          1365
+        ],
+        "original_size": [
+          5796,
+          3870
+        ],
+        "preview_size": [
+          1024,
+          682
+        ],
+        "preview_downscale_ratio": 5.66,
+        "overexpose_ratio": 0.04526123762829912,
+        "underexpose_ratio": 5.441257331378299e-05,
+        "luma_p5": 0.21568627655506134,
+        "luma_p50": 0.572549045085907,
+        "luma_p95": 0.9686274528503418,
+        "luma_span": 0.7529411762952805,
+        "exposure_scene": "other",
+        "laplacian_variance": 353.54964088679884,
+        "scoring_mode": "heuristic",
+        "runtime": "cpu",
+        "runtime_components": [
+          "cpu"
+        ],
+        "configured_runtime": "cpu",
+        "timing": {
+          "local_heuristic_seconds": 0.019318
+        },
+        "subject_focus": {
+          "mode": "subject_roi",
+          "score": 6.7952,
+          "global_blur_score": 7.1419,
+          "subject_focus_score": 6.7952,
+          "eye_focus_score": null,
+          "global_laplacian_variance": 728.477569,
+          "subject_laplacian_variance": 749.193509,
+          "eye_laplacian_variances": [],
+          "face_bbox": null,
+          "bbox": [
+            0.183908,
+            0.260717,
+            0.779108,
+            0.855917
+          ],
+          "source": "saliency_fallback",
+          "confidence": 0.35,
+          "global_blur_guard_failed": false,
+          "timing_seconds": 0.010443
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        }
+      }
+    },
+    "262A2706.CR2": {
+      "score_total": 5.98,
+      "scores": {
+        "sharpness": 4.9132631623753635,
+        "exposure": 7.039928782528097,
+        "subject": 4.95,
+        "composition": 6.78,
+        "lighting": 4.19,
+        "color": 5.68,
+        "clarity": 5.53,
+        "depth": 6.13,
+        "mood": 5.33
+      },
+      "scene": "other",
+      "decision": "keep",
+      "decision_reasons": [
+        "group_coverage_fallback"
+      ],
+      "meta": {
+        "preview_source": "embedded",
+        "focus_assessment": "subject_roi_preview",
+        "focus_preview_size": [
+          2048,
+          1365
+        ],
+        "original_size": [
+          5796,
+          3870
+        ],
+        "preview_size": [
+          1024,
+          682
+        ],
+        "preview_downscale_ratio": 5.66,
+        "overexpose_ratio": 0.001719723698680352,
+        "underexpose_ratio": 0.04628218933284457,
+        "luma_p5": 0.04313725605607033,
+        "luma_p50": 0.16862745583057404,
+        "luma_p95": 0.615686297416687,
+        "luma_span": 0.5725490413606167,
+        "exposure_scene": "other",
+        "laplacian_variance": 516.7600004256595,
+        "scoring_mode": "heuristic",
+        "runtime": "cpu",
+        "runtime_components": [
+          "cpu"
+        ],
+        "configured_runtime": "cpu",
+        "timing": {
+          "local_heuristic_seconds": 0.019742
+        },
+        "subject_focus": {
+          "mode": "subject_roi",
+          "score": 8.4193,
+          "global_blur_score": 7.8735,
+          "subject_focus_score": 8.4193,
+          "eye_focus_score": null,
+          "global_laplacian_variance": 797.982556,
+          "subject_laplacian_variance": 939.471662,
+          "eye_laplacian_variances": [],
+          "face_bbox": null,
+          "bbox": [
+            0.151404,
+            0.169143,
+            0.746604,
+            0.764343
+          ],
+          "source": "saliency_fallback",
+          "confidence": 0.35,
+          "global_blur_guard_failed": false,
+          "timing_seconds": 0.010556
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        }
+      }
+    }
+  }
+}

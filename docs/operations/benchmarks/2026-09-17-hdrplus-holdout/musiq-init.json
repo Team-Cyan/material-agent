@@ -1,0 +1,26 @@
+{
+  "model": "musiq",
+  "init_seconds": 6.589486167067662,
+  "lower_better": false,
+  "device": "cpu",
+  "peak_rss_bytes": 614678528,
+  "packages": {
+    "pyiqa": "0.1.16",
+    "torch": "2.14.0",
+    "torchvision": "0.29.0",
+    "timm": "1.0.29",
+    "transformers": "5.17.0"
+  },
+  "weights": [
+    {
+      "name": "musiq_koniq_ckpt-e95806b9.pth",
+      "size": 108610983,
+      "sha256": "e95806b9eae5f3814c410f574ba8e552362bd5bc63d758ed5b97860f5d6185aa"
+    },
+    {
+      "name": "cfanet_nr_koniq_res50-9a73138b.pth",
+      "size": 181196009,
+      "sha256": "9a73138beb3748dd6a83365610ac88fa1cd53225342c77fc9ed44a3be461354c"
+    }
+  ]
+}

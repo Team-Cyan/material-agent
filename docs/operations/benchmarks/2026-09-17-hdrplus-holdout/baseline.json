@@ -1,0 +1,4226 @@
+[
+  {
+    "group": 1,
+    "results": {
+      "g01i1": {
+        "score_total": 6.67,
+        "scores": {
+          "sharpness": 4.261538452682637,
+          "exposure": 9.370053348758004,
+          "subject": 6.1,
+          "composition": 6.76,
+          "lighting": 7.12,
+          "color": 6.06,
+          "clarity": 5.79,
+          "depth": 6.1,
+          "mood": 6.43
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1522
+        ],
+        "preview_sha256": "60115944f7ba8d40a7cd2ccc45dd6734ab66f036b2e56b2479ca8971e5fd8f89",
+        "decode_seconds": 0.18362412508577108,
+        "score_seconds": 0.07866954104974866
+      },
+      "g01i2": {
+        "score_total": 6.68,
+        "scores": {
+          "sharpness": 4.337004407492893,
+          "exposure": 9.370053348758004,
+          "subject": 6.1,
+          "composition": 6.76,
+          "lighting": 7.12,
+          "color": 6.06,
+          "clarity": 5.8,
+          "depth": 6.1,
+          "mood": 6.43
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1522
+        ],
+        "preview_sha256": "a290b672dcc85939c8625a7faffeb36bff1a10ae82e14aaa92259bc7c202ab1a",
+        "decode_seconds": 0.16248754202388227,
+        "score_seconds": 0.04926991695538163
+      },
+      "g01i3": {
+        "score_total": 6.67,
+        "scores": {
+          "sharpness": 4.263993748660534,
+          "exposure": 9.370053348758004,
+          "subject": 6.1,
+          "composition": 6.76,
+          "lighting": 7.12,
+          "color": 6.06,
+          "clarity": 5.8,
+          "depth": 6.1,
+          "mood": 6.43
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1522
+        ],
+        "preview_sha256": "782649dc95758299f4980933061297d8a04632a80d1152138021ea297e255978",
+        "decode_seconds": 0.16488612489774823,
+        "score_seconds": 0.0496886670589447
+      },
+      "g01i4": {
+        "score_total": 6.67,
+        "scores": {
+          "sharpness": 4.306534197912217,
+          "exposure": 9.370053348758004,
+          "subject": 6.1,
+          "composition": 6.76,
+          "lighting": 7.12,
+          "color": 6.06,
+          "clarity": 5.8,
+          "depth": 6.1,
+          "mood": 6.43
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1522
+        ],
+        "preview_sha256": "461973f754d8834f64c0d6fe96583f8b698c921e662355a411a027f557635407",
+        "decode_seconds": 0.16016058390960097,
+        "score_seconds": 0.046024583047255874
+      },
+      "g01i5": {
+        "score_total": 6.68,
+        "scores": {
+          "sharpness": 4.277558425335583,
+          "exposure": 9.370053348758004,
+          "subject": 6.1,
+          "composition": 6.76,
+          "lighting": 7.12,
+          "color": 6.06,
+          "clarity": 5.79,
+          "depth": 6.1,
+          "mood": 6.43
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1522
+        ],
+        "preview_sha256": "f707576f71e9247f55e0e18f99572c5aac0491ea12ccad8e443ebbc5a628cbf0",
+        "decode_seconds": 0.15296433307230473,
+        "score_seconds": 0.048289750004187226
+      }
+    }
+  },
+  {
+    "group": 2,
+    "results": {
+      "g02i1": {
+        "score_total": 4.76,
+        "scores": {
+          "sharpness": 1.4824499011246517,
+          "exposure": 7.514082051949067,
+          "subject": 5.19,
+          "composition": 6.88,
+          "lighting": 4.55,
+          "color": 4.9,
+          "clarity": 5.77,
+          "depth": 6.3,
+          "mood": 5.25
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "29a8a2f8f31b82fe139fbc3c6468d6277b5fe1b0ee712cd734f9c3d5081d793c",
+        "decode_seconds": 0.15398566611111164,
+        "score_seconds": 0.048041417030617595
+      },
+      "g02i2": {
+        "score_total": 4.77,
+        "scores": {
+          "sharpness": 1.4963550198745443,
+          "exposure": 7.514082051949067,
+          "subject": 5.19,
+          "composition": 6.88,
+          "lighting": 4.55,
+          "color": 4.9,
+          "clarity": 5.77,
+          "depth": 6.29,
+          "mood": 5.25
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "5fe6bb140eb2077567442243a670bc43d789339ea63fe73010f7cbcf0b723f9f",
+        "decode_seconds": 0.1537902499549091,
+        "score_seconds": 0.04527791705913842
+      },
+      "g02i3": {
+        "score_total": 4.77,
+        "scores": {
+          "sharpness": 1.4931162054990037,
+          "exposure": 7.514082051949067,
+          "subject": 5.19,
+          "composition": 6.87,
+          "lighting": 4.55,
+          "color": 4.9,
+          "clarity": 5.77,
+          "depth": 6.29,
+          "mood": 5.25
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "d71134b5d9db5a599897f3692e7d985613fb628a6aa6e72932d11e340800aa97",
+        "decode_seconds": 0.15353887504898012,
+        "score_seconds": 0.04527437500655651
+      },
+      "g02i4": {
+        "score_total": 4.77,
+        "scores": {
+          "sharpness": 1.490351017074833,
+          "exposure": 7.514082051949067,
+          "subject": 5.19,
+          "composition": 6.87,
+          "lighting": 4.55,
+          "color": 4.9,
+          "clarity": 5.77,
+          "depth": 6.29,
+          "mood": 5.24
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "bf0867c90c182a88ea804f84e8f1a8b0709cabca43c3ba3062bed5f4ac709e4b",
+        "decode_seconds": 0.15154379210434854,
+        "score_seconds": 0.0469007920473814
+      },
+      "g02i5": {
+        "score_total": 4.77,
+        "scores": {
+          "sharpness": 1.4931918111316533,
+          "exposure": 7.514082051949067,
+          "subject": 5.19,
+          "composition": 6.87,
+          "lighting": 4.55,
+          "color": 4.9,
+          "clarity": 5.77,
+          "depth": 6.29,
+          "mood": 5.25
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "6bb3335d3a1c066c24d9d3730408d02d8d7d2c938ef897ff4658ab44e81dbf35",
+        "decode_seconds": 0.15411370806396008,
+        "score_seconds": 0.04630891606211662
+      }
+    }
+  },
+  {
+    "group": 3,
+    "results": {
+      "g03i1": {
+        "score_total": 4.06,
+        "scores": {
+          "sharpness": 0.4356995108463429,
+          "exposure": 6.633511694452979,
+          "subject": 5.38,
+          "composition": 7.18,
+          "lighting": 5.04,
+          "color": 4.78,
+          "clarity": 5.81,
+          "depth": 6.8,
+          "mood": 5.54
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "ac7b89c3b9729cb12151f6680d0e24152fb85ccc5884bc2d0e80e2a4f60a089c",
+        "decode_seconds": 0.1505737081170082,
+        "score_seconds": 0.045319708064198494
+      },
+      "g03i2": {
+        "score_total": 4.05,
+        "scores": {
+          "sharpness": 0.4315801518881853,
+          "exposure": 6.633511694452979,
+          "subject": 5.38,
+          "composition": 7.18,
+          "lighting": 5.04,
+          "color": 4.78,
+          "clarity": 5.81,
+          "depth": 6.8,
+          "mood": 5.54
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "08b0df3401ad37f5bd7f18f97d69e9e10135af9ca1f62a908e2361de1a994443",
+        "decode_seconds": 0.1533475830219686,
+        "score_seconds": 0.04532591695897281
+      },
+      "g03i3": {
+        "score_total": 4.04,
+        "scores": {
+          "sharpness": 0.423706711670493,
+          "exposure": 6.633511694452979,
+          "subject": 5.38,
+          "composition": 7.18,
+          "lighting": 5.04,
+          "color": 4.78,
+          "clarity": 5.81,
+          "depth": 6.8,
+          "mood": 5.54
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "3fa17ee12f9f1b502883e73b28fb9718302e9f4e1949897c699c70403e52249e",
+        "decode_seconds": 0.15086270798929036,
+        "score_seconds": 0.046491957968100905
+      },
+      "g03i4": {
+        "score_total": 4.07,
+        "scores": {
+          "sharpness": 0.42724817700261536,
+          "exposure": 6.633511694452979,
+          "subject": 5.38,
+          "composition": 7.18,
+          "lighting": 5.04,
+          "color": 4.78,
+          "clarity": 5.81,
+          "depth": 6.8,
+          "mood": 5.54
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "2838e17b4ce48bcb7bb1f5c105296f67db739bbeaa1a50bc9fe13f831b7a4886",
+        "decode_seconds": 0.15153062506578863,
+        "score_seconds": 0.04610358295030892
+      },
+      "g03i5": {
+        "score_total": 4.05,
+        "scores": {
+          "sharpness": 0.427691009521525,
+          "exposure": 6.633511694452979,
+          "subject": 5.38,
+          "composition": 7.18,
+          "lighting": 5.03,
+          "color": 4.78,
+          "clarity": 5.81,
+          "depth": 6.8,
+          "mood": 5.54
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "0f92659f29a490450e9ef36454b20db1194455053e9947368ebee2226afe3f77",
+        "decode_seconds": 0.15054729208350182,
+        "score_seconds": 0.04544704197905958
+      }
+    }
+  },
+  {
+    "group": 4,
+    "results": {
+      "g04i1": {
+        "score_total": 0.0,
+        "scores": {
+          "exposure": 6.229411837458611,
+          "sharpness": 0.23192101289945863
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "46ab3a59fa4be99186690a4efd3b175fa8cd808b0f6d78dfe3b8cbe50ad685cf",
+        "decode_seconds": 0.0801911661401391,
+        "score_seconds": 0.006804541917517781
+      },
+      "g04i2": {
+        "score_total": 0.0,
+        "scores": {
+          "exposure": 6.229411837458611,
+          "sharpness": 0.22299042472721753
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "0675d5181e27f033fae830282709f5901313634c4614af533800302435ecdcbe",
+        "decode_seconds": 0.06912179198116064,
+        "score_seconds": 0.006035542115569115
+      },
+      "g04i3": {
+        "score_total": 0.0,
+        "scores": {
+          "exposure": 6.229411837458611,
+          "sharpness": 0.21333452439914574
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "2c36a6d3fbece3eb596722410a1cdf4d52b502ede42d4f945cc9a0c10dd7a6bb",
+        "decode_seconds": 0.07207625010050833,
+        "score_seconds": 0.006167457904666662
+      },
+      "g04i4": {
+        "score_total": 0.0,
+        "scores": {
+          "exposure": 6.229411837458611,
+          "sharpness": 0.24063613532771777
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "27c7ee562eb797420c6af881de08658798ac6434789ac0c5ed5e843f601bbf93",
+        "decode_seconds": 0.07172024995088577,
+        "score_seconds": 0.00544483307749033
+      },
+      "g04i5": {
+        "score_total": 0.0,
+        "scores": {
+          "exposure": 6.229411837458611,
+          "sharpness": 0.24303407444867814
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "fd3102c603d3ac4ac183b1d0c3659347b776a2ca194538c1fba802e5f8046e41",
+        "decode_seconds": 0.06889979192055762,
+        "score_seconds": 0.006315874867141247
+      }
+    }
+  },
+  {
+    "group": 5,
+    "results": {
+      "g05i1": {
+        "score_total": 4.64,
+        "scores": {
+          "sharpness": 2.889788788150481,
+          "exposure": 6.2,
+          "subject": 3.8,
+          "composition": 7.26,
+          "lighting": 0.0,
+          "color": 4.98,
+          "clarity": 6.22,
+          "depth": 6.93,
+          "mood": 3.97
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "b71fdc6e28899a12f3720643c38574c338e84c54b623de5e03c391bfdcc27506",
+        "decode_seconds": 0.06916133407503366,
+        "score_seconds": 0.04755529202520847
+      },
+      "g05i2": {
+        "score_total": 4.59,
+        "scores": {
+          "sharpness": 2.7843486428510786,
+          "exposure": 6.2,
+          "subject": 3.8,
+          "composition": 7.26,
+          "lighting": 0.0,
+          "color": 4.98,
+          "clarity": 6.22,
+          "depth": 6.93,
+          "mood": 3.97
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "35acb220294511ffc5461adfb4c6a79de605a4a76ba6c3987d3287d449f8c555",
+        "decode_seconds": 0.06925604189746082,
+        "score_seconds": 0.04758133413270116
+      },
+      "g05i3": {
+        "score_total": 4.59,
+        "scores": {
+          "sharpness": 2.774225752046042,
+          "exposure": 6.2,
+          "subject": 3.8,
+          "composition": 7.26,
+          "lighting": 0.0,
+          "color": 4.98,
+          "clarity": 6.22,
+          "depth": 6.93,
+          "mood": 3.97
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "53e5df0810d385e63c5c836007ca6198752eb24eb2b43234f4a64c1ff7f8ea43",
+        "decode_seconds": 0.06944733299314976,
+        "score_seconds": 0.04982391698285937
+      },
+      "g05i4": {
+        "score_total": 4.61,
+        "scores": {
+          "sharpness": 2.8219620170348674,
+          "exposure": 6.2,
+          "subject": 3.8,
+          "composition": 7.26,
+          "lighting": 0.0,
+          "color": 4.98,
+          "clarity": 6.22,
+          "depth": 6.93,
+          "mood": 3.97
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "23b3270dd68c7ff972ac4728b2941c3615c8615ce06e76b2124e75b762af84c5",
+        "decode_seconds": 0.0692962920293212,
+        "score_seconds": 0.046238958137109876
+      },
+      "g05i5": {
+        "score_total": 4.59,
+        "scores": {
+          "sharpness": 2.7889797325063292,
+          "exposure": 6.2,
+          "subject": 3.8,
+          "composition": 7.26,
+          "lighting": 0.0,
+          "color": 4.98,
+          "clarity": 6.22,
+          "depth": 6.93,
+          "mood": 3.97
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "671c6ad4ca7d7e8dd7582e550ae644924988862befb6b3ec6426d1be6b06245b",
+        "decode_seconds": 0.0702433749102056,
+        "score_seconds": 0.04855508403852582
+      }
+    }
+  },
+  {
+    "group": 6,
+    "results": {
+      "g06i1": {
+        "score_total": 4.48,
+        "scores": {
+          "sharpness": 2.324725548524782,
+          "exposure": 7.717290595986626,
+          "subject": 4.69,
+          "composition": 7.07,
+          "lighting": 2.98,
+          "color": 4.91,
+          "clarity": 5.88,
+          "depth": 6.61,
+          "mood": 4.84
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "a618c7258a3e7f3308b3404285530489788f6fe4a8c4e63a9aadee8a6e58f5a1",
+        "decode_seconds": 0.15541329188272357,
+        "score_seconds": 0.0463087500538677
+      },
+      "g06i2": {
+        "score_total": 4.46,
+        "scores": {
+          "sharpness": 2.1707368974612122,
+          "exposure": 7.717290595986626,
+          "subject": 4.69,
+          "composition": 7.07,
+          "lighting": 3.0,
+          "color": 4.91,
+          "clarity": 5.87,
+          "depth": 6.61,
+          "mood": 4.84
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "f394b87606a35ecef49369fd7e3545103de0a1923eeddb61c8c248163ea4ecb2",
+        "decode_seconds": 0.15389116713777184,
+        "score_seconds": 0.04482283303514123
+      },
+      "g06i3": {
+        "score_total": 4.4,
+        "scores": {
+          "sharpness": 2.0872693454373596,
+          "exposure": 7.717290595986626,
+          "subject": 4.69,
+          "composition": 7.07,
+          "lighting": 2.99,
+          "color": 4.91,
+          "clarity": 5.87,
+          "depth": 6.61,
+          "mood": 4.84
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "cbede0a647e4ac457287d686edf15a057c72c44ae33b500a729d06747ee3b939",
+        "decode_seconds": 0.15438695903867483,
+        "score_seconds": 0.04412287496961653
+      },
+      "g06i4": {
+        "score_total": 4.37,
+        "scores": {
+          "sharpness": 2.033938924009497,
+          "exposure": 7.717290595986626,
+          "subject": 4.7,
+          "composition": 7.07,
+          "lighting": 3.02,
+          "color": 4.91,
+          "clarity": 5.87,
+          "depth": 6.61,
+          "mood": 4.85
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "135192e99da4c7fe88bb9fee3d87429bbf53ac085d0bffb7cd1a62ae80d674bc",
+        "decode_seconds": 0.1535505000501871,
+        "score_seconds": 0.04925474990159273
+      },
+      "g06i5": {
+        "score_total": 4.5,
+        "scores": {
+          "sharpness": 2.306856448707623,
+          "exposure": 7.717290595986626,
+          "subject": 4.69,
+          "composition": 7.07,
+          "lighting": 2.99,
+          "color": 4.91,
+          "clarity": 5.89,
+          "depth": 6.62,
+          "mood": 4.84
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2024,
+          1518
+        ],
+        "preview_sha256": "e5312ae6760e5d690671d4dcdb814b7485b6ea5258d9453157ff0eb0fdeaada6",
+        "decode_seconds": 0.17074808408506215,
+        "score_seconds": 0.048318250104784966
+      }
+    }
+  },
+  {
+    "group": 7,
+    "results": {
+      "g07i1": {
+        "score_total": 5.19,
+        "scores": {
+          "sharpness": 1.458785230847694,
+          "exposure": 7.067022668231618,
+          "subject": 6.2,
+          "composition": 6.85,
+          "lighting": 7.78,
+          "color": 5.64,
+          "clarity": 5.51,
+          "depth": 6.25,
+          "mood": 6.56
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "0a68058f566618e88cf0ff556aef0a2e7008fb8112da27d34e3140e35eeeab95",
+        "decode_seconds": 0.06074250000528991,
+        "score_seconds": 0.04303170810453594
+      },
+      "g07i2": {
+        "score_total": 5.2,
+        "scores": {
+          "sharpness": 1.4725669687120957,
+          "exposure": 7.134758849577471,
+          "subject": 6.21,
+          "composition": 6.85,
+          "lighting": 7.79,
+          "color": 5.64,
+          "clarity": 5.52,
+          "depth": 6.26,
+          "mood": 6.56
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "2003db6a63083928c3a28ba747afb876a4ae4548a92c453c90b528c215914f27",
+        "decode_seconds": 0.058966708835214376,
+        "score_seconds": 0.04281533393077552
+      },
+      "g07i3": {
+        "score_total": 5.23,
+        "scores": {
+          "sharpness": 1.480681885144679,
+          "exposure": 7.134758849577471,
+          "subject": 6.21,
+          "composition": 6.85,
+          "lighting": 7.79,
+          "color": 5.64,
+          "clarity": 5.52,
+          "depth": 6.26,
+          "mood": 6.56
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "5c069b68c9579a76bc62f9d01b01366aecf9bdbfc18c457d0c9f4bcd2e87a7d0",
+        "decode_seconds": 0.05960512510500848,
+        "score_seconds": 0.04310825001448393
+      },
+      "g07i4": {
+        "score_total": 5.23,
+        "scores": {
+          "sharpness": 1.505327779895538,
+          "exposure": 7.134758849577471,
+          "subject": 6.21,
+          "composition": 6.85,
+          "lighting": 7.79,
+          "color": 5.64,
+          "clarity": 5.52,
+          "depth": 6.26,
+          "mood": 6.56
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "1390ea8e79a701e4dfcad55919f3e878c62a79af8f80feab95d488911477f2f6",
+        "decode_seconds": 0.05985229113139212,
+        "score_seconds": 0.04362150002270937
+      },
+      "g07i5": {
+        "score_total": 5.28,
+        "scores": {
+          "sharpness": 1.5554874829792729,
+          "exposure": 7.134758849577471,
+          "subject": 6.21,
+          "composition": 6.85,
+          "lighting": 7.79,
+          "color": 5.64,
+          "clarity": 5.52,
+          "depth": 6.26,
+          "mood": 6.56
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "9063d53dd7fb3c23268d15578a2128f4f33625716b83f38c27e57dbec9aaa329",
+        "decode_seconds": 0.06060354202054441,
+        "score_seconds": 0.04279875010251999
+      }
+    }
+  },
+  {
+    "group": 8,
+    "results": {
+      "g08i1": {
+        "score_total": 7.32,
+        "scores": {
+          "sharpness": 8.486938243858688,
+          "exposure": 9.97967898087068,
+          "subject": 6.61,
+          "composition": 7.23,
+          "lighting": 6.86,
+          "color": 4.93,
+          "clarity": 7.12,
+          "depth": 6.88,
+          "mood": 6.22
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          1512,
+          2016
+        ],
+        "preview_sha256": "01dd1ac507486d4a975fdcef112c7eefa26162b87264fe67bf7d927b6f3b6d6b",
+        "decode_seconds": 0.06370029109530151,
+        "score_seconds": 0.05049716611392796
+      },
+      "g08i2": {
+        "score_total": 7.32,
+        "scores": {
+          "sharpness": 8.488576335458246,
+          "exposure": 9.97967898087068,
+          "subject": 6.6,
+          "composition": 7.23,
+          "lighting": 6.85,
+          "color": 4.93,
+          "clarity": 7.12,
+          "depth": 6.88,
+          "mood": 6.22
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          1512,
+          2016
+        ],
+        "preview_sha256": "be29e9131497bc898ddad5c8b2d0baa3e70fc411482c7dc7ba9f16b9caa099e7",
+        "decode_seconds": 0.06408945797011256,
+        "score_seconds": 0.04968366608954966
+      },
+      "g08i3": {
+        "score_total": 7.32,
+        "scores": {
+          "sharpness": 8.477896971192074,
+          "exposure": 9.97967898087068,
+          "subject": 6.6,
+          "composition": 7.23,
+          "lighting": 6.85,
+          "color": 4.93,
+          "clarity": 7.12,
+          "depth": 6.88,
+          "mood": 6.22
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          1512,
+          2016
+        ],
+        "preview_sha256": "21b4b4ac198b847a9bb6e576f20ca909bed6e93431e3290365b2b22d0bcb0434",
+        "decode_seconds": 0.0637388329487294,
+        "score_seconds": 0.04994595912285149
+      },
+      "g08i4": {
+        "score_total": 7.32,
+        "scores": {
+          "sharpness": 8.456299802200164,
+          "exposure": 9.97967898087068,
+          "subject": 6.6,
+          "composition": 7.22,
+          "lighting": 6.85,
+          "color": 4.93,
+          "clarity": 7.12,
+          "depth": 6.87,
+          "mood": 6.22
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          1512,
+          2016
+        ],
+        "preview_sha256": "3e30e1d4b3fb175b62311b7d10d853921ea8d3e7ad04f1ace0732c85c24d689a",
+        "decode_seconds": 0.0631493751425296,
+        "score_seconds": 0.05325870797969401
+      },
+      "g08i5": {
+        "score_total": 7.32,
+        "scores": {
+          "sharpness": 8.450107897585463,
+          "exposure": 9.97967898087068,
+          "subject": 6.6,
+          "composition": 7.22,
+          "lighting": 6.84,
+          "color": 4.94,
+          "clarity": 7.12,
+          "depth": 6.87,
+          "mood": 6.22
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          1512,
+          2016
+        ],
+        "preview_sha256": "b4d2d915d3ede0e7902261d6f1eafa6862ad864daa0a252349c6e593a21e939f",
+        "decode_seconds": 0.064313291804865,
+        "score_seconds": 0.049426249926909804
+      }
+    }
+  },
+  {
+    "group": 9,
+    "results": {
+      "g09i1": {
+        "score_total": 5.06,
+        "scores": {
+          "sharpness": 0.6332598895259162,
+          "exposure": 8.055971502715892,
+          "subject": 6.13,
+          "composition": 7.3,
+          "lighting": 6.67,
+          "color": 5.31,
+          "clarity": 6.21,
+          "depth": 7.34,
+          "mood": 6.44
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "f234b2b8da100f8efaf40ba2acf94a22ad6dc64a5f61e288abd1f1aa6a1b4372",
+        "decode_seconds": 0.05945308320224285,
+        "score_seconds": 0.04102183296345174
+      },
+      "g09i2": {
+        "score_total": 5.08,
+        "scores": {
+          "sharpness": 0.6483295239838848,
+          "exposure": 8.055971502715892,
+          "subject": 6.13,
+          "composition": 7.3,
+          "lighting": 6.67,
+          "color": 5.31,
+          "clarity": 6.21,
+          "depth": 7.34,
+          "mood": 6.44
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "b14062b576178e02ffbf99ee34d48130eaff2278f0a2229e55e0df179f6e4a9b",
+        "decode_seconds": 0.06537225004285574,
+        "score_seconds": 0.04375604214146733
+      },
+      "g09i3": {
+        "score_total": 5.07,
+        "scores": {
+          "sharpness": 0.643683379815809,
+          "exposure": 8.055971502715892,
+          "subject": 6.13,
+          "composition": 7.3,
+          "lighting": 6.67,
+          "color": 5.31,
+          "clarity": 6.21,
+          "depth": 7.34,
+          "mood": 6.44
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "356499f48221d5b42aea8c2a9b8cab451b57c2c13b8c35cc95c1b6756b4775eb",
+        "decode_seconds": 0.06070362497121096,
+        "score_seconds": 0.04381904215551913
+      },
+      "g09i4": {
+        "score_total": 5.08,
+        "scores": {
+          "sharpness": 0.6490569991042583,
+          "exposure": 8.055971502715892,
+          "subject": 6.13,
+          "composition": 7.3,
+          "lighting": 6.67,
+          "color": 5.31,
+          "clarity": 6.21,
+          "depth": 7.34,
+          "mood": 6.44
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "828aa3813f018d01d6bafa022a57872ae6094dcea3b3059a6e6307015450bf41",
+        "decode_seconds": 0.06060016714036465,
+        "score_seconds": 0.04161725006997585
+      },
+      "g09i5": {
+        "score_total": 5.07,
+        "scores": {
+          "sharpness": 0.6431568665862766,
+          "exposure": 8.055971502715892,
+          "subject": 6.13,
+          "composition": 7.3,
+          "lighting": 6.67,
+          "color": 5.31,
+          "clarity": 6.21,
+          "depth": 7.34,
+          "mood": 6.44
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "30e8d43366f43c55c47723b754150604dc7ba40d2a137c62d2504c2a6aa731fb",
+        "decode_seconds": 0.05990233295597136,
+        "score_seconds": 0.04260079097002745
+      }
+    }
+  },
+  {
+    "group": 10,
+    "results": {
+      "g10i1": {
+        "score_total": 4.45,
+        "scores": {
+          "sharpness": 3.1074216409153226,
+          "exposure": 5.359717559814453,
+          "subject": 3.44,
+          "composition": 6.73,
+          "lighting": 0.0,
+          "color": 4.72,
+          "clarity": 5.43,
+          "depth": 6.05,
+          "mood": 3.59
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "4b089d94d21aa6bfd89f1111d8accfb909b2d8ef9d30309e42df16462e2ce574",
+        "decode_seconds": 0.062293458031490445,
+        "score_seconds": 0.043828041991218925
+      },
+      "g10i2": {
+        "score_total": 4.45,
+        "scores": {
+          "sharpness": 3.1474219519681563,
+          "exposure": 5.3491529676649305,
+          "subject": 3.44,
+          "composition": 6.73,
+          "lighting": 0.0,
+          "color": 4.72,
+          "clarity": 5.42,
+          "depth": 6.04,
+          "mood": 3.59
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "a0094827b443f9b3901c93cc419056a567fc26dd73b958494cbb2b3fff64c16c",
+        "decode_seconds": 0.060315542155876756,
+        "score_seconds": 0.04567299992777407
+      },
+      "g10i3": {
+        "score_total": 4.47,
+        "scores": {
+          "sharpness": 3.150867461449023,
+          "exposure": 5.3533703274197055,
+          "subject": 3.44,
+          "composition": 6.73,
+          "lighting": 0.0,
+          "color": 4.72,
+          "clarity": 5.43,
+          "depth": 6.05,
+          "mood": 3.59
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "9beb3846fc0140c8dc09a97877e5d220aef3027a4c9c29947ff7053989f947c7",
+        "decode_seconds": 0.05994520802050829,
+        "score_seconds": 0.04558770777657628
+      },
+      "g10i4": {
+        "score_total": 4.45,
+        "scores": {
+          "sharpness": 3.1224169171826293,
+          "exposure": 5.355574374728732,
+          "subject": 3.44,
+          "composition": 6.73,
+          "lighting": 0.0,
+          "color": 4.72,
+          "clarity": 5.43,
+          "depth": 6.05,
+          "mood": 3.59
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "673aefa4bc24397388afce00e8069b1914fc3cc85ee9b400a0caa048777c87b9",
+        "decode_seconds": 0.05863512493669987,
+        "score_seconds": 0.04499754193238914
+      },
+      "g10i5": {
+        "score_total": 4.42,
+        "scores": {
+          "sharpness": 3.1277265454568948,
+          "exposure": 5.3602367824978305,
+          "subject": 3.44,
+          "composition": 6.73,
+          "lighting": 0.0,
+          "color": 4.72,
+          "clarity": 5.43,
+          "depth": 6.05,
+          "mood": 3.59
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "7a316e48ad68e04c7c8bcd6d78c510e742ee188817a2bb36132b061f84831b00",
+        "decode_seconds": 0.05942616588436067,
+        "score_seconds": 0.04476945800706744
+      }
+    }
+  },
+  {
+    "group": 11,
+    "results": {
+      "g11i1": {
+        "score_total": 4.9,
+        "scores": {
+          "sharpness": 1.0658483873987408,
+          "exposure": 7.243137326565655,
+          "subject": 4.94,
+          "composition": 6.87,
+          "lighting": 4.37,
+          "color": 4.94,
+          "clarity": 5.35,
+          "depth": 6.29,
+          "mood": 5.2
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "8ff9a33525498f69dd0c04f2e2c91bc7bc0802a81121e15271540a910e896633",
+        "decode_seconds": 0.05817008297890425,
+        "score_seconds": 0.04176704213023186
+      },
+      "g11i2": {
+        "score_total": 4.93,
+        "scores": {
+          "sharpness": 1.0617993261501035,
+          "exposure": 7.310873507911508,
+          "subject": 4.94,
+          "composition": 6.87,
+          "lighting": 4.38,
+          "color": 4.94,
+          "clarity": 5.35,
+          "depth": 6.29,
+          "mood": 5.2
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "160eba02037d7b6432f161ef4bb60fbbe076848870405c493b70594ce72edc20",
+        "decode_seconds": 0.05961333308368921,
+        "score_seconds": 0.04354520794004202
+      },
+      "g11i3": {
+        "score_total": 4.9,
+        "scores": {
+          "sharpness": 1.0594881559673108,
+          "exposure": 7.310873507911508,
+          "subject": 4.94,
+          "composition": 6.87,
+          "lighting": 4.38,
+          "color": 4.94,
+          "clarity": 5.35,
+          "depth": 6.29,
+          "mood": 5.2
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "5b4a8c2b2a183aa53795105ee3cba5552a764796add371338e09e2b3b2eeab83",
+        "decode_seconds": 0.05886474996805191,
+        "score_seconds": 0.043647415935993195
+      },
+      "g11i4": {
+        "score_total": 4.91,
+        "scores": {
+          "sharpness": 1.066480214702039,
+          "exposure": 7.310873507911508,
+          "subject": 4.94,
+          "composition": 6.87,
+          "lighting": 4.38,
+          "color": 4.94,
+          "clarity": 5.35,
+          "depth": 6.29,
+          "mood": 5.2
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "e57288f7985df936113770c20d299e797a662806780fdcbe7f6287ab6ca27c17",
+        "decode_seconds": 0.05861425003968179,
+        "score_seconds": 0.043280832935124636
+      },
+      "g11i5": {
+        "score_total": 4.92,
+        "scores": {
+          "sharpness": 1.0677447132455125,
+          "exposure": 7.310873507911508,
+          "subject": 4.94,
+          "composition": 6.87,
+          "lighting": 4.37,
+          "color": 4.94,
+          "clarity": 5.35,
+          "depth": 6.29,
+          "mood": 5.2
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "fc9135d446272b61954d8ae0f72ed7300bb27f74ba89a3a8f23cf0cf9154ba3f",
+        "decode_seconds": 0.06002191687002778,
+        "score_seconds": 0.04182720906101167
+      }
+    }
+  },
+  {
+    "group": 12,
+    "results": {
+      "g12i1": {
+        "score_total": 4.85,
+        "scores": {
+          "sharpness": 1.1925198321447028,
+          "exposure": 7.7443849964575335,
+          "subject": 6.19,
+          "composition": 6.71,
+          "lighting": 7.86,
+          "color": 5.37,
+          "clarity": 5.43,
+          "depth": 6.01,
+          "mood": 6.42
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "5fb0ff17d5c3ee4366c515479decec40743f815fae9f650bfc2c92cb2392f21a",
+        "decode_seconds": 0.15506870788522065,
+        "score_seconds": 0.044491417007520795
+      },
+      "g12i2": {
+        "score_total": 4.87,
+        "scores": {
+          "sharpness": 1.2083883361138639,
+          "exposure": 7.7443849964575335,
+          "subject": 6.2,
+          "composition": 6.71,
+          "lighting": 7.86,
+          "color": 5.37,
+          "clarity": 5.43,
+          "depth": 6.01,
+          "mood": 6.42
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "6ebabe9749c115e8b68094bb6dff5df464164b17c2c63985a5351273e48a7b17",
+        "decode_seconds": 0.15333983418531716,
+        "score_seconds": 0.04284724988974631
+      },
+      "g12i3": {
+        "score_total": 4.89,
+        "scores": {
+          "sharpness": 1.261501475421328,
+          "exposure": 7.7443849964575335,
+          "subject": 6.2,
+          "composition": 6.71,
+          "lighting": 7.86,
+          "color": 5.37,
+          "clarity": 5.43,
+          "depth": 6.01,
+          "mood": 6.42
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "882f842c7ab80f4213f09740afa8d495cdf0bf030bc39ad1e1f1b075695c3959",
+        "decode_seconds": 0.15506237489171326,
+        "score_seconds": 0.044446000130847096
+      },
+      "g12i4": {
+        "score_total": 4.86,
+        "scores": {
+          "sharpness": 1.2045966799362775,
+          "exposure": 7.7443849964575335,
+          "subject": 6.19,
+          "composition": 6.71,
+          "lighting": 7.86,
+          "color": 5.37,
+          "clarity": 5.43,
+          "depth": 6.01,
+          "mood": 6.42
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "9b7b38bdc3849f35d2f77e6e77482a70accfbbd7fdb336aeee4cd44565d97ac3",
+        "decode_seconds": 0.15386458300054073,
+        "score_seconds": 0.04365895804949105
+      },
+      "g12i5": {
+        "score_total": 4.85,
+        "scores": {
+          "sharpness": 1.1943793470676507,
+          "exposure": 7.7443849964575335,
+          "subject": 6.2,
+          "composition": 6.71,
+          "lighting": 7.87,
+          "color": 5.37,
+          "clarity": 5.43,
+          "depth": 6.01,
+          "mood": 6.42
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2016,
+          1512
+        ],
+        "preview_sha256": "5d19e0f4b2902a66d911e3d4c6c56c8df820ceca3e1a14bbe17bef8cc56479d8",
+        "decode_seconds": 0.1554851250257343,
+        "score_seconds": 0.04430674994364381
+      }
+    }
+  },
+  {
+    "group": 13,
+    "results": {
+      "g13i1": {
+        "score_total": 5.75,
+        "scores": {
+          "sharpness": 3.1053129658531358,
+          "exposure": 7.446345870603214,
+          "subject": 5.04,
+          "composition": 6.92,
+          "lighting": 3.74,
+          "color": 4.9,
+          "clarity": 6.06,
+          "depth": 6.37,
+          "mood": 5.0
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "5fc5b0700dc872612ad873090365df1ecd635c62b6dd26ef49d3ab1fedb9a4dd",
+        "decode_seconds": 0.06830504117533565,
+        "score_seconds": 0.04434383404441178
+      },
+      "g13i2": {
+        "score_total": 5.73,
+        "scores": {
+          "sharpness": 3.0585602513063197,
+          "exposure": 7.446345870603214,
+          "subject": 5.04,
+          "composition": 6.92,
+          "lighting": 3.74,
+          "color": 4.9,
+          "clarity": 6.06,
+          "depth": 6.37,
+          "mood": 5.0
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "cd765e43a0910c1b25975129dc8ec164c4e23d2ef0a2f89974007e2db1951c19",
+        "decode_seconds": 0.06846937513910234,
+        "score_seconds": 0.044412249932065606
+      },
+      "g13i3": {
+        "score_total": 5.72,
+        "scores": {
+          "sharpness": 3.0845414136868916,
+          "exposure": 7.446345870603214,
+          "subject": 5.03,
+          "composition": 6.92,
+          "lighting": 3.72,
+          "color": 4.9,
+          "clarity": 6.06,
+          "depth": 6.37,
+          "mood": 5.0
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "bed4dedf13a88b304d9e8a0414ea8b1f988c39e13f0128a592fcde104ab1ca08",
+        "decode_seconds": 0.06863187509588897,
+        "score_seconds": 0.044853667030110955
+      },
+      "g13i4": {
+        "score_total": 5.76,
+        "scores": {
+          "sharpness": 3.184982762104391,
+          "exposure": 7.446345870603214,
+          "subject": 5.03,
+          "composition": 6.92,
+          "lighting": 3.71,
+          "color": 4.9,
+          "clarity": 6.07,
+          "depth": 6.37,
+          "mood": 4.99
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "b65422daa1b5de8b6e4e0961bfc0d8c232462255e2e638cf04fd040c83ce91b7",
+        "decode_seconds": 0.06861245888285339,
+        "score_seconds": 0.044842165894806385
+      },
+      "g13i5": {
+        "score_total": 5.8,
+        "scores": {
+          "sharpness": 3.2204771733566324,
+          "exposure": 7.446345870603214,
+          "subject": 5.03,
+          "composition": 6.92,
+          "lighting": 3.71,
+          "color": 4.9,
+          "clarity": 6.07,
+          "depth": 6.37,
+          "mood": 4.99
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "27b0081b4e0a26957e6103c23ec6e5e7548eeb73000b87db3283fcdf6efbace5",
+        "decode_seconds": 0.06924241711385548,
+        "score_seconds": 0.044237042078748345
+      }
+    }
+  },
+  {
+    "group": 14,
+    "results": {
+      "g14i1": {
+        "score_total": 6.45,
+        "scores": {
+          "sharpness": 2.5271863795547533,
+          "exposure": 9.749376293745907,
+          "subject": 6.1,
+          "composition": 7.01,
+          "lighting": 6.91,
+          "color": 6.21,
+          "clarity": 5.97,
+          "depth": 6.51,
+          "mood": 6.54
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "47ffb47aa3a0c0169ad5bf204e45ed7e5717efc7a90a4bd06fb2080958af0384",
+        "decode_seconds": 0.06954108411446214,
+        "score_seconds": 0.04223933396860957
+      },
+      "g14i2": {
+        "score_total": 6.47,
+        "scores": {
+          "sharpness": 2.5671637401045007,
+          "exposure": 9.749376293745907,
+          "subject": 6.1,
+          "composition": 7.01,
+          "lighting": 6.9,
+          "color": 6.21,
+          "clarity": 5.97,
+          "depth": 6.52,
+          "mood": 6.54
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "3c1744ec1123eea44c23d6c16e6bf95fdba4982b01c1f2f37e548690df132744",
+        "decode_seconds": 0.06860475009307265,
+        "score_seconds": 0.044063417008146644
+      },
+      "g14i3": {
+        "score_total": 6.49,
+        "scores": {
+          "sharpness": 2.5683986421519815,
+          "exposure": 9.749376293745907,
+          "subject": 6.1,
+          "composition": 7.01,
+          "lighting": 6.9,
+          "color": 6.21,
+          "clarity": 5.97,
+          "depth": 6.52,
+          "mood": 6.54
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "899c61933067e15b7a5b792dc6236dcd189d8b729b2292ae702913dc9ab3e451",
+        "decode_seconds": 0.06877754209563136,
+        "score_seconds": 0.04218141594901681
+      },
+      "g14i4": {
+        "score_total": 6.45,
+        "scores": {
+          "sharpness": 2.4733368260599042,
+          "exposure": 9.681640112400054,
+          "subject": 6.1,
+          "composition": 7.01,
+          "lighting": 6.9,
+          "color": 6.21,
+          "clarity": 5.96,
+          "depth": 6.52,
+          "mood": 6.54
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "e0939b89484121984ce4d9fc9650284abd080b93d9af60deb1fb9d2fbe7eea8c",
+        "decode_seconds": 0.06855516694486141,
+        "score_seconds": 0.042802250012755394
+      },
+      "g14i5": {
+        "score_total": 6.45,
+        "scores": {
+          "sharpness": 2.4886041252599576,
+          "exposure": 9.681640112400054,
+          "subject": 6.1,
+          "composition": 7.01,
+          "lighting": 6.9,
+          "color": 6.21,
+          "clarity": 5.96,
+          "depth": 6.52,
+          "mood": 6.54
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "b53d20e5b57ece831566510d9807a5e54e1fbfec09827a917149a1a6139b3cfb",
+        "decode_seconds": 0.06910754204727709,
+        "score_seconds": 0.0439224170986563
+      }
+    }
+  },
+  {
+    "group": 15,
+    "results": {
+      "g15i1": {
+        "score_total": 4.32,
+        "scores": {
+          "sharpness": 3.5932766225700523,
+          "exposure": 7.243137326565655,
+          "subject": 4.57,
+          "composition": 7.19,
+          "lighting": 1.97,
+          "color": 5.77,
+          "clarity": 6.4,
+          "depth": 6.82,
+          "mood": 4.85
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "ac3642dd87d4f0c327d117db728ee23f1689fd8e4a024fb11cf1def45246dbda",
+        "decode_seconds": 0.06874195788986981,
+        "score_seconds": 0.04475216590799391
+      },
+      "g15i2": {
+        "score_total": 4.41,
+        "scores": {
+          "sharpness": 3.6797821035291673,
+          "exposure": 7.310873507911508,
+          "subject": 4.64,
+          "composition": 7.21,
+          "lighting": 2.13,
+          "color": 5.78,
+          "clarity": 6.44,
+          "depth": 6.85,
+          "mood": 4.92
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "39e0582ae378dcf69c046bdae1122d45d2007ecfc444b98b0c5add3b9082150c",
+        "decode_seconds": 0.0692064999602735,
+        "score_seconds": 0.04621370788663626
+      },
+      "g15i3": {
+        "score_total": 4.39,
+        "scores": {
+          "sharpness": 3.6771641440737834,
+          "exposure": 7.310873507911508,
+          "subject": 4.62,
+          "composition": 7.2,
+          "lighting": 2.08,
+          "color": 5.78,
+          "clarity": 6.42,
+          "depth": 6.84,
+          "mood": 4.9
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "d3dc8f0358ebeeb893d620c495b46b3c1be1ec0c951f6cc765f6223f01c5641a",
+        "decode_seconds": 0.0694246250204742,
+        "score_seconds": 0.04410729091614485
+      },
+      "g15i4": {
+        "score_total": 4.28,
+        "scores": {
+          "sharpness": 3.6046779640974913,
+          "exposure": 7.243137326565655,
+          "subject": 4.56,
+          "composition": 7.19,
+          "lighting": 1.95,
+          "color": 5.76,
+          "clarity": 6.39,
+          "depth": 6.81,
+          "mood": 4.84
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "a94098937db928f12bff0096ff287dd66d521228239ce3bcabb64e687f7c541b",
+        "decode_seconds": 0.06842654198408127,
+        "score_seconds": 0.04613016592338681
+      },
+      "g15i5": {
+        "score_total": 4.5,
+        "scores": {
+          "sharpness": 3.8110580648754606,
+          "exposure": 7.378609689257361,
+          "subject": 4.7,
+          "composition": 7.23,
+          "lighting": 2.26,
+          "color": 5.8,
+          "clarity": 6.47,
+          "depth": 6.88,
+          "mood": 4.98
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "e0bae2cbdbeb11e840ba7dec9d1a8a18367aa409f57f45eb72c5d3a135ebbd24",
+        "decode_seconds": 0.06881012511439621,
+        "score_seconds": 0.045480041997507215
+      }
+    }
+  },
+  {
+    "group": 16,
+    "results": {
+      "g16i1": {
+        "score_total": 0.0,
+        "scores": {
+          "exposure": 5.5,
+          "sharpness": 0.0
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "bd0c5ef44a120c34f3ab31bcd49d927394ce7342515beacf93eb0675f5cab230",
+        "decode_seconds": 0.06841120799072087,
+        "score_seconds": 0.005900665884837508
+      },
+      "g16i2": {
+        "score_total": 0.0,
+        "scores": {
+          "exposure": 5.5,
+          "sharpness": 0.0
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "06b0536b5a5643ef3913167927a37a3c50516a677070e3cfb795492dcfefb062",
+        "decode_seconds": 0.06892912508919835,
+        "score_seconds": 0.005096083041280508
+      },
+      "g16i3": {
+        "score_total": 0.0,
+        "scores": {
+          "exposure": 5.5,
+          "sharpness": 0.0
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "4d3498dc8af68d0470d638ed68740044818bdf229d0c4f5a75fc1d9e89a83756",
+        "decode_seconds": 0.06875566695816815,
+        "score_seconds": 0.0061339999083429575
+      },
+      "g16i4": {
+        "score_total": 0.0,
+        "scores": {
+          "exposure": 5.5,
+          "sharpness": 0.0
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "d7a2d9fff8d6b02c3192499a49f671d886d782591698d13e09ebf7a013a60f0f",
+        "decode_seconds": 0.06875154096633196,
+        "score_seconds": 0.00519145792350173
+      },
+      "g16i5": {
+        "score_total": 0.0,
+        "scores": {
+          "exposure": 5.5,
+          "sharpness": 0.0
+        },
+        "scene": "other",
+        "decision": "reject",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "reject",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "selection": {
+          "version": 1,
+          "decision": "reject",
+          "role": "quality_policy",
+          "reasons": [
+            "global_catastrophic_blur",
+            "subject_focus_below_threshold"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "90b19ce3860e664c87a7c811c1db10f583657f22a085eb896ff20dbfd3065948",
+        "decode_seconds": 0.06859304197132587,
+        "score_seconds": 0.005138083128258586
+      }
+    }
+  },
+  {
+    "group": 17,
+    "results": {
+      "g17i1": {
+        "score_total": 7.2,
+        "scores": {
+          "sharpness": 10.0,
+          "exposure": 9.275223024324937,
+          "subject": 6.33,
+          "composition": 6.91,
+          "lighting": 6.09,
+          "color": 5.52,
+          "clarity": 7.11,
+          "depth": 6.35,
+          "mood": 5.98
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          1640,
+          1232
+        ],
+        "preview_sha256": "f3d5f00703d15dd2ed68e6c6935cc1f07660db9c68e866981e990f9e4df62de9",
+        "decode_seconds": 0.04147712513804436,
+        "score_seconds": 0.04804479097947478
+      },
+      "g17i2": {
+        "score_total": 7.19,
+        "scores": {
+          "sharpness": 10.0,
+          "exposure": 9.207486842979083,
+          "subject": 6.32,
+          "composition": 6.9,
+          "lighting": 6.05,
+          "color": 5.51,
+          "clarity": 7.1,
+          "depth": 6.33,
+          "mood": 5.97
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          1640,
+          1232
+        ],
+        "preview_sha256": "f932221bd2e1f134f998d0335952251cac0f94cd8d89d355805f32c22514e355",
+        "decode_seconds": 0.041161749977618456,
+        "score_seconds": 0.0496372920460999
+      },
+      "g17i3": {
+        "score_total": 7.19,
+        "scores": {
+          "sharpness": 10.0,
+          "exposure": 9.207486842979083,
+          "subject": 6.31,
+          "composition": 6.9,
+          "lighting": 6.05,
+          "color": 5.5,
+          "clarity": 7.1,
+          "depth": 6.33,
+          "mood": 5.96
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          1640,
+          1232
+        ],
+        "preview_sha256": "640d5d13a257450268f65fc028626a8d02ee3cc13e55628e267c7d59adadaa53",
+        "decode_seconds": 0.04134716698899865,
+        "score_seconds": 0.04837449989281595
+      },
+      "g17i4": {
+        "score_total": 7.2,
+        "scores": {
+          "sharpness": 10.0,
+          "exposure": 9.275223024324937,
+          "subject": 6.32,
+          "composition": 6.9,
+          "lighting": 6.08,
+          "color": 5.51,
+          "clarity": 7.1,
+          "depth": 6.34,
+          "mood": 5.98
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          1640,
+          1232
+        ],
+        "preview_sha256": "ebe687946e1ed44beeb64ef4b7d9c8bc1164fc2f7e0819989d340b7e3269dd57",
+        "decode_seconds": 0.041915833950042725,
+        "score_seconds": 0.04818783304654062
+      },
+      "g17i5": {
+        "score_total": 7.19,
+        "scores": {
+          "sharpness": 10.0,
+          "exposure": 9.207486842979083,
+          "subject": 6.32,
+          "composition": 6.9,
+          "lighting": 6.05,
+          "color": 5.5,
+          "clarity": 7.11,
+          "depth": 6.34,
+          "mood": 5.96
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          1640,
+          1232
+        ],
+        "preview_sha256": "547e1deec1c6082343acfff62bbf292544035e639362893684f5a6f21504222a",
+        "decode_seconds": 0.041292165871709585,
+        "score_seconds": 0.0468989999499172
+      }
+    }
+  },
+  {
+    "group": 18,
+    "results": {
+      "g18i1": {
+        "score_total": 5.87,
+        "scores": {
+          "sharpness": 9.317306411127507,
+          "exposure": 7.514082051949067,
+          "subject": 5.05,
+          "composition": 7.14,
+          "lighting": 2.49,
+          "color": 5.59,
+          "clarity": 7.06,
+          "depth": 6.73,
+          "mood": 4.94
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "110b122f13f80dbdd25c9afd3523f8038db936c6063655eb96829597c3fa66cc",
+        "decode_seconds": 0.0702353750821203,
+        "score_seconds": 0.044962374959141016
+      },
+      "g18i2": {
+        "score_total": 5.87,
+        "scores": {
+          "sharpness": 9.353675073492775,
+          "exposure": 7.514082051949067,
+          "subject": 5.05,
+          "composition": 7.14,
+          "lighting": 2.49,
+          "color": 5.59,
+          "clarity": 7.07,
+          "depth": 6.73,
+          "mood": 4.94
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "884336afc7b341975ba376afbffb3b73ee3f7b68e96d9a03071ec3ad3ac88661",
+        "decode_seconds": 0.069485415937379,
+        "score_seconds": 0.04773945803754032
+      },
+      "g18i3": {
+        "score_total": 5.88,
+        "scores": {
+          "sharpness": 9.28932127787227,
+          "exposure": 7.514082051949067,
+          "subject": 5.05,
+          "composition": 7.14,
+          "lighting": 2.5,
+          "color": 5.59,
+          "clarity": 7.06,
+          "depth": 6.73,
+          "mood": 4.94
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "2e340aa455e10ea3127c952972e7a27feacbb1341372d8e9a9662a5a0bb03f76",
+        "decode_seconds": 0.06811708305031061,
+        "score_seconds": 0.04429195891134441
+      },
+      "g18i4": {
+        "score_total": 5.88,
+        "scores": {
+          "sharpness": 9.283925541519546,
+          "exposure": 7.514082051949067,
+          "subject": 5.05,
+          "composition": 7.14,
+          "lighting": 2.51,
+          "color": 5.59,
+          "clarity": 7.06,
+          "depth": 6.73,
+          "mood": 4.94
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "56319ebd24430dd8290bb1f2026ceb57a9e4cbaff5167f95f613ed5dc10d0800",
+        "decode_seconds": 0.06927816616371274,
+        "score_seconds": 0.04893145803362131
+      },
+      "g18i5": {
+        "score_total": 5.89,
+        "scores": {
+          "sharpness": 9.295331637065905,
+          "exposure": 7.58181823329492,
+          "subject": 5.05,
+          "composition": 7.14,
+          "lighting": 2.51,
+          "color": 5.59,
+          "clarity": 7.06,
+          "depth": 6.73,
+          "mood": 4.94
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "c8ea5e4cc8100f7381952bb4f9e4f14f322de31cf3e7fd94642e48c29d80c26b",
+        "decode_seconds": 0.06882775016129017,
+        "score_seconds": 0.04657712485641241
+      }
+    }
+  },
+  {
+    "group": 19,
+    "results": {
+      "g19i1": {
+        "score_total": 5.61,
+        "scores": {
+          "sharpness": 4.750793662570748,
+          "exposure": 6.294830787723715,
+          "subject": 4.66,
+          "composition": 7.16,
+          "lighting": 2.37,
+          "color": 5.21,
+          "clarity": 6.29,
+          "depth": 6.77,
+          "mood": 4.78
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "587dc2834e092d68379d3b550c74658b29af641111d3280dd51be06d17117c4c",
+        "decode_seconds": 0.06883283401839435,
+        "score_seconds": 0.04405262507498264
+      },
+      "g19i2": {
+        "score_total": 5.61,
+        "scores": {
+          "sharpness": 4.758451149521405,
+          "exposure": 6.294830787723715,
+          "subject": 4.65,
+          "composition": 7.16,
+          "lighting": 2.35,
+          "color": 5.21,
+          "clarity": 6.29,
+          "depth": 6.77,
+          "mood": 4.78
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "e4561d9d0402cb4a9f3f8cf435153ea81171cd62a68b22654b5fa7f6b3b5ebbd",
+        "decode_seconds": 0.07242887490428984,
+        "score_seconds": 0.04410749999806285
+      },
+      "g19i3": {
+        "score_total": 5.61,
+        "scores": {
+          "sharpness": 4.710033841176381,
+          "exposure": 6.294830787723715,
+          "subject": 4.66,
+          "composition": 7.16,
+          "lighting": 2.36,
+          "color": 5.21,
+          "clarity": 6.29,
+          "depth": 6.77,
+          "mood": 4.78
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "33a510d281ef0a8aaa02258011bafbf95ccf2e1bc8af32b6a860de615c465733",
+        "decode_seconds": 0.06888662511482835,
+        "score_seconds": 0.04461912508122623
+      },
+      "g19i4": {
+        "score_total": 5.61,
+        "scores": {
+          "sharpness": 4.732183008379148,
+          "exposure": 6.294830787723715,
+          "subject": 4.65,
+          "composition": 7.16,
+          "lighting": 2.36,
+          "color": 5.2,
+          "clarity": 6.29,
+          "depth": 6.77,
+          "mood": 4.78
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "b355545281b27aad18d8557a5b4f488c250e126cd9c0dc9d129fea0f54b408ab",
+        "decode_seconds": 0.06860833405517042,
+        "score_seconds": 0.04689158406108618
+      },
+      "g19i5": {
+        "score_total": 5.61,
+        "scores": {
+          "sharpness": 4.709532377040113,
+          "exposure": 6.294830787723715,
+          "subject": 4.66,
+          "composition": 7.16,
+          "lighting": 2.36,
+          "color": 5.21,
+          "clarity": 6.29,
+          "depth": 6.77,
+          "mood": 4.78
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "4de97fb0d2deca382c1e8b6bc6c15d2b8b9741fa49aaf5ae4f2b01015c3ae78c",
+        "decode_seconds": 0.06959470803849399,
+        "score_seconds": 0.043617208022624254
+      }
+    }
+  },
+  {
+    "group": 20,
+    "results": {
+      "g20i1": {
+        "score_total": 5.77,
+        "scores": {
+          "sharpness": 10.0,
+          "exposure": 7.243137326565655,
+          "subject": 5.1,
+          "composition": 6.11,
+          "lighting": 4.72,
+          "color": 5.36,
+          "clarity": 5.45,
+          "depth": 5.02,
+          "mood": 5.03
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "05245dbfea4bb640db85ca1b3eecce3080cfa2e25634e847d62bf302585eb565",
+        "decode_seconds": 0.07014016597531736,
+        "score_seconds": 0.052885582903400064
+      },
+      "g20i2": {
+        "score_total": 5.78,
+        "scores": {
+          "sharpness": 10.0,
+          "exposure": 7.243137326565655,
+          "subject": 5.1,
+          "composition": 6.11,
+          "lighting": 4.72,
+          "color": 5.38,
+          "clarity": 5.45,
+          "depth": 5.02,
+          "mood": 5.04
+        },
+        "scene": "other",
+        "decision": "keep",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "keep",
+          "role": "group_coverage",
+          "reasons": [
+            "group_coverage_fallback"
+          ]
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "a436ee6003e8bcc9519dbb2d94a9a2a560a158f9c168a501e817945bb37a85d4",
+        "decode_seconds": 0.0692988340742886,
+        "score_seconds": 0.05418712506070733
+      },
+      "g20i3": {
+        "score_total": 5.77,
+        "scores": {
+          "sharpness": 10.0,
+          "exposure": 7.243137326565655,
+          "subject": 5.1,
+          "composition": 6.11,
+          "lighting": 4.7,
+          "color": 5.36,
+          "clarity": 5.45,
+          "depth": 5.02,
+          "mood": 5.03
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "592e8f3e875aaf0c657623b5102760b2f999f04db6d76e322419cf3766969c9c",
+        "decode_seconds": 0.06943133310414851,
+        "score_seconds": 0.05219924985431135
+      },
+      "g20i4": {
+        "score_total": 5.74,
+        "scores": {
+          "sharpness": 10.0,
+          "exposure": 7.175401145219802,
+          "subject": 5.1,
+          "composition": 6.11,
+          "lighting": 4.71,
+          "color": 5.37,
+          "clarity": 5.45,
+          "depth": 5.02,
+          "mood": 5.03
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "84450b73dd1d5d3e80148661ab47f84b8b735af3849b81575f83a3248f453958",
+        "decode_seconds": 0.06948424992151558,
+        "score_seconds": 0.05551479198038578
+      },
+      "g20i5": {
+        "score_total": 5.75,
+        "scores": {
+          "sharpness": 10.0,
+          "exposure": 7.175401145219802,
+          "subject": 5.1,
+          "composition": 6.11,
+          "lighting": 4.7,
+          "color": 5.36,
+          "clarity": 5.45,
+          "depth": 5.02,
+          "mood": 5.03
+        },
+        "scene": "other",
+        "decision": "review",
+        "quality_assessment": {
+          "version": 1,
+          "decision": "review",
+          "reasons": []
+        },
+        "selection": {
+          "version": 1,
+          "decision": "review",
+          "role": "quality_policy",
+          "reasons": []
+        },
+        "face_eye_evidence": {
+          "version": 1,
+          "status": "unknown",
+          "value": null,
+          "source": "unavailable",
+          "reason": "no_reliable_eye_measurement_or_context"
+        },
+        "focus_preview_size": [
+          2048,
+          1518
+        ],
+        "preview_sha256": "c9ca3f2d96cd477a555ab5f18365f29c3418a01b35263a512bc7313686ad1c2a",
+        "decode_seconds": 0.06965337507426739,
+        "score_seconds": 0.052970959106460214
+      }
+    }
+  }
+]

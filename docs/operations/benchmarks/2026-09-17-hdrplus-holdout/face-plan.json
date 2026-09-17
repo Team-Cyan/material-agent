@@ -1,0 +1,13 @@
+{
+  "model": "mediapipe-face-landmarker",
+  "source": "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task",
+  "sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff",
+  "size": 3758596,
+  "mediapipe": "0.10.35",
+  "budget": {
+    "incremental_peak_rss_bytes": 1073741824,
+    "warm_p95_seconds": 1
+  },
+  "scope": "independent landmark diagnostic; no face absence penalty or context inference",
+  "promotion": "requires labeled positive faces and applicable landmark coverage at fixed false-positive rate, not merely low latency"
+}

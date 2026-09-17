@@ -30,10 +30,10 @@ are permitted local verification; they are not physical interoperability proof.
 | D03 missing/zero rating and keywords | Implemented locally in this continuation | Ordinary write and rewrite protect nonzero ratings; malformed/duplicate declarations fail; exact visible keep/reject projection; 36 no-write policy/integration tests |
 | D03 import/effective/write ledger | Implemented for projection attempts locally | Versioned imported/requested/planned/effective fields, unknown authorship, nonzero conflicts and field outcomes; independent append-only ledger survives processed errors; rewrite persists receipts and scalar ownership. External change watching and crash reconciliation are not implemented |
 | D04 professional-software handoff | Unverified | No actual Bridge/Camera Raw/Photoshop or Capture One readback/writeback matrix has been run here; real XMP writes remain outside current authorization |
-| D05 evidence applicability and selective refinement | Implemented locally; refinement opt-in | Observed/unknown implemented; context-supported not_applicable is a consumer contract with no local context producer. Generic eye proxies removed. One-pass candidate/time/size bounds, baseline retention, no-resolution-gain guard and review reasons tested. Six real public RAWs show no larger half-size focus image, so refinement stays disabled pending quality acceptance |
-| D06 remaining model experiments/fusion | Not executed | TOPIQ/MUSIQ/MediaPipe/other candidates need separate frozen task-relevant datasets and resource comparisons. Stanford40 action labels do not validate technical quality or personal preference. No production fusion added |
+| D05 evidence applicability and selective refinement | Implemented locally; refinement opt-in | Observed/unknown implemented; context-supported not_applicable is a consumer contract with no local context producer. Generic eye proxies removed. One-pass candidate/time/size bounds, baseline retention, no-resolution-gain guard and review reasons tested. The later 100-frame holdout has 18 larger-focus completions and 22 no-gain attempts; ranking gain remains unproven and refinement stays disabled |
+| D06 remaining model experiments/fusion | Three candidates compared diagnostically | TOPIQ/MUSIQ/MediaPipe ran on 100 frozen HDR+ frames. Resource results are recorded; unstable proxy references fail the promotion gate. No fusion/default change; personal ranker still lacks personal labels |
 | D07 state/container resilience | Existing implementation, target revalidation outstanding | Appdata paths and state tests exist. No live backup/restore/container recreation or library-relocation migration was performed here; keep those separate from local code proof |
-| D08 GPT proxy acceptance | Controlled pilot complete; full acceptance pending | Two fresh-context Codex panels each viewed 12 controlled candidates. Baseline and reversed-order preferences agree 6/6; zero false rejects among 6 proxy-acceptable candidates per panel. Two new HDR+ event groups were evaluated on September 17 with tied blind preferences; default RAW hashing fails for their missing thumbnails. Larger event holdout and missing case categories remain unverified. [Report](benchmarks/2026-09-16-codex-blind-pilot/report.md) |
+| D08 GPT proxy acceptance | Controlled pilot complete; full acceptance pending | Two fresh-context Codex panels each viewed 12 controlled candidates. Baseline and reversed-order preferences agree 6/6; zero false rejects among 6 proxy-acceptable candidates per panel. Missing-thumbnail hashing is fixed in accad08. A larger 20-event/100-frame holdout has A 20/20 and B 17/20 panels; quota blocks the last three groups and order agreement is poor. Full acceptance and missing case categories remain unverified. [Report](benchmarks/2026-09-16-codex-blind-pilot/report.md) |
 
 ## Historical September 16 projection batch
 
@@ -95,3 +95,21 @@ See [review and real-burst evidence](2026-09-17-follow-up-validation.md) for sha
 rewrite preflight, conservative refinement guards, actual context-producer limits,
 new public data, and the latest dated verification. Earlier test counts above are
 historical batch evidence and must not be read as the current total.
+
+## September 17 expanded holdout and exposure counterexample
+
+See the [100-frame comparison](benchmarks/2026-09-17-hdrplus-holdout/report.md)
+for raw proxy responses, frozen model/resource plans and negative promotion
+results. Latest guarded suite: **745 passed, 102 skipped**. All hashes are
+available after the RAW fallback; one event still correctly splits on a real
+five-hour EXIF discontinuity. No automatic back-view/silhouette producer exists.
+
+The [real CR2 exposure counterexample](benchmarks/2026-09-17-exposure-brackets/report.md)
+reproduces a 0.34-second pair with hash distance 24: default threshold 10 splits
+it and keeps the dark quality-reject as a singleton. Threshold 24 or zero merges
+this pair and rejects the dark frame, but neither is a validated new default.
+Exposure-tolerant hash alternatives need labeled same/different-scene controls;
+a time-only exception is an unresolved product choice.
+
+[External acceptance steps](2026-09-17-external-acceptance-plan.md) are prepared;
+professional-software writeback and target-host recovery remain unexecuted.

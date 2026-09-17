@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "scope": "Isolated diagnostics only, no default enablement, rejection threshold, fusion or production changes",
+  "inputs": "Frozen manifest.json/config.json and exactly matching baseline JPEG previews",
+  "candidates_in_order": ["topiq_nr", "musiq"],
+  "runtime": "PyIQA 0.1.16, torch 2.14.0, CPU, batch 1, four torch threads, separate process per model",
+  "stop_limits": {"warm_p95_seconds": 2.0, "incremental_peak_rss_bytes": 2147483648, "model_download_seconds": 180, "run_seconds": 600},
+  "metrics": ["strict proxy pairwise accuracy with ties/unknown excluded", "top1 in each proxy preferred set", "order-stable reference subset", "tie/abstention counts", "latency", "peak RSS", "failure count"],
+  "promotion_requirements": {"minimum_order_stable_strict_pairs": 30, "pairwise_accuracy_gain_absolute": 0.05, "top1_must_not_regress": true, "no_new_false_rejects": true, "coverage_must_not_regress": true, "resource_limits_must_pass": true},
+  "limitations": "No rejection or fusion policy is calibrated by this experiment. Proxy results do not establish human acceptance. If evidence minima or resource limits fail, retain baseline and stop candidate promotion. RAW inference transform is frozen but is not a substitute for full-resolution focus review."
+}

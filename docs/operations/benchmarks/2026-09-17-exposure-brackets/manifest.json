@@ -1,0 +1,35 @@
+{
+  "source": "https://cseweb.ucsd.edu/~viscomp/projects/SIG17HDR/PaperData/SIGGRAPH17_HDR_Testset.zip",
+  "files": [
+    {
+      "entry": "Test/PAPER/LadySitting/262A2705.CR2",
+      "size": 24708996,
+      "sha256": "e0b97caabfccd2e3a60a71d6361fdbbb37fddbe8905256446385ad76b7600045",
+      "crc32": 2785221243
+    },
+    {
+      "entry": "Test/PAPER/LadySitting/262A2706.CR2",
+      "size": 26185761,
+      "sha256": "c4f8c396e46e6f23403e68d27a2e4761c7d1dd8fc658e5e081b8827c476dfbe8",
+      "crc32": 2036848282
+    },
+    {
+      "entry": "Test/PAPER/LadySitting/262A2707.CR2",
+      "size": 28271146,
+      "sha256": "d153bf937a5d3871cea9de0c51c472bcd0a1f9ec1b14c02d1a76206a83ee8b9b",
+      "crc32": 1384359599
+    },
+    {
+      "entry": "Test/PAPER/LadySitting/exposure.txt",
+      "size": 30,
+      "sha256": "77db60e386590b5bc1571875ac1d2f2afeae995c76a4ef3b175ec6bd38d803ae",
+      "crc32": 3432489526
+    },
+    {
+      "entry": "Test/README.txt",
+      "size": 169,
+      "sha256": "1f456134761a09f0ca321dc7d0cd6ed4d0b876e26710f5b3b5d91aa9ce51102c",
+      "crc32": 2041356259
+    }
+  ]
+}

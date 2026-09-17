@@ -1,0 +1,21 @@
+{
+  "model": "topiq_nr",
+  "init_seconds": 50.745204207953066,
+  "lower_better": false,
+  "device": "cpu",
+  "peak_rss_bytes": 1017184256,
+  "packages": {
+    "pyiqa": "0.1.16",
+    "torch": "2.14.0",
+    "torchvision": "0.29.0",
+    "timm": "1.0.29",
+    "transformers": "5.17.0"
+  },
+  "weights": [
+    {
+      "name": "cfanet_nr_koniq_res50-9a73138b.pth",
+      "size": 181196009,
+      "sha256": "9a73138beb3748dd6a83365610ac88fa1cd53225342c77fc9ed44a3be461354c"
+    }
+  ]
+}
