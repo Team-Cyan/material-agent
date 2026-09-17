@@ -73,3 +73,41 @@ different-subject/action negatives, a frozen calibration/holdout split, and a
 comparison of exposure-normalized visual evidence before changing production
 hash behavior. Severe clipping can destroy correspondence evidence; a time-only
 exception is a separate product tradeoff awaiting the user's decision.
+
+## Follow-up exposure-normalization ablation
+
+The ablation plan was frozen before computing alternative hashes. It compares
+64-bit pHash, grayscale histogram-equalized pHash, grayscale autocontrast pHash
+(cutoff zero), and dHash on the same 256-pixel production hash input. All 103
+baseline hashes were asserted equal to the actual `_hash_file` output. Original
+SHA-256 values were rechecked. No derived image or source metadata was written.
+
+HDR+ events 1–10 form a calibration partition and 11–20 a separate holdout
+partition; no fitting occurs in this diagnostic. Each partition has 100 positive
+pairs (all ten pairs within each five-frame event) and 225 negative pairs
+(all 25 cross-frame pairs between consecutive event IDs). The 450 negatives
+represent only 18 distinct event-pair comparisons and are strongly correlated.
+They are easy different-event controls with no fabricated timestamps, **not**
+same-time different-action/dish negatives. This new partition does not retroactively
+make the previously inspected exposure bracket a blind holdout.
+
+| Hash variant | Dark/bright bracket distance | Positive pass at 10, calibration / holdout | Negative match at 10, calibration / holdout | Negative match at 24, calibration / holdout |
+| --- | ---: | --- | --- | --- |
+| Current pHash | 24 | 100/100 / 100/100 | 0/225 / 0/225 | 25/225 / 25/225 |
+| Histogram-equalized pHash | 4 | 100/100 / 100/100 | 0/225 / 0/225 | 50/225 / 50/225 |
+| Autocontrast pHash | 24 | 100/100 / 100/100 | 0/225 / 0/225 | 25/225 / 25/225 |
+| dHash | 10 | 100/100 / 100/100 | 0/225 / 0/225 | 200/225 / 125/225 |
+
+The equalized variant is a promising exposure-tolerant candidate; it recovers
+this pair without raising the distance threshold. Autocontrast does not recover
+it. Increasing the existing threshold to 24 admits 50/450 different-event pairs
+in this fixture, so that single-example threshold change is not justified.
+These counts assess hash matching only: real different-event timestamps would
+still prevent grouping. They must not be reported as observed production merges.
+
+No algorithm is promoted. Before replacing the current hash, collect independently
+labeled hard negatives from the user's same-time different-subject/action case,
+include clipped/near-featureless controls and camera/preview variation, and
+freeze calibration and holdout events. A change also needs versioned hash-cache
+identity and compatibility tests so old pHash entries cannot be mixed with new
+normalized hashes. Keep the existing time gate and threshold-zero bypass.

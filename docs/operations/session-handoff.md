@@ -63,3 +63,12 @@ adjacent time AND hash grouping rule (threshold 0 means time only). Historical
 semantic substitutability rules no longer gate grouping. Keep source photos and
 XMP read-only, and do not resume the historical production review/deployment
 workflow merely because older evidence below or elsewhere mentions it.
+
+Exposure ablation: grayscale histogram-equalized pHash reduces the known bracket
+distance 24 -> 4; all 200 same-event pairs pass at threshold 10 and no matches
+occur in 450 easy different-event controls (only 18 distinct event pairs).
+Current pHash at threshold 24 matches 50/450 negatives. Do not raise the default
+from this fixture. Before implementing normalized hashing, obtain labeled rapid
+same-background/different-action or dish negatives and clipped controls; version
+the persisted hash-cache identity and preserve zero-threshold no-read behavior.
+The candidate remains offline only; see the exposure report and raw ablation.

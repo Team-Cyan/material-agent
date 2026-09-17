@@ -1,0 +1,18 @@
+{
+  "variants": [
+    "phash",
+    "equalized_phash",
+    "autocontrast_phash",
+    "dhash"
+  ],
+  "thresholds": [
+    10,
+    24
+  ],
+  "normalization": "256px production hash input, then grayscale; Pillow equalize or autocontrast cutoff=0 before 64-bit hash",
+  "split": "HDR+ first 10 event IDs calibration, last 10 holdout; no fitting in this diagnostic",
+  "positives": "all ten within-event pairs per five-frame event",
+  "negatives": "all 25 cross-event pairs between consecutive event IDs within each split, no fabricated timestamps; these are easy different-event controls, not same-time action negatives",
+  "exposure": "three previously inspected CR2s; known diagnostic, not blind holdout",
+  "decision": "No production changes; insufficient hard-negative labels for promotion"
+}

@@ -1,0 +1,795 @@
+{
+  "plan": {
+    "variants": [
+      "phash",
+      "equalized_phash",
+      "autocontrast_phash",
+      "dhash"
+    ],
+    "thresholds": [
+      10,
+      24
+    ],
+    "normalization": "256px production hash input, then grayscale; Pillow equalize or autocontrast cutoff=0 before 64-bit hash",
+    "split": "HDR+ first 10 event IDs calibration, last 10 holdout; no fitting in this diagnostic",
+    "positives": "all ten within-event pairs per five-frame event",
+    "negatives": "all 25 cross-event pairs between consecutive event IDs within each split, no fabricated timestamps; these are easy different-event controls, not same-time action negatives",
+    "exposure": "three previously inspected CR2s; known diagnostic, not blind holdout",
+    "decision": "No production changes; insufficient hard-negative labels for promotion"
+  },
+  "seconds": 16.832339958054945,
+  "hashes": {
+    "g01i1": {
+      "phash": "c29e34656d0fc1bc",
+      "equalized_phash": "c08f34d7290fe1bc",
+      "autocontrast_phash": "c29e34656d0fc1bc",
+      "dhash": "f0fcf8e0a0c0e890"
+    },
+    "g01i2": {
+      "phash": "c29e34676d0fc1b8",
+      "equalized_phash": "c08f34d7690fc1bc",
+      "autocontrast_phash": "c29e34676d0fc1b8",
+      "dhash": "f0ecf8e0a0c0e890"
+    },
+    "g01i3": {
+      "phash": "c29e34676d0fc1b8",
+      "equalized_phash": "c08f34d7690fc1bc",
+      "autocontrast_phash": "c29e34676d0fc1b8",
+      "dhash": "f0fcf8e0a0c0e890"
+    },
+    "g01i4": {
+      "phash": "c29e34676d0fc1b8",
+      "equalized_phash": "c08d34d7690fe1bc",
+      "autocontrast_phash": "c29e34676d0fc1b8",
+      "dhash": "f0fcf8e0a0c0e890"
+    },
+    "g01i5": {
+      "phash": "c29634676d0fc1bc",
+      "equalized_phash": "c08d34d7690fe1bc",
+      "autocontrast_phash": "c29634676d0fc1bc",
+      "dhash": "f0ecf8e0a0c0e890"
+    },
+    "g02i1": {
+      "phash": "998dccc9c4e3c5c9",
+      "equalized_phash": "998dcd114ce3e4cd",
+      "autocontrast_phash": "998dccc9c4e3c5c9",
+      "dhash": "f27870f1d8d8d9e0"
+    },
+    "g02i2": {
+      "phash": "998dccc9c4e3c5c9",
+      "equalized_phash": "998dcd114ce3e4cd",
+      "autocontrast_phash": "998dccc9c4e3c5c9",
+      "dhash": "f27878f1f8d8d9e0"
+    },
+    "g02i3": {
+      "phash": "998dcc89c4e7c5c9",
+      "equalized_phash": "998dcd114ce3e4cd",
+      "autocontrast_phash": "998dcc89c4e7c5c9",
+      "dhash": "f27870f1f8d8d9e0"
+    },
+    "g02i4": {
+      "phash": "998dcc89c4e7c5c9",
+      "equalized_phash": "998dcd114ce3e4cd",
+      "autocontrast_phash": "998dcc89c4e7c5c9",
+      "dhash": "f27870f1f8d8d9e0"
+    },
+    "g02i5": {
+      "phash": "998dccc9c4e3c5c9",
+      "equalized_phash": "998dcd114ce3e4cd",
+      "autocontrast_phash": "998dccc9c4e3c5c9",
+      "dhash": "f27870f1f8d8d9e0"
+    },
+    "g03i1": {
+      "phash": "ddc5e3c842632e1e",
+      "equalized_phash": "9dece3d00c616c9e",
+      "autocontrast_phash": "ddc5e3c842632e1e",
+      "dhash": "c0d066b830f0d878"
+    },
+    "g03i2": {
+      "phash": "ddc5e3c842632e1e",
+      "equalized_phash": "9dece3d00c616c9e",
+      "autocontrast_phash": "ddc5e3c842632e1e",
+      "dhash": "c0d066b830f0d878"
+    },
+    "g03i3": {
+      "phash": "ddc5e3c842632e1e",
+      "equalized_phash": "9dece3d00c616c9e",
+      "autocontrast_phash": "ddc5e3c842632e1e",
+      "dhash": "c0d066b830f0d878"
+    },
+    "g03i4": {
+      "phash": "ddc5e3c842632e1e",
+      "equalized_phash": "9dece3d00c616c9e",
+      "autocontrast_phash": "ddc5e3c842632e1e",
+      "dhash": "c0d0669830f0d878"
+    },
+    "g03i5": {
+      "phash": "ddc5e3c046632e1e",
+      "equalized_phash": "9dece3d00c616c9e",
+      "autocontrast_phash": "ddc5e3c842632e1e",
+      "dhash": "c0d0669830f0d878"
+    },
+    "g04i1": {
+      "phash": "c0e070783a8f8f3f",
+      "equalized_phash": "c1e0f7582a81f07f",
+      "autocontrast_phash": "c0e070783a8f8f3f",
+      "dhash": "8080c0f1b0f07874"
+    },
+    "g04i2": {
+      "phash": "c0e070783a8f8f3f",
+      "equalized_phash": "c1e0f7582a81f07f",
+      "autocontrast_phash": "c0e070783a8f8f3f",
+      "dhash": "8080c0f1b0f07874"
+    },
+    "g04i3": {
+      "phash": "c0e070783e8f873f",
+      "equalized_phash": "c1e0f7582a81f07f",
+      "autocontrast_phash": "c0e070783a8f8f3f",
+      "dhash": "8080c0f1b0f07874"
+    },
+    "g04i4": {
+      "phash": "c0e070783e8f873f",
+      "equalized_phash": "c1e0f7582a81f07f",
+      "autocontrast_phash": "c0e070783a8f8f3f",
+      "dhash": "8080c0f1b0f07876"
+    },
+    "g04i5": {
+      "phash": "c0e070783e8f873f",
+      "equalized_phash": "c1e0f7582a81f07f",
+      "autocontrast_phash": "c0e070783e8f873f",
+      "dhash": "8080c0f1b0f07874"
+    },
+    "g05i1": {
+      "phash": "9292b66c6dc9db12",
+      "equalized_phash": "9093b97cc211dd6b",
+      "autocontrast_phash": "9292b66c6dc9db12",
+      "dhash": "9cbcd8f0acb6b2f8"
+    },
+    "g05i2": {
+      "phash": "9292b66c6dc9db12",
+      "equalized_phash": "9093b97cc211dd6b",
+      "autocontrast_phash": "9292b66c6dc9db12",
+      "dhash": "9cbcd8f0a4b6b2f8"
+    },
+    "g05i3": {
+      "phash": "9292b66c6dc9db12",
+      "equalized_phash": "9093b97cc211dd6b",
+      "autocontrast_phash": "9292b66c6dc9db12",
+      "dhash": "9cbcd8f0a4b6b2f8"
+    },
+    "g05i4": {
+      "phash": "9292b66c6dc9db12",
+      "equalized_phash": "9093b97cc209dd6b",
+      "autocontrast_phash": "9292b66c6dc9db12",
+      "dhash": "9cbcd8f0a4b6b2f8"
+    },
+    "g05i5": {
+      "phash": "9292b66c6dc9db12",
+      "equalized_phash": "9093b97cc209dd6b",
+      "autocontrast_phash": "9292b66c6dc9db12",
+      "dhash": "9cbcd8f0a4b6b2f8"
+    },
+    "g06i1": {
+      "phash": "cbcb573634b28a8a",
+      "equalized_phash": "cacb479674b28aaa",
+      "autocontrast_phash": "cbcb573634b28a8a",
+      "dhash": "f9f3f1b1f1f1f1f3"
+    },
+    "g06i2": {
+      "phash": "cbcb573634b28a8a",
+      "equalized_phash": "cacb479674b28aaa",
+      "autocontrast_phash": "cbcb573634b28a8a",
+      "dhash": "f9f3f191f1f1f1f3"
+    },
+    "g06i3": {
+      "phash": "cbcb573634b28a8a",
+      "equalized_phash": "cacb479675b28a8a",
+      "autocontrast_phash": "cbcb573634b28a8a",
+      "dhash": "f9f3f191f1f1f1f3"
+    },
+    "g06i4": {
+      "phash": "cbcb573634b28a8a",
+      "equalized_phash": "caca479674b69a8a",
+      "autocontrast_phash": "cbcb573634b28a8a",
+      "dhash": "f9f1f191f1f1f1f3"
+    },
+    "g06i5": {
+      "phash": "cbcb573634b28a8a",
+      "equalized_phash": "caca479675369a8a",
+      "autocontrast_phash": "cbcb573634b28a8a",
+      "dhash": "f9f1f191f1f1f1f3"
+    },
+    "g07i1": {
+      "phash": "899d36c66931b6c6",
+      "equalized_phash": "819d16e66921b6de",
+      "autocontrast_phash": "899d36c66931b6c6",
+      "dhash": "f07078d3c1e8f070"
+    },
+    "g07i2": {
+      "phash": "899d36c66931b6c6",
+      "equalized_phash": "819d16e66921b6de",
+      "autocontrast_phash": "899d36c66931b6c6",
+      "dhash": "f07078d3c1e0f070"
+    },
+    "g07i3": {
+      "phash": "899d36c66931b6c6",
+      "equalized_phash": "819d16e66921b6de",
+      "autocontrast_phash": "899d36c66931b6c6",
+      "dhash": "f07078d3c1e8f071"
+    },
+    "g07i4": {
+      "phash": "899d36c66931b6c6",
+      "equalized_phash": "819d16e66921b6de",
+      "autocontrast_phash": "899d36c66931b6c6",
+      "dhash": "f07078d3c1e8f071"
+    },
+    "g07i5": {
+      "phash": "899d36c66931b6c6",
+      "equalized_phash": "819d16e66921b6de",
+      "autocontrast_phash": "899d36c66931b6c6",
+      "dhash": "f07078d3c1e8f071"
+    },
+    "g08i1": {
+      "phash": "d33634e54b9872cc",
+      "equalized_phash": "d2163ce54b9873cc",
+      "autocontrast_phash": "d33634e54b9872cc",
+      "dhash": "6cbcbcf8c0cab050"
+    },
+    "g08i2": {
+      "phash": "d33634e54b9872cc",
+      "equalized_phash": "d2163ce54b9873cc",
+      "autocontrast_phash": "d33634e54b9872cc",
+      "dhash": "6cbcbcf8c0cab050"
+    },
+    "g08i3": {
+      "phash": "d33634e54b9872cc",
+      "equalized_phash": "d2163ce54b9873cc",
+      "autocontrast_phash": "d33634e54b9872cc",
+      "dhash": "6cbcbcf8c0cab050"
+    },
+    "g08i4": {
+      "phash": "d33634e54b9872cc",
+      "equalized_phash": "d2163ce54b9873cc",
+      "autocontrast_phash": "d33634e54b9872cc",
+      "dhash": "6cbcbcf8c0cab050"
+    },
+    "g08i5": {
+      "phash": "d33634e54b9872cc",
+      "equalized_phash": "d2163ce54b9873cc",
+      "autocontrast_phash": "d33634e54b9872cc",
+      "dhash": "6cbcbcf8c0cab050"
+    },
+    "g09i1": {
+      "phash": "dc80c76775189ce6",
+      "equalized_phash": "dc80976f3518acf2",
+      "autocontrast_phash": "dc80c76775189ce6",
+      "dhash": "f0e0b0b040607874"
+    },
+    "g09i2": {
+      "phash": "dc80c76775189ce6",
+      "equalized_phash": "dc80976f3518acf2",
+      "autocontrast_phash": "dc80c76775189ce6",
+      "dhash": "f0e0b0b040607874"
+    },
+    "g09i3": {
+      "phash": "dc80c76775189ce6",
+      "equalized_phash": "dc80976f3518acf2",
+      "autocontrast_phash": "dc80c76775189ce6",
+      "dhash": "f0e0b0b040607874"
+    },
+    "g09i4": {
+      "phash": "dc80c76775189ce6",
+      "equalized_phash": "dc80976f3518acf2",
+      "autocontrast_phash": "dc80c76775189ce6",
+      "dhash": "f0e0b0b040607874"
+    },
+    "g09i5": {
+      "phash": "dc80c76775189ce6",
+      "equalized_phash": "dc80976f3518acf2",
+      "autocontrast_phash": "dc80c76775189ce6",
+      "dhash": "f0e0b0b040607874"
+    },
+    "g10i1": {
+      "phash": "cc8ec686e6c56167",
+      "equalized_phash": "cc9fd7877440f148",
+      "autocontrast_phash": "cc8ec686e6c56167",
+      "dhash": "6070b3b434f0e5e4"
+    },
+    "g10i2": {
+      "phash": "cc8ec686e6c56167",
+      "equalized_phash": "cc9ff7877440f048",
+      "autocontrast_phash": "cc8ec686e6c56167",
+      "dhash": "6070b3b434f0e5e4"
+    },
+    "g10i3": {
+      "phash": "cc8ec686e6c56167",
+      "equalized_phash": "cc9fd7877440f148",
+      "autocontrast_phash": "cc8ec686e6c56167",
+      "dhash": "6060b3b434f0e5e4"
+    },
+    "g10i4": {
+      "phash": "cc8ec686e6c56167",
+      "equalized_phash": "cc9fd7877440f148",
+      "autocontrast_phash": "cc8ec686e6c56167",
+      "dhash": "6070b3b434f0e5e4"
+    },
+    "g10i5": {
+      "phash": "cc8ec686e6c56167",
+      "equalized_phash": "cc9fd7877440f148",
+      "autocontrast_phash": "cc8ec686e6c56167",
+      "dhash": "6070b3b434f0e5e4"
+    },
+    "g11i1": {
+      "phash": "8bad54d1aa6a4c9d",
+      "equalized_phash": "98a573d2a45a6cad",
+      "autocontrast_phash": "8bad54d1aa6a4c9d",
+      "dhash": "f8fefbfbfbf8f8e0"
+    },
+    "g11i2": {
+      "phash": "8bad54d1aa6a4c9d",
+      "equalized_phash": "98a573d2a45a6cad",
+      "autocontrast_phash": "8bad54d1aa6a4c9d",
+      "dhash": "f8fefbfffbf8f8e0"
+    },
+    "g11i3": {
+      "phash": "8bad54d1aa6a4c9d",
+      "equalized_phash": "98a573d2a45a6cad",
+      "autocontrast_phash": "8bad54d1aa6a4c9d",
+      "dhash": "f8fefbfffbf8f8e0"
+    },
+    "g11i4": {
+      "phash": "8bad54d1aa6a4c9d",
+      "equalized_phash": "98a573d2a45a6cad",
+      "autocontrast_phash": "8bad54d1aa6a4c9d",
+      "dhash": "f8fefbfffbf8f8f0"
+    },
+    "g11i5": {
+      "phash": "8bad54d1aa6a4c9d",
+      "equalized_phash": "98a573d2a45a6cad",
+      "autocontrast_phash": "8bad54d1aa6a4c9d",
+      "dhash": "f8fefbfffbf8f8e0"
+    },
+    "g12i1": {
+      "phash": "da82c52d2d957ac6",
+      "equalized_phash": "da82c52d2f917a66",
+      "autocontrast_phash": "da82c52d2d957ac6",
+      "dhash": "f0f0f1316139f8f0"
+    },
+    "g12i2": {
+      "phash": "da82c52d6d917ac6",
+      "equalized_phash": "da82c52d2f917a66",
+      "autocontrast_phash": "da82c52d6d917ac6",
+      "dhash": "f0f0f1316139f0f0"
+    },
+    "g12i3": {
+      "phash": "da82c52d6d917ac6",
+      "equalized_phash": "da82c52d2f917a66",
+      "autocontrast_phash": "da82c52d6d917ac6",
+      "dhash": "f0f0f1316139f8f0"
+    },
+    "g12i4": {
+      "phash": "da82c52d2d957ac6",
+      "equalized_phash": "da82c52d2f917a66",
+      "autocontrast_phash": "da82c52d6d917ac6",
+      "dhash": "f0f0f1316139f8f0"
+    },
+    "g12i5": {
+      "phash": "da82c52d2d957ac6",
+      "equalized_phash": "da82c52d2f917a66",
+      "autocontrast_phash": "da82c52d6d917ac6",
+      "dhash": "f0f0f1316139f8f0"
+    },
+    "g13i1": {
+      "phash": "c0c0ce3f394f66c6",
+      "equalized_phash": "c0d04e3f69cf7684",
+      "autocontrast_phash": "c0c0ce3f394f66c6",
+      "dhash": "a080e49094ace1e4"
+    },
+    "g13i2": {
+      "phash": "c0c0ce3f394f66c6",
+      "equalized_phash": "c0d04e3f69cf7684",
+      "autocontrast_phash": "c0c0ce3f394f66c6",
+      "dhash": "a080e49094ace1e4"
+    },
+    "g13i3": {
+      "phash": "c0c0ce3f394f66c6",
+      "equalized_phash": "c0d04e3f69cf7684",
+      "autocontrast_phash": "c0c0ce3f394f66c6",
+      "dhash": "a080e49094ace1e4"
+    },
+    "g13i4": {
+      "phash": "c0c0ce3f394f66c6",
+      "equalized_phash": "c0d04e3f69cf7684",
+      "autocontrast_phash": "c0c0ce3f394f66c6",
+      "dhash": "a080e49094ace1e4"
+    },
+    "g13i5": {
+      "phash": "c0c0ce3f394f66c6",
+      "equalized_phash": "c0d04e3f69cf7684",
+      "autocontrast_phash": "c0c0ce3f394f66c6",
+      "dhash": "a080e49094ace1e4"
+    },
+    "g14i1": {
+      "phash": "d0c53f32640dbbd2",
+      "equalized_phash": "d1a42b32612dbbf2",
+      "autocontrast_phash": "d0c53f32640dbbd2",
+      "dhash": "f0f0f0e08ce8f0f0"
+    },
+    "g14i2": {
+      "phash": "d0c53f32640dbbd2",
+      "equalized_phash": "d1a42b32612dbbf2",
+      "autocontrast_phash": "d0c53f32640dbbd2",
+      "dhash": "f0f0f0c08ce8f0f0"
+    },
+    "g14i3": {
+      "phash": "d0c53f32640dbbd2",
+      "equalized_phash": "d1a42b32452dbbf2",
+      "autocontrast_phash": "d0c53f32640dbbd2",
+      "dhash": "f0f0f0c08cf8f0f0"
+    },
+    "g14i4": {
+      "phash": "d0c53f32640dbbd2",
+      "equalized_phash": "d1a42b32452dbbf2",
+      "autocontrast_phash": "d0c53f32640dbbd2",
+      "dhash": "f0f0f0e0ace8f0f0"
+    },
+    "g14i5": {
+      "phash": "d0c53f32640dbbd2",
+      "equalized_phash": "d1a42b32452dbbf2",
+      "autocontrast_phash": "d0c53f32640dbbd2",
+      "dhash": "f0f0f0c0acf8f0f0"
+    },
+    "g15i1": {
+      "phash": "c6953d6449e3b46c",
+      "equalized_phash": "c5953d6c4b62b44d",
+      "autocontrast_phash": "c6953d6449e3b46c",
+      "dhash": "e6e4f0c0e4e4c4e0"
+    },
+    "g15i2": {
+      "phash": "c6953d6449e3b46c",
+      "equalized_phash": "c5953d6c4b62b44d",
+      "autocontrast_phash": "c6953d6449e3b46c",
+      "dhash": "e6e4f0c0e4e4c4e0"
+    },
+    "g15i3": {
+      "phash": "c6953d6449e3b46c",
+      "equalized_phash": "c5953d6c4b62b44d",
+      "autocontrast_phash": "c6953d6449e3b46c",
+      "dhash": "e6e4f0c0e4e4c4e0"
+    },
+    "g15i4": {
+      "phash": "c6953d6449e3b46c",
+      "equalized_phash": "c5953d6c4b62b44d",
+      "autocontrast_phash": "c6953d6449e3b46c",
+      "dhash": "e6e4f0c0e4e4c4e0"
+    },
+    "g15i5": {
+      "phash": "c6953d6449e3b46c",
+      "equalized_phash": "c5953d6c4b62b44d",
+      "autocontrast_phash": "c6953d6449e3b46c",
+      "dhash": "e6e4f0c0e4e4c4e0"
+    },
+    "g16i1": {
+      "phash": "d8d8c90b8b99b333",
+      "equalized_phash": "d9deba0b42d1b134",
+      "autocontrast_phash": "d8d8c90b8b99b333",
+      "dhash": "702328b0611a3ab4"
+    },
+    "g16i2": {
+      "phash": "d8d8c90b8b99b333",
+      "equalized_phash": "d9deba0b42d1b134",
+      "autocontrast_phash": "d8d8c90b8b99b333",
+      "dhash": "702328b0611a3ab4"
+    },
+    "g16i3": {
+      "phash": "d8d8c90b8b99b333",
+      "equalized_phash": "d9deba0b42d1b134",
+      "autocontrast_phash": "d8d8c90b8b99b333",
+      "dhash": "702328b0611a3ab4"
+    },
+    "g16i4": {
+      "phash": "d8d8c90b8b99b333",
+      "equalized_phash": "d9deba0b42d1b134",
+      "autocontrast_phash": "d8d8c90b8b99b333",
+      "dhash": "702328b0611a3ab4"
+    },
+    "g16i5": {
+      "phash": "d8d8c90b8b99b333",
+      "equalized_phash": "d9deba0b42d1b134",
+      "autocontrast_phash": "d8d8c90b8b99b333",
+      "dhash": "702328b0611a3ab4"
+    },
+    "g17i1": {
+      "phash": "83627c955753a9a9",
+      "equalized_phash": "83626c955753a9ad",
+      "autocontrast_phash": "83627c955753a9a9",
+      "dhash": "c0c7d3c9fefefeff"
+    },
+    "g17i2": {
+      "phash": "83627c955753a9a9",
+      "equalized_phash": "83626c955753a9ad",
+      "autocontrast_phash": "83627c955753a9a9",
+      "dhash": "c0c7d3c9fefefeff"
+    },
+    "g17i3": {
+      "phash": "83627c955753a9a9",
+      "equalized_phash": "83626c955753a9ad",
+      "autocontrast_phash": "83627c955753a9a9",
+      "dhash": "c0c7d3c9fefefeff"
+    },
+    "g17i4": {
+      "phash": "83627c955753a9a9",
+      "equalized_phash": "83626c955753a9ad",
+      "autocontrast_phash": "83627c955753a9a9",
+      "dhash": "c0c7d3c9fefefeff"
+    },
+    "g17i5": {
+      "phash": "83627c955753a9a9",
+      "equalized_phash": "83626c955753a9ad",
+      "autocontrast_phash": "83627c955753a9a9",
+      "dhash": "c0c7d3c9fefefeff"
+    },
+    "g18i1": {
+      "phash": "c39d6433b4618fe4",
+      "equalized_phash": "c39d6417b4618bec",
+      "autocontrast_phash": "c39d6433b4618fe4",
+      "dhash": "f0e0f0d8f8c8c080"
+    },
+    "g18i2": {
+      "phash": "c39d6433b4618fe4",
+      "equalized_phash": "c39d6417b4618be5",
+      "autocontrast_phash": "c39d6433b4618fe4",
+      "dhash": "f0e0f0d8f8c8c080"
+    },
+    "g18i3": {
+      "phash": "c39d6433b4618fe4",
+      "equalized_phash": "c39d6417b4618bec",
+      "autocontrast_phash": "c39d6433b4618fe4",
+      "dhash": "f0e0f0d8f8c8c080"
+    },
+    "g18i4": {
+      "phash": "c39d6433b4618fe4",
+      "equalized_phash": "c39d6417b4618bec",
+      "autocontrast_phash": "c39d6433b4618fe4",
+      "dhash": "f0e0f0d8f8c8c080"
+    },
+    "g18i5": {
+      "phash": "c39d6433b4618fe4",
+      "equalized_phash": "c39d6417b4618bec",
+      "autocontrast_phash": "c39d6433b4618fe4",
+      "dhash": "f0e0f0d8f8c8c080"
+    },
+    "g19i1": {
+      "phash": "8f8f3938584e86c7",
+      "equalized_phash": "878779b8584e86c7",
+      "autocontrast_phash": "8f8f3938584e86c7",
+      "dhash": "f8fe6664f8fdf1f0"
+    },
+    "g19i2": {
+      "phash": "8f8f3938584e86c7",
+      "equalized_phash": "878779b8584e86c7",
+      "autocontrast_phash": "8f8f3938584e86c7",
+      "dhash": "f8fe6664f8fdf1f0"
+    },
+    "g19i3": {
+      "phash": "8f8f3938584e86c7",
+      "equalized_phash": "878779b8584e86c7",
+      "autocontrast_phash": "8f8f3938584e86c7",
+      "dhash": "f8fe6664f8fdf1f0"
+    },
+    "g19i4": {
+      "phash": "8f8f3938584e86c7",
+      "equalized_phash": "878779b8584e86c7",
+      "autocontrast_phash": "8f8f3938584e86c7",
+      "dhash": "f8fe6664f8fdf1f0"
+    },
+    "g19i5": {
+      "phash": "8f8f3938584e86c7",
+      "equalized_phash": "878779b8584e86c7",
+      "autocontrast_phash": "8f8f3938584e86c7",
+      "dhash": "f8fe6664f8fdf1f0"
+    },
+    "g20i1": {
+      "phash": "8b2f9d366a32c899",
+      "equalized_phash": "8b0fdd344a366387",
+      "autocontrast_phash": "8b2f9d366a32c899",
+      "dhash": "e0727361e1edb8f1"
+    },
+    "g20i2": {
+      "phash": "8b2f99366a32c999",
+      "equalized_phash": "8b2fdd344a366385",
+      "autocontrast_phash": "8b2f99366a32c999",
+      "dhash": "e0737361e1edb8f1"
+    },
+    "g20i3": {
+      "phash": "8b2f9d366a32c899",
+      "equalized_phash": "8b0fdd344a366387",
+      "autocontrast_phash": "8b2f9d366a32c899",
+      "dhash": "e0727361e1edb8f1"
+    },
+    "g20i4": {
+      "phash": "8b2f9d366a32c899",
+      "equalized_phash": "8b0fdd344a366387",
+      "autocontrast_phash": "8b2f9d366a32c899",
+      "dhash": "e0727361e1edb8f1"
+    },
+    "g20i5": {
+      "phash": "8b2f9d366a32c899",
+      "equalized_phash": "8b0fdd344a366387",
+      "autocontrast_phash": "8b2f99366a32c999",
+      "dhash": "e0727361e1edb8f1"
+    },
+    "262A2705.CR2": {
+      "phash": "cdce34916766c721",
+      "equalized_phash": "818f5ee175b314cc",
+      "autocontrast_phash": "cdce34916766c721",
+      "dhash": "e6e66662d2d09bb2"
+    },
+    "262A2706.CR2": {
+      "phash": "c58e38e33762c72c",
+      "equalized_phash": "858f5861766b94ce",
+      "autocontrast_phash": "c58e38e33762c72c",
+      "dhash": "e6e6e6e6d6d29bb3"
+    },
+    "262A2707.CR2": {
+      "phash": "818e1ce175b3d4cd",
+      "equalized_phash": "818f5c6177b314cd",
+      "autocontrast_phash": "818e1ce175b3d4cd",
+      "dhash": "e2e2e2d2d2da9bba"
+    }
+  },
+  "splits": {
+    "calibration": {
+      "phash": {
+        "positive_pairs": 100,
+        "negative_pairs": 225,
+        "positive_p95_distance": 2.0,
+        "negative_min_distance": 24,
+        "thresholds": {
+          "10": {
+            "positive_pass": 100,
+            "negative_false_match": 0
+          },
+          "24": {
+            "positive_pass": 100,
+            "negative_false_match": 25
+          }
+        }
+      },
+      "equalized_phash": {
+        "positive_pairs": 100,
+        "negative_pairs": 225,
+        "positive_p95_distance": 4.0,
+        "negative_min_distance": 20,
+        "thresholds": {
+          "10": {
+            "positive_pass": 100,
+            "negative_false_match": 0
+          },
+          "24": {
+            "positive_pass": 100,
+            "negative_false_match": 50
+          }
+        }
+      },
+      "autocontrast_phash": {
+        "positive_pairs": 100,
+        "negative_pairs": 225,
+        "positive_p95_distance": 2.0,
+        "negative_min_distance": 24,
+        "thresholds": {
+          "10": {
+            "positive_pass": 100,
+            "negative_false_match": 0
+          },
+          "24": {
+            "positive_pass": 100,
+            "negative_false_match": 25
+          }
+        }
+      },
+      "dhash": {
+        "positive_pairs": 100,
+        "negative_pairs": 225,
+        "positive_p95_distance": 2.0,
+        "negative_min_distance": 15,
+        "thresholds": {
+          "10": {
+            "positive_pass": 100,
+            "negative_false_match": 0
+          },
+          "24": {
+            "positive_pass": 100,
+            "negative_false_match": 200
+          }
+        }
+      }
+    },
+    "holdout": {
+      "phash": {
+        "positive_pairs": 100,
+        "negative_pairs": 225,
+        "positive_p95_distance": 2.0,
+        "negative_min_distance": 20,
+        "thresholds": {
+          "10": {
+            "positive_pass": 100,
+            "negative_false_match": 0
+          },
+          "24": {
+            "positive_pass": 100,
+            "negative_false_match": 25
+          }
+        }
+      },
+      "equalized_phash": {
+        "positive_pairs": 100,
+        "negative_pairs": 225,
+        "positive_p95_distance": 2.0,
+        "negative_min_distance": 22,
+        "thresholds": {
+          "10": {
+            "positive_pass": 100,
+            "negative_false_match": 0
+          },
+          "24": {
+            "positive_pass": 100,
+            "negative_false_match": 50
+          }
+        }
+      },
+      "autocontrast_phash": {
+        "positive_pairs": 100,
+        "negative_pairs": 225,
+        "positive_p95_distance": 2.0,
+        "negative_min_distance": 20,
+        "thresholds": {
+          "10": {
+            "positive_pass": 100,
+            "negative_false_match": 0
+          },
+          "24": {
+            "positive_pass": 100,
+            "negative_false_match": 25
+          }
+        }
+      },
+      "dhash": {
+        "positive_pairs": 100,
+        "negative_pairs": 225,
+        "positive_p95_distance": 2.0,
+        "negative_min_distance": 14,
+        "thresholds": {
+          "10": {
+            "positive_pass": 100,
+            "negative_false_match": 0
+          },
+          "24": {
+            "positive_pass": 100,
+            "negative_false_match": 125
+          }
+        }
+      }
+    }
+  },
+  "exposure_distances": {
+    "262A2705.CR2/262A2706.CR2": {
+      "phash": 14,
+      "equalized_phash": 12,
+      "autocontrast_phash": 14,
+      "dhash": 6
+    },
+    "262A2705.CR2/262A2707.CR2": {
+      "phash": 24,
+      "equalized_phash": 4,
+      "autocontrast_phash": 24,
+      "dhash": 10
+    },
+    "262A2706.CR2/262A2707.CR2": {
+      "phash": 18,
+      "equalized_phash": 10,
+      "autocontrast_phash": 18,
+      "dhash": 10
+    }
+  }
+}

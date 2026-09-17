@@ -113,3 +113,10 @@ a time-only exception is an unresolved product choice.
 
 [External acceptance steps](2026-09-17-external-acceptance-plan.md) are prepared;
 professional-software writeback and target-host recovery remain unexecuted.
+
+The follow-up hash ablation makes histogram-equalized pHash a candidate:
+the exposure pair distance falls from 24 to 4 at unchanged threshold 10.
+It passes the existing 200 positive/450 easy negative pairs, but these negatives
+represent only 18 different-event comparisons and do not cover rapid dish/action
+changes. No hash algorithm/default is changed; hard-negative labels and hash-cache
+versioning are prerequisites for promotion.
