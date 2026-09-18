@@ -21,12 +21,12 @@ must be distinguished. Historical external operations do not expand this scope.
 
 Status vocabulary: **Pending**, **In progress**, **Implemented**, **Accepted
 locally**, **Blocked**. Local acceptance never implies target-machine deployment
-or photographic product acceptance. No implementation task is currently running.
+or photographic product acceptance. The bounded direct-coverage experiment is complete; production behavior remains unchanged.
 
 | Item | Status | Commit / evidence / checks | Next action or blocker |
 | --- | --- | --- | --- |
 | Phase 1 Gate 0/1/2/3 | Accepted locally, bounded scope | [Actual-path gates](2026-09-15-inference-unification-gates-0-1.md), [readiness](2026-09-15-inference-unification-readiness.md); shared native lifecycle, CPU parity, compatibility and candidate matrix | No repeat migration. Target provider/hardware acceptance is separate |
-| Adjacent time/hash and missing-thumbnail RAWs | Implemented; business acceptance incomplete | `accad08`; four RAW regressions; last guarded full suite 745 passed/102 skipped | Preserve rule. Full sequences expose action-coverage loss; see decision below |
+| Adjacent time/hash and missing-thumbnail RAWs | Implemented; business acceptance incomplete | `accad08`; four RAW regressions; last guarded full suite 753 passed/102 skipped | Preserve rule. Full sequences expose action-coverage loss; see decision below |
 | Group coverage / quality-selection persistence | Implemented | [Implementation audit history](2026-09-17-follow-up-validation.md); `2c6ec47` includes reviewed refinement/rewrite guards | Per-group keep works, but is not per-action coverage; no score inflation |
 | XMP policy / projection-attempt ledger | Implemented locally | `2c6ec47` and linked audit; missing/zero rating rules, protected nonzero values, malformed/duplicate failures, rewrite preflight, append-only outcomes | External watching/crash reconciliation and professional software readback remain unverified |
 | Evidence applicability / opt-in refinement | Implemented; not promoted | Observed/unknown contracts and conservative no-gain guard; 100-frame run had 18 completed/22 no-gain/60 untriggered observations | No demonstrated ranking gain; keep disabled. No automatic back-view/silhouette producer or accepted context dataset |
@@ -34,6 +34,7 @@ or photographic product acceptance. No implementation task is currently running.
 | Independent HDR+ A/B proxy evaluation | Execution complete; acceptance gate failed | `4b76ce8`; both panels 20/20; prior responses unchanged; 1/20 preferred-set agreement, 7 stable strict pairs vs minimum 30 | Quota blocker resolved. References remain unstable; no human-accuracy or product-acceptance claim |
 | Exposure and action hard negatives | Accepted locally as diagnostic evidence | `5caaacb`, `2811b9d`, `a90e3ef`; [real RAW](benchmarks/2026-09-17-exposure-brackets/report.md), [synthetic](benchmarks/2026-09-17-hash-hardcases/report.md), [video pairs](benchmarks/2026-09-18-cooking-hashes/report.md) | Current candidates fail some known controls. Do not tune these inspected inputs further |
 | Whole-sequence closure / reproducible runner | Accepted locally | `4b76ce8`; [sequence report](benchmarks/2026-09-18-cooking-sequences/report.md); 29 focused tests, 2 boundary tests, Ruff, source hashes, 25-pair exact parity and runner/plan fingerprints | No algorithm promoted; decision boundary below |
+| Direct coverage relation / conservative selector | Execution complete; admission failed | `7661372`; [40-case report](benchmarks/2026-09-18-direct-coverage/report.md), 32 focused guarded tests; 0 structural violations, 2 false cover edges, 1 selected unique-content loss; 94% abstention | Baseline rejected for promotion. Preserve frozen results; no automatic model rotation |
 | Personal ranker / automatic context acceptance | Blocked on reference data | Action labels and order-sensitive model proxies cannot establish personal preference or reliable back-view/silhouette applicability | Obtain suitable independent labels before model integration/training |
 | Professional-software and target recovery acceptance | Blocked on external inputs/authorization | [Concrete execution plan](2026-09-17-external-acceptance-plan.md) | Identify scratch write scope/software and separately authorized target operator/appdata scope; do not execute now |
 
@@ -51,26 +52,30 @@ correct implementation of adjacent links and the business wish to retain all
 different actions. The wide, dark video's low quality scores and group-level
 selection contribute to the losses; it is not camera-burst quality ground truth.
 
-Existing candidates are **not promoted**. No additional algorithm experiment is
-prepared in this batch. The next change requires a clear product decision:
+Existing candidates are **not promoted**. The subsequent authorized offline
+experiment completed evaluation of direct content coverage separately from quality
+and final selection. It does not change the adjacent grouping definition. The earlier
+product-decision questions do not block this bounded experiment.
 
-1. Is the current adjacent-link definition authoritative even when different
-   actions connect, or should a new visual group constraint be designed? A new
-   constraint is not an unapproved restoration of semantic grouping.
-2. When exposure destroys correspondence evidence, keep conservative split/
-   coverage, or explicitly allow a time-only exception with false-merge risk?
-   Previous `continue` messages do not select an exception.
-
-Until then, retain existing behavior. Any subsequently authorized candidate needs
-one frozen hypothesis, bounded resources, explicit admission/rejection criteria,
-a fresh broader event/subject evaluation, and hash-cache revision separation.
-Do not keep rotating algorithms on the inspected holdouts.
+The frozen protocol requires independent false-coverage and unique-content-loss
+measurements, conservative unknown retention, explicit candidate/resource caps,
+full recomputation under mutations, and fresh still-photo events. There is no
+permission to tune repeatedly on these inspected holdouts or promote a new rule.
+The baseline failed its predeclared gates, including a small-content false cover
+and all-retained fresh RAW events. Its bounded batch is complete; this is not a
+product-decision blocker. Any production adoption remains a separate design and
+acceptance decision.
 
 ## Verification limits
 
-Latest production-code full guarded suite remains **745 passed, 102 skipped**
-from `accad08`; this is historical full-suite evidence, not a new full run.
+Latest full guarded suite is **753 passed, 102 skipped**, run before the
+one-time authorized push through `a1ecf76`; subsequent offline work is not pushed.
 `4b76ce8` changes isolated benchmark code/tests and evidence, with **29 focused
 checks**, **2 repository-boundary checks**, Ruff and exact real-data parity.
 Source photo/video bytes were verified unchanged. No actual XMP write, live
 service operation, deployment or push occurred in these continuation batches.
+
+The direct-coverage continuation adds **32 focused guarded checks** and a
+40-case immutable-input experiment. Exact prior production-path parity holds for
+25 video pairs and both full sequences (184 frames). No full-suite rerun is
+claimed for these isolated scripts; source/application code is unchanged.

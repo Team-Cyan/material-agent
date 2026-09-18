@@ -1,0 +1,51 @@
+{
+  "cases": 40,
+  "frame_instances_including_repeated_pairs": 263,
+  "directed_edges": 1164,
+  "relation_counts": {
+    "cover": 70,
+    "unknown": 1094
+  },
+  "structural_violations": 0,
+  "independent_negative_cover_edges": 2,
+  "selected_rejects": 13,
+  "independently_checked_selected_rejects": 2,
+  "false_covered_selected_rejects": 1,
+  "unjudged_selected_rejects": 11,
+  "known_unique_content_loss_cases": [
+    "synthetic-expression"
+  ],
+  "route_counts": {
+    "hash_prior": 1056,
+    "high_hash_temporal_bypass": 108
+  },
+  "route_match_seconds": {
+    "hash_prior": 10.388211391167715,
+    "high_hash_temporal_bypass": 1.0461323426570743
+  },
+  "abstention_fraction": 0.9398625429553265,
+  "maximum_case_seconds": 43.594796790974215,
+  "process_peak_rss_bytes": 773259264,
+  "resource_overruns": 0,
+  "fresh_real_events": 2,
+  "required_fresh_real_events": 10,
+  "sequence_parity": [
+    {
+      "sequence": "s07-d72",
+      "frames": 63,
+      "preview_sha256_and_production_selection_equal": true
+    },
+    {
+      "sequence": "s22-d23",
+      "frames": 121,
+      "preview_sha256_and_production_selection_equal": true
+    }
+  ],
+  "old_pair_preview_and_production_selection_parity": 25,
+  "synthetic_positive_redundancy_eliminated": 1,
+  "synthetic_positive_redundancy_available": 4,
+  "synthetic_positive_input_reduction_fraction": 0.125,
+  "accepted": false,
+  "decision": "Stop this baseline; preserve frozen failure evidence; no production promotion or automatic model rotation.",
+  "results_sha256": "435b2eb039d2bf48e74f4ad9fa970986b9e4291eb94f31fde2773797bba1f801"
+}
