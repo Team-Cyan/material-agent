@@ -1,0 +1,58 @@
+{
+  "schema": "material-agent.direct-coverage.v1",
+  "protocol": {
+    "window_seconds": 10.0,
+    "neighbors_forward": 3,
+    "max_frames": 256,
+    "max_pairs": 600,
+    "max_seconds": 90.0,
+    "max_side": 512,
+    "keypoints": 600,
+    "ratio": 0.7,
+    "min_matches": 20,
+    "min_inlier_ratio": 0.75,
+    "min_hull_fraction": 0.3,
+    "min_overlap": 0.98,
+    "min_dynamic_range": 16.0,
+    "max_clipped_fraction": 0.4,
+    "mean_residual": 2.0,
+    "p95_residual": 6.0,
+    "tile_residual": 4.0,
+    "tile_grid": 8,
+    "quality_sharpness_ratio": 0.95,
+    "quality_exposure_tolerance": 0.5
+  },
+  "hypothesis": "direct geometry-supported witnesses plus independent quality dominance reduce unique loss without transitive reject",
+  "production_change": false,
+  "budgets": {
+    "case_wall_seconds": 90,
+    "process_peak_rss_bytes": 2000000000,
+    "max_frames": 256,
+    "max_pairs": 600,
+    "native_call_cancellation": "not hard cancellable; check at call boundaries, overrun invalidates edge"
+  },
+  "acceptance": {
+    "structural_violations": 0,
+    "known_negative_cover_edges": 0,
+    "known_unique_loss": 0,
+    "synthetic_duplicate_reduction_minimum": 0.5,
+    "real_holdout_minimum_events_for_promotion": 10,
+    "over_retention": "report vs independently acceptable keeper sets; undefined when proxy abstains",
+    "no_threshold_tuning_on_holdout": true
+  },
+  "comparison": [
+    "production adjacent hash + group selection",
+    "pHash direct relations + conservative selector",
+    "SIFT direct relations + conservative selector",
+    "SIFT cover-connected groups + old group selection (unsafe selector ablation)"
+  ],
+  "references": "construction labels, official action negatives, fresh independent Codex coverage judgments with tie/unknown; never system edges as truth",
+  "cases": [
+    "deterministic identity, exposure, noise, shadows, moving foliage/water-like texture, parallax, occlusion, small gesture/expression patches",
+    "known real CR2 exposure bracket",
+    "known complete cooking windows",
+    "two new public HDR+ photo events"
+  ],
+  "research_report_sha256": "824de4accde4e7d482d2b86ae63b6350ceb597922944a2f03ca479bc79d5f6fc",
+  "weights": "none; installed OpenCV 4.13.0 / opencv-python 4.13.0.92, SIFT CPU"
+}

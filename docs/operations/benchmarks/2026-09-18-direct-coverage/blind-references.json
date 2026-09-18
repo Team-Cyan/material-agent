@@ -1,0 +1,314 @@
+{
+  "1": {
+    "a": {
+      "group": 1,
+      "reference_source": "model_generated",
+      "readable_ids": [
+        "A11",
+        "A12",
+        "A13"
+      ],
+      "directed_relations": [
+        {
+          "source": "A11",
+          "target": "A12",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u6cb3\u5cb8\u96ea\u6797\u6784\u56fe\uff0cA12\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        },
+        {
+          "source": "A12",
+          "target": "A11",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u6cb3\u5cb8\u96ea\u6797\u6784\u56fe\uff0cA11\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        },
+        {
+          "source": "A11",
+          "target": "A13",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u6cb3\u5cb8\u96ea\u6797\u6784\u56fe\uff0cA13\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        },
+        {
+          "source": "A13",
+          "target": "A11",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u6cb3\u5cb8\u96ea\u6797\u6784\u56fe\uff0cA11\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        },
+        {
+          "source": "A12",
+          "target": "A13",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u6cb3\u5cb8\u96ea\u6797\u6784\u56fe\uff0cA13\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        },
+        {
+          "source": "A13",
+          "target": "A12",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u6cb3\u5cb8\u96ea\u6797\u6784\u56fe\uff0cA12\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        }
+      ],
+      "quality_preferences": [
+        {
+          "first": "A11",
+          "second": "A12",
+          "preference": "tie"
+        },
+        {
+          "first": "A11",
+          "second": "A13",
+          "preference": "tie"
+        },
+        {
+          "first": "A12",
+          "second": "A13",
+          "preference": "tie"
+        }
+      ],
+      "static_scene": "yes",
+      "acceptable_keeper_sets": [
+        [
+          "A11"
+        ],
+        [
+          "A12"
+        ],
+        [
+          "A13"
+        ]
+      ],
+      "uncertainty": "\u6c34\u9762\u7eb9\u7406\u5b58\u5728\u77ac\u65f6\u7ec6\u5fae\u53d8\u5316\uff0c\u4f46\u4e0d\u6784\u6210\u9700\u8981\u5355\u72ec\u4fdd\u7559\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+    },
+    "b": {
+      "group": 1,
+      "readable_ids": [
+        "B11",
+        "B12",
+        "B13"
+      ],
+      "directed_relations": [
+        {
+          "source": "B11",
+          "target": "B12",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        },
+        {
+          "source": "B11",
+          "target": "B13",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        },
+        {
+          "source": "B12",
+          "target": "B11",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        },
+        {
+          "source": "B12",
+          "target": "B13",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        },
+        {
+          "source": "B13",
+          "target": "B11",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        },
+        {
+          "source": "B13",
+          "target": "B12",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        }
+      ],
+      "quality_preferences": [
+        {
+          "first": "B11",
+          "second": "B12",
+          "preference": "tie"
+        },
+        {
+          "first": "B11",
+          "second": "B13",
+          "preference": "tie"
+        },
+        {
+          "first": "B12",
+          "second": "B13",
+          "preference": "tie"
+        }
+      ],
+      "static_scene": "yes",
+      "acceptable_keeper_sets": [
+        [
+          "B11"
+        ],
+        [
+          "B12"
+        ],
+        [
+          "B13"
+        ]
+      ],
+      "uncertainty": "Only very small rendering or exposure differences are visible; none changes meaningful scene content or supports a reliable quality preference.",
+      "reference_source": "model_generated"
+    }
+  },
+  "2": {
+    "a": {
+      "group": 2,
+      "reference_source": "model_generated",
+      "readable_ids": [
+        "A21",
+        "A22",
+        "A23"
+      ],
+      "directed_relations": [
+        {
+          "source": "A21",
+          "target": "A22",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u5c71\u8c37\u5ca9\u5761\u6784\u56fe\uff0cA22\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        },
+        {
+          "source": "A22",
+          "target": "A21",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u5c71\u8c37\u5ca9\u5761\u6784\u56fe\uff0cA21\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        },
+        {
+          "source": "A21",
+          "target": "A23",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u5c71\u8c37\u5ca9\u5761\u6784\u56fe\uff0cA23\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        },
+        {
+          "source": "A23",
+          "target": "A21",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u5c71\u8c37\u5ca9\u5761\u6784\u56fe\uff0cA21\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        },
+        {
+          "source": "A22",
+          "target": "A23",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u5c71\u8c37\u5ca9\u5761\u6784\u56fe\uff0cA23\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        },
+        {
+          "source": "A23",
+          "target": "A22",
+          "reference": "cover",
+          "reason": "\u76f8\u540c\u9759\u6001\u5c71\u8c37\u5ca9\u5761\u6784\u56fe\uff0cA22\u6ca1\u6709\u53ef\u786e\u8ba4\u7684\u72ec\u7279\u8bb0\u5f55\u5185\u5bb9\u3002"
+        }
+      ],
+      "quality_preferences": [
+        {
+          "first": "A21",
+          "second": "A22",
+          "preference": "tie"
+        },
+        {
+          "first": "A21",
+          "second": "A23",
+          "preference": "tie"
+        },
+        {
+          "first": "A22",
+          "second": "A23",
+          "preference": "tie"
+        }
+      ],
+      "static_scene": "yes",
+      "acceptable_keeper_sets": [
+        [
+          "A21"
+        ],
+        [
+          "A22"
+        ],
+        [
+          "A23"
+        ]
+      ],
+      "uncertainty": "\u4ec5\u89c1\u8f7b\u5fae\u660e\u6697\u6216\u538b\u7f29\u89c2\u611f\u5dee\u5f02\uff0c\u672a\u53d1\u73b0\u5f71\u54cd\u8bb0\u5f55\u5185\u5bb9\u6216\u8d28\u91cf\u53d6\u820d\u7684\u660e\u786e\u5dee\u522b\u3002"
+    },
+    "b": {
+      "group": 2,
+      "readable_ids": [
+        "B21",
+        "B22",
+        "B23"
+      ],
+      "directed_relations": [
+        {
+          "source": "B21",
+          "target": "B22",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        },
+        {
+          "source": "B21",
+          "target": "B23",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        },
+        {
+          "source": "B22",
+          "target": "B21",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        },
+        {
+          "source": "B22",
+          "target": "B23",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        },
+        {
+          "source": "B23",
+          "target": "B21",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        },
+        {
+          "source": "B23",
+          "target": "B22",
+          "reference": "cover",
+          "reason": "The same static landscape composition and all meaningful visible features are preserved."
+        }
+      ],
+      "quality_preferences": [
+        {
+          "first": "B21",
+          "second": "B22",
+          "preference": "tie"
+        },
+        {
+          "first": "B21",
+          "second": "B23",
+          "preference": "tie"
+        },
+        {
+          "first": "B22",
+          "second": "B23",
+          "preference": "tie"
+        }
+      ],
+      "static_scene": "yes",
+      "acceptable_keeper_sets": [
+        [
+          "B21"
+        ],
+        [
+          "B22"
+        ],
+        [
+          "B23"
+        ]
+      ],
+      "uncertainty": "Only very small rendering or exposure differences are visible; none changes meaningful scene content or supports a reliable quality preference.",
+      "reference_source": "model_generated"
+    }
+  }
+}
