@@ -1,0 +1,49 @@
+{
+  "source": "https://www.hdrplusdata.org/dataset.html",
+  "license": "CC-BY-SA-4.0",
+  "selection": "first two lexicographic events with at least 3 frames excluding all prior 24 events; first three payloads; frozen before inspection",
+  "images": [
+    {
+      "event": "0006_20160721_175239_909",
+      "file": "payload_N000.dng",
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0006_20160721_175239_909/payload_N000.dng",
+      "sha256": "a86d2dfc8b90f1f6d7e50942f883c962f1a83305745bfff50056bca0932a5ba9",
+      "bytes": 7667214
+    },
+    {
+      "event": "0006_20160721_175239_909",
+      "file": "payload_N001.dng",
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0006_20160721_175239_909/payload_N001.dng",
+      "sha256": "d2c6294a9b9c95d08ebe7f1ddb69bbd5320a3711f358c2452288ec6af2f589ed",
+      "bytes": 7661818
+    },
+    {
+      "event": "0006_20160721_175239_909",
+      "file": "payload_N002.dng",
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0006_20160721_175239_909/payload_N002.dng",
+      "sha256": "51a088cc1264347ca9f6dae0d9a3d53efa3cb739176a186727f05d12a1519b5e",
+      "bytes": 7666356
+    },
+    {
+      "event": "0006_20160721_175246_335",
+      "file": "payload_N000.dng",
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0006_20160721_175246_335/payload_N000.dng",
+      "sha256": "747f3968df823d8b287189493e616463779e1dfb797cf549a954d491c411aa8a",
+      "bytes": 7846492
+    },
+    {
+      "event": "0006_20160721_175246_335",
+      "file": "payload_N001.dng",
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0006_20160721_175246_335/payload_N001.dng",
+      "sha256": "2f3c1136cae387a57283cc312d94e9cfe1ac8c02c55b1660ad7f6c1db13cb77b",
+      "bytes": 7843478
+    },
+    {
+      "event": "0006_20160721_175246_335",
+      "file": "payload_N002.dng",
+      "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0006_20160721_175246_335/payload_N002.dng",
+      "sha256": "a7620f284e29d81bc0422da4adbaa6e5d02e3c9f61582b4562c122d3f6b5b968",
+      "bytes": 7841028
+    }
+  ]
+}

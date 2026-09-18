@@ -1,0 +1,616 @@
+{
+  "panels": {
+    "a": [
+      {
+        "ids": [
+          "A01L",
+          "A01R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A01L",
+            "target": "A01R",
+            "reference": "cover",
+            "reason": "Same static kitchen view with the same meaningful scene content visible."
+          },
+          {
+            "source": "A01R",
+            "target": "A01L",
+            "reference": "cover",
+            "reason": "Same static kitchen view with the same meaningful scene content visible."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "A02L",
+          "A02R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A02L",
+            "target": "A02R",
+            "reference": "cover",
+            "reason": "Same static kitchen view; no meaningful object or action differs."
+          },
+          {
+            "source": "A02R",
+            "target": "A02L",
+            "reference": "cover",
+            "reason": "Same static kitchen view; no meaningful object or action differs."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "A03L",
+          "A03R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A03L",
+            "target": "A03R",
+            "reference": "cover",
+            "reason": "Both show the same static kitchen composition and visible contents."
+          },
+          {
+            "source": "A03R",
+            "target": "A03L",
+            "reference": "cover",
+            "reason": "Both show the same static kitchen composition and visible contents."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "A04L",
+          "A04R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A04L",
+            "target": "A04R",
+            "reference": "cover",
+            "reason": "The static kitchen scene and all meaningful visible elements match."
+          },
+          {
+            "source": "A04R",
+            "target": "A04L",
+            "reference": "cover",
+            "reason": "The static kitchen scene and all meaningful visible elements match."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "A05L",
+          "A05R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A05L",
+            "target": "A05R",
+            "reference": "cover",
+            "reason": "Same static kitchen view with no meaningful content change."
+          },
+          {
+            "source": "A05R",
+            "target": "A05L",
+            "reference": "cover",
+            "reason": "Same static kitchen view with no meaningful content change."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "A06L",
+          "A06R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A06L",
+            "target": "A06R",
+            "reference": "cover",
+            "reason": "Both preserve the same static kitchen scene and visible objects."
+          },
+          {
+            "source": "A06R",
+            "target": "A06L",
+            "reference": "cover",
+            "reason": "Both preserve the same static kitchen scene and visible objects."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "A07L",
+          "A07R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A07L",
+            "target": "A07R",
+            "reference": "cover",
+            "reason": "Same static kitchen composition; no meaningful content is lost."
+          },
+          {
+            "source": "A07R",
+            "target": "A07L",
+            "reference": "cover",
+            "reason": "Same static kitchen composition; no meaningful content is lost."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "A08L",
+          "A08R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A08L",
+            "target": "A08R",
+            "reference": "cover",
+            "reason": "The same static kitchen and meaningful visible details appear in both."
+          },
+          {
+            "source": "A08R",
+            "target": "A08L",
+            "reference": "cover",
+            "reason": "The same static kitchen and meaningful visible details appear in both."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "A09L",
+          "A09R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A09L",
+            "target": "A09R",
+            "reference": "cover",
+            "reason": "Both frames preserve the same static scene without meaningful change."
+          },
+          {
+            "source": "A09R",
+            "target": "A09L",
+            "reference": "cover",
+            "reason": "Both frames preserve the same static scene without meaningful change."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "A10L",
+          "A10R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A10L",
+            "target": "A10R",
+            "reference": "cover",
+            "reason": "Same static kitchen view and the same meaningful visible content."
+          },
+          {
+            "source": "A10R",
+            "target": "A10L",
+            "reference": "cover",
+            "reason": "Same static kitchen view and the same meaningful visible content."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "A11L",
+          "A11R"
+        ],
+        "directed_relations": [
+          {
+            "source": "A11L",
+            "target": "A11R",
+            "reference": "cover",
+            "reason": "The static kitchen composition and meaningful scene content match."
+          },
+          {
+            "source": "A11R",
+            "target": "A11L",
+            "reference": "cover",
+            "reason": "The static kitchen composition and meaningful scene content match."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "none",
+        "reference_source": "model_generated"
+      }
+    ],
+    "b": [
+      {
+        "ids": [
+          "B01L",
+          "B01R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B01L",
+            "target": "B01R",
+            "reference": "cover",
+            "reason": "The same fixed kitchen view and all visible objects are preserved; no target-only subject or action is visible."
+          },
+          {
+            "source": "B01R",
+            "target": "B01L",
+            "reference": "cover",
+            "reason": "The same fixed kitchen view and all visible objects are preserved; no target-only subject or action is visible."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "B02L",
+          "B02R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B02L",
+            "target": "B02R",
+            "reference": "cover",
+            "reason": "Both show the same empty kitchen from the same framing with no meaningful content unique to the target."
+          },
+          {
+            "source": "B02R",
+            "target": "B02L",
+            "reference": "cover",
+            "reason": "Both show the same empty kitchen from the same framing with no meaningful content unique to the target."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "B03L",
+          "B03R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B03L",
+            "target": "B03R",
+            "reference": "cover",
+            "reason": "The fixed kitchen scene, framing, and visible countertop and cabinet details are equivalent."
+          },
+          {
+            "source": "B03R",
+            "target": "B03L",
+            "reference": "cover",
+            "reason": "The fixed kitchen scene, framing, and visible countertop and cabinet details are equivalent."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "B04L",
+          "B04R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B04L",
+            "target": "B04R",
+            "reference": "cover",
+            "reason": "No person, gesture, action, or object appears only in the target; the static kitchen content matches."
+          },
+          {
+            "source": "B04R",
+            "target": "B04L",
+            "reference": "cover",
+            "reason": "No person, gesture, action, or object appears only in the target; the static kitchen content matches."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "B05L",
+          "B05R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B05L",
+            "target": "B05R",
+            "reference": "cover",
+            "reason": "The same empty fixed-camera kitchen scene is visible with no meaningful target-only content."
+          },
+          {
+            "source": "B05R",
+            "target": "B05L",
+            "reference": "cover",
+            "reason": "The same empty fixed-camera kitchen scene is visible with no meaningful target-only content."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "B06L",
+          "B06R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B06L",
+            "target": "B06R",
+            "reference": "cover",
+            "reason": "Both preserve the same framing and visible kitchen contents, with no unique event or subject in the target."
+          },
+          {
+            "source": "B06R",
+            "target": "B06L",
+            "reference": "cover",
+            "reason": "Both preserve the same framing and visible kitchen contents, with no unique event or subject in the target."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "B07L",
+          "B07R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B07L",
+            "target": "B07R",
+            "reference": "cover",
+            "reason": "The same later kitchen state, including the sink-area items and plant, is fully represented."
+          },
+          {
+            "source": "B07R",
+            "target": "B07L",
+            "reference": "cover",
+            "reason": "The same later kitchen state, including the sink-area items and plant, is fully represented."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "B08L",
+          "B08R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B08L",
+            "target": "B08R",
+            "reference": "cover",
+            "reason": "The fixed kitchen view and all meaningful visible objects match, with no target-only action."
+          },
+          {
+            "source": "B08R",
+            "target": "B08L",
+            "reference": "cover",
+            "reason": "The fixed kitchen view and all meaningful visible objects match, with no target-only action."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "B09L",
+          "B09R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B09L",
+            "target": "B09R",
+            "reference": "cover",
+            "reason": "Both frames show equivalent scene content and framing; neither contains a unique subject or event."
+          },
+          {
+            "source": "B09R",
+            "target": "B09L",
+            "reference": "cover",
+            "reason": "Both frames show equivalent scene content and framing; neither contains a unique subject or event."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "B10L",
+          "B10R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B10L",
+            "target": "B10R",
+            "reference": "cover",
+            "reason": "The same empty kitchen and sink-area arrangement are visible without meaningful target-only content."
+          },
+          {
+            "source": "B10R",
+            "target": "B10L",
+            "reference": "cover",
+            "reason": "The same empty kitchen and sink-area arrangement are visible without meaningful target-only content."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      },
+      {
+        "ids": [
+          "B11L",
+          "B11R"
+        ],
+        "directed_relations": [
+          {
+            "source": "B11L",
+            "target": "B11R",
+            "reference": "cover",
+            "reason": "The same static kitchen scene and visible objects are preserved; no unique target event is present."
+          },
+          {
+            "source": "B11R",
+            "target": "B11L",
+            "reference": "cover",
+            "reason": "The same static kitchen scene and visible objects are preserved; no unique target event is present."
+          }
+        ],
+        "quality_preference": "tie",
+        "uncertainty": "No material uncertainty in the rendered pair; judgment is limited to visible content.",
+        "reference_source": "model_generated"
+      }
+    ]
+  },
+  "consensus": [
+    {
+      "sequence": "s07-d72",
+      "source": "118",
+      "target": "176",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    },
+    {
+      "sequence": "s07-d72",
+      "source": "118",
+      "target": "59",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    },
+    {
+      "sequence": "s07-d72",
+      "source": "118",
+      "target": "88",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    },
+    {
+      "sequence": "s07-d72",
+      "source": "118",
+      "target": "29",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    },
+    {
+      "sequence": "s07-d72",
+      "source": "118",
+      "target": "147",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    },
+    {
+      "sequence": "s22-d23",
+      "source": "29",
+      "target": "118",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    },
+    {
+      "sequence": "s22-d23",
+      "source": "29",
+      "target": "59",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    },
+    {
+      "sequence": "s22-d23",
+      "source": "29",
+      "target": "88",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    },
+    {
+      "sequence": "s22-d23",
+      "source": "147",
+      "target": "176",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    },
+    {
+      "sequence": "s22-d23",
+      "source": "147",
+      "target": "206",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    },
+    {
+      "sequence": "s22-d23",
+      "source": "29",
+      "target": "0",
+      "panel_a": "cover",
+      "panel_b": "cover",
+      "reference": "cover",
+      "reference_source": "model_generated"
+    }
+  ],
+  "human_ground_truth": false
+}

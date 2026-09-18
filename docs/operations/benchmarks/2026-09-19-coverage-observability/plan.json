@@ -1,0 +1,46 @@
+{
+  "schema": "material-agent.coverage-observability.v1",
+  "hypothesis": "Color residual connected components preserve localized changes while a smoothed global residual tolerates high-frequency JPEG and sensor noise; geometry and the final-keeper selector remain unchanged.",
+  "frozen_before_development_execution": true,
+  "production_change": false,
+  "protocol": {
+    "max_side": 1024,
+    "smoothing_sigma": 1.0,
+    "global_mean_limit": 2.0,
+    "global_p95_limit": 6.0,
+    "local_absolute_floor": 12.0,
+    "local_mad_multiplier": 6.0,
+    "connected_component_minimum_pixels": 8,
+    "maximum_candidate_pairs": 48,
+    "maximum_case_seconds": 15,
+    "process_rss_limit_bytes": 2000000000
+  },
+  "development": {
+    "seeds": [2049, 2050],
+    "side_lengths": [320, 1280],
+    "controls": ["identity", "jpeg", "noise", "subpixel", "exposure", "small_luminance", "isoluminant_color"],
+    "positives": ["identity", "jpeg", "noise", "subpixel", "exposure"],
+    "negatives": ["small_luminance", "isoluminant_color"],
+    "small_content_patch_side": 4,
+    "jpeg_quality_pair": [95, 85],
+    "noise_standard_deviation": 3,
+    "subpixel_translation_xy": [0.25, 0.25],
+    "exposure_gain_offset": [0.7, 10],
+    "reference_source": "construction; symbolic content, not portrait or action accuracy"
+  },
+  "stopping": {
+    "development_negative_cover_maximum": 0,
+    "development_positive_cover_minimum_fraction": 0.5,
+    "on_failure": "stop this hypothesis without threshold tuning or consuming fresh holdout",
+    "on_pass": "freeze implementation and evaluate two previously unused HDR+ events; first three payloads; exclude prior 24 events; independent Codex panels permit unknown/tie"
+  },
+  "holdout": {
+    "selection": "first two eligible lexicographic events excluding all previously inspected HDR+ events",
+    "download_limit_bytes": 200000000,
+    "negative_consensus_cover_maximum": 0,
+    "required_retention_improvement_events": 1,
+    "minimum_events_for_product_promotion": 10,
+    "new_model_weights": false,
+    "threshold_retuning": false
+  }
+}

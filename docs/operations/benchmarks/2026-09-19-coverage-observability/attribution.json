@@ -1,0 +1,1173 @@
+{
+  "schema": "material-agent.coverage-attribution.v1",
+  "no_threshold_changes": true,
+  "no_selection_changes": true,
+  "sources_unchanged": true,
+  "script_sha256": "17796d64e030627fece0e8e1fde603e69d40f2d638d6121e567142c75b65bcac",
+  "results": {
+    "exposure-bracket": {
+      "baseline": {
+        "relation": "unknown",
+        "reason": "unexplained_local_change",
+        "evidence": {
+          "hash_distance": 24,
+          "route": "high_hash_temporal_bypass",
+          "matches": 253,
+          "inlier_ratio": 0.9525691699604744,
+          "inlier_hull_fractions": [
+            0.6600910436889925,
+            0.6606383568215445
+          ],
+          "target_overlap": 0.9995876099706745,
+          "photometric_gain": 3.935483870967742,
+          "residual_mean": 15.626474828654446,
+          "residual_p95": 60.580645161290334,
+          "maximum_tile_residual": 49.943630438859714
+        },
+        "match_seconds": 0.013989500002935529
+      },
+      "affine_residual": {
+        "mean": 15.626474828654446,
+        "p95": 60.580645161290334,
+        "p99": 90.78806451612881,
+        "max": 210.25806451612905
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 22.835814078611296,
+        "other_mean": 13.222039658548416,
+        "top_quartile_error_mass_fraction": 0.3654892654347169
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 15.376980639756,
+          "p95": 58.956449982937066,
+          "p99": 87.06745718813244,
+          "max": 198.73858305362006
+        },
+        "1.0": {
+          "mean": 15.068547462183574,
+          "p95": 56.40481368925287,
+          "p99": 82.27772214526509,
+          "max": 174.28485338617153
+        },
+        "2.0": {
+          "mean": 14.752980081541512,
+          "p95": 53.12464379874286,
+          "p99": 79.58154117483559,
+          "max": 144.9810988702404
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 8.324408072572753,
+        "p95": 22.66944444444379,
+        "p99": 88.51999999999923,
+        "max": 238.0
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 105156,
+          "largest_component": 92290
+        },
+        "12": {
+          "pixels": 70899,
+          "largest_component": 35427
+        },
+        "24": {
+          "pixels": 33702,
+          "largest_component": 15725
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.67578125,
+        0.6070381231671554
+      ],
+      "transform": [
+        [
+          1.005765940373601,
+          0.0028416922072439,
+          -1.2533416051351092
+        ],
+        [
+          0.0010272511014685415,
+          1.0045582515439813,
+          -0.5868864929814277
+        ],
+        [
+          5.774004180459862e-06,
+          8.696664159169943e-06,
+          1.0
+        ]
+      ]
+    },
+    "fresh-hdr-1": {
+      "baseline": {
+        "relation": "unknown",
+        "reason": "unexplained_local_change",
+        "evidence": {
+          "hash_distance": 0,
+          "route": "hash_prior",
+          "matches": 391,
+          "inlier_ratio": 0.9974424552429667,
+          "inlier_hull_fractions": [
+            0.6985571266937598,
+            0.7003369062229802
+          ],
+          "target_overlap": 0.9886668019480519,
+          "photometric_gain": 1.0,
+          "residual_mean": 3.0539084387795943,
+          "residual_p95": 10.0,
+          "maximum_tile_residual": 7.141276041666667
+        },
+        "match_seconds": 0.010620875051245093
+      },
+      "affine_residual": {
+        "mean": 3.0539084387795943,
+        "p95": 10.0,
+        "p99": 18.0,
+        "max": 79.0
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 4.541300779647107,
+        "other_mean": 2.5578599482709072,
+        "top_quartile_error_mass_fraction": 0.37190253442748555
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 2.2601926224503393,
+          "p95": 7.280003816599173,
+          "p99": 13.28718426626284,
+          "max": 60.94740123795344
+        },
+        "1.0": {
+          "mean": 1.2747879281645789,
+          "p95": 4.0150114384807924,
+          "p99": 7.970405646007349,
+          "max": 33.96141779445554
+        },
+        "2.0": {
+          "mean": 0.8392472688078417,
+          "p95": 2.347942319129981,
+          "p99": 5.305571980432491,
+          "max": 21.88399819959926
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 3.0956204276959536,
+        "p95": 10.0,
+        "p99": 18.0,
+        "max": 80.25
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 22974,
+          "largest_component": 2354
+        },
+        "12": {
+          "pixels": 5384,
+          "largest_component": 241
+        },
+        "24": {
+          "pixels": 698,
+          "largest_component": 212
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.99609375,
+        0.42337662337662335
+      ],
+      "transform": [
+        [
+          1.0069611669064822,
+          -0.0009639584079175413,
+          -2.4623829367981593
+        ],
+        [
+          0.004816773893184492,
+          1.0038105248015765,
+          -1.3322611066111116
+        ],
+        [
+          1.357426633700914e-05,
+          -3.5665881723769647e-07,
+          1.0
+        ]
+      ]
+    },
+    "fresh-hdr-2": {
+      "baseline": {
+        "relation": "unknown",
+        "reason": "unexplained_local_change",
+        "evidence": {
+          "hash_distance": 0,
+          "route": "hash_prior",
+          "matches": 403,
+          "inlier_ratio": 0.9975186104218362,
+          "inlier_hull_fractions": [
+            0.7701873822933051,
+            0.7707112947488619
+          ],
+          "target_overlap": 0.9946428571428572,
+          "photometric_gain": 0.9661016949152542,
+          "residual_mean": 2.8180444538345157,
+          "residual_p95": 7.644067796610173,
+          "maximum_tile_residual": 7.292924611581925
+        },
+        "match_seconds": 0.010953041957691312
+      },
+      "affine_residual": {
+        "mean": 2.8180444538345157,
+        "p95": 7.644067796610173,
+        "p99": 12.644067796610159,
+        "max": 41.728813559322035
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 4.000856101625765,
+        "other_mean": 2.4237310036105892,
+        "top_quartile_error_mass_fraction": 0.3549609189157037
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 2.5497728191458684,
+          "p95": 6.650520181598782,
+          "p99": 10.620504130864465,
+          "max": 30.59674609068935
+        },
+        "1.0": {
+          "mean": 2.3467385206851614,
+          "p95": 5.785139041311832,
+          "p99": 9.957692871565373,
+          "max": 18.879503763710005
+        },
+        "2.0": {
+          "mean": 2.296302226505308,
+          "p95": 5.658823295593435,
+          "p99": 8.871099987463298,
+          "max": 17.955675801240957
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 2.682545379960386,
+        "p95": 7.0,
+        "p99": 12.0,
+        "max": 41.0
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 19284,
+          "largest_component": 4162
+        },
+        "12": {
+          "pixels": 2283,
+          "largest_component": 507
+        },
+        "24": {
+          "pixels": 526,
+          "largest_component": 390
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.0,
+        0.2857142857142857
+      ],
+      "transform": [
+        [
+          1.0003169561813143,
+          -0.0075281734599974975,
+          2.6742444711998035
+        ],
+        [
+          -0.00045872525268039554,
+          1.001655569572882,
+          -0.26764191171682605
+        ],
+        [
+          -1.110761040997984e-06,
+          2.9226172456944865e-06,
+          0.9999999999999999
+        ]
+      ]
+    },
+    "synthetic-identity-arrays": {
+      "baseline": {
+        "relation": "cover",
+        "reason": "geometry_and_photometric_consistency",
+        "evidence": {
+          "hash_distance": 0,
+          "route": "hash_prior",
+          "matches": 601,
+          "inlier_ratio": 1.0,
+          "inlier_hull_fractions": [
+            0.9303039148553092,
+            0.9303039148553092
+          ],
+          "target_overlap": 1.0,
+          "photometric_gain": 1.0,
+          "residual_mean": 0.0,
+          "residual_p95": 0.0,
+          "maximum_tile_residual": 0.0
+        },
+        "match_seconds": 0.007515582954511046
+      },
+      "affine_residual": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 0.0,
+        "other_mean": 0.0,
+        "top_quartile_error_mass_fraction": 0.0
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        },
+        "1.0": {
+          "mean": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        },
+        "2.0": {
+          "mean": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 0,
+          "largest_component": 0
+        },
+        "12": {
+          "pixels": 0,
+          "largest_component": 0
+        },
+        "24": {
+          "pixels": 0,
+          "largest_component": 0
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.0,
+        0.0
+      ],
+      "transform": [
+        [
+          0.9999999999999992,
+          2.8417629715618216e-16,
+          6.312517281855912e-14
+        ],
+        [
+          -2.584492419767104e-16,
+          1.0000000000000002,
+          1.910774983566022e-14
+        ],
+        [
+          -1.66942246096524e-18,
+          1.6730308142492695e-18,
+          1.0
+        ]
+      ]
+    },
+    "synthetic-identity-jpeg": {
+      "baseline": {
+        "relation": "cover",
+        "reason": "geometry_and_photometric_consistency",
+        "evidence": {
+          "hash_distance": 0,
+          "route": "hash_prior",
+          "matches": 600,
+          "inlier_ratio": 1.0,
+          "inlier_hull_fractions": [
+            0.9266792282044273,
+            0.9266792282044273
+          ],
+          "target_overlap": 1.0,
+          "photometric_gain": 1.0,
+          "residual_mean": 0.0,
+          "residual_p95": 0.0,
+          "maximum_tile_residual": 0.0
+        },
+        "match_seconds": 0.008540207985788584
+      },
+      "affine_residual": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 0.0,
+        "other_mean": 0.0,
+        "top_quartile_error_mass_fraction": 0.0
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        },
+        "1.0": {
+          "mean": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        },
+        "2.0": {
+          "mean": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 0,
+          "largest_component": 0
+        },
+        "12": {
+          "pixels": 0,
+          "largest_component": 0
+        },
+        "24": {
+          "pixels": 0,
+          "largest_component": 0
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.0,
+        0.0
+      ],
+      "transform": [
+        [
+          0.9999999999999994,
+          6.13523702308488e-17,
+          6.782523366448712e-14
+        ],
+        [
+          -3.80162441616906e-17,
+          0.9999999999999992,
+          1.2825218612864674e-13
+        ],
+        [
+          -4.143631483580602e-19,
+          2.798944381448355e-20,
+          1.0
+        ]
+      ]
+    },
+    "synthetic-exposure-arrays": {
+      "baseline": {
+        "relation": "cover",
+        "reason": "geometry_and_photometric_consistency",
+        "evidence": {
+          "hash_distance": 4,
+          "route": "hash_prior",
+          "matches": 568,
+          "inlier_ratio": 1.0,
+          "inlier_hull_fractions": [
+            0.9303039148553092,
+            0.9303050293054995
+          ],
+          "target_overlap": 1.0,
+          "photometric_gain": 0.7032967032967034,
+          "residual_mean": 0.26329026442307624,
+          "residual_p95": 0.5494505494505404,
+          "maximum_tile_residual": 0.272699175824175
+        },
+        "match_seconds": 0.008552500046789646
+      },
+      "affine_residual": {
+        "mean": 0.26329026442307624,
+        "p95": 0.5494505494505404,
+        "p99": 0.6483516483516496,
+        "max": 1.0879120879120734
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 0.261154704670329,
+        "other_mean": 0.264002117673992,
+        "top_quartile_error_mass_fraction": 0.24797223820881992
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 0.17209898983430988,
+          "p95": 0.38196673129982545,
+          "p99": 0.4647732702307165,
+          "max": 0.773432528442143
+        },
+        "1.0": {
+          "mean": 0.08432974350544291,
+          "p95": 0.20382578096091836,
+          "p99": 0.2651155515967435,
+          "max": 0.4647659611712669
+        },
+        "2.0": {
+          "mean": 0.057450377303776,
+          "p95": 0.12779396111711055,
+          "p99": 0.16034420756030626,
+          "max": 0.24998904356355922
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 0.08024650493421054,
+        "p95": 0.5,
+        "p99": 0.5789473684210407,
+        "max": 1.3333333333333428
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 0,
+          "largest_component": 0
+        },
+        "12": {
+          "pixels": 0,
+          "largest_component": 0
+        },
+        "24": {
+          "pixels": 0,
+          "largest_component": 0
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.909375,
+        0.0
+      ],
+      "transform": [
+        [
+          1.0000502037464063,
+          7.11270632410075e-06,
+          -0.004586639854508832
+        ],
+        [
+          2.19271031758131e-05,
+          1.0000350475059334,
+          -0.0032499710058961654
+        ],
+        [
+          9.715732063917054e-08,
+          7.423119111014012e-08,
+          0.9999999999999999
+        ]
+      ]
+    },
+    "synthetic-exposure-jpeg": {
+      "baseline": {
+        "relation": "unknown",
+        "reason": "unexplained_local_change",
+        "evidence": {
+          "hash_distance": 6,
+          "route": "hash_prior",
+          "matches": 375,
+          "inlier_ratio": 1.0,
+          "inlier_hull_fractions": [
+            0.9078148895207309,
+            0.9076686770720727
+          ],
+          "target_overlap": 1.0,
+          "photometric_gain": 0.7142857142857143,
+          "residual_mean": 5.538528180803571,
+          "residual_p95": 13.857142857142847,
+          "maximum_tile_residual": 5.865803571428571
+        },
+        "match_seconds": 0.008959874976426363
+      },
+      "affine_residual": {
+        "mean": 5.538528180803571,
+        "p95": 13.857142857142847,
+        "p99": 18.42857142857143,
+        "max": 33.42857142857143
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 5.539556150328984,
+        "other_mean": 5.538185167268262,
+        "top_quartile_error_mass_fraction": 0.25024174959452317
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 2.848193082211797,
+          "p95": 7.1400360922883435,
+          "p99": 9.541840619972632,
+          "max": 17.168196998765552
+        },
+        "1.0": {
+          "mean": 0.4954177115534847,
+          "p95": 1.2172725587207767,
+          "p99": 1.6003790730600294,
+          "max": 3.0055829951785853
+        },
+        "2.0": {
+          "mean": 0.20670772930211567,
+          "p95": 0.5038373890616443,
+          "p99": 0.6647039692338202,
+          "max": 1.452447577866863
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 5.562612731476058,
+        "p95": 14.0,
+        "p99": 18.913478260869336,
+        "max": 33.0
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 38564,
+          "largest_component": 1475
+        },
+        "12": {
+          "pixels": 8801,
+          "largest_component": 13
+        },
+        "24": {
+          "pixels": 101,
+          "largest_component": 2
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.8375,
+        0.69375
+      ],
+      "transform": [
+        [
+          1.0001814407470362,
+          -5.587523025884121e-05,
+          0.0017453494509110782
+        ],
+        [
+          0.00010952954997229428,
+          1.0001033342982675,
+          -0.014687106508743159
+        ],
+        [
+          6.778657686325552e-07,
+          -7.910714727329453e-08,
+          1.0
+        ]
+      ]
+    },
+    "synthetic-noise-arrays": {
+      "baseline": {
+        "relation": "unknown",
+        "reason": "unexplained_local_change",
+        "evidence": {
+          "hash_distance": 2,
+          "route": "hash_prior",
+          "matches": 475,
+          "inlier_ratio": 1.0,
+          "inlier_hull_fractions": [
+            0.9250071968606037,
+            0.9251514191315799
+          ],
+          "target_overlap": 1.0,
+          "photometric_gain": 0.989010989010989,
+          "residual_mean": 2.22647707760989,
+          "residual_p95": 5.472527472527474,
+          "maximum_tile_residual": 2.3446497252747256
+        },
+        "match_seconds": 0.008887709118425846
+      },
+      "affine_residual": {
+        "mean": 2.22647707760989,
+        "p95": 5.472527472527474,
+        "p99": 7.307802197802153,
+        "max": 14.472527472527474
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 2.212499565426957,
+        "other_mean": 2.2311369763613995,
+        "top_quartile_error_mass_fraction": 0.24845964786387603
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 1.4584297585451196,
+          "p95": 3.5897231549846134,
+          "p99": 4.724455004682923,
+          "max": 9.71795902180537
+        },
+        "1.0": {
+          "mean": 0.7368904617593199,
+          "p95": 1.7825056578808942,
+          "p99": 2.303523996127357,
+          "max": 4.129961450964288
+        },
+        "2.0": {
+          "mean": 0.5262139065817197,
+          "p95": 1.1300881592755008,
+          "p99": 1.3943959454527772,
+          "max": 2.1179014006427934
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 2.17228088086872,
+        "p95": 5.0,
+        "p99": 7.0,
+        "max": 13.0
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 3284,
+          "largest_component": 6
+        },
+        "12": {
+          "pixels": 3,
+          "largest_component": 1
+        },
+        "24": {
+          "pixels": 0,
+          "largest_component": 0
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.0875,
+        0.20625
+      ],
+      "transform": [
+        [
+          0.9999460046381983,
+          -6.24835848784691e-05,
+          0.012134447421887039
+        ],
+        [
+          -6.372056936711414e-06,
+          0.999948659296207,
+          0.005766925772864809
+        ],
+        [
+          4.0892542698182055e-08,
+          -2.516797566939498e-07,
+          1.0
+        ]
+      ]
+    },
+    "synthetic-noise-jpeg": {
+      "baseline": {
+        "relation": "unknown",
+        "reason": "unexplained_local_change",
+        "evidence": {
+          "hash_distance": 4,
+          "route": "hash_prior",
+          "matches": 422,
+          "inlier_ratio": 1.0,
+          "inlier_hull_fractions": [
+            0.919931998532769,
+            0.91960651223917
+          ],
+          "target_overlap": 1.0,
+          "photometric_gain": 1.010989010989011,
+          "residual_mean": 4.829313079498625,
+          "residual_p95": 12.417582417582409,
+          "maximum_tile_residual": 5.456703296703297
+        },
+        "match_seconds": 0.009058707859367132
+      },
+      "affine_residual": {
+        "mean": 4.829313079498625,
+        "p95": 12.417582417582409,
+        "p99": 16.890109890109883,
+        "max": 38.79120879120879
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 4.832084890935986,
+        "other_mean": 4.828388805470049,
+        "top_quartile_error_mass_fraction": 0.25021188751807694
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 2.7349189952216424,
+          "p95": 6.88676527908649,
+          "p99": 9.368785575795576,
+          "max": 20.27433214529313
+        },
+        "1.0": {
+          "mean": 0.8972165884236992,
+          "p95": 2.2018623645609723,
+          "p99": 2.8974662045558808,
+          "max": 7.417320886340008
+        },
+        "2.0": {
+          "mean": 0.5661190359259901,
+          "p95": 1.2871945209115256,
+          "p99": 1.6434004189500626,
+          "max": 3.3058656547017335
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 4.8253691611225635,
+        "p95": 12.0,
+        "p99": 17.0,
+        "max": 38.5
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 31840,
+          "largest_component": 340
+        },
+        "12": {
+          "pixels": 5705,
+          "largest_component": 14
+        },
+        "24": {
+          "pixels": 66,
+          "largest_component": 2
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.11875,
+        0.509375
+      ],
+      "transform": [
+        [
+          1.0000712679272723,
+          -0.00014211729423955767,
+          0.010990032750143137
+        ],
+        [
+          0.00011287127705841347,
+          0.9999611722698374,
+          -0.015847405566498197
+        ],
+        [
+          6.694371980159779e-07,
+          -5.101103188308485e-07,
+          1.0
+        ]
+      ]
+    },
+    "synthetic-expression-arrays": {
+      "baseline": {
+        "relation": "cover",
+        "reason": "geometry_and_photometric_consistency",
+        "evidence": {
+          "hash_distance": 2,
+          "route": "hash_prior",
+          "matches": 594,
+          "inlier_ratio": 1.0,
+          "inlier_hull_fractions": [
+            0.9303039148553092,
+            0.930302470249334
+          ],
+          "target_overlap": 1.0,
+          "photometric_gain": 1.0,
+          "residual_mean": 0.00935546875,
+          "residual_p95": 0.0,
+          "maximum_tile_residual": 0.59875
+        },
+        "match_seconds": 0.007861207937821746
+      },
+      "affine_residual": {
+        "mean": 0.00935546875,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 129.0
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 0.026326068275915944,
+        "other_mean": 0.003698012969087737,
+        "top_quartile_error_mass_fraction": 0.7035490605427975
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 0.00935546875,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 105.82788544949817
+        },
+        "1.0": {
+          "mean": 0.009355468750000002,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 65.30472055011465
+        },
+        "2.0": {
+          "mean": 0.009355468750000005,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 29.304785257866257
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 0.019997070312499997,
+        "p95": 0.0,
+        "p99": 0.5,
+        "max": 129.0
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 15,
+          "largest_component": 15
+        },
+        "12": {
+          "pixels": 15,
+          "largest_component": 15
+        },
+        "24": {
+          "pixels": 12,
+          "largest_component": 12
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.45,
+        0.453125
+      ],
+      "transform": [
+        [
+          1.0000006788912752,
+          1.159352170421923e-06,
+          -0.0002902478100790836
+        ],
+        [
+          -7.014610816424879e-07,
+          1.0000018341179002,
+          -0.00020629658526699686
+        ],
+        [
+          -4.665665092446829e-09,
+          7.785757978831004e-09,
+          1.0
+        ]
+      ]
+    },
+    "synthetic-expression-jpeg": {
+      "baseline": {
+        "relation": "cover",
+        "reason": "geometry_and_photometric_consistency",
+        "evidence": {
+          "hash_distance": 2,
+          "route": "hash_prior",
+          "matches": 595,
+          "inlier_ratio": 1.0,
+          "inlier_hull_fractions": [
+            0.9266792282044273,
+            0.9266806125605892
+          ],
+          "target_overlap": 1.0,
+          "photometric_gain": 1.0,
+          "residual_mean": 0.011826171875,
+          "residual_p95": 0.0,
+          "maximum_tile_residual": 0.756875
+        },
+        "match_seconds": 0.009031291119754314
+      },
+      "affine_residual": {
+        "mean": 0.011826171875,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 133.0
+      },
+      "gradient_strata": {
+        "top_quartile_mean": 0.027643292206778074,
+        "other_mean": 0.00655050268271084,
+        "top_quartile_error_mass_fraction": 0.5846407927332783
+      },
+      "blur_sensitivity": {
+        "0.5": {
+          "mean": 0.010656627058987069,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 107.16477432430875
+        },
+        "1.0": {
+          "mean": 0.009637078122421072,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 66.29225755686596
+        },
+        "2.0": {
+          "mean": 0.009409250116486278,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 29.59610982388196
+        }
+      },
+      "quantile_mapping_residual": {
+        "mean": 0.0250390625,
+        "p95": 0.0,
+        "p99": 0.5,
+        "max": 133.0
+      },
+      "local_evidence": {
+        "6": {
+          "pixels": 28,
+          "largest_component": 21
+        },
+        "12": {
+          "pixels": 20,
+          "largest_component": 16
+        },
+        "24": {
+          "pixels": 12,
+          "largest_component": 12
+        }
+      },
+      "peak_residual_location_fraction": [
+        0.45,
+        0.453125
+      ],
+      "transform": [
+        [
+          1.000001201374909,
+          4.937105983261624e-07,
+          -0.0001328783008130082
+        ],
+        [
+          -9.251507524105002e-08,
+          1.0000013344063519,
+          -3.663102435821267e-05
+        ],
+        [
+          8.543325825075985e-10,
+          4.246894710940169e-09,
+          1.0
+        ]
+      ]
+    },
+    "isoluminant-color": {
+      "gray_absolute_max": 0,
+      "rgb_absolute_max": 200,
+      "diagnostics": {
+        "baseline": {
+          "relation": "cover",
+          "reason": "geometry_and_photometric_consistency",
+          "evidence": {
+            "hash_distance": 0,
+            "route": "hash_prior",
+            "matches": 600,
+            "inlier_ratio": 1.0,
+            "inlier_hull_fractions": [
+              0.9303035821630368,
+              0.9303035821630368
+            ],
+            "target_overlap": 1.0,
+            "photometric_gain": 1.0,
+            "residual_mean": 0.0,
+            "residual_p95": 0.0,
+            "maximum_tile_residual": 0.0
+          },
+          "match_seconds": 0.00864199991337955
+        },
+        "affine_residual": {
+          "mean": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        },
+        "gradient_strata": {
+          "top_quartile_mean": 0.0,
+          "other_mean": 0.0,
+          "top_quartile_error_mass_fraction": 0.0
+        },
+        "blur_sensitivity": {
+          "0.5": {
+            "mean": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "max": 0.0
+          },
+          "1.0": {
+            "mean": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "max": 0.0
+          },
+          "2.0": {
+            "mean": 0.0,
+            "p95": 0.0,
+            "p99": 0.0,
+            "max": 0.0
+          }
+        },
+        "quantile_mapping_residual": {
+          "mean": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        },
+        "local_evidence": {
+          "6": {
+            "pixels": 0,
+            "largest_component": 0
+          },
+          "12": {
+            "pixels": 0,
+            "largest_component": 0
+          },
+          "24": {
+            "pixels": 0,
+            "largest_component": 0
+          }
+        },
+        "peak_residual_location_fraction": [
+          0.0,
+          0.0
+        ],
+        "transform": [
+          [
+            1.0000000000000013,
+            -3.5076558111145866e-16,
+            -2.125182695903436e-13
+          ],
+          [
+            1.1821146079783372e-16,
+            1.000000000000001,
+            -2.6740880366270843e-13
+          ],
+          [
+            1.4688670025821908e-18,
+            -1.226419122181383e-18,
+            1.0
+          ]
+        ]
+      }
+    },
+    "resolution-loss": [
+      {
+        "input_side": 320,
+        "prepared_shape": [
+          320,
+          320
+        ],
+        "nonzero_pixels": 16,
+        "maximum_difference": 123.0,
+        "sum_difference": 899.0
+      },
+      {
+        "input_side": 640,
+        "prepared_shape": [
+          512,
+          512
+        ],
+        "nonzero_pixels": 27,
+        "maximum_difference": 79.0,
+        "sum_difference": 410.0
+      },
+      {
+        "input_side": 1280,
+        "prepared_shape": [
+          512,
+          512
+        ],
+        "nonzero_pixels": 14,
+        "maximum_difference": 26.0,
+        "sum_difference": 88.0
+      }
+    ]
+  }
+}
