@@ -1,0 +1,16 @@
+{
+  "pair_id": "U01",
+  "kind": "video",
+  "scene_id": "mpii-kitchen",
+  "sequence": "s22-d23",
+  "frames": [
+    3245,
+    3392
+  ],
+  "video_sha256": "53c201e259a09f51b60f8aa5fa7c02c7b769ae6c90cfe29e793112c6494f5bec",
+  "license": "scientific-use; no redistribution",
+  "source": "https://datasets.d2.mpi-inf.mpg.de/MPII-Cooking-2/videos/s22-d23-cam-002.avi",
+  "reference_status": "awaiting_user; outside the 12-pair blinded assessment",
+  "sampling": "First existing same-segment cut-dice pair; selected to ask whether different posture within the same annotated action needs separate retention, not to relabel distinct actions as a new preference.",
+  "annotation_context": "Both frames are annotated cut diceV in the same segment; annotation does not prove visual equivalence."
+}

@@ -1,0 +1,375 @@
+[
+  {
+    "ids": ["A01L", "A01R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "A01L",
+        "target": "A01R",
+        "reference": "cover",
+        "confidence": 0.94,
+        "reason": "Mountain, shoreline, water extent, islands, and tree line are visibly preserved; no concrete meaningful-content change is discernible."
+      },
+      {
+        "source": "A01R",
+        "target": "A01L",
+        "reference": "cover",
+        "confidence": 0.94,
+        "reason": "Mountain, shoreline, water extent, islands, and tree line are visibly preserved; no concrete meaningful-content change is discernible."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Fine water ripples and distant foliage are too small to compare reliably at this rendering scale; any such difference may be incidental texture or encoding variation.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A02L", "A02R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "A02L",
+        "target": "A02R",
+        "reference": "cover",
+        "confidence": 0.93,
+        "reason": "The gate, stonework, trunks, foliage masses, and background opening align with no identified content change."
+      },
+      {
+        "source": "A02R",
+        "target": "A02L",
+        "reference": "cover",
+        "confidence": 0.93,
+        "reason": "The gate, stonework, trunks, foliage masses, and background opening align with no identified content change."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Deep shadows conceal fine detail, so small changes in the darkest foliage or behind the gate are not observable.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A03L", "A03R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "A03L",
+        "target": "A03R",
+        "reference": "cover",
+        "confidence": 0.94,
+        "reason": "The hiker's visible pose, pack, trail, rocks, and trees appear preserved."
+      },
+      {
+        "source": "A03R",
+        "target": "A03L",
+        "reference": "cover",
+        "confidence": 0.94,
+        "reason": "The hiker's visible pose, pack, trail, rocks, and trees appear preserved."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "The hiker's face and hands are too small to assess expression or fine gesture; no readable difference is visible there.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A04L", "A04R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "A04L",
+        "target": "A04R",
+        "reference": "cover",
+        "confidence": 0.84,
+        "reason": "Architecture, sculptures, and all readily readable visitor placements appear preserved."
+      },
+      {
+        "source": "A04R",
+        "target": "A04L",
+        "reference": "cover",
+        "confidence": 0.84,
+        "reason": "Architecture, sculptures, and all readily readable visitor placements appear preserved."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "The crowded scene contains many small, partially occluded people; subtle hand, face, or limb differences are not reliably observable.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A05L", "A05R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "A05L",
+        "target": "A05R",
+        "reference": "cover",
+        "confidence": 0.93,
+        "reason": "The person's pose and clothing, rock formations, pools, and visible wave shapes appear preserved."
+      },
+      {
+        "source": "A05R",
+        "target": "A05L",
+        "reference": "cover",
+        "confidence": 0.93,
+        "reason": "The person's pose and clothing, rock formations, pools, and visible wave shapes appear preserved."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Fine surf texture and facial expression are below reliable comparison resolution; no concrete change is discernible.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A06L", "A06R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "A06L",
+        "target": "A06R",
+        "reference": "cover",
+        "confidence": 0.92,
+        "reason": "Fence, field, sky, tree silhouettes, and shadowed foreground appear preserved without a located content change."
+      },
+      {
+        "source": "A06R",
+        "target": "A06L",
+        "reference": "cover",
+        "confidence": 0.92,
+        "reason": "Fence, field, sky, tree silhouettes, and shadowed foreground appear preserved without a located content change."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Individual leaves and deep-shadow ground texture are not resolved well enough to distinguish capture variation from encoding noise.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A07L", "A07R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "A07L",
+        "target": "A07R",
+        "reference": "cover",
+        "confidence": 0.89,
+        "reason": "The damaged structure, rubble, fence, visible worker, spray, and framing foliage appear preserved."
+      },
+      {
+        "source": "A07R",
+        "target": "A07L",
+        "reference": "cover",
+        "confidence": 0.89,
+        "reason": "The damaged structure, rubble, fence, visible worker, spray, and framing foliage appear preserved."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "The water spray, rubble fragments, and needles are fine dynamic textures; small differences in them would be limited and not reliably localizable here.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A08L", "A08R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": [0.0, 0.0, 1.0, 1.0],
+        "right_box": [0.0, 0.0, 1.0, 1.0],
+        "description": "Low-light chroma and luminance noise differs across the frame while the visible room layout is unchanged.",
+        "category": "illumination",
+        "visibility": "clear",
+        "importance": "nuisance",
+        "confidence": 0.93,
+        "reason": "The difference is acquisition-like grain in a severely underexposed scene, with no identified object, identity, or state change."
+      }
+    ],
+    "directed_relations": [
+      {
+        "source": "A08L",
+        "target": "A08R",
+        "reference": "cover",
+        "confidence": 0.9,
+        "reason": "All observable furniture, openings, and light sources are preserved; the visible difference is frame-wide low-light noise."
+      },
+      {
+        "source": "A08R",
+        "target": "A08L",
+        "reference": "cover",
+        "confidence": 0.9,
+        "reason": "All observable furniture, openings, and light sources are preserved; the visible difference is frame-wide low-light noise."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Severe underexposure makes small objects and any occupants in the darkest areas not observable.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A09L", "A09R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": [0.0, 0.34, 0.07, 0.54],
+        "right_box": [0.51, 0.13, 0.72, 0.6],
+        "description": "Only a truncated part of the person is visible at the far left in A09L, while the person stands at the right cabinet and reaches into it in A09R.",
+        "category": "gesture",
+        "visibility": "limited",
+        "importance": "important",
+        "confidence": 0.9,
+        "reason": "The person's location and readable interaction differ substantially, although the left-side pose is mostly outside the frame."
+      },
+      {
+        "left_box": [0.71, 0.02, 0.87, 0.41],
+        "right_box": [0.69, 0.02, 0.87, 0.42],
+        "description": "The tall right-side cabinet or refrigerator is closed in A09L and open with interior shelves visible in A09R.",
+        "category": "object",
+        "visibility": "clear",
+        "importance": "important",
+        "confidence": 0.99,
+        "reason": "A distinct object-state change is plainly visible and is tied to the person's interaction."
+      }
+    ],
+    "directed_relations": [
+      {
+        "source": "A09L",
+        "target": "A09R",
+        "reference": "different",
+        "confidence": 0.99,
+        "reason": "A09L does not preserve the open cabinet interior or the person reaching into it."
+      },
+      {
+        "source": "A09R",
+        "target": "A09L",
+        "reference": "different",
+        "confidence": 0.98,
+        "reason": "A09R does not preserve the closed cabinet state or the person's mostly off-frame position in A09L."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "The person's face and precise hand action are not readable, but the cabinet state and broad interaction are unambiguous.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A10L", "A10R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": [0.55, 0.13, 0.74, 0.59],
+        "right_box": [0.63, 0.32, 0.91, 0.76],
+        "description": "The person stands beside and reaches toward the tall cabinet in A10L, but bends over and works at the sink in A10R.",
+        "category": "gesture",
+        "visibility": "clear",
+        "importance": "preference_dependent",
+        "confidence": 0.96,
+        "reason": "The action stage and body pose are visibly distinct, while which moment matters depends on the intended depiction of the activity."
+      }
+    ],
+    "directed_relations": [
+      {
+        "source": "A10L",
+        "target": "A10R",
+        "reference": "different",
+        "confidence": 0.96,
+        "reason": "The cabinet-reaching moment does not preserve the sink-working action in the target."
+      },
+      {
+        "source": "A10R",
+        "target": "A10L",
+        "reference": "different",
+        "confidence": 0.96,
+        "reason": "The sink-working moment does not preserve the cabinet-reaching action in the target."
+      }
+    ],
+    "preference_required": true,
+    "uncertainty": "The exact object in the person's hands and facial expression are not readable; the broad actions and locations are clear.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A11L", "A11R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": [0.39, 0.3, 0.65, 0.63],
+        "right_box": [0.35, 0.34, 0.54, 0.67],
+        "description": "The person leans over an open cutlery drawer in A11L and works with both hands on the cutting board in A11R.",
+        "category": "gesture",
+        "visibility": "clear",
+        "importance": "preference_dependent",
+        "confidence": 0.97,
+        "reason": "The visible actions differ, while the preferred activity moment depends on photographic intent."
+      },
+      {
+        "left_box": [0.37, 0.52, 0.62, 0.64],
+        "right_box": [0.37, 0.52, 0.62, 0.64],
+        "description": "A wide cutlery drawer is open in A11L and closed or no longer projecting in A11R.",
+        "category": "object",
+        "visibility": "clear",
+        "importance": "important",
+        "confidence": 0.98,
+        "reason": "The drawer has a distinct and clearly visible open-versus-closed state."
+      }
+    ],
+    "directed_relations": [
+      {
+        "source": "A11L",
+        "target": "A11R",
+        "reference": "different",
+        "confidence": 0.98,
+        "reason": "A11L does not preserve the cutting-board action shown in A11R."
+      },
+      {
+        "source": "A11R",
+        "target": "A11L",
+        "reference": "different",
+        "confidence": 0.98,
+        "reason": "A11R does not preserve the open drawer and drawer interaction shown in A11L."
+      }
+    ],
+    "preference_required": true,
+    "uncertainty": "Small utensils and facial expression are not readable, but the drawer state and broad hand activity are clear.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A12L", "A12R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": [0.3, 0.31, 0.47, 0.69],
+        "right_box": [0.34, 0.34, 0.52, 0.67],
+        "description": "The person's torso, arms, and hands occupy different cutting poses over the board.",
+        "category": "gesture",
+        "visibility": "clear",
+        "importance": "preference_dependent",
+        "confidence": 0.96,
+        "reason": "Both show food preparation, but the captured gesture is a visibly different moment whose value depends on intended timing."
+      },
+      {
+        "left_box": [0.36, 0.61, 0.45, 0.69],
+        "right_box": [0.36, 0.6, 0.45, 0.69],
+        "description": "The orange food item lies diagonally across the board in A12L and is held upright or repositioned under the hands in A12R.",
+        "category": "object",
+        "visibility": "clear",
+        "importance": "preference_dependent",
+        "confidence": 0.92,
+        "reason": "The ingredient's visible state and position change with the action, but the significance of that instant depends on photographic intent."
+      }
+    ],
+    "directed_relations": [
+      {
+        "source": "A12L",
+        "target": "A12R",
+        "reference": "different",
+        "confidence": 0.95,
+        "reason": "A12L does not preserve the upright ingredient position and two-handed cutting pose in A12R."
+      },
+      {
+        "source": "A12R",
+        "target": "A12L",
+        "reference": "different",
+        "confidence": 0.95,
+        "reason": "A12R does not preserve the diagonal ingredient position and hand pose in A12L."
+      }
+    ],
+    "preference_required": true,
+    "uncertainty": "The precise cutting stage and facial expression are not readable; only the broad pose and ingredient position are assessed.",
+    "reference_source": "model_generated"
+  }
+]

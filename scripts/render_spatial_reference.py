@@ -12,10 +12,14 @@ from PIL import Image, ImageDraw
 from material_agent.domain.scoring_engine import decode_raw
 
 
-def render(panel, index):
+def render(panel, index, example=None):
     root = Path("docs/operations/benchmarks/2026-09-19-spatial-reference")
     rows = json.loads((root / "inputs.json").read_text())["pairs"]
-    row = (rows if panel == "A" else list(reversed(rows)))[index]
+    row = (
+        json.loads(example.read_text())
+        if example
+        else (rows if panel == "A" else list(reversed(rows)))[index]
+    )
     config = json.loads(
         Path("docs/operations/benchmarks/2026-09-17-hdrplus-holdout/config.json").read_text()
     )
@@ -48,7 +52,8 @@ def render(panel, index):
     for i, im in enumerate(images):
         im.thumbnail((768, 570))
         canvas.paste(im, (i * 768, 30))
-        key = f"{panel}{index + 1:02}{'L' if i == 0 else 'R'}"
+        prefix = "U01" if example else f"{panel}{index + 1:02}"
+        key = f"{prefix}{'L' if i == 0 else 'R'}"
         ids.append(key)
         draw.text((i * 768 + 10, 10), key, fill="black")
     output = io.BytesIO()
@@ -64,10 +69,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("panel", choices=["A", "B"])
     parser.add_argument("index", type=int)
+    parser.add_argument("--example", type=Path)
     args = parser.parse_args()
     if not 0 <= args.index < 12:
         parser.error("index must be 0..11")
-    print(json.dumps(render(args.panel, args.index)))
+    print(json.dumps(render(args.panel, args.index, args.example)))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,364 @@
+[
+  {
+    "ids": ["B01L", "B01R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": [0.34, 0.34, 0.5, 0.7],
+        "right_box": [0.3, 0.3, 0.48, 0.7],
+        "description": "The person remains at the cutting board, but the upper-body lean, arm placement, and hand position over the food differ between frames.",
+        "category": "gesture",
+        "visibility": "clear",
+        "importance": "preference_dependent",
+        "confidence": 0.9,
+        "reason": "The pose and hand placement are visibly different, while choosing which instant matters depends on the intended moment; facial expression is not readable."
+      },
+      {
+        "left_box": [0.365, 0.605, 0.435, 0.68],
+        "right_box": [0.36, 0.605, 0.44, 0.68],
+        "description": "The orange food item and knife/hand arrangement on the cutting board have changed position.",
+        "category": "object",
+        "visibility": "limited",
+        "importance": "preference_dependent",
+        "confidence": 0.76,
+        "reason": "A small cutting-state difference is visible, but the object detail is too small to identify a consequential state change independently of moment preference."
+      }
+    ],
+    "directed_relations": [
+      {
+        "source": "B01L",
+        "target": "B01R",
+        "reference": "different",
+        "confidence": 0.82,
+        "reason": "B01L does not preserve B01R's observable hand and body pose at the cutting board."
+      },
+      {
+        "source": "B01R",
+        "target": "B01L",
+        "reference": "different",
+        "confidence": 0.82,
+        "reason": "B01R does not preserve B01L's observable hand and body pose at the cutting board."
+      }
+    ],
+    "preference_required": true,
+    "uncertainty": "The action is readable, but the hands and food are small and no facial expression can be assessed; the preferred cutting instant is subjective.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B02L", "B02R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": null,
+        "right_box": [0.36, 0.52, 0.64, 0.625],
+        "description": "A wide utensil drawer is pulled open in the right image and is not open in the left image.",
+        "category": "object",
+        "visibility": "clear",
+        "importance": "important",
+        "confidence": 0.98,
+        "reason": "The open drawer is a distinct and clearly visible object state."
+      },
+      {
+        "left_box": [0.34, 0.36, 0.47, 0.7],
+        "right_box": [0.39, 0.29, 0.63, 0.61],
+        "description": "The person changes from working over the cutting board to standing behind and reaching across the open drawer.",
+        "category": "gesture",
+        "visibility": "clear",
+        "importance": "important",
+        "confidence": 0.96,
+        "reason": "The large, readable action change is tied to the drawer state rather than a minor unreadable hand variation."
+      }
+    ],
+    "directed_relations": [
+      {
+        "source": "B02L",
+        "target": "B02R",
+        "reference": "different",
+        "confidence": 0.98,
+        "reason": "B02L lacks the open drawer and the associated reaching action visible in B02R."
+      },
+      {
+        "source": "B02R",
+        "target": "B02L",
+        "reference": "different",
+        "confidence": 0.96,
+        "reason": "B02R does not preserve B02L's cutting-board action and instead shows a distinct drawer interaction."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "The exact utensil being handled is not readable, but the open drawer and broad action change are unambiguous.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B03L", "B03R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": [0.63, 0.32, 0.86, 0.71],
+        "right_box": [0.55, 0.13, 0.78, 0.59],
+        "description": "The person is bent over and reaching into the sink area in the left image, but stands at the tall cabinet with an arm raised in the right image.",
+        "category": "gesture",
+        "visibility": "clear",
+        "importance": "important",
+        "confidence": 0.99,
+        "reason": "Both body location and the large-scale, readable activity differ substantially."
+      }
+    ],
+    "directed_relations": [
+      {
+        "source": "B03L",
+        "target": "B03R",
+        "reference": "different",
+        "confidence": 0.99,
+        "reason": "B03L does not preserve the cabinet-side standing action visible in B03R."
+      },
+      {
+        "source": "B03R",
+        "target": "B03L",
+        "reference": "different",
+        "confidence": 0.99,
+        "reason": "B03R does not preserve the bent sink-side action visible in B03L."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Small held objects and facial expression are not readable, but the action and position change are clear.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B04L", "B04R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": [0.64, 0.01, 0.84, 0.53],
+        "right_box": [0.65, 0.01, 0.84, 0.53],
+        "description": "The tall cabinet or refrigerator door is open, exposing its interior in the left image, and closed in the right image.",
+        "category": "object",
+        "visibility": "clear",
+        "importance": "important",
+        "confidence": 0.99,
+        "reason": "The open-versus-closed door and visible interior are a distinct object-state change."
+      },
+      {
+        "left_box": [0.52, 0.13, 0.72, 0.59],
+        "right_box": [0.0, 0.37, 0.1, 0.68],
+        "description": "The person interacts with the open tall cabinet near the center-right in the left image, but is only partly visible entering or leaving at the far left edge in the right image.",
+        "category": "gesture",
+        "visibility": "clear",
+        "importance": "important",
+        "confidence": 0.97,
+        "reason": "The person's location and readable interaction differ substantially despite partial cropping in the right frame."
+      }
+    ],
+    "directed_relations": [
+      {
+        "source": "B04L",
+        "target": "B04R",
+        "reference": "different",
+        "confidence": 0.99,
+        "reason": "B04L does not preserve B04R's closed-door state or edge-positioned person."
+      },
+      {
+        "source": "B04R",
+        "target": "B04L",
+        "reference": "different",
+        "confidence": 0.99,
+        "reason": "B04R lacks the exposed cabinet interior and cabinet interaction visible in B04L."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "The appliance or cabinet's precise identity is unclear, and the person is cropped in B04R; the door state and location change remain clear.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B05L", "B05R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "B05L",
+        "target": "B05R",
+        "reference": "cover",
+        "confidence": 0.84,
+        "reason": "No observable meaningful content in the low-light room differs at the supplied viewing scale."
+      },
+      {
+        "source": "B05R",
+        "target": "B05L",
+        "reference": "cover",
+        "confidence": 0.84,
+        "reason": "No observable meaningful content in the low-light room differs at the supplied viewing scale."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Heavy darkness and visible sensor noise limit inspection of shadow detail; small changes concealed in dark areas are not observable.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B06L", "B06R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "B06L",
+        "target": "B06R",
+        "reference": "cover",
+        "confidence": 0.96,
+        "reason": "The demolished building, foreground trees, rubble, and visible water spray retain the same observable content."
+      },
+      {
+        "source": "B06R",
+        "target": "B06L",
+        "reference": "cover",
+        "confidence": 0.96,
+        "reason": "The demolished building, foreground trees, rubble, and visible water spray retain the same observable content."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Fine spray droplets and foliage texture are too small for pixel-level comparison, but no localized or semantic change is discernible.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B07L", "B07R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "B07L",
+        "target": "B07R",
+        "reference": "cover",
+        "confidence": 0.97,
+        "reason": "The field, fence, trees, and foreground vegetation show the same observable content."
+      },
+      {
+        "source": "B07R",
+        "target": "B07L",
+        "reference": "cover",
+        "confidence": 0.97,
+        "reason": "The field, fence, trees, and foreground vegetation show the same observable content."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Individual leaves and grass blades are below reliable comparison scale; no broader foliage or scene change is visible.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B08L", "B08R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "B08L",
+        "target": "B08R",
+        "reference": "cover",
+        "confidence": 0.96,
+        "reason": "The person's pose, clothing, shoreline, and observable wave pattern show no discernible meaningful difference."
+      },
+      {
+        "source": "B08R",
+        "target": "B08L",
+        "reference": "cover",
+        "confidence": 0.96,
+        "reason": "The person's pose, clothing, shoreline, and observable wave pattern show no discernible meaningful difference."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Fine water texture and facial expression are not readable enough for a smaller-scale distinction; the visible pose and wave structures appear preserved.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B09L", "B09R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "B09L",
+        "target": "B09R",
+        "reference": "cover",
+        "confidence": 0.95,
+        "reason": "The museum architecture, sculptures, and visible crowd arrangement preserve the same observable content."
+      },
+      {
+        "source": "B09R",
+        "target": "B09L",
+        "reference": "cover",
+        "confidence": 0.95,
+        "reason": "The museum architecture, sculptures, and visible crowd arrangement preserve the same observable content."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Faces and very small gestures in the crowd are not readable, so only the visible whole-body arrangements can be compared.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B10L", "B10R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "B10L",
+        "target": "B10R",
+        "reference": "cover",
+        "confidence": 0.98,
+        "reason": "The hiker's pose and equipment, rock surface, and surrounding trees show the same observable content."
+      },
+      {
+        "source": "B10R",
+        "target": "B10L",
+        "reference": "cover",
+        "confidence": 0.98,
+        "reason": "The hiker's pose and equipment, rock surface, and surrounding trees show the same observable content."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "The hiker's face and hands are small, but no whole-body gesture, equipment, or environmental change is discernible.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B11L", "B11R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "B11L",
+        "target": "B11R",
+        "reference": "cover",
+        "confidence": 0.95,
+        "reason": "The gate, stonework, trees, and visible foliage arrangement preserve the same observable content."
+      },
+      {
+        "source": "B11R",
+        "target": "B11L",
+        "reference": "cover",
+        "confidence": 0.95,
+        "reason": "The gate, stonework, trees, and visible foliage arrangement preserve the same observable content."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Deep shadows obscure some foliage and gate detail, while no localized change is visible at the supplied scale.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B12L", "B12R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {
+        "source": "B12L",
+        "target": "B12R",
+        "reference": "cover",
+        "confidence": 0.98,
+        "reason": "The river surface, shoreline, vegetation, mountains, and clouds show the same observable content."
+      },
+      {
+        "source": "B12R",
+        "target": "B12L",
+        "reference": "cover",
+        "confidence": 0.98,
+        "reason": "The river surface, shoreline, vegetation, mountains, and clouds show the same observable content."
+      }
+    ],
+    "preference_required": false,
+    "uncertainty": "Fine water ripples and distant foliage are below reliable pixel-level comparison scale; no broader water-shape or scene change is discernible.",
+    "reference_source": "model_generated"
+  }
+]
