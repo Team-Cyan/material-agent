@@ -21,7 +21,7 @@ must be distinguished. Historical external operations do not expand this scope.
 
 Status vocabulary: **Pending**, **In progress**, **Implemented**, **Accepted
 locally**, **Blocked**. Local acceptance never implies target-machine deployment
-or photographic product acceptance. The first direct-coverage experiment is complete; one attribution-driven hypothesis is entering independent holdout. Production behavior remains unchanged.
+or photographic product acceptance. The baseline and one attribution-driven hypothesis are complete; both failed admission. Production behavior remains unchanged.
 
 | Item | Status | Commit / evidence / checks | Next action or blocker |
 | --- | --- | --- | --- |
@@ -35,7 +35,7 @@ or photographic product acceptance. The first direct-coverage experiment is comp
 | Exposure and action hard negatives | Accepted locally as diagnostic evidence | `5caaacb`, `2811b9d`, `a90e3ef`; [real RAW](benchmarks/2026-09-17-exposure-brackets/report.md), [synthetic](benchmarks/2026-09-17-hash-hardcases/report.md), [video pairs](benchmarks/2026-09-18-cooking-hashes/report.md) | Current candidates fail some known controls. Do not tune these inspected inputs further |
 | Whole-sequence closure / reproducible runner | Accepted locally | `4b76ce8`; [sequence report](benchmarks/2026-09-18-cooking-sequences/report.md); 29 focused tests, 2 boundary tests, Ruff, source hashes, 25-pair exact parity and runner/plan fingerprints | No algorithm promoted; decision boundary below |
 | Direct coverage relation / conservative selector | Execution complete; admission failed | `7661372`; [40-case report](benchmarks/2026-09-18-direct-coverage/report.md), 32 focused guarded tests; 0 structural violations, 2 false cover edges, 1 selected unique-content loss; 94% abstention | Baseline rejected for promotion. Preserve frozen results; no automatic model rotation |
-| Local residual observability hypothesis | In progress | [Frozen protocol](benchmarks/2026-09-19-coverage-observability/plan.json); attribution, 11 video-reject A/B proxy references, 28 new development pairs: 0/8 negative false cover, 18/20 positives covered | Evaluate two untouched RAW events after locking implementation; no production promotion |
+| Local residual observability hypothesis | Execution complete; holdout gate failed | `efcdbdd`; [attribution and fresh-burst report](benchmarks/2026-09-19-coverage-observability/report.md), 31 focused guarded tests; development false cover 4→0/8, positive cover 12→18/20; two fresh bursts both retain 3/3 | No retention improvement; no promotion or threshold tuning. Further hypotheses need independent local meaningful/nuisance-change references |
 | Personal ranker / automatic context acceptance | Blocked on reference data | Action labels and order-sensitive model proxies cannot establish personal preference or reliable back-view/silhouette applicability | Obtain suitable independent labels before model integration/training |
 | Professional-software and target recovery acceptance | Blocked on external inputs/authorization | [Concrete execution plan](2026-09-17-external-acceptance-plan.md) | Identify scratch write scope/software and separately authorized target operator/appdata scope; do not execute now |
 
@@ -80,3 +80,9 @@ The direct-coverage continuation adds **32 focused guarded checks** and a
 40-case immutable-input experiment. Exact prior production-path parity holds for
 25 video pairs and both full sequences (184 frames). No full-suite rerun is
 claimed for these isolated scripts; source/application code is unchanged.
+
+The September 19 attribution batch adds eleven independent A/B **model-generated**
+video coverage references (no human labels). A frozen RGB/local-residual hypothesis
+passed new development controls but failed untouched, correlated stream-burst
+retention criteria. This completes one bounded follow-up; it does not authorize
+production integration or automatic further model rotation.

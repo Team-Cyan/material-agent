@@ -1,0 +1,131 @@
+{
+  "development": {
+    "positive_pairs": 20,
+    "negative_pairs": 8,
+    "baseline_positive_cover": 12,
+    "proposed_positive_cover": 18,
+    "baseline_negative_false_cover": 4,
+    "proposed_negative_false_cover": 0
+  },
+  "holdout": [
+    {
+      "event": "0006_20160721_175239_909",
+      "consensus": [
+        {
+          "source": "0",
+          "target": "1",
+          "reference": "cover"
+        },
+        {
+          "source": "1",
+          "target": "0",
+          "reference": "cover"
+        },
+        {
+          "source": "0",
+          "target": "2",
+          "reference": "cover"
+        },
+        {
+          "source": "2",
+          "target": "0",
+          "reference": "cover"
+        },
+        {
+          "source": "1",
+          "target": "2",
+          "reference": "cover"
+        },
+        {
+          "source": "2",
+          "target": "1",
+          "reference": "cover"
+        }
+      ],
+      "variants": {
+        "frozen_sift": {
+          "kept": 3,
+          "unknown": 6,
+          "negative_reference_cover_edges": 0,
+          "structural_violations": 0,
+          "selected_rejects": 0,
+          "final_content_loss_against_model_reference": false,
+          "extra_retention_against_consensus_singleton": 2
+        },
+        "observability": {
+          "kept": 3,
+          "unknown": 6,
+          "negative_reference_cover_edges": 0,
+          "structural_violations": 0,
+          "selected_rejects": 0,
+          "final_content_loss_against_model_reference": false,
+          "extra_retention_against_consensus_singleton": 2
+        }
+      }
+    },
+    {
+      "event": "0006_20160721_175246_335",
+      "consensus": [
+        {
+          "source": "0",
+          "target": "1",
+          "reference": "cover"
+        },
+        {
+          "source": "1",
+          "target": "0",
+          "reference": "cover"
+        },
+        {
+          "source": "0",
+          "target": "2",
+          "reference": "cover"
+        },
+        {
+          "source": "2",
+          "target": "0",
+          "reference": "cover"
+        },
+        {
+          "source": "1",
+          "target": "2",
+          "reference": "cover"
+        },
+        {
+          "source": "2",
+          "target": "1",
+          "reference": "cover"
+        }
+      ],
+      "variants": {
+        "frozen_sift": {
+          "kept": 3,
+          "unknown": 6,
+          "negative_reference_cover_edges": 0,
+          "structural_violations": 0,
+          "selected_rejects": 0,
+          "final_content_loss_against_model_reference": false,
+          "extra_retention_against_consensus_singleton": 2
+        },
+        "observability": {
+          "kept": 3,
+          "unknown": 6,
+          "negative_reference_cover_edges": 0,
+          "structural_violations": 0,
+          "selected_rejects": 0,
+          "final_content_loss_against_model_reference": false,
+          "extra_retention_against_consensus_singleton": 2
+        }
+      }
+    }
+  ],
+  "retention_improvement_events": 0,
+  "required_improvement_events": 1,
+  "accepted_for_promotion": false,
+  "stop_reason": "Frozen holdout improvement criterion failed; no further threshold adjustment on these inputs.",
+  "video_proxy_reference_updates": 11,
+  "human_reference_updates": 0,
+  "geometry_implementation_sha256": "54387bfe9b887d978bb7d13ea0bfb92eff9bf9303fe8060c2a774b623a0632fb",
+  "source_boundary": "Source bytes unchanged; no photos/XMP/production state writes.",
+  "sample_limit": "Two unused bursts captured seven seconds apart show similar stream scenery; not two independent subject/event populations."
+}

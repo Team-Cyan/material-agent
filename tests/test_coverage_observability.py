@@ -53,3 +53,19 @@ def test_unobservable_blank_keeps_geometry_abstention():
 def test_diagnostic_moments_do_not_assign_content_labels():
     assert diagnose.moments(np.array([0.0, 0.0, 10.0]))["max"] == 10
     assert "relation" not in diagnose.moments(np.array([0.0, 1.0]))
+
+
+def test_holdout_is_bounded_and_does_not_silently_expand():
+    sys.path.insert(0, str(ROOT / "scripts"))
+    try:
+        holdout = importlib.import_module("benchmark_observability_holdout")
+    finally:
+        sys.path.pop(0)
+    rows = [{"event": e, "file": str(i)} for e in ["a", "b"] for i in range(3)]
+    holdout.validate_rows(rows, 48)
+    with pytest.raises(ValueError):
+        holdout.validate_rows(rows + rows, 48)
+    with pytest.raises(ValueError):
+        holdout.validate_rows(rows, 1)
+    with pytest.raises(ValueError):
+        holdout.validate_rows(rows[:-1] + [rows[0]], 48)
