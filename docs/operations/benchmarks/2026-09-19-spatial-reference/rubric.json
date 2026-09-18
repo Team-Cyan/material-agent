@@ -1,0 +1,31 @@
+{
+  "schema": "material-agent.spatial-reference.v1",
+  "purpose": "Determine whether independently reproducible spatial references can distinguish meaningful content changes from nuisance before any further algorithm hypothesis.",
+  "algorithm_evaluation": false,
+  "frozen_before_candidate_inspection": true,
+  "budget": {"minimum_pairs": 12, "maximum_pairs": 24, "minimum_distinct_scene_sources": 4, "source_search_minutes": 30, "new_download_bytes": 100000000},
+  "sampling": "Use already licensed local public samples first. Select for visible category/scene coverage, never model scores or thresholds. Near-adjacent bursts of the same scene count once. Prefer one temporal pair per event; additional pairs are correlated and identified.",
+  "required_categories": ["water_or_foliage", "illumination_or_encoding", "gesture_or_expression", "object_state_or_identity"],
+  "panel_blinding": "Two fresh independent Codex panels, reversed display order, neutral IDs, no model outputs, thresholds, prior panel judgments or algorithm failure labels. This is model_generated evidence, not human ground truth.",
+  "pair_record": {
+    "ids": ["neutral left id", "neutral right id"],
+    "same_scene": "yes|no|unknown",
+    "regions": [{"left_box": "[x0,y0,x1,y1] normalized, null if not visible", "right_box": "normalized or null", "description": "concrete visible change, not inferred motion intent", "category": "water|foliage|illumination|gesture|expression|object|registration|other", "visibility": "clear|limited|not_observable", "importance": "important|nuisance|preference_dependent|unknown", "confidence": "number 0..1", "reason": "visible evidence and limits"}],
+    "directed_relations": [{"source": "neutral id", "target": "neutral id", "reference": "cover|different|unknown", "confidence": "number 0..1", "reason": "all meaningful target content preserved?"}],
+    "preference_required": "boolean",
+    "uncertainty": "text",
+    "reference_source": "model_generated"
+  },
+  "interpretation": {
+    "importance": "Distinct visible object identity/state or readable human gesture/expression is a candidate important change, not an automatic label. If whether the change matters depends on the photographer's intended moment, composition, water shape or expression preference, mark preference_dependent and preference_required=true.",
+    "nuisance": "Only assign when visible differences can be described as acquisition/illumination variation or incidental texture with no identified meaningful-content difference under an ordinary scene-documentation reading. If aesthetic intent could reverse the judgment and no objective distinction is evident, abstain on importance.",
+    "unknown": "Limited resolution, occlusion, disagreement or uncertainty is not duplicate content. Never infer identity from unchanged background or shared scene alone.",
+    "cover": "Directed content claim, separate from technical image quality. A is cover for B only when all observable meaningful content of B is preserved. Allow unknown; do not manufacture a keeper preference."
+  },
+  "acceptance": {
+    "reference_agreement": "Preserve each panel. Consensus only when both relation labels agree with confidence >=0.75. Importance is agreed only if category and importance agree and normalized corresponding boxes overlap at IoU >=0.3; do not force a majority vote.",
+    "feasibility_minimum": "At least four distinct physical scene sources, with at least two agreed important-change pairs and two agreed nuisance pairs, spanning the required categories. Insufficient or correlated evidence is reported explicitly.",
+    "stop": "If over half of pairs need personal preference in either panel, or real-scene contrasts/categories cannot be established within budget, stop algorithm experiments and present at most three concrete examples in one minimal user choice. No extra downloads or model rotation to evade this rule.",
+    "on_pass": "Commit reference package plus one next research recommendation to independent review; do not start another algorithm experiment in this batch."
+  }
+}

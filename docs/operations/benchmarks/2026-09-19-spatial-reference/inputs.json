@@ -1,0 +1,230 @@
+{
+  "schema": "material-agent.spatial-reference.inputs.v1",
+  "rubric_sha256": "9d689053323e25170e830d67770d701413921167c6aec90d1b6d30a8018079d3",
+  "selection": "8 HDR+ scenes from neutral first-frame inventory for category diversity; first/last of five existing frames. Four official action-transition pairs from one kitchen, annotations withheld from panels. No algorithm result used in selection.",
+  "pairs": [
+    {
+      "pair_id": "P01",
+      "kind": "raw",
+      "scene_id": "hdr-scene-01",
+      "images": [
+        {
+          "event": "0006_20160721_163256_525",
+          "file": "payload_N000.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0006_20160721_163256_525/payload_N000.dng",
+          "sha256": "e518867737fd282bec79705154fcd79917ab9a53e42be4ba81e9da3567b4e0f0"
+        },
+        {
+          "event": "0006_20160721_163256_525",
+          "file": "payload_N004.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0006_20160721_163256_525/payload_N004.dng",
+          "sha256": "af8d7131678ba2ebc2416b5c92cd82fe75560a42462bc8369d0223982dd05c9b"
+        }
+      ],
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "pair_id": "P02",
+      "kind": "raw",
+      "scene_id": "hdr-scene-05",
+      "images": [
+        {
+          "event": "0094_20150412_172906_649",
+          "file": "payload_N000.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0094_20150412_172906_649/payload_N000.dng",
+          "sha256": "253fa99a2be5ff74fb36dd821cfc80abda59db903ab4506685981062c9b9d5d7"
+        },
+        {
+          "event": "0094_20150412_172906_649",
+          "file": "payload_N004.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0094_20150412_172906_649/payload_N004.dng",
+          "sha256": "352c8ea34c48c29f09fa3d4fb1d06591204b6d26078baf6bfc773e281bdcc32b"
+        }
+      ],
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "pair_id": "P03",
+      "kind": "raw",
+      "scene_id": "hdr-scene-08",
+      "images": [
+        {
+          "event": "0543_20150917_124736_551",
+          "file": "payload_N000.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0543_20150917_124736_551/payload_N000.dng",
+          "sha256": "dd100af270b3b126bae5970f2916c5fdf6d96ef5252a8ea27bee5cd91bfdf748"
+        },
+        {
+          "event": "0543_20150917_124736_551",
+          "file": "payload_N004.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/0543_20150917_124736_551/payload_N004.dng",
+          "sha256": "c06f47059d70f822ec8452bfbfbb9a3d4ad44e06f6ca97ebd32fff207bea4c2e"
+        }
+      ],
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "pair_id": "P04",
+      "kind": "raw",
+      "scene_id": "hdr-scene-13",
+      "images": [
+        {
+          "event": "33TJ_20150627_152439_197",
+          "file": "payload_N000.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/33TJ_20150627_152439_197/payload_N000.dng",
+          "sha256": "feedc7d4adebd1b5a4e2aa57ff95f5607d700e1952787b6010bf79fd02b2c804"
+        },
+        {
+          "event": "33TJ_20150627_152439_197",
+          "file": "payload_N004.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/33TJ_20150627_152439_197/payload_N004.dng",
+          "sha256": "8390cb1e19ff75c342986fdaec2ec81ed91e3e40188bee1416c7d7914b6c5507"
+        }
+      ],
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "pair_id": "P05",
+      "kind": "raw",
+      "scene_id": "hdr-scene-14",
+      "images": [
+        {
+          "event": "33TJ_20150819_101659_151",
+          "file": "payload_N000.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/33TJ_20150819_101659_151/payload_N000.dng",
+          "sha256": "87d14108f8ebc144a366d5c3c6057b1947104f448dcfaac230827a9e5fbfe042"
+        },
+        {
+          "event": "33TJ_20150819_101659_151",
+          "file": "payload_N004.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/33TJ_20150819_101659_151/payload_N004.dng",
+          "sha256": "5cd6bc1cc2e87706cabd5ab8fdf9dd32cde2818cb941b64117b613d5cecbe93f"
+        }
+      ],
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "pair_id": "P06",
+      "kind": "raw",
+      "scene_id": "hdr-scene-15",
+      "images": [
+        {
+          "event": "4KK2_20150718_142209_198",
+          "file": "payload_N000.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/4KK2_20150718_142209_198/payload_N000.dng",
+          "sha256": "8d346b1d7a7f434f6b261fc6fd6c3f8f1f5eb7a385147a802116677f6be48061"
+        },
+        {
+          "event": "4KK2_20150718_142209_198",
+          "file": "payload_N004.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/4KK2_20150718_142209_198/payload_N004.dng",
+          "sha256": "ca2e60d9c0250253af0e535ef9efb4ee8cbaebf31c4e6dc975a10bfa9765cbdb"
+        }
+      ],
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "pair_id": "P07",
+      "kind": "raw",
+      "scene_id": "hdr-scene-18",
+      "images": [
+        {
+          "event": "6FHF_20150303_142127_997",
+          "file": "payload_N000.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/6FHF_20150303_142127_997/payload_N000.dng",
+          "sha256": "984fd9a3c13e825d6418cd708c0798f37dbeedf8b9b007fb476e60e48b5191fa"
+        },
+        {
+          "event": "6FHF_20150303_142127_997",
+          "file": "payload_N004.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/6FHF_20150303_142127_997/payload_N004.dng",
+          "sha256": "1c83d438ebb81e6f508236d65744735e85b1020e8e3303a1b617c68e45319bee"
+        }
+      ],
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "pair_id": "P08",
+      "kind": "raw",
+      "scene_id": "hdr-scene-20",
+      "images": [
+        {
+          "event": "6G7M_20150409_224902_070",
+          "file": "payload_N000.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/6G7M_20150409_224902_070/payload_N000.dng",
+          "sha256": "f7d37cbd48cd392c6c8661b4758e3e85beef668d10a845ed2cf563e64cb171db"
+        },
+        {
+          "event": "6G7M_20150409_224902_070",
+          "file": "payload_N004.dng",
+          "source": "https://storage.googleapis.com/hdrplusdata/20171106/bursts/6G7M_20150409_224902_070/payload_N004.dng",
+          "sha256": "722cb686913fff78ca16f4497b48524ffa87399de5c0d0ab6b76bed1d3020037"
+        }
+      ],
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "pair_id": "P09",
+      "kind": "video",
+      "scene_id": "mpii-kitchen",
+      "sequence": "s22-d23",
+      "frames": [
+        231,
+        320
+      ],
+      "video_sha256": "53c201e259a09f51b60f8aa5fa7c02c7b769ae6c90cfe29e793112c6494f5bec",
+      "license": "scientific-use; no redistribution",
+      "source": "https://datasets.d2.mpi-inf.mpg.de/MPII-Cooking-2/videos/s22-d23-cam-002.avi"
+    },
+    {
+      "pair_id": "P10",
+      "kind": "video",
+      "scene_id": "mpii-kitchen",
+      "sequence": "s22-d23",
+      "frames": [
+        504,
+        613
+      ],
+      "video_sha256": "53c201e259a09f51b60f8aa5fa7c02c7b769ae6c90cfe29e793112c6494f5bec",
+      "license": "scientific-use; no redistribution",
+      "source": "https://datasets.d2.mpi-inf.mpg.de/MPII-Cooking-2/videos/s22-d23-cam-002.avi"
+    },
+    {
+      "pair_id": "P11",
+      "kind": "video",
+      "scene_id": "mpii-kitchen",
+      "sequence": "s22-d23",
+      "frames": [
+        1666,
+        1717
+      ],
+      "video_sha256": "53c201e259a09f51b60f8aa5fa7c02c7b769ae6c90cfe29e793112c6494f5bec",
+      "license": "scientific-use; no redistribution",
+      "source": "https://datasets.d2.mpi-inf.mpg.de/MPII-Cooking-2/videos/s22-d23-cam-002.avi"
+    },
+    {
+      "pair_id": "P12",
+      "kind": "video",
+      "scene_id": "mpii-kitchen",
+      "sequence": "s22-d23",
+      "frames": [
+        1836,
+        1956
+      ],
+      "video_sha256": "53c201e259a09f51b60f8aa5fa7c02c7b769ae6c90cfe29e793112c6494f5bec",
+      "license": "scientific-use; no redistribution",
+      "source": "https://datasets.d2.mpi-inf.mpg.de/MPII-Cooking-2/videos/s22-d23-cam-002.avi"
+    }
+  ],
+  "new_download_bytes": 0,
+  "search_started_utc": "2026-09-18 17:16:11 UTC",
+  "search_budget_minutes": 30,
+  "source_search_complete": true,
+  "distinct_physical_scene_sources": 9,
+  "independent_dataset_sources": 2,
+  "limitations": [
+    "Existing public samples reused for new spatial reference elicitation; not a new algorithm holdout.",
+    "Kitchen pairs count as one physical scene; no expressive close-up guarantee.",
+    "UCSD bracket excluded from this reference set because redistribution/use license evidence was insufficient."
+  ]
+}

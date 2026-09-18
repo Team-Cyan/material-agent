@@ -21,7 +21,7 @@ must be distinguished. Historical external operations do not expand this scope.
 
 Status vocabulary: **Pending**, **In progress**, **Implemented**, **Accepted
 locally**, **Blocked**. Local acceptance never implies target-machine deployment
-or photographic product acceptance. The baseline and one attribution-driven hypothesis are complete; both failed admission. Production behavior remains unchanged.
+or photographic product acceptance. The baseline and one attribution-driven hypothesis both failed admission. A bounded spatial reference collection is in progress; no third algorithm is running.
 
 | Item | Status | Commit / evidence / checks | Next action or blocker |
 | --- | --- | --- | --- |
@@ -36,6 +36,7 @@ or photographic product acceptance. The baseline and one attribution-driven hypo
 | Whole-sequence closure / reproducible runner | Accepted locally | `4b76ce8`; [sequence report](benchmarks/2026-09-18-cooking-sequences/report.md); 29 focused tests, 2 boundary tests, Ruff, source hashes, 25-pair exact parity and runner/plan fingerprints | No algorithm promoted; decision boundary below |
 | Direct coverage relation / conservative selector | Execution complete; admission failed | `7661372`; [40-case report](benchmarks/2026-09-18-direct-coverage/report.md), 32 focused guarded tests; 0 structural violations, 2 false cover edges, 1 selected unique-content loss; 94% abstention | Baseline rejected for promotion. Preserve frozen results; no automatic model rotation |
 | Local residual observability hypothesis | Execution complete; holdout gate failed | `efcdbdd`; [attribution and fresh-burst report](benchmarks/2026-09-19-coverage-observability/report.md), 31 focused guarded tests; development false cover 4→0/8, positive cover 12→18/20; two fresh bursts both retain 3/3 | No retention improvement; no promotion or threshold tuning. Further hypotheses need independent local meaningful/nuisance-change references |
+| Important-change / nuisance spatial references | In progress | [Frozen rubric and source scope](benchmarks/2026-09-19-spatial-reference/provenance.md); 12 pairs / 9 physical scenes; 0 new download bytes; 12 guarded assessor/boundary tests | Complete one bounded A/B panel recovery; preserve disagreement and apply preference/category stop rules |
 | Personal ranker / automatic context acceptance | Blocked on reference data | Action labels and order-sensitive model proxies cannot establish personal preference or reliable back-view/silhouette applicability | Obtain suitable independent labels before model integration/training |
 | Professional-software and target recovery acceptance | Blocked on external inputs/authorization | [Concrete execution plan](2026-09-17-external-acceptance-plan.md) | Identify scratch write scope/software and separately authorized target operator/appdata scope; do not execute now |
 

@@ -50,7 +50,13 @@ no diagnostic image assets are persisted.
 
 ## One frozen hypothesis
 
-Keep the existing geometric gates and final keeper selector. Replace the residual
+Keep the existing geometric algorithms/thresholds and final keeper selector.
+The 1024-pixel cap also changes SIFT and geometry input resolution relative to the
+512 baseline: this is **not matched geometry or representation**. Development
+gains cannot be attributed wholly to RGB/local residuals. A frozen 2x2 attribution
+run is not performed because the failed fresh-burst gate already fixes the next
+decision: collect spatial references before another algorithm hypothesis.
+Replace the residual
 predicate with an RGB comparison at a 1024-pixel cap: global luminance gain and
 robust channel offsets, sigma-1 smoothed global residual limits, and connected
 regions of unexplained color/luminance residual. A global MAD noise envelope is
