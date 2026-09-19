@@ -127,3 +127,45 @@ def test_category_agreement_does_not_bypass_minimum_sample_budget():
     summary = m.assess(inputs, a, b)["summary"]
     assert all(summary["required_category_coverage"].values())
     assert not summary["feasible_for_next_research_proposal"]
+
+
+def test_reference_gap_does_not_imply_personal_preference_blocker():
+    inputs, a, b = fixture()
+    summary = m.assess(inputs, a, b)["summary"]
+    assert summary["blockers"] == ["reference_insufficient"]
+    assert summary["preference_blocked"] is False
+    assert summary["decision"] == "stop_algorithm_experiments_reference_insufficient"
+    assert "nuisance_regions" in summary["reference_gaps"]
+
+
+def test_both_blockers_are_preserved_without_hiding_reference_gaps():
+    inputs, a, b = fixture()
+    a[0]["preference_required"] = True
+    summary = m.assess(inputs, a, b)["summary"]
+    assert summary["blockers"] == ["reference_insufficient", "preference_blocked"]
+    assert summary["reference_gaps"]
+
+
+@pytest.mark.parametrize("pref_count,blocked", [(6, False), (7, True)])
+def test_majority_preference_boundary_with_sufficient_references(pref_count, blocked):
+    inputs = {"pairs": [{"pair_id": str(i), "scene_id": str(i % 4)} for i in range(12)]}
+    cats = ["water", "illumination", "gesture", "object"] * 3
+    a = [
+        row("A", i + 1, c, "nuisance" if c in {"water", "illumination"} else "important")
+        for i, c in enumerate(cats)
+    ]
+    b = []
+    for i, item in enumerate(reversed(a)):
+        other = row("B", i + 1, item["regions"][0]["category"], item["regions"][0]["importance"])
+        other["regions"][0]["left_box"], other["regions"][0]["right_box"] = (
+            item["regions"][0]["right_box"],
+            item["regions"][0]["left_box"],
+        )
+        b.append(other)
+    for item in a[:pref_count]:
+        item["preference_required"] = True
+    summary = m.assess(inputs, a, b)["summary"]
+    assert summary["reference_gaps"] == []
+    assert summary["preference_blocked"] == blocked
+    assert summary["blockers"] == (["preference_blocked"] if blocked else [])
+    assert summary["feasible_for_next_research_proposal"] == (not blocked)

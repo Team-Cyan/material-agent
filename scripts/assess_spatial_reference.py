@@ -180,14 +180,21 @@ def assess(inputs, panel_a, panel_b):
     }
     pref_count = sum(x["preference_required_by_either"] for x in out)
     scenes = len({x["scene_id"] for x in out})
-    passed = (
-        12 <= n <= 24
-        and scenes >= 4
-        and len(important) >= 2
-        and len(nuisance) >= 2
-        and all(groups.values())
-        and pref_count <= n / 2
+    reference_gaps = []
+    for missing, reason in [
+        (not 12 <= n <= 24, "sample_count"),
+        (scenes < 4, "scene_diversity"),
+        (len(important) < 2, "important_regions"),
+        (len(nuisance) < 2, "nuisance_regions"),
+        (not all(groups.values()), "category_coverage"),
+    ]:
+        if missing:
+            reference_gaps.append(reason)
+    preference_blocked = pref_count > n / 2
+    blockers = (["reference_insufficient"] if reference_gaps else []) + (
+        ["preference_blocked"] if preference_blocked else []
     )
+    passed = not blockers
     return {
         "pairs": out,
         "summary": {
@@ -198,9 +205,14 @@ def assess(inputs, panel_a, panel_b):
             "agreed_nuisance_pairs": nuisance,
             "required_category_coverage": groups,
             "feasible_for_next_research_proposal": passed,
+            "blockers": blockers,
+            "reference_gaps": reference_gaps,
+            "preference_blocked": preference_blocked,
             "decision": "reference_package_only_no_algorithm_experiment"
             if passed
-            else "stop_algorithm_experiments_and_request_minimal_sample_preference",
+            else "stop_algorithm_experiments_and_request_minimal_sample_preference"
+            if preference_blocked
+            else "stop_algorithm_experiments_reference_insufficient",
             "human_labels": 0,
         },
     }
