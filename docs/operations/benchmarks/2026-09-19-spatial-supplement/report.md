@@ -111,3 +111,22 @@ identically in memory. No production source code, defaults or runtime state was
 changed; no source media/XMP writes, deployment, production review or push took
 place in this supplement. The earlier user-requested push through `7f2a367` is
 separate, completed before this continuation.
+
+### Test-import portability correction
+
+Independent review reproduced a collection failure in the direct spatial-test
+command: `from test_spatial_reference import row` assumed `tests/` was a top-level
+module search directory. The earlier 17-test guarded run supplied that directory
+via `PYTHONPATH` for the guard plugin and therefore masked this defect.
+
+The import now uses the existing `tests` package:
+`from tests.test_spatial_reference import row`. No production or assessment logic
+changed. Without any added `PYTHONPATH`, verification is:
+
+- `uv run --no-sync pytest -q tests/test_spatial_reference.py tests/test_spatial_supplement.py`: **15 passed**;
+- `uv run --no-sync pytest -q tests/test_repository_boundary.py`: **2 passed**;
+- `make check` and `git diff --check`: passed.
+
+The direct runs above do not claim the optional read-only guard plugin was
+loaded. They exercise synthetic JSON fixtures and repository boundaries only.
+The frozen reference conclusions and stopping decision remain unchanged.

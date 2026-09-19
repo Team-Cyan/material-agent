@@ -38,7 +38,7 @@ or photographic product acceptance. The baseline and one attribution-driven hypo
 | Direct coverage relation / conservative selector | Execution complete; admission failed | `7661372`; [40-case report](benchmarks/2026-09-18-direct-coverage/report.md), 32 focused guarded tests; 0 structural violations, 2 false cover edges, 1 selected unique-content loss; 94% abstention | Baseline rejected for promotion. Preserve frozen results; no automatic model rotation |
 | Local residual observability hypothesis | Execution complete; holdout gate failed | `efcdbdd`; [attribution and fresh-burst report](benchmarks/2026-09-19-coverage-observability/report.md), 31 focused guarded tests; development false cover 4→0/8, positive cover 12→18/20; two fresh bursts both retain 3/3 | No retention improvement; no promotion or threshold tuning. Further hypotheses need independent local meaningful/nuisance-change references |
 | Important-change / nuisance spatial references | Evidence complete; feasibility gate failed | `775b3f3`; [reference report](benchmarks/2026-09-19-spatial-reference/report.md); both panels 12/12, 9 scenes, one agreed important pair / zero nuisance pairs; 12 guarded checks | No third algorithm. U01 same-action preference awaiting user; spatial category gaps remain even after that answer |
-| Final bounded spatial-reference supplement | Complete; reference gate still failed | [Final supplement](benchmarks/2026-09-19-spatial-supplement/report.md); four new fixed CDnet pairs, joint 16 pairs / 13 scenes; 2 important pairs, 1 nuisance pair; 17 guarded tests | `reference_insufficient`, not `preference_blocked`; illumination and gesture categories missing. Search closed at conservative 29m12s cumulative, 3,797,249 dataset bytes downloaded; no further algorithm or collection in this batch |
+| Final bounded spatial-reference supplement | Complete; reference gate still failed | [Final supplement](benchmarks/2026-09-19-spatial-supplement/report.md); four new fixed CDnet pairs, joint 16 pairs / 13 scenes; 2 important pairs, 1 nuisance pair; 15 direct spatial tests + 2 boundary tests after test-import portability correction | `reference_insufficient`, not `preference_blocked`; illumination and gesture categories missing. Search closed at conservative 29m12s cumulative, 3,797,249 dataset bytes downloaded; no further algorithm or collection in this batch |
 | Personal ranker / automatic context acceptance | Blocked on reference data | Action labels and order-sensitive model proxies cannot establish personal preference or reliable back-view/silhouette applicability | Obtain suitable independent labels before model integration/training |
 | Professional-software and target recovery acceptance | Blocked on external inputs/authorization | [Concrete execution plan](2026-09-17-external-acceptance-plan.md) | Identify scratch write scope/software and separately authorized target operator/appdata scope; do not execute now |
 
@@ -107,3 +107,9 @@ gesture/expression contrasts. `reference_insufficient=true` and
 The sole next proposal is a separately scoped human-annotated reference collection
 covering those gaps. No new algorithm, source search, threshold adjustment or
 production integration is authorized by this result.
+
+A review found that the original guarded test environment masked a bare sibling
+test import. The import now uses the existing `tests` package. Direct spatial
+tests pass 15/15 without added `PYTHONPATH`; repository-boundary tests pass 2/2,
+with Ruff and diff checks passing. This test-only fix does not change the frozen
+reference results or authorize more collection.

@@ -5,7 +5,7 @@ import importlib
 import json
 from pathlib import Path
 
-from test_spatial_reference import row
+from tests.test_spatial_reference import row
 
 
 def test_joint_alignment_and_original_immutability(tmp_path, monkeypatch):
