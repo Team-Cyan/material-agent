@@ -55,9 +55,11 @@ if profile == "intel":
     c["detection"].update(
         model_path=str(assets / "ssd.onnx"),
         face_model_path=str(assets / "yunet.onnx"),
-        compiled_cache_dir=None,
+        compiled_cache_dir=str(out.resolve() / "compiled-cache"),
     )
-    c["aesthetic"].update(model_path=str(assets / "nima.tflite"), compiled_cache_dir=None)
+    c["aesthetic"].update(model_path=str(assets / "nima.tflite"), compiled_cache_dir=str(out.resolve() / "compiled-cache"))
+if profile == "intel":
+    assert not (out.resolve() / "compiled-cache").exists(), "use a fresh output directory"
 counts = {}
 
 

@@ -41,18 +41,18 @@ no new media, model download, production review, SQLite or XMP operation.
 Both revisions ran with the same interpreter, packages, input/model bytes and
 settings on Darwin arm64. Baseline src was extracted to an ignored directory;
 imports were verified to come from that directory. Three fresh processes per
-profile/revision, alternated AB/BA/AB, five repetitions per process. Persistent
-compiled caching was disabled on both sides; result caches were cleared before
+profile/revision, alternated AB/BA/AB, five repetitions per process. Each process used its own initially empty compiled-cache directory; persistent
+cache storage was retained only inside that process. Result caches were cleared before
 each repetition, with normal within-repetition NIMA priming reuse preserved.
 Numbers below are medians across three process trials, not confidence intervals.
 
 | Metric | Before | After | Interpretation |
 | --- | ---: | ---: | --- |
-| Heuristic warm, four images | 67.753 ms | 67.869 ms | +0.17%; effectively flat in this small sample |
-| Learned warm, four images | 203.600 ms | 218.145 ms | +7.14%; observed overhead, not a universal throughput estimate |
-| Learned first repetition | 1.344 s | 1.531 s | +13.9%; compile/startup sensitive, ranges overlap |
-| Learned process peak RSS | 660.8 MB | 672.9 MB | +12.1 MB / 1.83%; process peak, not steady-state allocation |
-| Heuristic process peak RSS | 102.2 MB | 103.5 MB | +1.3 MB |
+| Heuristic warm, four images | 68.369 ms | 68.806 ms | +0.64%; effectively flat in this small sample |
+| Learned warm, four images | 191.745 ms | 203.821 ms | +6.30%; observed overhead, not a universal throughput estimate |
+| Learned first repetition | 3.066 s | 3.184 s | +3.87%; fresh compiled cache, OS cache not flushed |
+| Learned process peak RSS | 664.5 MB | 683.3 MB | +18.8 MB / 2.84%; process peak, not steady-state allocation |
+| Heuristic process peak RSS | 102.2 MB | 103.4 MB | +1.2 MB |
 | CLI `--help`, five fresh processes | 39.93 ms | 38.72 ms | No startup regression observed; help avoids model initialization |
 
 Both configurations have exact score, dimensions and scene parity for these
@@ -151,3 +151,24 @@ Focused guarded validation: **53 passed** (new preflight tests, projection polic
 projection ledger, repository boundaries), Ruff and diff checks passed. This
 batch does not tune runtime models, thresholds or cache policy. Remote quality
 and image outcomes must be checked separately after push.
+
+## Measurement self-review correction
+
+The first audit harness passed `compiled_cache_dir=None`. Both adapter versions
+stringified it into a directory named `None`, so the original claim of disabled
+persistent caching was false. Later processes reused compiled blobs. The
+[initial measurements in the superseded commit](https://github.com/Team-Cyan/material-agent/blob/931154cca3b05d56f1a764f07a8e7a67491e476f/docs/operations/benchmarks/2026-09-19-runtime-audit/measurements.json) are retained and explicitly
+superseded; their cold-start numbers must not be used. The generated cache was
+moved into the ignored audit scratch directory; no user file was removed.
+
+The corrected harness uses a unique, asserted-absent cache under each process
+output directory. All twelve benchmark processes were repeated with the exact
+frozen baseline/candidate source trees and same inputs/settings. The table and
+`measurements.json` now contain only this corrected run: learned warm overhead
+6.30%, first repetition 3.87%, peak RSS +18.8 MB. This remains a small diagnostic
+observation, not a statistical or target-hardware performance guarantee.
+
+Release correction `70ab08f` was pushed and its remote quality job passed;
+[image publication](https://github.com/Team-Cyan/material-agent/actions/runs/35448595251)
+was still running when this measurement correction was recorded. A push or
+quality success alone is not a successful image release or deployment.
