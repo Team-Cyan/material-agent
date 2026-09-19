@@ -13,9 +13,10 @@ has been approved. Quality and selection remain separate; readable groups can
 retain a quality-reject for coverage without score inflation.
 
 Local experiments, fixes, verification and reviewed local commits are authorized.
-Push, deployment, private-host operations, production review and actual photo/XMP
-writes remain excluded. Synthetic, video, real RAW, model proxy and human evidence
-must be distinguished. Historical external operations do not expand this scope.
+The one-time user-requested push through `7f2a367` completed; subsequent local
+batches are not authorized to push. Deployment, private-host operations,
+production review and actual photo/XMP writes remain excluded. Synthetic, video,
+real RAW, model proxy and human evidence must be distinguished. Historical external operations do not expand this scope.
 
 ## Task ledger
 
@@ -37,6 +38,7 @@ or photographic product acceptance. The baseline and one attribution-driven hypo
 | Direct coverage relation / conservative selector | Execution complete; admission failed | `7661372`; [40-case report](benchmarks/2026-09-18-direct-coverage/report.md), 32 focused guarded tests; 0 structural violations, 2 false cover edges, 1 selected unique-content loss; 94% abstention | Baseline rejected for promotion. Preserve frozen results; no automatic model rotation |
 | Local residual observability hypothesis | Execution complete; holdout gate failed | `efcdbdd`; [attribution and fresh-burst report](benchmarks/2026-09-19-coverage-observability/report.md), 31 focused guarded tests; development false cover 4→0/8, positive cover 12→18/20; two fresh bursts both retain 3/3 | No retention improvement; no promotion or threshold tuning. Further hypotheses need independent local meaningful/nuisance-change references |
 | Important-change / nuisance spatial references | Evidence complete; feasibility gate failed | `775b3f3`; [reference report](benchmarks/2026-09-19-spatial-reference/report.md); both panels 12/12, 9 scenes, one agreed important pair / zero nuisance pairs; 12 guarded checks | No third algorithm. U01 same-action preference awaiting user; spatial category gaps remain even after that answer |
+| Final bounded spatial-reference supplement | Complete; reference gate still failed | [Final supplement](benchmarks/2026-09-19-spatial-supplement/report.md); four new fixed CDnet pairs, joint 16 pairs / 13 scenes; 2 important pairs, 1 nuisance pair; 17 guarded tests | `reference_insufficient`, not `preference_blocked`; illumination and gesture categories missing. Search closed at conservative 29m12s cumulative, 3,797,249 dataset bytes downloaded; no further algorithm or collection in this batch |
 | Personal ranker / automatic context acceptance | Blocked on reference data | Action labels and order-sensitive model proxies cannot establish personal preference or reliable back-view/silhouette applicability | Obtain suitable independent labels before model integration/training |
 | Professional-software and target recovery acceptance | Blocked on external inputs/authorization | [Concrete execution plan](2026-09-17-external-acceptance-plan.md) | Identify scratch write scope/software and separately authorized target operator/appdata scope; do not execute now |
 
@@ -71,11 +73,14 @@ acceptance decision.
 ## Verification limits
 
 Latest full guarded suite is **753 passed, 102 skipped**, run before the
-one-time authorized push through `a1ecf76`; subsequent offline work is not pushed.
+earlier push through `a1ecf76`. A later explicit push through `7f2a367` completed
+with 45 focused guarded tests and Ruff; the final reference-supplement batch
+after that push remains local.
 `4b76ce8` changes isolated benchmark code/tests and evidence, with **29 focused
 checks**, **2 repository-boundary checks**, Ruff and exact real-data parity.
 Source photo/video bytes were verified unchanged. No actual XMP write, live
-service operation, deployment or push occurred in these continuation batches.
+service operation or deployment occurred in these continuation batches. Push
+status is recorded separately above.
 
 The direct-coverage continuation adds **32 focused guarded checks** and a
 40-case immutable-input experiment. Exact prior production-path parity holds for
@@ -88,8 +93,17 @@ passed new development controls but failed untouched, correlated stream-burst
 retention criteria. This completes one bounded follow-up; it does not authorize
 production integration or automatic further model rotation.
 
-Spatial-reference quota recovery succeeded for both panels. The data gate, not
-quota, now stops further algorithm experiments: only one important spatial pair
-and no nuisance pair agree under the frozen rubric. The minimal U01 user example
+The original spatial-reference quota recovery succeeded for both panels. That
+twelve-pair package had only one agreed important spatial pair and no nuisance
+pair under the frozen rubric; the supplement below supersedes its gap counts. The minimal U01 user example
 is separate from the twelve blind pairs and does not alter prior different-action
 requirements. No third candidate is started.
+
+The final bounded public-reference supplement is now closed. Its four new pairs
+add one agreed object-change pair and one water-nuisance pair (the same pair).
+Combined evidence still lacks a second nuisance pair and agreed illumination and
+gesture/expression contrasts. `reference_insufficient=true` and
+`preference_blocked=false`; U01 is still pending but is not the data blocker.
+The sole next proposal is a separately scoped human-annotated reference collection
+covering those gaps. No new algorithm, source search, threshold adjustment or
+production integration is authorized by this result.

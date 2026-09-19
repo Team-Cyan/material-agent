@@ -1,0 +1,517 @@
+{
+  "pairs": [
+    {
+      "pair_id": "P01",
+      "scene_id": "hdr-scene-01",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.94
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.94
+        }
+      ]
+    },
+    {
+      "pair_id": "P02",
+      "scene_id": "hdr-scene-05",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.93
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.93
+        }
+      ]
+    },
+    {
+      "pair_id": "P03",
+      "scene_id": "hdr-scene-08",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.94
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.94
+        }
+      ]
+    },
+    {
+      "pair_id": "P04",
+      "scene_id": "hdr-scene-13",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.84
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.84
+        }
+      ]
+    },
+    {
+      "pair_id": "P05",
+      "scene_id": "hdr-scene-14",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.93
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.93
+        }
+      ]
+    },
+    {
+      "pair_id": "P06",
+      "scene_id": "hdr-scene-15",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.92
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.92
+        }
+      ]
+    },
+    {
+      "pair_id": "P07",
+      "scene_id": "hdr-scene-18",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.89
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.89
+        }
+      ]
+    },
+    {
+      "pair_id": "P08",
+      "scene_id": "hdr-scene-20",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [
+        0
+      ],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.84
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.84
+        }
+      ]
+    },
+    {
+      "pair_id": "P09",
+      "scene_id": "mpii-kitchen",
+      "preference_required_by_either": false,
+      "agreed_regions": [
+        {
+          "a_region": 1,
+          "b_region": 0,
+          "category": "object",
+          "importance": "important",
+          "minimum_box_iou": 0.45882352941176474,
+          "minimum_confidence": 0.99
+        }
+      ],
+      "unmatched_a_regions": [
+        0
+      ],
+      "unmatched_b_regions": [
+        1
+      ],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "different",
+          "a_reference": "different",
+          "b_reference": "different",
+          "minimum_confidence": 0.99
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "different",
+          "a_reference": "different",
+          "b_reference": "different",
+          "minimum_confidence": 0.98
+        }
+      ]
+    },
+    {
+      "pair_id": "P10",
+      "scene_id": "mpii-kitchen",
+      "preference_required_by_either": true,
+      "agreed_regions": [],
+      "unmatched_a_regions": [
+        0
+      ],
+      "unmatched_b_regions": [
+        0
+      ],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "different",
+          "a_reference": "different",
+          "b_reference": "different",
+          "minimum_confidence": 0.96
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "different",
+          "a_reference": "different",
+          "b_reference": "different",
+          "minimum_confidence": 0.96
+        }
+      ]
+    },
+    {
+      "pair_id": "P11",
+      "scene_id": "mpii-kitchen",
+      "preference_required_by_either": true,
+      "agreed_regions": [],
+      "unmatched_a_regions": [
+        0,
+        1
+      ],
+      "unmatched_b_regions": [
+        0,
+        1
+      ],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "different",
+          "a_reference": "different",
+          "b_reference": "different",
+          "minimum_confidence": 0.96
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "different",
+          "a_reference": "different",
+          "b_reference": "different",
+          "minimum_confidence": 0.98
+        }
+      ]
+    },
+    {
+      "pair_id": "P12",
+      "scene_id": "mpii-kitchen",
+      "preference_required_by_either": true,
+      "agreed_regions": [
+        {
+          "a_region": 0,
+          "b_region": 0,
+          "category": "gesture",
+          "importance": "preference_dependent",
+          "minimum_box_iou": 0.8224299065420563,
+          "minimum_confidence": 0.9
+        }
+      ],
+      "unmatched_a_regions": [
+        1
+      ],
+      "unmatched_b_regions": [
+        1
+      ],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "different",
+          "a_reference": "different",
+          "b_reference": "different",
+          "minimum_confidence": 0.82
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "different",
+          "a_reference": "different",
+          "b_reference": "different",
+          "minimum_confidence": 0.82
+        }
+      ]
+    },
+    {
+      "pair_id": "S01",
+      "scene_id": "cdnet2012-backdoor",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [
+        0
+      ],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "unknown",
+          "a_reference": "unknown",
+          "b_reference": "unknown",
+          "minimum_confidence": 0.55
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "unknown",
+          "a_reference": "unknown",
+          "b_reference": "cover",
+          "minimum_confidence": 0.55
+        }
+      ]
+    },
+    {
+      "pair_id": "S02",
+      "scene_id": "cdnet2012-boats",
+      "preference_required_by_either": false,
+      "agreed_regions": [
+        {
+          "a_region": 1,
+          "b_region": 1,
+          "category": "water",
+          "importance": "nuisance",
+          "minimum_box_iou": 1.0,
+          "minimum_confidence": 0.82
+        },
+        {
+          "a_region": 0,
+          "b_region": 0,
+          "category": "object",
+          "importance": "important",
+          "minimum_box_iou": 0.8461538461538461,
+          "minimum_confidence": 0.83
+        }
+      ],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "different",
+          "a_reference": "different",
+          "b_reference": "different",
+          "minimum_confidence": 0.83
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "different",
+          "a_reference": "different",
+          "b_reference": "different",
+          "minimum_confidence": 0.83
+        }
+      ]
+    },
+    {
+      "pair_id": "S03",
+      "scene_id": "cdnet2012-fall",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.8
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.8
+        }
+      ]
+    },
+    {
+      "pair_id": "S04",
+      "scene_id": "cdnet2012-office",
+      "preference_required_by_either": false,
+      "agreed_regions": [],
+      "unmatched_a_regions": [],
+      "unmatched_b_regions": [],
+      "relations": [
+        {
+          "source_side_in_a": "L",
+          "target_side_in_a": "R",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.88
+        },
+        {
+          "source_side_in_a": "R",
+          "target_side_in_a": "L",
+          "reference": "cover",
+          "a_reference": "cover",
+          "b_reference": "cover",
+          "minimum_confidence": 0.88
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "pair_count": 16,
+    "distinct_scene_sources": 13,
+    "preference_required_pairs": 3,
+    "agreed_important_pairs": [
+      "P09",
+      "S02"
+    ],
+    "agreed_nuisance_pairs": [
+      "S02"
+    ],
+    "required_category_coverage": {
+      "water_or_foliage": true,
+      "illumination_or_encoding": false,
+      "gesture_or_expression": false,
+      "object_state_or_identity": true
+    },
+    "feasible_for_next_research_proposal": false,
+    "blockers": [
+      "reference_insufficient"
+    ],
+    "reference_gaps": [
+      "nuisance_regions",
+      "category_coverage"
+    ],
+    "preference_blocked": false,
+    "decision": "stop_algorithm_experiments_reference_insufficient",
+    "human_labels": 0
+  },
+  "provenance": "Original labels unchanged; neutral IDs only remapped in memory. A=original+supplement; B=supplement+original; each B set is reverse ordered. U01 excluded.",
+  "fingerprints": {
+    "original/inputs.json": "cc71788b5b649b8897dd5f7d62a380b9f6d66ec7a2603a511e7537bf34882634",
+    "original/panel-a.json": "9a153c3120c34a4630aced170cc73500d813db1a5c9536f69c0d11ca9131b3cb",
+    "original/panel-b.json": "8b336a0117b355dd7f5228f05ec7958abf22650bae83e22de93c072cbf1ffe75",
+    "supplement/inputs.json": "0b9787ece3ef2c54713d07338daf7a7265bea3040e53cfdd1f851ec859fed3fa",
+    "supplement/panel-a.json": "70cfcfbfd73aeabd0fd929e53e83bd4302cea346fca73bb2eeae2cb478c6143b",
+    "supplement/panel-b.json": "dc84bcfbcdfaa708616ea360a36022ccedeef9ab998c6f7bf7603fd10aae8bdd",
+    "assess_spatial_supplement.py": "d25ae3df59df54f4227a7c8d00f6e360d301fd5157c1081bbf61658ea37ddea7",
+    "assess_spatial_reference.py": "af570fa0954c12c96252d217ea40bb672512ce02d0f4d42fa3ff479a0b17a9ae"
+  }
+}

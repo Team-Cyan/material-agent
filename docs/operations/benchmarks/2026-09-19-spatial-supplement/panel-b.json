@@ -1,0 +1,82 @@
+[
+  {
+    "ids": ["B01L", "B01R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {"source": "B01L", "target": "B01R", "reference": "cover", "confidence": 0.93, "reason": "The visible room contents and their states match; no meaningful target-only content is identifiable."},
+      {"source": "B01R", "target": "B01L", "reference": "cover", "confidence": 0.93, "reason": "The visible room contents and their states match; no meaningful target-only content is identifiable."}
+    ],
+    "preference_required": false,
+    "uncertainty": "Small lighting or pixel-level differences may be below the displayed resolution; no distinct changed region is reliably visible.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B02L", "B02R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {"source": "B02L", "target": "B02R", "reference": "cover", "confidence": 0.88, "reason": "The visible tree, parked vehicles, hydrant, and background retain the same observable content."},
+      {"source": "B02R", "target": "B02L", "reference": "cover", "confidence": 0.88, "reason": "The visible tree, parked vehicles, hydrant, and background retain the same observable content."}
+    ],
+    "preference_required": false,
+    "uncertainty": "Individual leaves are too small to establish a specific corresponding changed region at this display size.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B03L", "B03R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": [0.26, 0.12, 0.38, 0.23],
+        "right_box": [0.29, 0.12, 0.40, 0.23],
+        "description": "A bright white, boxy vehicle in the left view contrasts with a dark, lower-profile vehicle in the corresponding area of the right view.",
+        "category": "object",
+        "visibility": "clear",
+        "importance": "important",
+        "confidence": 0.83,
+        "reason": "The two views visibly contain different vehicle appearances at this location; the identity or sequence of the vehicles cannot be established from the stills."
+      },
+      {
+        "left_box": [0.0, 0.48, 0.99, 1.0],
+        "right_box": [0.0, 0.48, 0.99, 1.0],
+        "description": "The arrangement of small ripples across the foreground water differs.",
+        "category": "water",
+        "visibility": "clear",
+        "importance": "nuisance",
+        "confidence": 0.82,
+        "reason": "Only incidental water texture changes are identifiable there under an ordinary scene-documentation reading."
+      }
+    ],
+    "directed_relations": [
+      {"source": "B03L", "target": "B03R", "reference": "different", "confidence": 0.83, "reason": "The left view does not preserve the dark vehicle appearance visible in the right view."},
+      {"source": "B03R", "target": "B03L", "reference": "different", "confidence": 0.83, "reason": "The right view does not preserve the bright white, boxy vehicle appearance visible in the left view."}
+    ],
+    "preference_required": false,
+    "uncertainty": "Vehicle identity and whether either vehicle was moving are unknown; the content difference is based only on visible appearance. Water aesthetics could matter to a particular photographer.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["B04L", "B04R"],
+    "same_scene": "yes",
+    "regions": [
+      {
+        "left_box": [0.0, 0.58, 0.025, 0.76],
+        "right_box": null,
+        "description": "A narrow, dark curved fragment appears at the extreme left edge of the left view; no corresponding fragment is apparent in the right view.",
+        "category": "object",
+        "visibility": "limited",
+        "importance": "unknown",
+        "confidence": 0.57,
+        "reason": "The fragment is clipped by the frame and its source or significance cannot be identified."
+      }
+    ],
+    "directed_relations": [
+      {"source": "B04L", "target": "B04R", "reference": "cover", "confidence": 0.82, "reason": "All identifiable content in the right view is also visible in the left view."},
+      {"source": "B04R", "target": "B04L", "reference": "unknown", "confidence": 0.69, "reason": "The left-edge fragment may be additional object content, but it is too clipped to assess."}
+    ],
+    "preference_required": false,
+    "uncertainty": "The edge fragment is only a few pixels wide, and a registration or crop effect cannot be excluded; no object identity or action is inferred.",
+    "reference_source": "model_generated"
+  }
+]

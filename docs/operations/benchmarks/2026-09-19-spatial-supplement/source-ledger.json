@@ -1,0 +1,54 @@
+{
+  "search_budget": {
+    "limit_seconds": 1800,
+    "prior_allowance_seconds": 300,
+    "current_window_start_utc_conservative": "2026-09-19T03:03:00Z",
+    "closed_utc": "2026-09-19T03:27:12Z",
+    "current_elapsed_upper_bound_seconds": 1452,
+    "cumulative_accounted_seconds": 1752,
+    "precision": "Conservative elapsed-window accounting, includes intervening implementation and push; active search duration not separately instrumented. No reset and no further source search."
+  },
+  "download_budget": {
+    "limit_bytes": 100000000,
+    "prior_dataset_bytes": 0,
+    "archive_range_payload_bytes": 3797249,
+    "retained_original_frame_bytes": 288129,
+    "web_metadata_bytes": "Not measured by web connector; excluded from archive byte counter. No claim of exact total network transfer."
+  },
+  "pair_budget": {
+    "prior_including_U01": 13,
+    "new": 4,
+    "total_including_U01": 17,
+    "limit": 24
+  },
+  "sources": [
+    {
+      "name": "DAVIS",
+      "decision": "excluded_media_permission_not_established",
+      "urls": [
+        "https://davischallenge.org/challenge2017/rulesdates.html",
+        "https://davischallenge.org/davis2016/code.html",
+        "https://davischallenge.org/davis2017/code.html"
+      ],
+      "reason": "Inspected rules explicitly license new annotations; source-image permission not established by the inspected material. No media downloaded."
+    },
+    {
+      "name": "CDnet2012",
+      "decision": "scoped_local_research_use",
+      "urls": [
+        "https://changedetection.net/",
+        "https://changedetection.net/dataset2012/"
+      ],
+      "reason": "Official site invites academic and industrial researchers to test change/motion algorithms on camera-captured data. Applied narrowly to local change-reference diagnostics; no blanket redistribution or production-use license claimed. No source frames committed.",
+      "selected_sequences": [
+        "backdoor",
+        "boats",
+        "fall",
+        "office"
+      ],
+      "sampling": "Selected and HEAD-probed before first new frame viewing; one fixed pair per sequence, frame 1 and frame 30. No replacements.",
+      "attribution": "N. Goyette, P.-M. Jodoin, F. Porikli, J. Konrad, P. Ishwar, changedetection.net: A new change detection benchmark dataset, CDW-2012 at CVPR-2012."
+    }
+  ],
+  "acquisition": "Strict HTTP 206 byte ranges over official ZIPs, central directory and two named JPEG members only; CRC checked by zipfile, SHA256 retained. No complete large archive or annotation masks downloaded."
+}

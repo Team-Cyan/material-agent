@@ -1,0 +1,38 @@
+[
+  {
+    "sequence": "backdoor",
+    "archive": "/static/dataset/shadow/backdoor.zip",
+    "url": "https://changedetection.net/static/dataset/shadow/backdoor.zip",
+    "status": 200,
+    "content_length": "31814212",
+    "accept_ranges": "bytes",
+    "content_type": "application/zip"
+  },
+  {
+    "sequence": "boats",
+    "archive": "/static/dataset/dynamicBackground/boats.zip",
+    "url": "https://changedetection.net/static/dataset/dynamicBackground/boats.zip",
+    "status": 200,
+    "content_length": "145594293",
+    "accept_ranges": "bytes",
+    "content_type": "application/zip"
+  },
+  {
+    "sequence": "fall",
+    "archive": "/static/dataset/dynamicBackground/fall.zip",
+    "url": "https://changedetection.net/static/dataset/dynamicBackground/fall.zip",
+    "status": 200,
+    "content_length": "405286739",
+    "accept_ranges": "bytes",
+    "content_type": "application/zip"
+  },
+  {
+    "sequence": "office",
+    "archive": "/static/dataset/baseline/office.zip",
+    "url": "https://changedetection.net/static/dataset/baseline/office.zip",
+    "status": 200,
+    "content_length": "29397702",
+    "accept_ranges": "bytes",
+    "content_type": "application/zip"
+  }
+]

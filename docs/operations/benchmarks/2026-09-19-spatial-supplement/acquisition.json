@@ -1,0 +1,93 @@
+{
+  "download_bytes": 3797249,
+  "sequences": [
+    {
+      "sequence": "backdoor",
+      "started_utc": "2026-09-19T03:26:37Z",
+      "bytes_before": 0,
+      "frame_count": 2000,
+      "frames": [
+        {
+          "member": "backdoor/input/in000001.jpg",
+          "path": ".local/spatial-supplement/backdoor-in000001.jpg",
+          "size": 13921,
+          "sha256": "b2532780423c06868f334f4142cfb61fa324b2d81b65d9a952364281093fcc37"
+        },
+        {
+          "member": "backdoor/input/in000030.jpg",
+          "path": ".local/spatial-supplement/backdoor-in000030.jpg",
+          "size": 14060,
+          "sha256": "cf1cef63f91f85a531ccf474620a52e25be7babaf9c25bf220576ee8c2cb7ced"
+        }
+      ],
+      "status": "retrieved_index_only",
+      "bytes_after": 476476
+    },
+    {
+      "sequence": "boats",
+      "started_utc": "2026-09-19T03:26:46Z",
+      "bytes_before": 476476,
+      "frame_count": 7999,
+      "frames": [
+        {
+          "member": "boats/input/in000001.jpg",
+          "path": ".local/spatial-supplement/boats-in000001.jpg",
+          "size": 18555,
+          "sha256": "91e2e9151d372d46c9df8558ee1abde05904fe16116784688af5f9ed502afd03"
+        },
+        {
+          "member": "boats/input/in000030.jpg",
+          "path": ".local/spatial-supplement/boats-in000030.jpg",
+          "size": 18087,
+          "sha256": "d13a1be8f7f7d4c241736c84fb1c79eff7812152c41885e1611c54585d8330db"
+        }
+      ],
+      "status": "retrieved_index_only",
+      "bytes_after": 2257378
+    },
+    {
+      "sequence": "fall",
+      "started_utc": "2026-09-19T03:26:55Z",
+      "bytes_before": 2257378,
+      "frame_count": 4000,
+      "frames": [
+        {
+          "member": "fall/input/in000001.jpg",
+          "path": ".local/spatial-supplement/fall-in000001.jpg",
+          "size": 100408,
+          "sha256": "d25823c49c628afb208a97ebb7d53eaca460f4db6e3c64c6ea8a69a6ecede5df"
+        },
+        {
+          "member": "fall/input/in000030.jpg",
+          "path": ".local/spatial-supplement/fall-in000030.jpg",
+          "size": 100523,
+          "sha256": "6f76cb23eba74766c89f7101803a6f4ae55544eb393e49ee089f2eaad18b23b9"
+        }
+      ],
+      "status": "retrieved_index_only",
+      "bytes_after": 3323026
+    },
+    {
+      "sequence": "office",
+      "started_utc": "2026-09-19T03:27:04Z",
+      "bytes_before": 3323026,
+      "frame_count": 2050,
+      "frames": [
+        {
+          "member": "office/input/in000001.jpg",
+          "path": ".local/spatial-supplement/office-in000001.jpg",
+          "size": 11294,
+          "sha256": "493cf44c6b8c447d63aba5806d1e2e9d9c86497af05394d1c5b19f3cc7c100a9"
+        },
+        {
+          "member": "office/input/in000030.jpg",
+          "path": ".local/spatial-supplement/office-in000030.jpg",
+          "size": 11281,
+          "sha256": "210c794c9e06268f70d1e2bad1ebe837d1c1f9d306348326d732fb5f074c3fb5"
+        }
+      ],
+      "status": "retrieved_index_only",
+      "bytes_after": 3797249
+    }
+  ]
+}

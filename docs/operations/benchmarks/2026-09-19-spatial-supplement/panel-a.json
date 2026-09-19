@@ -1,0 +1,53 @@
+[
+  {
+    "ids": ["A01L", "A01R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {"source": "A01L", "target": "A01R", "reference": "unknown", "confidence": 0.55, "reason": "The bench, bicycle, fence and street match, but a tiny cropped edge detail cannot be identified well enough to establish full content coverage."},
+      {"source": "A01R", "target": "A01L", "reference": "unknown", "confidence": 0.55, "reason": "The visible scene largely matches, but the narrow frame-edge detail leaves full coverage uncertain."}
+    ],
+    "preference_required": false,
+    "uncertainty": "No reliable region-level change can be localized at this resolution; the extreme edge is too cropped to identify.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A02L", "A02R"],
+    "same_scene": "yes",
+    "regions": [
+      {"left_box": [0.29, 0.12, 0.39, 0.23], "right_box": [0.27, 0.11, 0.38, 0.23], "description": "A dark sedan appears at the left parking position while a white, taller vehicle appears at the corresponding right position.", "category": "object", "visibility": "clear", "importance": "important", "confidence": 0.93, "reason": "The vehicle identity and silhouette differ visibly against otherwise corresponding trees and parked vehicles."},
+      {"left_box": [0.0, 0.48, 0.99, 1.0], "right_box": [0.0, 0.48, 0.99, 1.0], "description": "Small ripples on the foreground water have different texture and highlights.", "category": "water", "visibility": "clear", "importance": "nuisance", "confidence": 0.82, "reason": "The water surface pattern changes without an identifiable new object or event within it."}
+    ],
+    "directed_relations": [
+      {"source": "A02L", "target": "A02R", "reference": "different", "confidence": 0.92, "reason": "The white vehicle visible in A02R is not preserved in A02L."},
+      {"source": "A02R", "target": "A02L", "reference": "different", "confidence": 0.92, "reason": "The dark sedan visible in A02L is not preserved in A02R."}
+    ],
+    "preference_required": false,
+    "uncertainty": "Vehicle make and exact motion are not inferable; the visible identity and shape change is sufficient for the directed content distinction.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A03L", "A03R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {"source": "A03L", "target": "A03R", "reference": "cover", "confidence": 0.8, "reason": "The visible cars, person in red, trees and street content are preserved."},
+      {"source": "A03R", "target": "A03L", "reference": "cover", "confidence": 0.8, "reason": "The visible cars, person in red, trees and street content are preserved."}
+    ],
+    "preference_required": false,
+    "uncertainty": "Fine leaf or highlight variation cannot be distinguished confidently at this display resolution, so no change region is asserted.",
+    "reference_source": "model_generated"
+  },
+  {
+    "ids": ["A04L", "A04R"],
+    "same_scene": "yes",
+    "regions": [],
+    "directed_relations": [
+      {"source": "A04L", "target": "A04R", "reference": "cover", "confidence": 0.88, "reason": "The visible office objects, doorway, furniture and framing correspond with no identifiable meaningful content change."},
+      {"source": "A04R", "target": "A04L", "reference": "cover", "confidence": 0.88, "reason": "The visible office objects, doorway, furniture and framing correspond with no identifiable meaningful content change."}
+    ],
+    "preference_required": false,
+    "uncertainty": "Small pixel-level variation, if present, is not reliably attributable to a visible region or content change.",
+    "reference_source": "model_generated"
+  }
+]
