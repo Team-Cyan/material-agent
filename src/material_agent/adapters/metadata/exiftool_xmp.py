@@ -218,7 +218,14 @@ class ExifToolXMPWriter:
         _validate_material_rating(rating)
         path = Path(xmp_path)
         _reject_symbolic_link(path)
-        tree = _read_xmp_root(path) if _path_identity(path) is not None else None
+        try:
+            tree = _read_xmp_root(path) if _path_identity(path) is not None else None
+        except (OSError, ET.ParseError, ValueError) as error:
+            # Projection preflight now parses before the older Subject reader.
+            # Preserve that reader's fail-closed public exception contract.
+            raise RuntimeError(
+                f"Unable to safely preserve Subject tags from existing XMP {path}"
+            ) from error
         return _projection_receipt(tree, rating, subject_tags, instructions, description)
 
     def write(

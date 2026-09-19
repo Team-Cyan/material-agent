@@ -135,3 +135,19 @@ Existing ignored NIMA/SSD/YuNet assets are required; their hashes are recorded.
 The harness raises on media/DB writes, writes only benchmark JSON/Markdown, and
 reports Darwin RSS units. Do not compare numbers across different machines or
 interpret compile-cold process runs as disk-cache-cold operating-system runs.
+
+## Release-gate correction batch
+
+The quality container now marks only `/app` as a safe Git directory, allowing
+tracked-file boundary checks on the bind-mounted checkout without disabling Git
+ownership checks globally. XMP projection preflight wraps bounded parser failures
+in the writer's prior `RuntimeError` contract and retains the underlying cause;
+it still refuses malformed, entity-bearing or oversized inputs before copying
+or invoking ExifTool. Failure receipts remain attached.
+
+Three added regressions feed invalid XML through the real parser from BytesIO;
+they create no media or sidecar files and assert no copy or external writer call.
+Focused guarded validation: **53 passed** (new preflight tests, projection policy,
+projection ledger, repository boundaries), Ruff and diff checks passed. This
+batch does not tune runtime models, thresholds or cache policy. Remote quality
+and image outcomes must be checked separately after push.
