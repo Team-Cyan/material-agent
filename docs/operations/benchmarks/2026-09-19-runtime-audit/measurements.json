@@ -1,0 +1,1939 @@
+{
+  "baseline": "9de0e41d79ac05269800746b9a849af1fa68c1a9",
+  "current": "09c5882ff196890d4f69e9ed280ccaf2d18fc430",
+  "machine": {
+    "os": "Darwin",
+    "architecture": "arm64",
+    "python": "3.14.3"
+  },
+  "packages": {
+    "openvino": "2026.2.1",
+    "numpy": "2.4.4",
+    "Pillow": "11.3.0",
+    "rawpy": "0.26.1",
+    "opencv-python": "4.13.0.92"
+  },
+  "protocol": {
+    "trials_per_checkout_profile": 3,
+    "repetitions_per_process": 5,
+    "images_per_repetition": 4,
+    "order": "AB, BA, AB per profile",
+    "persistent_compiled_cache": false,
+    "result_cache": "cleared before every repetition; intra-repetition NIMA priming cache retained",
+    "media_db_write_audit": "raises before sensitive file writes; no production constructor called",
+    "rss_unit": "bytes on Darwin",
+    "limitation": "Small synthetic PNG sample, no RAW decode/SQLite/XMP/Intel hardware throughput claim"
+  },
+  "inputs": {
+    "manifest.yaml": {
+      "bytes": 1265,
+      "sha256": "803184446eabd40d1b6dc818355f6405956ee8be77f845b2181402ddd9aa28cd"
+    },
+    "portrait-sharp-source.png": {
+      "bytes": 622548,
+      "sha256": "b943274e26ae75b3a487bd2fe9b784f8c7cfc2d4a1b5f21bb25bbe656be74874"
+    },
+    "portrait-motion-blur-same-subject.png": {
+      "bytes": 490769,
+      "sha256": "f26853d7b3efd1be5f5a780cc3e522b5640699569a96f8e550b00811b7fe3fb1"
+    },
+    "low-light-room.png": {
+      "bytes": 564046,
+      "sha256": "72ff2632aab939adab6ca307451f37e3918807e6e1066fcf87a4f5a9a91ad8da"
+    },
+    "ui-screenshot.png": {
+      "bytes": 387190,
+      "sha256": "115285e04b2b35c793b55cd68e90be6e0e20f06ba2b194ab84070e66b3c8a1e3"
+    },
+    "yunet.onnx": {
+      "bytes": 100416,
+      "sha256": "321aa5a6afabf7ecc46a3d06bfab2b579dc96eb5c3be7edd365fa04502ad9294"
+    },
+    "nima.tflite": {
+      "bytes": 6448632,
+      "sha256": "a5051a0fcced735682735e3e0fd58ee54c83ed664282a003f52235b3dbcb9320"
+    },
+    "ssd.onnx": {
+      "bytes": 29461455,
+      "sha256": "b8fba5e404077d4048d27fcd1667e85e27e192eb9bf51e696c46a3acd7d21058"
+    }
+  },
+  "inventory": {
+    "9de0e41": {
+      "other": {
+        "files": 46,
+        "bytes": 733135,
+        "text_lines": 6882
+      },
+      "docs": {
+        "files": 89,
+        "bytes": 537466,
+        "text_lines": 12090
+      },
+      "scripts": {
+        "files": 1,
+        "bytes": 687,
+        "text_lines": 21
+      },
+      "src": {
+        "files": 130,
+        "bytes": 869035,
+        "text_lines": 21921
+      },
+      "tests": {
+        "files": 62,
+        "bytes": 12301857,
+        "text_lines": 19378
+      }
+    },
+    "09c5882": {
+      "other": {
+        "files": 46,
+        "bytes": 731519,
+        "text_lines": 6769
+      },
+      "docs": {
+        "files": 190,
+        "bytes": 4548280,
+        "text_lines": 139878
+      },
+      "scripts": {
+        "files": 15,
+        "bytes": 116103,
+        "text_lines": 2800
+      },
+      "src": {
+        "files": 133,
+        "bytes": 908462,
+        "text_lines": 22943
+      },
+      "tests": {
+        "files": 74,
+        "bytes": 12378204,
+        "text_lines": 21274
+      }
+    }
+  },
+  "startup": [
+    {
+      "checkout": "baseline",
+      "trial": 0,
+      "seconds": 0.03759441711008549
+    },
+    {
+      "checkout": "current",
+      "trial": 0,
+      "seconds": 0.03652662504464388
+    },
+    {
+      "checkout": "current",
+      "trial": 1,
+      "seconds": 0.03968083392828703
+    },
+    {
+      "checkout": "baseline",
+      "trial": 1,
+      "seconds": 0.04022766719572246
+    },
+    {
+      "checkout": "baseline",
+      "trial": 2,
+      "seconds": 0.03993212501518428
+    },
+    {
+      "checkout": "current",
+      "trial": 2,
+      "seconds": 0.040407625027000904
+    },
+    {
+      "checkout": "current",
+      "trial": 3,
+      "seconds": 0.038715832866728306
+    },
+    {
+      "checkout": "baseline",
+      "trial": 3,
+      "seconds": 0.03729408304207027
+    },
+    {
+      "checkout": "baseline",
+      "trial": 4,
+      "seconds": 0.04086433304473758
+    },
+    {
+      "checkout": "current",
+      "trial": 4,
+      "seconds": 0.036537833977490664
+    }
+  ],
+  "summary": {
+    "heuristic": {
+      "baseline": {
+        "process_seconds": {
+          "median": 0.5204561660066247,
+          "min": 0.5193008338101208,
+          "max": 1.409558832878247
+        },
+        "peak_rss_bytes": {
+          "median": 102236160,
+          "min": 102154240,
+          "max": 106463232
+        },
+        "cold_run_seconds": {
+          "median": 0.074755,
+          "min": 0.07428,
+          "max": 0.088336
+        },
+        "warm_p50_run_seconds": {
+          "median": 0.067753,
+          "min": 0.066897,
+          "max": 0.067899
+        },
+        "counts_each_trial": [
+          {
+            "input_loads": 20
+          },
+          {
+            "input_loads": 20
+          },
+          {
+            "input_loads": 20
+          }
+        ],
+        "deterministic_each_trial": [
+          true,
+          true,
+          true
+        ]
+      },
+      "current": {
+        "process_seconds": {
+          "median": 0.5294770421460271,
+          "min": 0.5294443329330534,
+          "max": 0.531497374875471
+        },
+        "peak_rss_bytes": {
+          "median": 103497728,
+          "min": 103399424,
+          "max": 103514112
+        },
+        "cold_run_seconds": {
+          "median": 0.073959,
+          "min": 0.073213,
+          "max": 0.074232
+        },
+        "warm_p50_run_seconds": {
+          "median": 0.067869,
+          "min": 0.06726,
+          "max": 0.068083
+        },
+        "counts_each_trial": [
+          {
+            "input_loads": 20
+          },
+          {
+            "input_loads": 20
+          },
+          {
+            "input_loads": 20
+          }
+        ],
+        "deterministic_each_trial": [
+          true,
+          true,
+          true
+        ]
+      },
+      "score_scene_dimensions_exact_parity": true
+    },
+    "intel": {
+      "baseline": {
+        "process_seconds": {
+          "median": 2.686373542062938,
+          "min": 2.6765377500560135,
+          "max": 4.623010750161484
+        },
+        "peak_rss_bytes": {
+          "median": 660783104,
+          "min": 657014784,
+          "max": 669761536
+        },
+        "cold_run_seconds": {
+          "median": 1.343616,
+          "min": 1.338898,
+          "max": 3.578973
+        },
+        "warm_p50_run_seconds": {
+          "median": 0.2036,
+          "min": 0.192196,
+          "max": 0.205035
+        },
+        "counts_each_trial": [
+          {
+            "input_loads": 20,
+            "nima_adapter_calls": 5,
+            "nima_init": 1,
+            "detection_calls": 20,
+            "ssd_init": 1
+          },
+          {
+            "input_loads": 20,
+            "nima_adapter_calls": 5,
+            "nima_init": 1,
+            "detection_calls": 20,
+            "ssd_init": 1
+          },
+          {
+            "input_loads": 20,
+            "nima_adapter_calls": 5,
+            "nima_init": 1,
+            "detection_calls": 20,
+            "ssd_init": 1
+          }
+        ],
+        "deterministic_each_trial": [
+          true,
+          true,
+          true
+        ]
+      },
+      "current": {
+        "process_seconds": {
+          "median": 2.959458916913718,
+          "min": 2.9329230000730604,
+          "max": 4.3016642921138555
+        },
+        "peak_rss_bytes": {
+          "median": 672890880,
+          "min": 672006144,
+          "max": 678592512
+        },
+        "cold_run_seconds": {
+          "median": 1.530672,
+          "min": 1.512733,
+          "max": 3.221848
+        },
+        "warm_p50_run_seconds": {
+          "median": 0.218145,
+          "min": 0.200655,
+          "max": 0.220154
+        },
+        "counts_each_trial": [
+          {
+            "input_loads": 20,
+            "nima_adapter_calls": 5,
+            "nima_init": 1,
+            "detection_calls": 20,
+            "ssd_init": 1
+          },
+          {
+            "input_loads": 20,
+            "nima_adapter_calls": 5,
+            "nima_init": 1,
+            "detection_calls": 20,
+            "ssd_init": 1
+          },
+          {
+            "input_loads": 20,
+            "nima_adapter_calls": 5,
+            "nima_init": 1,
+            "detection_calls": 20,
+            "ssd_init": 1
+          }
+        ],
+        "deterministic_each_trial": [
+          true,
+          true,
+          true
+        ]
+      },
+      "score_scene_dimensions_exact_parity": true
+    }
+  },
+  "trials": [
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.9809317081235349,
+      "child_elapsed_seconds": 1.3533262910787016,
+      "peak_rss_bytes": 106463232,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.00174,
+          "local_heuristic_seconds": 0.086046,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 0.355905,
+        "cold_run_seconds": 0.088336,
+        "warm_p50_run_seconds": 0.066897,
+        "p50_run_seconds": 0.066989,
+        "images_per_second": 56.1948
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 6.747143,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 6.675714,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 4.668571,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 3.872857,
+          "scene": "other",
+          "aesthetic_score": null
+        }
+      ],
+      "checkout": "baseline",
+      "trial": 0,
+      "process_seconds": 1.409558832878247
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.12860350008122623,
+      "child_elapsed_seconds": 0.4877496671397239,
+      "peak_rss_bytes": 103399424,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000243,
+          "local_heuristic_seconds": 0.07261,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 0.342621,
+        "cold_run_seconds": 0.073213,
+        "warm_p50_run_seconds": 0.06726,
+        "p50_run_seconds": 0.067309,
+        "images_per_second": 58.3735
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 6.747143,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 6.675714,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 4.668571,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 3.872857,
+          "scene": "other",
+          "aesthetic_score": null
+        }
+      ],
+      "checkout": "current",
+      "trial": 0,
+      "process_seconds": 0.5294770421460271
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.1261087090242654,
+      "child_elapsed_seconds": 4.549786749994382,
+      "peak_rss_bytes": 669761536,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000278,
+          "local_heuristic_seconds": 0.070945,
+          "model_runs": 1,
+          "model_preprocess_seconds": 0.003939,
+          "model_inference_seconds": 0.010274,
+          "model_postprocess_seconds": 0.000106,
+          "model_compile_seconds": 0.258931
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 4.345899,
+        "cold_run_seconds": 3.578973,
+        "warm_p50_run_seconds": 0.192196,
+        "p50_run_seconds": 0.193557,
+        "images_per_second": 4.602
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 4.1413,
+          "scene": "people",
+          "aesthetic_score": 4.141343
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 3.8644,
+          "scene": "people",
+          "aesthetic_score": 3.864361
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 3.4409,
+          "scene": "other",
+          "aesthetic_score": 3.44092
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 4.0034,
+          "scene": "other",
+          "aesthetic_score": 4.003413
+        }
+      ],
+      "checkout": "baseline",
+      "trial": 0,
+      "process_seconds": 4.623010750161484
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.13018912496045232,
+      "child_elapsed_seconds": 4.231192291947082,
+      "peak_rss_bytes": 678592512,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000293,
+          "local_heuristic_seconds": 0.068732,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.011928,
+          "model_inference_seconds": 0.058517,
+          "model_postprocess_seconds": 0.000297,
+          "model_compile_seconds": 2.801544
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 4.024034,
+        "cold_run_seconds": 3.221848,
+        "warm_p50_run_seconds": 0.200655,
+        "p50_run_seconds": 0.200992,
+        "images_per_second": 4.9701
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 4.1413,
+          "scene": "people",
+          "aesthetic_score": 4.141343
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 3.8644,
+          "scene": "people",
+          "aesthetic_score": 3.864361
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 3.4409,
+          "scene": "other",
+          "aesthetic_score": 3.44092
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 4.0034,
+          "scene": "other",
+          "aesthetic_score": 4.003413
+        }
+      ],
+      "checkout": "current",
+      "trial": 0,
+      "process_seconds": 4.3016642921138555
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.1300140421371907,
+      "child_elapsed_seconds": 0.49001633399166167,
+      "peak_rss_bytes": 103514112,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000408,
+          "local_heuristic_seconds": 0.073155,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 0.345747,
+        "cold_run_seconds": 0.073959,
+        "warm_p50_run_seconds": 0.067869,
+        "p50_run_seconds": 0.068079,
+        "images_per_second": 57.8458
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 6.747143,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 6.675714,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 4.668571,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 3.872857,
+          "scene": "other",
+          "aesthetic_score": null
+        }
+      ],
+      "checkout": "current",
+      "trial": 1,
+      "process_seconds": 0.531497374875471
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.12180262501351535,
+      "child_elapsed_seconds": 0.479902750113979,
+      "peak_rss_bytes": 102154240,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000349,
+          "local_heuristic_seconds": 0.073992,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 0.346315,
+        "cold_run_seconds": 0.074755,
+        "warm_p50_run_seconds": 0.067899,
+        "p50_run_seconds": 0.067978,
+        "images_per_second": 57.7509
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 6.747143,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 6.675714,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 4.668571,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 3.872857,
+          "scene": "other",
+          "aesthetic_score": null
+        }
+      ],
+      "checkout": "baseline",
+      "trial": 1,
+      "process_seconds": 0.5193008338101208
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.12840091600082815,
+      "child_elapsed_seconds": 2.593112416099757,
+      "peak_rss_bytes": 672006144,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000275,
+          "local_heuristic_seconds": 0.072971,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.012295,
+          "model_inference_seconds": 0.063995,
+          "model_postprocess_seconds": 0.000294,
+          "model_compile_seconds": 1.139943
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 2.395161,
+        "cold_run_seconds": 1.530672,
+        "warm_p50_run_seconds": 0.218145,
+        "p50_run_seconds": 0.218655,
+        "images_per_second": 8.3502
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 4.1413,
+          "scene": "people",
+          "aesthetic_score": 4.141343
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 3.8644,
+          "scene": "people",
+          "aesthetic_score": 3.864361
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 3.4409,
+          "scene": "other",
+          "aesthetic_score": 3.44092
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 4.0034,
+          "scene": "other",
+          "aesthetic_score": 4.003413
+        }
+      ],
+      "checkout": "current",
+      "trial": 1,
+      "process_seconds": 2.959458916913718
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.12433616700582206,
+      "child_elapsed_seconds": 2.3442458340432495,
+      "peak_rss_bytes": 660783104,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000313,
+          "local_heuristic_seconds": 0.073527,
+          "model_runs": 1,
+          "model_preprocess_seconds": 0.003593,
+          "model_inference_seconds": 0.008267,
+          "model_postprocess_seconds": 6.1e-05,
+          "model_compile_seconds": 0.066853
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 2.152675,
+        "cold_run_seconds": 1.338898,
+        "warm_p50_run_seconds": 0.2036,
+        "p50_run_seconds": 0.205565,
+        "images_per_second": 9.2908
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 4.1413,
+          "scene": "people",
+          "aesthetic_score": 4.141343
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 3.8644,
+          "scene": "people",
+          "aesthetic_score": 3.864361
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 3.4409,
+          "scene": "other",
+          "aesthetic_score": 3.44092
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 4.0034,
+          "scene": "other",
+          "aesthetic_score": 4.003413
+        }
+      ],
+      "checkout": "baseline",
+      "trial": 1,
+      "process_seconds": 2.6765377500560135
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.1227195831015706,
+      "child_elapsed_seconds": 0.4795720409601927,
+      "peak_rss_bytes": 102236160,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000279,
+          "local_heuristic_seconds": 0.073626,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 0.345336,
+        "cold_run_seconds": 0.07428,
+        "warm_p50_run_seconds": 0.067753,
+        "p50_run_seconds": 0.068067,
+        "images_per_second": 57.9147
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 6.747143,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 6.675714,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 4.668571,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 3.872857,
+          "scene": "other",
+          "aesthetic_score": null
+        }
+      ],
+      "checkout": "baseline",
+      "trial": 2,
+      "process_seconds": 0.5204561660066247
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.12486566603183746,
+      "child_elapsed_seconds": 0.4893595410976559,
+      "peak_rss_bytes": 103497728,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000248,
+          "local_heuristic_seconds": 0.073578,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 0.35023,
+        "cold_run_seconds": 0.074232,
+        "warm_p50_run_seconds": 0.068083,
+        "p50_run_seconds": 0.068134,
+        "images_per_second": 57.1053
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 6.747143,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 6.675714,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 4.668571,
+          "scene": "other",
+          "aesthetic_score": null
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 3.872857,
+          "scene": "other",
+          "aesthetic_score": null
+        }
+      ],
+      "checkout": "current",
+      "trial": 2,
+      "process_seconds": 0.5294443329330534
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.12287366692908108,
+      "child_elapsed_seconds": 2.3540367500390857,
+      "peak_rss_bytes": 657014784,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000376,
+          "local_heuristic_seconds": 0.073577,
+          "model_runs": 1,
+          "model_preprocess_seconds": 0.003528,
+          "model_inference_seconds": 0.007241,
+          "model_postprocess_seconds": 6.3e-05,
+          "model_compile_seconds": 0.06684
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 2.162057,
+        "cold_run_seconds": 1.343616,
+        "warm_p50_run_seconds": 0.205035,
+        "p50_run_seconds": 0.205748,
+        "images_per_second": 9.2504
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 4.1413,
+          "scene": "people",
+          "aesthetic_score": 4.141343
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 3.8644,
+          "scene": "people",
+          "aesthetic_score": 3.864361
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 3.4409,
+          "scene": "other",
+          "aesthetic_score": 3.44092
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 4.0034,
+          "scene": "other",
+          "aesthetic_score": 4.003413
+        }
+      ],
+      "checkout": "baseline",
+      "trial": 2,
+      "process_seconds": 2.686373542062938
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.1284208749420941,
+      "child_elapsed_seconds": 2.5868663750588894,
+      "peak_rss_bytes": 672890880,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.00027,
+          "local_heuristic_seconds": 0.073982,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.011703,
+          "model_inference_seconds": 0.063179,
+          "model_postprocess_seconds": 0.000266,
+          "model_compile_seconds": 1.124183
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 2.390736,
+        "cold_run_seconds": 1.512733,
+        "warm_p50_run_seconds": 0.220154,
+        "p50_run_seconds": 0.221003,
+        "images_per_second": 8.3656
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "scores": [
+        {
+          "id": "portrait-sharp",
+          "dimensions": {
+            "subject": 6.48,
+            "composition": 7.3,
+            "lighting": 7.66,
+            "color": 5.64,
+            "clarity": 6.23,
+            "depth": 7.12,
+            "mood": 6.8
+          },
+          "score": 4.1413,
+          "scene": "people",
+          "aesthetic_score": 4.141343
+        },
+        {
+          "id": "portrait-motion-blur",
+          "dimensions": {
+            "subject": 6.35,
+            "composition": 7.3,
+            "lighting": 7.81,
+            "color": 5.61,
+            "clarity": 5.81,
+            "depth": 7.03,
+            "mood": 6.82
+          },
+          "score": 3.8644,
+          "scene": "people",
+          "aesthetic_score": 3.864361
+        },
+        {
+          "id": "low-light-room",
+          "dimensions": {
+            "subject": 4.1,
+            "composition": 6.32,
+            "lighting": 3.01,
+            "color": 4.9,
+            "clarity": 4.55,
+            "depth": 5.37,
+            "mood": 4.43
+          },
+          "score": 3.4409,
+          "scene": "other",
+          "aesthetic_score": 3.44092
+        },
+        {
+          "id": "ui-screenshot",
+          "dimensions": {
+            "subject": 3.09,
+            "composition": 6.22,
+            "lighting": 0.0,
+            "color": 4.66,
+            "clarity": 4.64,
+            "depth": 5.21,
+            "mood": 3.29
+          },
+          "score": 4.0034,
+          "scene": "other",
+          "aesthetic_score": 4.003413
+        }
+      ],
+      "checkout": "current",
+      "trial": 2,
+      "process_seconds": 2.9329230000730604
+    }
+  ]
+}

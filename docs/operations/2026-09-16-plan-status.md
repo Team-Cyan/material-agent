@@ -13,8 +13,9 @@ has been approved. Quality and selection remain separate; readable groups can
 retain a quality-reject for coverage without score inflation.
 
 Local experiments, fixes, verification and reviewed local commits are authorized.
-The one-time user-requested push through `7f2a367` completed; subsequent local
-batches are not authorized to push. Deployment, private-host operations,
+The user now authorizes reviewed batch commits and normal pushes. The reviewed
+reference commits through `09c5882` have been pushed; CI publication is tracked
+separately from Git push and deployment. Deployment, private-host operations,
 production review and actual photo/XMP writes remain excluded. Synthetic, video,
 real RAW, model proxy and human evidence must be distinguished. Historical external operations do not expand this scope.
 
@@ -39,6 +40,7 @@ or photographic product acceptance. The baseline and one attribution-driven hypo
 | Local residual observability hypothesis | Execution complete; holdout gate failed | `efcdbdd`; [attribution and fresh-burst report](benchmarks/2026-09-19-coverage-observability/report.md), 31 focused guarded tests; development false cover 4→0/8, positive cover 12→18/20; two fresh bursts both retain 3/3 | No retention improvement; no promotion or threshold tuning. Further hypotheses need independent local meaningful/nuisance-change references |
 | Important-change / nuisance spatial references | Evidence complete; feasibility gate failed | `775b3f3`; [reference report](benchmarks/2026-09-19-spatial-reference/report.md); both panels 12/12, 9 scenes, one agreed important pair / zero nuisance pairs; 12 guarded checks | No third algorithm. U01 same-action preference awaiting user; spatial category gaps remain even after that answer |
 | Final bounded spatial-reference supplement | Complete; reference gate still failed | [Final supplement](benchmarks/2026-09-19-spatial-supplement/report.md); four new fixed CDnet pairs, joint 16 pairs / 13 scenes; 2 important pairs, 1 nuisance pair; 15 direct spatial tests + 2 boundary tests after test-import portability correction | `reference_insufficient`, not `preference_blocked`; illumination and gesture categories missing. Search closed at conservative 29m12s cumulative, 3,797,249 dataset bytes downloaded; no further algorithm or collection in this batch |
+| Complexity, efficiency and stability audit | Initial bounded audit complete; release defects identified | [Runtime audit](benchmarks/2026-09-19-runtime-audit/report.md), pre-unification `9de0e41` vs `09c5882`; runtime text +4.7%, dependencies unchanged, small learned-model warm latency +7.1%; 797 guarded tests passed / 102 skipped | Fix confirmed CI ownership and XMP error-contract failures; do not generalize small PNG results to RAW or target hardware |
 | Personal ranker / automatic context acceptance | Blocked on reference data | Action labels and order-sensitive model proxies cannot establish personal preference or reliable back-view/silhouette applicability | Obtain suitable independent labels before model integration/training |
 | Professional-software and target recovery acceptance | Blocked on external inputs/authorization | [Concrete execution plan](2026-09-17-external-acceptance-plan.md) | Identify scratch write scope/software and separately authorized target operator/appdata scope; do not execute now |
 
@@ -75,7 +77,7 @@ acceptance decision.
 Latest full guarded suite is **753 passed, 102 skipped**, run before the
 earlier push through `a1ecf76`. A later explicit push through `7f2a367` completed
 with 45 focused guarded tests and Ruff; the final reference-supplement batch
-after that push remains local.
+was subsequently pushed through `09c5882` under the new batch authorization.
 `4b76ce8` changes isolated benchmark code/tests and evidence, with **29 focused
 checks**, **2 repository-boundary checks**, Ruff and exact real-data parity.
 Source photo/video bytes were verified unchanged. No actual XMP write, live
