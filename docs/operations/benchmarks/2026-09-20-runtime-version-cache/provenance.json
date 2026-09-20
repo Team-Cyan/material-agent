@@ -1,0 +1,25 @@
+{
+  "python": "3.14.3",
+  "os": "Darwin",
+  "architecture": "arm64",
+  "packages": {
+    "openvino": "2026.2.1",
+    "numpy": "2.4.4",
+    "Pillow": "11.3.0",
+    "rawpy": "0.26.1",
+    "opencv-python": "4.13.0.92"
+  },
+  "inputs_sha256": {
+    "portrait-motion-blur-same-subject.png": "f26853d7b3efd1be5f5a780cc3e522b5640699569a96f8e550b00811b7fe3fb1",
+    "portrait-sharp-source.png": "b943274e26ae75b3a487bd2fe9b784f8c7cfc2d4a1b5f21bb25bbe656be74874",
+    "low-light-room.png": "72ff2632aab939adab6ca307451f37e3918807e6e1066fcf87a4f5a9a91ad8da",
+    "ui-screenshot.png": "115285e04b2b35c793b55cd68e90be6e0e20f06ba2b194ab84070e66b3c8a1e3",
+    "manifest.yaml": "803184446eabd40d1b6dc818355f6405956ee8be77f845b2181402ddd9aa28cd",
+    "yunet.onnx": "321aa5a6afabf7ecc46a3d06bfab2b579dc96eb5c3be7edd365fa04502ad9294",
+    "nima.tflite": "a5051a0fcced735682735e3e0fd58ee54c83ed664282a003f52235b3dbcb9320",
+    "ssd.onnx": "b8fba5e404077d4048d27fcd1667e85e27e192eb9bf51e696c46a3acd7d21058"
+  },
+  "harness_sha256": "81f9e0b67a1d6f0bd9105e9841127f28d071784a1011a6aefe157bc2a8320a50",
+  "candidate_client_sha256": "411ad77e7ab7d7e45ef6da7b54960ab619a4bee92e324cce77892178cb7db3fc",
+  "baseline_client_sha256": "fd9a52a1f862f4abf796242df38f3a96853abeceaf0cb2c980ef5e587c7a6b0e"
+}

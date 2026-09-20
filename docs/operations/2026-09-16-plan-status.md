@@ -1,6 +1,6 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated September 19, 2026. The dated filename is
+Single status entrypoint, updated September 20, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
@@ -14,8 +14,9 @@ retain a quality-reject for coverage without score inflation.
 
 Local experiments, fixes, verification and reviewed local commits are authorized.
 The user now authorizes reviewed batch commits and normal pushes. The reviewed
-reference commits through `09c5882` have been pushed; CI publication is tracked
-separately from Git push and deployment. Deployment, private-host operations,
+reference and audit commits through `0e84b81` have been pushed, with remote
+quality and image publication successful. Git push, publication and deployment
+remain distinct; no deployment occurred. Deployment, private-host operations,
 production review and actual photo/XMP writes remain excluded. Synthetic, video,
 real RAW, model proxy and human evidence must be distinguished. Historical external operations do not expand this scope.
 
@@ -40,7 +41,8 @@ or photographic product acceptance. The baseline and one attribution-driven hypo
 | Local residual observability hypothesis | Execution complete; holdout gate failed | `efcdbdd`; [attribution and fresh-burst report](benchmarks/2026-09-19-coverage-observability/report.md), 31 focused guarded tests; development false cover 4→0/8, positive cover 12→18/20; two fresh bursts both retain 3/3 | No retention improvement; no promotion or threshold tuning. Further hypotheses need independent local meaningful/nuisance-change references |
 | Important-change / nuisance spatial references | Evidence complete; feasibility gate failed | `775b3f3`; [reference report](benchmarks/2026-09-19-spatial-reference/report.md); both panels 12/12, 9 scenes, one agreed important pair / zero nuisance pairs; 12 guarded checks | No third algorithm. U01 same-action preference awaiting user; spatial category gaps remain even after that answer |
 | Final bounded spatial-reference supplement | Complete; reference gate still failed | [Final supplement](benchmarks/2026-09-19-spatial-supplement/report.md); four new fixed CDnet pairs, joint 16 pairs / 13 scenes; 2 important pairs, 1 nuisance pair; 15 direct spatial tests + 2 boundary tests after test-import portability correction | `reference_insufficient`, not `preference_blocked`; illumination and gesture categories missing. Search closed at conservative 29m12s cumulative, 3,797,249 dataset bytes downloaded; no further algorithm or collection in this batch |
-| Complexity, efficiency and stability audit | Bounded audit complete; release-gate fixes verified locally | [Runtime audit](benchmarks/2026-09-19-runtime-audit/report.md), pre-unification `9de0e41` vs `09c5882`; runtime text +4.7%, dependencies unchanged, small learned-model warm latency +6.3% (corrected fresh-cache protocol); 797 guarded tests passed / 102 skipped | CI ownership and XMP error-contract fixes pass 53 focused guarded tests; `70ab08f` remote quality passed; image publication tracked separately. Do not generalize small PNG results to RAW or target hardware |
+| Complexity, efficiency and stability audit | Bounded audit complete; release-gate fixes verified locally | [Runtime audit](benchmarks/2026-09-19-runtime-audit/report.md), pre-unification `9de0e41` vs `09c5882`; runtime text +4.7%, dependencies unchanged, small learned-model warm latency +6.3% (corrected fresh-cache protocol); 797 guarded tests passed / 102 skipped | CI ownership and XMP error-contract fixes pass 53 focused guarded tests; `0e84b81` remote quality and image publication succeeded. Do not generalize small PNG results to RAW or target hardware |
+| Bounded package-version lookup optimization | Implemented and locally verified; single attempt gate passed | [Version snapshot follow-up](benchmarks/2026-09-20-runtime-version-cache/report.md); lazy client-lifetime snapshot, 4 paired trials, learned warm 779.595→762.427 ms (2.20%), 3/4 faster; heuristic 1.80% slower; exact score and identity parity; 803 guarded tests passed / 102 skipped | No further optimization/RAW/hardware experiments in this batch. Changing installed packages requires a new client. Latest batch publication is tracked separately |
 | Personal ranker / automatic context acceptance | Blocked on reference data | Action labels and order-sensitive model proxies cannot establish personal preference or reliable back-view/silhouette applicability | Obtain suitable independent labels before model integration/training |
 | Professional-software and target recovery acceptance | Blocked on external inputs/authorization | [Concrete execution plan](2026-09-17-external-acceptance-plan.md) | Identify scratch write scope/software and separately authorized target operator/appdata scope; do not execute now |
 

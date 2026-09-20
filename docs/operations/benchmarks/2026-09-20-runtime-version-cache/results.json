@@ -1,0 +1,1241 @@
+{
+  "summary": {
+    "heuristic": {
+      "baseline": {
+        "warm_seconds": 0.2738115,
+        "cold_seconds": 0.287917,
+        "rss_bytes": 103391232.0,
+        "process_seconds": 2.263620208017528
+      },
+      "candidate": {
+        "warm_seconds": 0.278731,
+        "cold_seconds": 0.297831,
+        "rss_bytes": 103284736.0,
+        "process_seconds": 2.3016305001219735
+      },
+      "score_parity": true,
+      "counts_parity": true,
+      "paired_faster_trials": [],
+      "warm_improvement_percent": -1.7966739892225192
+    },
+    "intel": {
+      "baseline": {
+        "warm_seconds": 0.779595,
+        "cold_seconds": 15.7834395,
+        "rss_bytes": 679354368.0,
+        "process_seconds": 20.15580906253308
+      },
+      "candidate": {
+        "warm_seconds": 0.7624265,
+        "cold_seconds": 15.7913785,
+        "rss_bytes": 676118528.0,
+        "process_seconds": 20.07148581254296
+      },
+      "score_parity": true,
+      "counts_parity": true,
+      "paired_faster_trials": [
+        1,
+        2,
+        3
+      ],
+      "warm_improvement_percent": 2.202233210833837
+    }
+  },
+  "performance_gate_passed": true,
+  "trials": [
+    {
+      "profile": "heuristic",
+      "import_seconds": 1.7331409160979092,
+      "child_elapsed_seconds": 3.2413968332111835,
+      "peak_rss_bytes": 108363776,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.00256,
+          "local_heuristic_seconds": 0.304066,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 1.424262,
+        "cold_run_seconds": 0.308124,
+        "warm_p50_run_seconds": 0.27945,
+        "p50_run_seconds": 0.281864,
+        "images_per_second": 14.0424
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "variant": "baseline",
+      "trial": 0,
+      "process_seconds": 3.4830967080779374,
+      "score_sha256": "e9a8a700ba6058fb83c30ba993f392084a5c50b926eab0d1665e1aa44b23962b"
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.7331051249057055,
+      "child_elapsed_seconds": 2.28435270790942,
+      "peak_rss_bytes": 108232704,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.00117,
+          "local_heuristic_seconds": 0.306974,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 1.470728,
+        "cold_run_seconds": 0.309878,
+        "warm_p50_run_seconds": 0.286704,
+        "p50_run_seconds": 0.292631,
+        "images_per_second": 13.5987
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "variant": "candidate",
+      "trial": 0,
+      "process_seconds": 2.515048834029585,
+      "score_sha256": "e9a8a700ba6058fb83c30ba993f392084a5c50b926eab0d1665e1aa44b23962b"
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.6139919159468263,
+      "child_elapsed_seconds": 19.67636629077606,
+      "peak_rss_bytes": 680820736,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001402,
+          "local_heuristic_seconds": 0.280556,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.047723,
+          "model_inference_seconds": 0.260588,
+          "model_postprocess_seconds": 0.001057,
+          "model_compile_seconds": 14.072279
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 18.716457,
+        "cold_run_seconds": 15.633535,
+        "warm_p50_run_seconds": 0.759051,
+        "p50_run_seconds": 0.763075,
+        "images_per_second": 1.0686
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "variant": "baseline",
+      "trial": 0,
+      "process_seconds": 20.023323667002842,
+      "score_sha256": "d1ef81c96a9134aac12126910891b1e620397bc75aa0e3d443639229bf372440"
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.7017491657752544,
+      "child_elapsed_seconds": 19.866026624804363,
+      "peak_rss_bytes": 684572672,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001644,
+          "local_heuristic_seconds": 0.298536,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.041909,
+          "model_inference_seconds": 0.253268,
+          "model_postprocess_seconds": 0.001307,
+          "model_compile_seconds": 14.167687
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 18.825716,
+        "cold_run_seconds": 15.757491,
+        "warm_p50_run_seconds": 0.767386,
+        "p50_run_seconds": 0.768547,
+        "images_per_second": 1.0624
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "variant": "candidate",
+      "trial": 0,
+      "process_seconds": 20.22297029220499,
+      "score_sha256": "d1ef81c96a9134aac12126910891b1e620397bc75aa0e3d443639229bf372440"
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.5917449581902474,
+      "child_elapsed_seconds": 2.0766514581628144,
+      "peak_rss_bytes": 103268352,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001085,
+          "local_heuristic_seconds": 0.292906,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 1.419812,
+        "cold_run_seconds": 0.295381,
+        "warm_p50_run_seconds": 0.280938,
+        "p50_run_seconds": 0.282679,
+        "images_per_second": 14.0864
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "variant": "candidate",
+      "trial": 1,
+      "process_seconds": 2.3190011670812964,
+      "score_sha256": "e9a8a700ba6058fb83c30ba993f392084a5c50b926eab0d1665e1aa44b23962b"
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.5652175832074136,
+      "child_elapsed_seconds": 2.015207750024274,
+      "peak_rss_bytes": 103432192,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001955,
+          "local_heuristic_seconds": 0.270344,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 1.386806,
+        "cold_run_seconds": 0.274014,
+        "warm_p50_run_seconds": 0.278524,
+        "p50_run_seconds": 0.274014,
+        "images_per_second": 14.4216
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "variant": "baseline",
+      "trial": 1,
+      "process_seconds": 2.245370125165209,
+      "score_sha256": "e9a8a700ba6058fb83c30ba993f392084a5c50b926eab0d1665e1aa44b23962b"
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.601712082978338,
+      "child_elapsed_seconds": 19.84440758312121,
+      "peak_rss_bytes": 673415168,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001545,
+          "local_heuristic_seconds": 0.280533,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.03846,
+          "model_inference_seconds": 0.244375,
+          "model_postprocess_seconds": 0.001041,
+          "model_compile_seconds": 14.358527
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 18.890576,
+        "cold_run_seconds": 15.844806,
+        "warm_p50_run_seconds": 0.757467,
+        "p50_run_seconds": 0.7596,
+        "images_per_second": 1.0587
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "variant": "candidate",
+      "trial": 1,
+      "process_seconds": 20.19457587506622,
+      "score_sha256": "d1ef81c96a9134aac12126910891b1e620397bc75aa0e3d443639229bf372440"
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.6904114168137312,
+      "child_elapsed_seconds": 18.8994769169949,
+      "peak_rss_bytes": 683753472,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001517,
+          "local_heuristic_seconds": 0.272947,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.04144,
+          "model_inference_seconds": 0.253884,
+          "model_postprocess_seconds": 0.001365,
+          "model_compile_seconds": 13.210998
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 17.86976,
+        "cold_run_seconds": 14.745293,
+        "warm_p50_run_seconds": 0.779104,
+        "p50_run_seconds": 0.780635,
+        "images_per_second": 1.1192
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "variant": "baseline",
+      "trial": 1,
+      "process_seconds": 19.2672942080535,
+      "score_sha256": "d1ef81c96a9134aac12126910891b1e620397bc75aa0e3d443639229bf372440"
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.6042840420268476,
+      "child_elapsed_seconds": 2.054316666908562,
+      "peak_rss_bytes": 103235584,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001379,
+          "local_heuristic_seconds": 0.298621,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 1.381417,
+        "cold_run_seconds": 0.30182,
+        "warm_p50_run_seconds": 0.269099,
+        "p50_run_seconds": 0.270988,
+        "images_per_second": 14.4779
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "variant": "baseline",
+      "trial": 2,
+      "process_seconds": 2.281870290869847,
+      "score_sha256": "e9a8a700ba6058fb83c30ba993f392084a5c50b926eab0d1665e1aa44b23962b"
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.5896832919679582,
+      "child_elapsed_seconds": 2.04828645917587,
+      "peak_rss_bytes": 103268352,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001445,
+          "local_heuristic_seconds": 0.297095,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 1.394208,
+        "cold_run_seconds": 0.300281,
+        "warm_p50_run_seconds": 0.276524,
+        "p50_run_seconds": 0.278259,
+        "images_per_second": 14.3451
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "variant": "candidate",
+      "trial": 2,
+      "process_seconds": 2.2842598331626505,
+      "score_sha256": "e9a8a700ba6058fb83c30ba993f392084a5c50b926eab0d1665e1aa44b23962b"
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.6136942498851568,
+      "child_elapsed_seconds": 19.941242416854948,
+      "peak_rss_bytes": 668434432,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001868,
+          "local_heuristic_seconds": 0.260635,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.04016,
+          "model_inference_seconds": 0.251411,
+          "model_postprocess_seconds": 0.001288,
+          "model_compile_seconds": 14.448223
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 18.980847,
+        "cold_run_seconds": 15.933344,
+        "warm_p50_run_seconds": 0.780086,
+        "p50_run_seconds": 0.789258,
+        "images_per_second": 1.0537
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "variant": "baseline",
+      "trial": 2,
+      "process_seconds": 20.28829445806332,
+      "score_sha256": "d1ef81c96a9134aac12126910891b1e620397bc75aa0e3d443639229bf372440"
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.6903317091055214,
+      "child_elapsed_seconds": 19.610990750137717,
+      "peak_rss_bytes": 670990336,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001116,
+          "local_heuristic_seconds": 0.246015,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.039289,
+          "model_inference_seconds": 0.225024,
+          "model_postprocess_seconds": 0.001138,
+          "model_compile_seconds": 14.365747
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 18.598929,
+        "cold_run_seconds": 15.825266,
+        "warm_p50_run_seconds": 0.689723,
+        "p50_run_seconds": 0.689735,
+        "images_per_second": 1.0753
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "variant": "candidate",
+      "trial": 2,
+      "process_seconds": 19.9483957500197,
+      "score_sha256": "d1ef81c96a9134aac12126910891b1e620397bc75aa0e3d443639229bf372440"
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.5387785830534995,
+      "child_elapsed_seconds": 1.8140341250691563,
+      "peak_rss_bytes": 103301120,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001368,
+          "local_heuristic_seconds": 0.267357,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 1.216186,
+        "cold_run_seconds": 0.269983,
+        "warm_p50_run_seconds": 0.240828,
+        "p50_run_seconds": 0.240911,
+        "images_per_second": 16.4449
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "variant": "candidate",
+      "trial": 3,
+      "process_seconds": 2.010928666917607,
+      "score_sha256": "e9a8a700ba6058fb83c30ba993f392084a5c50b926eab0d1665e1aa44b23962b"
+    },
+    {
+      "profile": "heuristic",
+      "import_seconds": 0.5418497498612851,
+      "child_elapsed_seconds": 1.8236531249713153,
+      "peak_rss_bytes": 103350272,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 3,
+          "total": 3,
+          "rate": 1.0
+        },
+        "reject_recall": {
+          "numerator": 1,
+          "total": 3,
+          "rate": 0.333333
+        },
+        "reject_false_negative_count": 2,
+        "scene_accuracy": {
+          "numerator": 1,
+          "total": 4,
+          "rate": 0.25
+        },
+        "scene_other_rate": {
+          "numerator": 4,
+          "total": 4,
+          "rate": 1.0
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": 0.795714,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": null,
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000974,
+          "local_heuristic_seconds": 0.248024,
+          "model_runs": 0,
+          "model_preprocess_seconds": 0.0,
+          "model_inference_seconds": 0.0,
+          "model_postprocess_seconds": 0.0,
+          "model_compile_seconds": 0.0
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 1.218046,
+        "cold_run_seconds": 0.250404,
+        "warm_p50_run_seconds": 0.240512,
+        "p50_run_seconds": 0.240544,
+        "images_per_second": 16.4197
+      },
+      "counts": {
+        "input_loads": 20
+      },
+      "variant": "baseline",
+      "trial": 3,
+      "process_seconds": 2.0134056671522558,
+      "score_sha256": "e9a8a700ba6058fb83c30ba993f392084a5c50b926eab0d1665e1aa44b23962b"
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.5150278329383582,
+      "child_elapsed_seconds": 19.268523499835283,
+      "peak_rss_bytes": 678821888,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.000913,
+          "local_heuristic_seconds": 0.27932,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.041328,
+          "model_inference_seconds": 0.249555,
+          "model_postprocess_seconds": 0.001502,
+          "model_compile_seconds": 13.896097
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 18.408081,
+        "cold_run_seconds": 15.319099,
+        "warm_p50_run_seconds": 0.770721,
+        "p50_run_seconds": 0.770926,
+        "images_per_second": 1.0865
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "variant": "candidate",
+      "trial": 3,
+      "process_seconds": 19.595356167061254,
+      "score_sha256": "d1ef81c96a9134aac12126910891b1e620397bc75aa0e3d443639229bf372440"
+    },
+    {
+      "profile": "intel",
+      "import_seconds": 0.6543837920762599,
+      "child_elapsed_seconds": 20.218560917070135,
+      "peak_rss_bytes": 677888000,
+      "metrics": {
+        "item_count": 4,
+        "group_top1": {
+          "numerator": 1,
+          "total": 1,
+          "rate": 1.0
+        },
+        "pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_recall": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "reject_false_negative_count": 1,
+        "scene_accuracy": {
+          "numerator": 3,
+          "total": 4,
+          "rate": 0.75
+        },
+        "scene_other_rate": {
+          "numerator": 2,
+          "total": 4,
+          "rate": 0.5
+        },
+        "face_positive_count": 2,
+        "face_recall": null,
+        "face_accuracy": null,
+        "screenshot_photo_separation": -0.5625,
+        "reject_prior_recall": null,
+        "reject_prior_false_negative_count": null,
+        "quality_pairwise_preference": null,
+        "aesthetic_pairwise_preference": {
+          "numerator": 2,
+          "total": 3,
+          "rate": 0.666667
+        },
+        "embedding_same_group_top1": null,
+        "embedding_non_photo_photo_max_similarity": null,
+        "timings": {
+          "raw_decode_seconds": 0.001397,
+          "local_heuristic_seconds": 0.289128,
+          "model_runs": 5,
+          "model_preprocess_seconds": 0.037328,
+          "model_inference_seconds": 0.241815,
+          "model_postprocess_seconds": 0.001204,
+          "model_compile_seconds": 14.571823
+        },
+        "deterministic_scores": true,
+        "elapsed_seconds": 19.211709,
+        "cold_run_seconds": 16.103396,
+        "warm_p50_run_seconds": 0.791045,
+        "p50_run_seconds": 0.81692,
+        "images_per_second": 1.041
+      },
+      "counts": {
+        "input_loads": 20,
+        "nima_adapter_calls": 5,
+        "nima_init": 1,
+        "detection_calls": 20,
+        "ssd_init": 1
+      },
+      "variant": "baseline",
+      "trial": 3,
+      "process_seconds": 20.568175334017724,
+      "score_sha256": "d1ef81c96a9134aac12126910891b1e620397bc75aa0e3d443639229bf372440"
+    }
+  ],
+  "same_environment_cache_identity_exact_parity": true,
+  "metadata_only_diagnostic": {
+    "note": "25 version-dictionary uses; isolates metadata work, not end-to-end speed causality",
+    "trials": [
+      {
+        "trial": 0,
+        "variant": "baseline",
+        "seconds": 0.10211291699670255,
+        "queries": 125
+      },
+      {
+        "trial": 0,
+        "variant": "candidate",
+        "seconds": 0.0025869167875498533,
+        "queries": 5
+      },
+      {
+        "trial": 1,
+        "variant": "candidate",
+        "seconds": 0.0028545830864459276,
+        "queries": 5
+      },
+      {
+        "trial": 1,
+        "variant": "baseline",
+        "seconds": 0.07559958286583424,
+        "queries": 125
+      },
+      {
+        "trial": 2,
+        "variant": "baseline",
+        "seconds": 0.06452491716481745,
+        "queries": 125
+      },
+      {
+        "trial": 2,
+        "variant": "candidate",
+        "seconds": 0.003248542081564665,
+        "queries": 5
+      },
+      {
+        "trial": 3,
+        "variant": "candidate",
+        "seconds": 0.002687624888494611,
+        "queries": 5
+      },
+      {
+        "trial": 3,
+        "variant": "baseline",
+        "seconds": 0.07430479186587036,
+        "queries": 125
+      }
+    ],
+    "median_seconds": {
+      "baseline": 0.0749521873658523,
+      "candidate": 0.002771103987470269
+    }
+  }
+}

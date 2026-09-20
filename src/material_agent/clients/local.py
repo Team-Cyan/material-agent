@@ -48,6 +48,10 @@ class AsyncLocalClient:
         self._aesthetic_result_cache = self._aesthetic_cache.values
         self._result_identities = {}
         self._asset_snapshots = {}
+        # Package installations are fixed for a client lifetime, including absence.
+        # Recreate the client after changing the environment; assets/config still
+        # invalidate result identities on each lookup. Keep heuristic startup lazy.
+        self._runtime_versions = None
 
     async def score_image(self, jpeg_bytes: bytes) -> dict:
         heuristic_started = time.perf_counter()
@@ -236,6 +240,11 @@ class AsyncLocalClient:
         if snapshot is None or (snapshot.model_path, snapshot.processor_path) != asset_paths:
             snapshot = self._asset_snapshots[kind] = AssetSnapshot(*asset_paths)
         assets = snapshot.current()
+        if self._runtime_versions is None:
+            self._runtime_versions = {
+                name: runtime_version(name)
+                for name in ("openvino", "numpy", "Pillow", "torch", "transformers")
+            }
         key = identity(
             {
                 "schema": REVISION,
@@ -244,10 +253,7 @@ class AsyncLocalClient:
                 "inference": self.inference,
                 "assets": assets,
                 "preprocessing": preprocessing_spec(kind, config),
-                "versions": {
-                    name: runtime_version(name)
-                    for name in ("openvino", "numpy", "Pillow", "torch", "transformers")
-                },
+                "versions": self._runtime_versions,
             }
         )
         previous = self._result_identities.get(kind)

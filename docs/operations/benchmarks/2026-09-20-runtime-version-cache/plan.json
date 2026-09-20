@@ -1,0 +1,10 @@
+{
+  "scope": "One client-lifetime immutable package-version snapshot attempt only",
+  "baseline": "0e84b819960ac0cdde75c992d9b39aa33532ae15",
+  "candidate": "baseline plus clients/local.py lazy version snapshot; frozen copy before measurements",
+  "inputs": "same four existing synthetic PNG fixtures and existing pinned NIMA/SSD/YuNet assets as prior audit",
+  "protocol": {"profiles": ["heuristic", "intel"], "process_trials_per_variant_profile": 4, "repetitions_per_process": 5, "paired_order": ["baseline,candidate", "candidate,baseline", "baseline,candidate", "candidate,baseline"], "compiled_cache": "unique absent directory per process, retained within its repetitions", "result_cache": "cleared before each repetition; normal intra-repetition priming reuse"},
+  "acceptance": {"scores_scenes_dimensions_exact_parity": true, "learned_warm_median_improvement_minimum_percent": 2, "learned_faster_pairs_minimum": 3, "no_added_model_initializations_or_calls": true, "identity_correctness_tests": true, "bounded_complexity": "one lazy instance field and moved dictionary construction; no new dependency, model or global cache"},
+  "stop": "If gate fails, revert only this runtime attempt and retain results. No alternate optimization or expanded RAW/hardware experiment.",
+  "boundary": "No production review, photos/XMP modification, deployment, source search or model/default changes. Batch commit/push authorized after verification."
+}

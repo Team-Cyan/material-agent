@@ -172,3 +172,14 @@ Release correction `70ab08f` was pushed and its remote quality job passed;
 [image publication](https://github.com/Team-Cyan/material-agent/actions/runs/35448595251)
 was still running when this measurement correction was recorded. A push or
 quality success alone is not a successful image release or deployment.
+
+## Follow-up status, September 20
+
+`0e84b81` completed both remote quality and image publication in
+[Actions 35448750398](https://github.com/Team-Cyan/material-agent/actions/runs/35448750398).
+No deployment was performed. The single authorized version-lookup optimization
+is documented in the [bounded follow-up](../2026-09-20-runtime-version-cache/report.md):
+2.20% learned warm improvement in its own four paired trials, unchanged scores
+and call counts; heuristic timings were 1.80% slower. This does not supersede
+the original pre-unification 6.3% / +18.8 MB diagnostic or establish target
+hardware acceptance. No other optimization or hardware experiment was started.
