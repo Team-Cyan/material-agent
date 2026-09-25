@@ -3,7 +3,6 @@ from pathlib import Path
 import signal
 import sqlite3
 import threading
-from time import perf_counter
 
 import pytest
 
@@ -557,11 +556,13 @@ def test_sigterm_persists_cancelled_state_without_waiting_for_prepare_worker(tmp
     service = ReviewRunService(repo)
     prepare_started = threading.Event()
     release_prepare = threading.Event()
+    prepare_finished = threading.Event()
 
     def _build_executor(**kwargs):
         def _blocking_prepare(file_path):
             prepare_started.set()
-            release_prepare.wait(timeout=2)
+            release_prepare.wait(timeout=5)
+            prepare_finished.set()
             return file_path
 
         return JobExecutor(
@@ -579,7 +580,6 @@ def test_sigterm_persists_cancelled_state_without_waiting_for_prepare_worker(tmp
 
     trigger = threading.Thread(target=_send_sigterm)
     trigger.start()
-    started_at = perf_counter()
     try:
         with sigterm_as_cancellation(), pytest.raises(RunCancelled, match="SIGTERM"):
             service.run(
@@ -591,11 +591,10 @@ def test_sigterm_persists_cancelled_state_without_waiting_for_prepare_worker(tmp
                 file_paths=["/tmp/photos/a.ARW"],
                 build_executor=_build_executor,
             )
-        elapsed = perf_counter() - started_at
         status = repo.conn.execute(
             "SELECT status FROM jobs ORDER BY started_at DESC, id DESC LIMIT 1"
         ).fetchone()["status"]
-        assert elapsed < 0.5
+        assert not prepare_finished.is_set()
         assert status == "cancelled"
     finally:
         release_prepare.set()

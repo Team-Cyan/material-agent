@@ -102,6 +102,13 @@ The three new tests are ordinary repository tests, not a runtime probe feature.
 The source candidate was frozen before timing; its client-file SHA256 is in
 provenance. Input/model hashes match the prior audit. No photos/XMP were written,
 no private host was accessed, and no closed spatial-reference work was restarted.
-Batch commit/push is authorized; this batch's remote quality and image result are
-reported separately after publication completes. No additional hardware or RAW
-I/O experiment is included or automatically started.
+The batch was pushed as `a2db712`. Its first CI attempt had one failure in an
+existing SIGTERM cancellation test: the task returned and recorded `cancelled`,
+but a fixed 0.5-second wall-clock assertion measured 1.09 seconds on the runner.
+That test passed three isolated local repetitions. A retry of the same commit
+passed remote quality, immutable-image smoke and image publication in
+[Actions 35515765580](https://github.com/Team-Cyan/material-agent/actions/runs/35515765580).
+No deployment occurred. A subsequent review replaced the cancellation test's
+wall-clock assertion with a direct check that the preparation worker is still
+blocked when cancellation returns; its release wait remains bounded. No
+additional hardware or RAW I/O experiment was started.

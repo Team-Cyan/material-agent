@@ -1,6 +1,6 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated September 20, 2026. The dated filename is
+Single status entrypoint, updated September 25, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
@@ -14,7 +14,7 @@ retain a quality-reject for coverage without score inflation.
 
 Local experiments, fixes, verification and reviewed local commits are authorized.
 The user now authorizes reviewed batch commits and normal pushes. The reviewed
-reference and audit commits through `0e84b81` have been pushed, with remote
+reference and audit commits through `a2db712` have been pushed, with remote
 quality and image publication successful. Git push, publication and deployment
 remain distinct; no deployment occurred. Deployment, private-host operations,
 production review and actual photo/XMP writes remain excluded. Synthetic, video,
@@ -42,7 +42,7 @@ or photographic product acceptance. The baseline and one attribution-driven hypo
 | Important-change / nuisance spatial references | Evidence complete; feasibility gate failed | `775b3f3`; [reference report](benchmarks/2026-09-19-spatial-reference/report.md); both panels 12/12, 9 scenes, one agreed important pair / zero nuisance pairs; 12 guarded checks | No third algorithm. U01 same-action preference awaiting user; spatial category gaps remain even after that answer |
 | Final bounded spatial-reference supplement | Complete; reference gate still failed | [Final supplement](benchmarks/2026-09-19-spatial-supplement/report.md); four new fixed CDnet pairs, joint 16 pairs / 13 scenes; 2 important pairs, 1 nuisance pair; 15 direct spatial tests + 2 boundary tests after test-import portability correction | `reference_insufficient`, not `preference_blocked`; illumination and gesture categories missing. Search closed at conservative 29m12s cumulative, 3,797,249 dataset bytes downloaded; no further algorithm or collection in this batch |
 | Complexity, efficiency and stability audit | Bounded audit complete; release-gate fixes verified locally | [Runtime audit](benchmarks/2026-09-19-runtime-audit/report.md), pre-unification `9de0e41` vs `09c5882`; runtime text +4.7%, dependencies unchanged, small learned-model warm latency +6.3% (corrected fresh-cache protocol); 797 guarded tests passed / 102 skipped | CI ownership and XMP error-contract fixes pass 53 focused guarded tests; `0e84b81` remote quality and image publication succeeded. Do not generalize small PNG results to RAW or target hardware |
-| Bounded package-version lookup optimization | Implemented and locally verified; single attempt gate passed | [Version snapshot follow-up](benchmarks/2026-09-20-runtime-version-cache/report.md); lazy client-lifetime snapshot, 4 paired trials, learned warm 779.595→762.427 ms (2.20%), 3/4 faster; heuristic 1.80% slower; exact score and identity parity; 803 guarded tests passed / 102 skipped | No further optimization/RAW/hardware experiments in this batch. Changing installed packages requires a new client. Latest batch publication is tracked separately |
+| Bounded package-version lookup optimization | Implemented and published; single attempt gate passed | [Version snapshot follow-up](benchmarks/2026-09-20-runtime-version-cache/report.md); lazy client-lifetime snapshot, 4 paired trials, learned warm 779.595→762.427 ms (2.20%), 3/4 faster; heuristic 1.80% slower; exact score and identity parity; 803 guarded tests passed / 102 skipped; [quality, image smoke and publication succeeded after one CI retry](https://github.com/Team-Cyan/material-agent/actions/runs/35515765580) | No further optimization/RAW/hardware experiments in this batch. Changing installed packages requires a new client; target hardware acceptance remains separate |
 | Personal ranker / automatic context acceptance | Blocked on reference data | Action labels and order-sensitive model proxies cannot establish personal preference or reliable back-view/silhouette applicability | Obtain suitable independent labels before model integration/training |
 | Professional-software and target recovery acceptance | Blocked on external inputs/authorization | [Concrete execution plan](2026-09-17-external-acceptance-plan.md) | Identify scratch write scope/software and separately authorized target operator/appdata scope; do not execute now |
 
@@ -76,7 +76,7 @@ acceptance decision.
 
 ## Verification limits
 
-Latest full guarded suite is **753 passed, 102 skipped**, run before the
+An earlier full guarded suite had **753 passed, 102 skipped**, run before the
 earlier push through `a1ecf76`. A later explicit push through `7f2a367` completed
 with 45 focused guarded tests and Ruff; the final reference-supplement batch
 was subsequently pushed through `09c5882` under the new batch authorization.
