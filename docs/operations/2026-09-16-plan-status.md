@@ -1,8 +1,45 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated September 25, 2026. The dated filename is
+Single status entrypoint, updated October 2, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
+
+September 28 mainline correction: the user directed work back to culling
+algorithm improvement. The [updated plan](2026-09-26-culling-improvement-plan.md)
+closes the optional offline annotation-viewer branch. Product WebUI remains the
+admin/operator dashboard; browser layout/download acceptance is outside the
+active queue and is not an algorithm prerequisite.
+
+September 29 execution complete: the [evidence inventory](benchmarks/2026-09-29-representation-control/inventory.md)
+and [controlled synthetic runner](benchmarks/2026-09-29-representation-control/report.md)
+are delivered. Four cases / 16 arm cells verify shared geometry, fixed residual
+resolution and 512-gray baseline parity; controller checks passed 46 tests and
+lint. Resume reused all four records without recomputation. The tiny luminance
+control remains cover in both representations; no accuracy or speedup is claimed.
+
+No qualifying independent human labels were found in the scoped existing-manifest
+inventory. Next resolve that evidence scope, then bind frozen real inputs and run
+G2/Batch 3. Minimum 24 pairs / 12 independent families and all category/split quotas
+remain unmet. Do not repeat runner preparation or reopen annotation UI work.
+Production behavior and historical acquisition limits remain unchanged.
+
+September 30 recovery: the implementation session hit its usage limit during
+final documentation/checkpoint work. Saved runner/protocol hashes still match
+the accepted matrix. The controller finalized the report, refined mapping-test
+check, public-document hygiene and recovery snapshot; completed preparation
+should not be dispatched again.
+
+Completed support work is retained: 138 focused/regression checks on September 27
+and 81 reference/viewer/boundary checks on September 28 passed, with lint; see the
+[tooling report](benchmarks/2026-09-27-reference-tooling/report.md) and
+[handler follow-up](benchmarks/2026-09-27-reference-tooling/2026-09-28-viewer-contract-report.md).
+Local checkpoints and hashed snapshots remain the quota-interruption recovery path.
+
+October 2 publication review: the user authorized continuing and pushing the
+reviewed batch. The controller corrected G1 counting: abstention-only pairs and
+their families cannot pad the minimum labeled-reference totals. The
+[publication review](2026-10-02-culling-tooling-review.md) records current checks
+and release status. This changes evaluation tooling only; G1/G2 remain unmet.
 
 ## Rules and authorization
 
@@ -44,6 +81,9 @@ or photographic product acceptance. The baseline and one attribution-driven hypo
 | Complexity, efficiency and stability audit | Bounded audit complete; release-gate fixes verified locally | [Runtime audit](benchmarks/2026-09-19-runtime-audit/report.md), pre-unification `9de0e41` vs `09c5882`; runtime text +4.7%, dependencies unchanged, small learned-model warm latency +6.3% (corrected fresh-cache protocol); 797 guarded tests passed / 102 skipped | CI ownership and XMP error-contract fixes pass 53 focused guarded tests; `0e84b81` remote quality and image publication succeeded. Do not generalize small PNG results to RAW or target hardware |
 | Bounded package-version lookup optimization | Implemented and published; single attempt gate passed | [Version snapshot follow-up](benchmarks/2026-09-20-runtime-version-cache/report.md); lazy client-lifetime snapshot, 4 paired trials, learned warm 779.595→762.427 ms (2.20%), 3/4 faster; heuristic 1.80% slower; exact score and identity parity; 803 guarded tests passed / 102 skipped; [quality, image smoke and publication succeeded after one CI retry](https://github.com/Team-Cyan/material-agent/actions/runs/35515765580) | No further optimization/RAW/hardware experiments in this batch. Changing installed packages requires a new client; target hardware acceptance remains separate |
 | Personal ranker / automatic context acceptance | Blocked on reference data | Action labels and order-sensitive model proxies cannot establish personal preference or reliable back-view/silhouette applicability | Obtain suitable independent labels before model integration/training |
+| Human-reference tooling continuation | Closed supporting work; preserve existing artifacts | [Tooling guide](benchmarks/2026-09-27-reference-tooling/README.md); validator/merge and handler contracts verified locally | No further annotation UI or browser task; zero real human labels, G1 remains insufficient |
+| Controlled algorithm comparison preparation | Accepted locally; synthetic scope | [Report and commands](benchmarks/2026-09-29-representation-control/report.md), [inventory](benchmarks/2026-09-29-representation-control/inventory.md); 4 cases / 16 arm cells, 46 controller checks, verified resume | Zero qualifying human labels found in scoped manifests; G1/G2 and frozen real-data binding still required for quality evaluation |
+| Constructed candidate-graph diagnostics | Structural portion accepted locally | [14-snapshot report](benchmarks/2026-09-27-reference-tooling/candidate-graph/report.md); 42 arm/snapshot component/full equalities, zero witness violations; historical global-cap displacement retained | Per-event cap still omits useful pairs; no production promotion, real event segmentation or complete human-oracle G2 acceptance |
 | Professional-software and target recovery acceptance | Blocked on external inputs/authorization | [Concrete execution plan](2026-09-17-external-acceptance-plan.md) | Identify scratch write scope/software and separately authorized target operator/appdata scope; do not execute now |
 
 ## Converged grouping result and required decisions
@@ -108,9 +148,11 @@ add one agreed object-change pair and one water-nuisance pair (the same pair).
 Combined evidence still lacks a second nuisance pair and agreed illumination and
 gesture/expression contrasts. `reference_insufficient=true` and
 `preference_blocked=false`; U01 is still pending but is not the data blocker.
-The sole next proposal is a separately scoped human-annotated reference collection
-covering those gaps. No new algorithm, source search, threshold adjustment or
-production integration is authorized by this result.
+That historical result does not authorize another source search, threshold
+adjustment or production integration. The evidence inventory and synthetic runner
+preparation are complete. The current next step is resolving independent
+reference inputs; missing judgments still block labeled quality evaluation. Existing
+reference tools may be reused, with no further annotation-page work.
 
 A review found that the original guarded test environment masked a bare sibling
 test import. The import now uses the existing `tests` package. Direct spatial

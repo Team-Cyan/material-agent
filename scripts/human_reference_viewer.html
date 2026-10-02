@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'">
+<title>Local reference annotation</title>
+<style>
+body{font:16px system-ui;margin:24px;background:#f5f5f5;color:#181818}main{max-width:1500px;margin:auto}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:16px}.photo{position:relative;line-height:0;touch-action:none;width:fit-content;max-width:100%}img{max-width:100%;max-height:65vh;display:block;user-select:none}.box{position:absolute;border:2px solid #f0f;background:#ff00ff22;pointer-events:none;box-sizing:border-box}label{display:inline-block;margin:8px}select,input,button,textarea{font:inherit;padding:6px}textarea{display:block;width:95%;min-height:60px}button{margin:8px 8px 8px 0}fieldset{margin-top:16px}#status{white-space:pre-wrap}pre{white-space:pre-wrap}h2{margin-bottom:6px}.help{max-width:1100px}button:focus,select:focus,textarea:focus{outline:3px solid #008ac7}
+</style><main><h1>Local reference annotation</h1>
+<p class="help">Judge the visible content in each direction independently. A → B asks whether A preserves all important content visible in B. Quality is a separate judgment. Unknown, unjudgeable and preference-dependent are valid answers. Drag on either image to mark a region; coordinates refer to the oriented image, excluding its title and surrounding space. No upload or network access is used. Export before closing; annotations remain in memory only.</p>
+<div><button id="previous">Previous</button><strong id="progress"></strong><button id="next">Next</button><button id="export">Export saved annotations</button></div>
+<div class="photos"><section><h2 id="nameA"></h2><div class="photo" id="photoA"><img id="imageA" alt="Image A" draggable="false"></div></section><section><h2 id="nameB"></h2><div class="photo" id="photoB"><img id="imageB" alt="Image B" draggable="false"></div></section></div>
+<fieldset><legend>Content judgments</legend><label>Visible correspondence <select id="correspondence"></select></label><label>A → B <select id="a_to_b"></select></label><label>B → A <select id="b_to_a"></select></label><label><input id="no_visible_change" type="checkbox">No visible change (no regions)</label><label>Reason<textarea id="reason"></textarea></label></fieldset>
+<fieldset><legend>Independent quality judgment</legend><label>A <select id="qualityA"></select></label><label>B <select id="qualityB"></select></label><label>Preference <select id="preference"></select></label><label>Quality reason<textarea id="qualityReason"></textarea></label></fieldset>
+<fieldset><legend>Region evidence</legend><label>Importance <select id="importance"></select></label><label>Observed phenomenon <select id="phenomenon"></select></label><label>Visibility <select id="visibility"></select></label><label>Description <input id="description"></label><p>Choose evidence labels and description, then drag on the image. Use Clear regions to redraw. The category is your observed judgment, never a supplied source target.</p><button id="clearRegions">Clear regions</button><pre id="regions"></pre></fieldset>
+<button id="save">Save this pair</button><p id="status" role="status"></p></main>
+<script>
+const payload = /*PAYLOAD*/;
+const $ = id => document.getElementById(id);
+const options = (id, values) => { for (const value of ['',...values]) {const option=document.createElement('option');option.value=value;option.textContent=value||'Choose…';$(id).append(option);} };
+options('correspondence',['yes','no','unknown','unjudgeable']);
+for (const key of ['a_to_b','b_to_a']) options(key,['cover','negative','unknown','unjudgeable','preference_dependent']);
+for (const key of ['qualityA','qualityB']) options(key,['readable','unreadable','unknown']);
+options('preference',['A','B','tie','unknown','preference_dependent']);
+options('importance',['important','nuisance','unknown','preference_dependent']);
+options('phenomenon',['exposure','illumination','texture_noise','object_state','hand_progression','expression_pose','camera_motion','occlusion']);
+options('visibility',['clear','limited','not_visible']);
+let index=0, regions=[], started='', dirty=false;
+const saved=new Map();
+function drawRegions(){
+ for(const e of document.querySelectorAll('.box')) e.remove();
+ for(const r of regions){const box=document.createElement('div');box.className='box';box.style.left=100*r.box[0]+'%';box.style.top=100*r.box[1]+'%';box.style.width=100*(r.box[2]-r.box[0])+'%';box.style.height=100*(r.box[3]-r.box[1])+'%';$('photo'+r.side).append(box);}
+ $('regions').textContent=JSON.stringify(regions,null,2);
+}
+function show(){
+ const panel=payload.panels[index], record=saved.get(panel.id);
+ $('progress').textContent=`${panel.id} (${index+1}/${payload.panels.length}) — ${saved.size} saved`;
+ for(const side of ['A','B']) {$('name'+side).textContent=panel.id+' '+side;$('image'+side).src=panel.images[side];}
+ for(const key of ['correspondence','a_to_b','b_to_a','reason']) $(key).value=record?.[key]||'';
+ for(const side of ['A','B']) $('quality'+side).value=record?.quality[side]||'';
+ $('preference').value=record?.quality.preference||'';$('qualityReason').value=record?.quality.reason||'';
+ $('no_visible_change').checked=record?.no_visible_change||false;
+ regions=structuredClone(record?.regions||[]);started=new Date().toISOString();dirty=false;drawRegions();$('status').textContent='';
+}
+function save(){
+ const panel=payload.panels[index];
+ const record={id:`${panel.id}_${payload.annotator}`,annotator:payload.annotator,origin:'new_human',role:'independent',supersedes:[],revision:'human-reference-v1',started_at:started,completed_at:new Date().toISOString(),correspondence:$('correspondence').value,a_to_b:$('a_to_b').value,b_to_a:$('b_to_a').value,quality:{A:$('qualityA').value,B:$('qualityB').value,preference:$('preference').value,reason:$('qualityReason').value.trim()},regions:structuredClone(regions),no_visible_change:$('no_visible_change').checked,reason:$('reason').value.trim(),preview_hashes:panel.hashes};
+ if(!record.correspondence||!record.a_to_b||!record.b_to_a||!record.quality.A||!record.quality.B||!record.quality.preference||!record.quality.reason||!record.reason) throw Error('Complete every judgment and both reasons. Unknown is allowed.');
+ const definite=[record.a_to_b,record.b_to_a].some(v=>['cover','negative'].includes(v));
+ if(definite&&!['yes','no'].includes(record.correspondence)) throw Error('Definite coverage needs judgeable correspondence.');
+ if(definite&&!regions.length&&!record.no_visible_change) throw Error('Mark evidence regions or explicitly select no visible change.');
+ if(record.no_visible_change&&(regions.length||[record.a_to_b,record.b_to_a].includes('negative'))) throw Error('No visible change conflicts with regions or negative.');
+ for(const [direction,side] of [['a_to_b','B'],['b_to_a','A']]) if(record[direction]==='negative'&&!regions.some(r=>r.side===side&&r.importance==='important')) throw Error('Negative requires an important region on target '+side+'.');
+ saved.set(panel.id,record);dirty=false;$('status').textContent='Saved locally in memory. Export to keep your annotations.';$('progress').textContent=`${panel.id} (${index+1}/${payload.panels.length}) — ${saved.size} saved`;
+}
+function handle(fn){try{fn();}catch(error){$('status').textContent=error.message;}}
+$('save').onclick=()=>handle(save);
+for(const [id,step] of [['previous',-1],['next',1]]) $(id).onclick=()=>handle(()=>{if(dirty)throw Error('Save this pair before navigating.'); index=Math.max(0,Math.min(payload.panels.length-1,index+step));show();});
+$('clearRegions').onclick=()=>{regions=[];dirty=true;drawRegions();};
+for(const e of document.querySelectorAll('select,input,textarea')) {
+ for(const event of ['input','change']) e.addEventListener(event,()=>dirty=true);
+}
+for(const side of ['A','B']){
+ const img=$('image'+side);let anchor=null;
+ const point=event=>{const b=img.getBoundingClientRect();return [Math.max(0,Math.min(1,(event.clientX-b.left)/b.width)),Math.max(0,Math.min(1,(event.clientY-b.top)/b.height))];};
+ img.onpointerdown=e=>{anchor=point(e);img.setPointerCapture(e.pointerId);};
+ img.onpointerup=e=>handle(()=>{if(!anchor)return;const end=point(e),start=anchor;anchor=null;
+ const box=[Math.min(start[0],end[0]),Math.min(start[1],end[1]),Math.max(start[0],end[0]),Math.max(start[1],end[1])].map(v=>Math.round(v*1000000)/1000000);
+ if(box[0]>=box[2]||box[1]>=box[3])throw Error('Drag a nonempty region.');
+ if(!$('importance').value||!$('phenomenon').value||!$('visibility').value||!$('description').value.trim())throw Error('Choose region labels and enter a description before dragging.');
+ regions.push({side,box,importance:$('importance').value,phenomenon:$('phenomenon').value,visibility:$('visibility').value,description:$('description').value.trim()});dirty=true;drawRegions();});
+ img.onpointercancel=()=>anchor=null;
+}
+$('export').onclick=()=>handle(()=>{if(dirty)throw Error('Save the current pair before exporting.');if(!saved.size)throw Error('No saved annotations to export.');
+ const value={bundle:payload.bundle,annotations:[...saved].map(([pair,record])=>({pair,record}))};
+ const blob=new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='human-annotations.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$('status').textContent='Exported. Keep the JSON in the private .local workspace and run merge + validate.';
+});
+window.addEventListener('beforeunload',e=>{if(dirty||saved.size){e.preventDefault();e.returnValue='';}});
+show();
+</script></html>

@@ -165,6 +165,13 @@
 
 ## Next
 
+- resolve independent culling reference inputs after the completed
+  [evidence inventory and synthetic protocol](operations/benchmarks/2026-09-29-representation-control/report.md).
+  Shared-geometry checks and resume are verified; G1/G2 and real-data binding
+  remain required before labeled quality evaluation. Follow the
+  [continuation plan](operations/2026-09-26-culling-improvement-plan.md#next-substantive-step-and-dispatch-boundary);
+  do not reopen the closed annotation-viewer branch or change the admin WebUI
+
 - review score/photo outliers from the grouping-enabled full-library rerun and
   compare the new group-size/rank distribution with the singleton-only baseline
 

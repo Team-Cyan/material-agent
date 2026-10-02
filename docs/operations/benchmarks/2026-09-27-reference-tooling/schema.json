@@ -1,0 +1,494 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "material-agent.human-reference.v1",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "enum": [
+        "material-agent.human-reference.v1"
+      ]
+    },
+    "freeze": {
+      "type": "object",
+      "properties": {
+        "at": {
+          "type": "string",
+          "minLength": 1,
+          "format": "date-time"
+        },
+        "membership_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "at",
+        "membership_sha256"
+      ],
+      "additionalProperties": false
+    },
+    "annotators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "human",
+              "model",
+              "synthetic"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1
+          },
+          "scene_family": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1
+          },
+          "related_sources": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "split": {
+            "type": "string",
+            "enum": [
+              "development",
+              "holdout"
+            ]
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "new_still",
+              "historical_inspected",
+              "synthetic",
+              "model_generated",
+              "video"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "scene_family",
+          "related_sources",
+          "split",
+          "origin"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1
+          },
+          "event": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "permission": {
+                "type": "string",
+                "minLength": 1
+              },
+              "capture_time": {
+                "type": "string",
+                "minLength": 1,
+                "format": "date-time"
+              },
+              "capture_time_provenance": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "permission",
+              "capture_time",
+              "capture_time_provenance"
+            ],
+            "additionalProperties": false
+          },
+          "preview": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "recipe": {
+                "type": "string",
+                "minLength": 1
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "coordinates": {
+                "type": "string",
+                "enum": [
+                  "normalized_xyxy_oriented_image"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "recipe",
+              "width",
+              "height",
+              "coordinates"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "event",
+          "source",
+          "preview"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1
+          },
+          "A": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1
+          },
+          "B": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1
+          },
+          "annotations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_-]+$",
+                  "minLength": 1
+                },
+                "annotator": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_-]+$",
+                  "minLength": 1
+                },
+                "origin": {
+                  "type": "string",
+                  "enum": [
+                    "new_human",
+                    "historical_inspected",
+                    "synthetic",
+                    "model_generated"
+                  ]
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "independent",
+                    "adjudication"
+                  ]
+                },
+                "supersedes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]+$",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                },
+                "revision": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "started_at": {
+                  "type": "string",
+                  "minLength": 1,
+                  "format": "date-time"
+                },
+                "completed_at": {
+                  "type": "string",
+                  "minLength": 1,
+                  "format": "date-time"
+                },
+                "correspondence": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no",
+                    "unknown",
+                    "unjudgeable"
+                  ]
+                },
+                "a_to_b": {
+                  "type": "string",
+                  "enum": [
+                    "cover",
+                    "negative",
+                    "unknown",
+                    "unjudgeable",
+                    "preference_dependent"
+                  ]
+                },
+                "b_to_a": {
+                  "type": "string",
+                  "enum": [
+                    "cover",
+                    "negative",
+                    "unknown",
+                    "unjudgeable",
+                    "preference_dependent"
+                  ]
+                },
+                "quality": {
+                  "type": "object",
+                  "properties": {
+                    "A": {
+                      "type": "string",
+                      "enum": [
+                        "readable",
+                        "unreadable",
+                        "unknown"
+                      ]
+                    },
+                    "B": {
+                      "type": "string",
+                      "enum": [
+                        "readable",
+                        "unreadable",
+                        "unknown"
+                      ]
+                    },
+                    "preference": {
+                      "type": "string",
+                      "enum": [
+                        "A",
+                        "B",
+                        "tie",
+                        "unknown",
+                        "preference_dependent"
+                      ]
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "A",
+                    "B",
+                    "preference",
+                    "reason"
+                  ],
+                  "additionalProperties": false
+                },
+                "regions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "side": {
+                        "type": "string",
+                        "enum": [
+                          "A",
+                          "B"
+                        ]
+                      },
+                      "box": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "minItems": 4,
+                        "maxItems": 4
+                      },
+                      "importance": {
+                        "type": "string",
+                        "enum": [
+                          "important",
+                          "nuisance",
+                          "unknown",
+                          "preference_dependent"
+                        ]
+                      },
+                      "phenomenon": {
+                        "type": "string",
+                        "enum": [
+                          "exposure",
+                          "illumination",
+                          "texture_noise",
+                          "object_state",
+                          "hand_progression",
+                          "expression_pose",
+                          "camera_motion",
+                          "occlusion"
+                        ]
+                      },
+                      "description": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "visibility": {
+                        "type": "string",
+                        "enum": [
+                          "clear",
+                          "limited",
+                          "not_visible"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "side",
+                      "box",
+                      "importance",
+                      "phenomenon",
+                      "description",
+                      "visibility"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 0
+                },
+                "no_visible_change": {
+                  "type": "boolean"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "preview_hashes": {
+                  "type": "object",
+                  "properties": {
+                    "A": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "B": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "A",
+                    "B"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "id",
+                "annotator",
+                "origin",
+                "role",
+                "supersedes",
+                "revision",
+                "started_at",
+                "completed_at",
+                "correspondence",
+                "a_to_b",
+                "b_to_a",
+                "quality",
+                "regions",
+                "no_visible_change",
+                "reason",
+                "preview_hashes"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "id",
+          "A",
+          "B",
+          "annotations"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    }
+  },
+  "required": [
+    "schema",
+    "freeze",
+    "annotators",
+    "events",
+    "assets",
+    "pairs"
+  ],
+  "additionalProperties": false
+}

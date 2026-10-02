@@ -1,0 +1,284 @@
+{
+  "schema": "material-agent.representation-control.v1",
+  "evidence_kind": "synthetic_protocol_wiring_only",
+  "identity": {
+    "protocol_sha256": "786d02994d5e7444e803416258e1e66a733a2b4f2023a83bdc77e6fb12a8fbb2",
+    "runner_sha256": "9642e3a8b18e94b77d64600af38d1d2e7ab3a9a7a5ee0d60ada189215353df16",
+    "direct_coverage_sha256": "54387bfe9b887d978bb7d13ea0bfb92eff9bf9303fe8060c2a774b623a0632fb",
+    "observability_sha256": "866c3233b8133c3a1ae34d71a93b5bde5f8cecadda12cafd1a590ca075c656ef",
+    "historical_plan_sha256": "b1a110d5768644670a48acba7034b4ea2ed521cb8b01719a225a6fc83f8fa3cb",
+    "runtime": {
+      "python": "3.14.3",
+      "opencv": "4.13.0",
+      "numpy": "2.4.4",
+      "pillow": "11.3.0",
+      "imagehash": "4.3.2"
+    }
+  },
+  "summary": {
+    "cases": 4,
+    "matrix_arms": 16,
+    "all_512_gray_parity": true,
+    "all_arm_geometry_shared": true,
+    "resource_overruns_observed": 0,
+    "quality_gate": "not_applicable_synthetic_only"
+  },
+  "rows": [
+    {
+      "case_id": "identity",
+      "input_sha256": [
+        "e0bd01a0b289b6471567d7d46370d6574821437f1a898bf3c2b5b0d7fbfd4e4d",
+        "e0bd01a0b289b6471567d7d46370d6574821437f1a898bf3c2b5b0d7fbfd4e4d"
+      ],
+      "semantic_sha256": "fb64c75aab6a92c08c707f303ef3acc12e2c7779104dffc9a1258d1bfcc71787",
+      "case_seconds_observed": 0.6326534999534488,
+      "process_peak_rss_bytes_observed": 450641920,
+      "matrix": {
+        "512": {
+          "geometry_source_hw": [
+            512,
+            512
+          ],
+          "geometry_target_hw": [
+            512,
+            512
+          ],
+          "residual_source_hw": [
+            512,
+            512
+          ],
+          "residual_target_hw": [
+            512,
+            512
+          ],
+          "geometry_artifact_sha256": "c576f25597477aa697769f07b0b86ece7ac366d846819983ee8f12f65a9fe440",
+          "common_gate_reason": "geometry_and_photometric_consistency",
+          "gray_relation": "cover",
+          "rgb_local_relation": "cover",
+          "gray_B_decision": "reject",
+          "rgb_local_B_decision": "reject",
+          "parity_512_gray": true,
+          "gray_residual_evidence_equal_historical_512": true
+        },
+        "1024": {
+          "geometry_source_hw": [
+            1024,
+            1024
+          ],
+          "geometry_target_hw": [
+            1024,
+            1024
+          ],
+          "residual_source_hw": [
+            512,
+            512
+          ],
+          "residual_target_hw": [
+            512,
+            512
+          ],
+          "geometry_artifact_sha256": "1f6ed071d31d482125610107f78309b5b174a51aadf5737da44eb5674f38eea6",
+          "common_gate_reason": "geometry_and_photometric_consistency",
+          "gray_relation": "cover",
+          "rgb_local_relation": "cover",
+          "gray_B_decision": "reject",
+          "rgb_local_B_decision": "reject",
+          "parity_512_gray": null,
+          "gray_residual_evidence_equal_historical_512": null
+        }
+      }
+    },
+    {
+      "case_id": "jpeg",
+      "input_sha256": [
+        "e0bd01a0b289b6471567d7d46370d6574821437f1a898bf3c2b5b0d7fbfd4e4d",
+        "72d6c3acacb3934dd8e5e442901ad4c4eff3689a1ac7d59665129fe272d1e349"
+      ],
+      "semantic_sha256": "4d906037f4f2e78b527bc6806424773f0fce4f921489c09aee469ffc1d1b91d9",
+      "case_seconds_observed": 0.5252057919278741,
+      "process_peak_rss_bytes_observed": 452870144,
+      "matrix": {
+        "512": {
+          "geometry_source_hw": [
+            512,
+            512
+          ],
+          "geometry_target_hw": [
+            512,
+            512
+          ],
+          "residual_source_hw": [
+            512,
+            512
+          ],
+          "residual_target_hw": [
+            512,
+            512
+          ],
+          "geometry_artifact_sha256": "2f607c23bec730442bec7732ca2793fea720f6dbb01b9ffacf697845cf97884b",
+          "common_gate_reason": "geometry_and_photometric_consistency",
+          "gray_relation": "cover",
+          "rgb_local_relation": "cover",
+          "gray_B_decision": "reject",
+          "rgb_local_B_decision": "reject",
+          "parity_512_gray": true,
+          "gray_residual_evidence_equal_historical_512": true
+        },
+        "1024": {
+          "geometry_source_hw": [
+            1024,
+            1024
+          ],
+          "geometry_target_hw": [
+            1024,
+            1024
+          ],
+          "residual_source_hw": [
+            512,
+            512
+          ],
+          "residual_target_hw": [
+            512,
+            512
+          ],
+          "geometry_artifact_sha256": "c55419ab84505e22833d33451dbac17a2dabc07b1e6277b99db8aa5c8fcaa1fc",
+          "common_gate_reason": "unexplained_local_change",
+          "gray_relation": "cover",
+          "rgb_local_relation": "cover",
+          "gray_B_decision": "reject",
+          "rgb_local_B_decision": "reject",
+          "parity_512_gray": null,
+          "gray_residual_evidence_equal_historical_512": null
+        }
+      }
+    },
+    {
+      "case_id": "small-luminance",
+      "input_sha256": [
+        "e0bd01a0b289b6471567d7d46370d6574821437f1a898bf3c2b5b0d7fbfd4e4d",
+        "bb68a7052b991b1142d7401bb4f28ba5820265dc73b28a401156a51b7eafa4b4"
+      ],
+      "semantic_sha256": "6315e03ea6fbbdb31fe61cb719c1f99d222f01ae37eb863cad22e853ae68ee25",
+      "case_seconds_observed": 0.5190274999476969,
+      "process_peak_rss_bytes_observed": 452952064,
+      "matrix": {
+        "512": {
+          "geometry_source_hw": [
+            512,
+            512
+          ],
+          "geometry_target_hw": [
+            512,
+            512
+          ],
+          "residual_source_hw": [
+            512,
+            512
+          ],
+          "residual_target_hw": [
+            512,
+            512
+          ],
+          "geometry_artifact_sha256": "cd2d168c396f65d686cf305d57d8e4b70e07e0bbfbf64c3c7e9029cb06f315c3",
+          "common_gate_reason": "geometry_and_photometric_consistency",
+          "gray_relation": "cover",
+          "rgb_local_relation": "cover",
+          "gray_B_decision": "reject",
+          "rgb_local_B_decision": "reject",
+          "parity_512_gray": true,
+          "gray_residual_evidence_equal_historical_512": true
+        },
+        "1024": {
+          "geometry_source_hw": [
+            1024,
+            1024
+          ],
+          "geometry_target_hw": [
+            1024,
+            1024
+          ],
+          "residual_source_hw": [
+            512,
+            512
+          ],
+          "residual_target_hw": [
+            512,
+            512
+          ],
+          "geometry_artifact_sha256": "e6e60425c0c1e9fa0fa107fa13b7841a5de29d18a7cad574c9794a0f52243a87",
+          "common_gate_reason": "unexplained_local_change",
+          "gray_relation": "cover",
+          "rgb_local_relation": "cover",
+          "gray_B_decision": "reject",
+          "rgb_local_B_decision": "reject",
+          "parity_512_gray": null,
+          "gray_residual_evidence_equal_historical_512": null
+        }
+      }
+    },
+    {
+      "case_id": "isoluminant-color",
+      "input_sha256": [
+        "11fe449c848d2f1fc81250ac40653197e4b2245fcb1cf16fdebb09fe07d2c493",
+        "960ef04d208abb14368270cc12f1c4ab866e5993ef809c2e03b0b63ef67685d2"
+      ],
+      "semantic_sha256": "31b09098bd5eb9d4302c59b6976f90dff878658c0bd4c4ab58ad782c4dc8c45e",
+      "case_seconds_observed": 0.5400043330155313,
+      "process_peak_rss_bytes_observed": 453099520,
+      "matrix": {
+        "512": {
+          "geometry_source_hw": [
+            512,
+            512
+          ],
+          "geometry_target_hw": [
+            512,
+            512
+          ],
+          "residual_source_hw": [
+            512,
+            512
+          ],
+          "residual_target_hw": [
+            512,
+            512
+          ],
+          "geometry_artifact_sha256": "59a0ff633a747b5c338f0e1bd3030e79cda1645e9259f8ead9148d0d010fbba7",
+          "common_gate_reason": "geometry_and_photometric_consistency",
+          "gray_relation": "cover",
+          "rgb_local_relation": "unknown",
+          "gray_B_decision": "reject",
+          "rgb_local_B_decision": "keep",
+          "parity_512_gray": true,
+          "gray_residual_evidence_equal_historical_512": true
+        },
+        "1024": {
+          "geometry_source_hw": [
+            1024,
+            1024
+          ],
+          "geometry_target_hw": [
+            1024,
+            1024
+          ],
+          "residual_source_hw": [
+            512,
+            512
+          ],
+          "residual_target_hw": [
+            512,
+            512
+          ],
+          "geometry_artifact_sha256": "88a5f3f7369fd06ec83f76ec18111b84156bbc591b006228f94184ac761a9cf6",
+          "common_gate_reason": "unexplained_local_change",
+          "gray_relation": "cover",
+          "rgb_local_relation": "unknown",
+          "gray_B_decision": "reject",
+          "rgb_local_B_decision": "keep",
+          "parity_512_gray": null,
+          "gray_residual_evidence_equal_historical_512": null
+        }
+      }
+    }
+  ]
+}

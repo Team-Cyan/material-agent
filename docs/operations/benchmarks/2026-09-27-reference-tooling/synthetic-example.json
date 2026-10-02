@@ -1,0 +1,179 @@
+{
+  "schema": "material-agent.human-reference.v1",
+  "freeze": {
+    "at": "2026-09-26T10:00:00Z",
+    "membership_sha256": "f17bdee2e9840180c1044ea0eb8a29ce3f05fb7a608ee284489ab0c267f5ea00"
+  },
+  "annotators": [
+    {
+      "id": "demo_operator",
+      "kind": "human"
+    },
+    {
+      "id": "second_operator",
+      "kind": "human"
+    }
+  ],
+  "events": [
+    {
+      "id": "E01",
+      "scene_family": "F01",
+      "related_sources": [
+        "generated_0"
+      ],
+      "split": "development",
+      "origin": "synthetic"
+    },
+    {
+      "id": "E02",
+      "scene_family": "F02",
+      "related_sources": [
+        "generated_1"
+      ],
+      "split": "holdout",
+      "origin": "synthetic"
+    }
+  ],
+  "assets": [
+    {
+      "id": "E01_I01",
+      "event": "E01",
+      "source": {
+        "path": "E01_I01.png",
+        "sha256": "15bbb84324f0dd20fbb831cb19f180b60443c4d822bc3babbc63e1074ce7bb63",
+        "permission": "Original geometric test fixture",
+        "capture_time": "2026-09-25T12:00:00+00:00",
+        "capture_time_provenance": "Synthetic timestamp; not camera metadata"
+      },
+      "preview": {
+        "path": "E01_I01.png",
+        "sha256": "15bbb84324f0dd20fbb831cb19f180b60443c4d822bc3babbc63e1074ce7bb63",
+        "recipe": "Original RGB PNG; oriented; no resize",
+        "width": 600,
+        "height": 400,
+        "coordinates": "normalized_xyxy_oriented_image"
+      }
+    },
+    {
+      "id": "E01_I02",
+      "event": "E01",
+      "source": {
+        "path": "E01_I02.png",
+        "sha256": "fde923c6af3536e6576178b35a070db356baf23a0445b167c50007691cbd4fe3",
+        "permission": "Original geometric test fixture",
+        "capture_time": "2026-09-25T12:00:00+00:00",
+        "capture_time_provenance": "Synthetic timestamp; not camera metadata"
+      },
+      "preview": {
+        "path": "E01_I02.png",
+        "sha256": "fde923c6af3536e6576178b35a070db356baf23a0445b167c50007691cbd4fe3",
+        "recipe": "Original RGB PNG; oriented; no resize",
+        "width": 600,
+        "height": 400,
+        "coordinates": "normalized_xyxy_oriented_image"
+      }
+    },
+    {
+      "id": "E01_I03",
+      "event": "E01",
+      "source": {
+        "path": "E01_I03.png",
+        "sha256": "342e035a4ee813dc60cc83165d4d9df2eea79b5296291f4ba7df46e21992c8e7",
+        "permission": "Original geometric test fixture",
+        "capture_time": "2026-09-25T12:00:00+00:00",
+        "capture_time_provenance": "Synthetic timestamp; not camera metadata"
+      },
+      "preview": {
+        "path": "E01_I03.png",
+        "sha256": "342e035a4ee813dc60cc83165d4d9df2eea79b5296291f4ba7df46e21992c8e7",
+        "recipe": "Original RGB PNG; oriented; no resize",
+        "width": 600,
+        "height": 400,
+        "coordinates": "normalized_xyxy_oriented_image"
+      }
+    },
+    {
+      "id": "E02_I01",
+      "event": "E02",
+      "source": {
+        "path": "E02_I01.png",
+        "sha256": "4cb2913e2bb0e377d959995873e790b3bbe05ac594f2fb0fe466479867ce663b",
+        "permission": "Original geometric test fixture",
+        "capture_time": "2026-09-25T12:00:00+00:00",
+        "capture_time_provenance": "Synthetic timestamp; not camera metadata"
+      },
+      "preview": {
+        "path": "E02_I01.png",
+        "sha256": "4cb2913e2bb0e377d959995873e790b3bbe05ac594f2fb0fe466479867ce663b",
+        "recipe": "Original RGB PNG; oriented; no resize",
+        "width": 600,
+        "height": 400,
+        "coordinates": "normalized_xyxy_oriented_image"
+      }
+    },
+    {
+      "id": "E02_I02",
+      "event": "E02",
+      "source": {
+        "path": "E02_I02.png",
+        "sha256": "1b21bb3dbca4fc92f90a4ddf182ddcb711c36d1d61a7b7bc5a88eb75b3c4c64b",
+        "permission": "Original geometric test fixture",
+        "capture_time": "2026-09-25T12:00:00+00:00",
+        "capture_time_provenance": "Synthetic timestamp; not camera metadata"
+      },
+      "preview": {
+        "path": "E02_I02.png",
+        "sha256": "1b21bb3dbca4fc92f90a4ddf182ddcb711c36d1d61a7b7bc5a88eb75b3c4c64b",
+        "recipe": "Original RGB PNG; oriented; no resize",
+        "width": 600,
+        "height": 400,
+        "coordinates": "normalized_xyxy_oriented_image"
+      }
+    },
+    {
+      "id": "E02_I03",
+      "event": "E02",
+      "source": {
+        "path": "E02_I03.png",
+        "sha256": "942d2e66c7704fd18779d9afefb145634a56d7d755a4647ac526b5639ec2a6f2",
+        "permission": "Original geometric test fixture",
+        "capture_time": "2026-09-25T12:00:00+00:00",
+        "capture_time_provenance": "Synthetic timestamp; not camera metadata"
+      },
+      "preview": {
+        "path": "E02_I03.png",
+        "sha256": "942d2e66c7704fd18779d9afefb145634a56d7d755a4647ac526b5639ec2a6f2",
+        "recipe": "Original RGB PNG; oriented; no resize",
+        "width": 600,
+        "height": 400,
+        "coordinates": "normalized_xyxy_oriented_image"
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "id": "E01_P01",
+      "A": "E01_I01",
+      "B": "E01_I02",
+      "annotations": []
+    },
+    {
+      "id": "E01_P02",
+      "A": "E01_I01",
+      "B": "E01_I03",
+      "annotations": []
+    },
+    {
+      "id": "E02_P01",
+      "A": "E02_I01",
+      "B": "E02_I02",
+      "annotations": []
+    },
+    {
+      "id": "E02_P02",
+      "A": "E02_I01",
+      "B": "E02_I03",
+      "annotations": []
+    }
+  ]
+}

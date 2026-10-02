@@ -1,0 +1,815 @@
+{
+  "schema": "material-agent.constructed-candidate-graph.v1",
+  "label_origin": "constructed",
+  "cases": [
+    {
+      "id": "chain",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 6,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 12,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "a",
+          "target": "b",
+          "relation": "cover"
+        },
+        {
+          "source": "b",
+          "target": "c",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "keeper_deleted",
+      "frames": [
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 6,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 12,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "b",
+          "target": "c",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "cycle_tied",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 50,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 50,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 50,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "a",
+          "target": "b",
+          "relation": "cover"
+        },
+        {
+          "source": "b",
+          "target": "c",
+          "relation": "cover"
+        },
+        {
+          "source": "c",
+          "target": "a",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "missing_quality",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {}
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "a",
+          "target": "b",
+          "relation": "cover"
+        },
+        {
+          "source": "b",
+          "target": "c",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "low_unique_high_duplicate",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 10,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "b",
+          "target": "c",
+          "relation": "cover"
+        },
+        {
+          "source": "c",
+          "target": "b",
+          "relation": "cover"
+        },
+        {
+          "source": "b",
+          "target": "a",
+          "relation": "different"
+        },
+        {
+          "source": "c",
+          "target": "a",
+          "relation": "different"
+        }
+      ]
+    },
+    {
+      "id": "bridge_before",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 1,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 19,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "d",
+          "event": "event-1",
+          "seconds": 20,
+          "quality": {
+            "total": 60,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "a",
+          "target": "b",
+          "relation": "cover"
+        },
+        {
+          "source": "c",
+          "target": "d",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "bridge_inserted",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 1,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 19,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "d",
+          "event": "event-1",
+          "seconds": 20,
+          "quality": {
+            "total": 60,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "x",
+          "event": "event-1",
+          "seconds": 10,
+          "quality": {
+            "total": 100,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "a",
+          "target": "b",
+          "relation": "cover"
+        },
+        {
+          "source": "c",
+          "target": "d",
+          "relation": "cover"
+        },
+        {
+          "source": "x",
+          "target": "a",
+          "relation": "cover"
+        },
+        {
+          "source": "x",
+          "target": "c",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "bridge_removed",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 1,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 19,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "d",
+          "event": "event-1",
+          "seconds": 20,
+          "quality": {
+            "total": 60,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "a",
+          "target": "b",
+          "relation": "cover"
+        },
+        {
+          "source": "c",
+          "target": "d",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "global_cap_before",
+      "frames": [
+        {
+          "id": "a",
+          "event": "late",
+          "seconds": 100,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "late",
+          "seconds": 101,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "late",
+          "seconds": 102,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "d",
+          "event": "late",
+          "seconds": 103,
+          "quality": {
+            "total": 60,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "b",
+          "target": "c",
+          "relation": "cover"
+        },
+        {
+          "source": "b",
+          "target": "d",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "global_cap_after",
+      "frames": [
+        {
+          "id": "x",
+          "event": "early",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "y",
+          "event": "early",
+          "seconds": 1,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "a",
+          "event": "late",
+          "seconds": 100,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "late",
+          "seconds": 101,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "late",
+          "seconds": 102,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "d",
+          "event": "late",
+          "seconds": 103,
+          "quality": {
+            "total": 60,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "x",
+          "target": "y",
+          "relation": "cover"
+        },
+        {
+          "source": "b",
+          "target": "c",
+          "relation": "cover"
+        },
+        {
+          "source": "b",
+          "target": "d",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "nearest_three_omission",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 1,
+          "quality": {
+            "total": 89,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 2,
+          "quality": {
+            "total": 88,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "d",
+          "event": "event-1",
+          "seconds": 3,
+          "quality": {
+            "total": 87,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "e",
+          "event": "event-1",
+          "seconds": 4,
+          "quality": {
+            "total": 86,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "a",
+          "target": "e",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "unknown_and_missing_time",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 1,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": null,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "a",
+          "target": "b",
+          "relation": "unknown"
+        },
+        {
+          "source": "a",
+          "target": "c",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "selection_cascade_before",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 6,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 12,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "d",
+          "event": "event-1",
+          "seconds": 18,
+          "quality": {
+            "total": 60,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "a",
+          "target": "b",
+          "relation": "cover"
+        },
+        {
+          "source": "b",
+          "target": "c",
+          "relation": "cover"
+        },
+        {
+          "source": "c",
+          "target": "d",
+          "relation": "cover"
+        }
+      ]
+    },
+    {
+      "id": "selection_cascade_after",
+      "frames": [
+        {
+          "id": "a",
+          "event": "event-1",
+          "seconds": 0,
+          "quality": {
+            "total": 90,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "b",
+          "event": "event-1",
+          "seconds": 6,
+          "quality": {
+            "total": 80,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "c",
+          "event": "event-1",
+          "seconds": 12,
+          "quality": {
+            "total": 70,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "d",
+          "event": "event-1",
+          "seconds": 18,
+          "quality": {
+            "total": 60,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        },
+        {
+          "id": "x",
+          "event": "event-1",
+          "seconds": -6,
+          "quality": {
+            "total": 100,
+            "sharpness": 50,
+            "exposure": 50
+          }
+        }
+      ],
+      "oracle": [
+        {
+          "source": "x",
+          "target": "a",
+          "relation": "cover"
+        },
+        {
+          "source": "a",
+          "target": "b",
+          "relation": "cover"
+        },
+        {
+          "source": "b",
+          "target": "c",
+          "relation": "cover"
+        },
+        {
+          "source": "c",
+          "target": "d",
+          "relation": "cover"
+        }
+      ]
+    }
+  ]
+}

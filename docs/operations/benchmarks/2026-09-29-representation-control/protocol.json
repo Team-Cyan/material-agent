@@ -1,0 +1,81 @@
+{
+  "schema": "material-agent.representation-control.v1",
+  "purpose": "synthetic wiring and isolation checks only; no quality/promotion decision",
+  "frozen_before_execution": true,
+  "geometry_max_sides": [
+    512,
+    1024
+  ],
+  "residual_max_side": 512,
+  "baseline_geometry_max_side": 512,
+  "candidate_policy": "exact four directed A_to_B pairs listed below; no enumeration or unknown-as-negative",
+  "cases": [
+    {
+      "id": "identity",
+      "seed": 2049,
+      "side": 1280,
+      "kind": "identity"
+    },
+    {
+      "id": "jpeg",
+      "seed": 2049,
+      "side": 1280,
+      "kind": "jpeg"
+    },
+    {
+      "id": "small-luminance",
+      "seed": 2049,
+      "side": 1280,
+      "kind": "small_luminance"
+    },
+    {
+      "id": "isoluminant-color",
+      "seed": 2049,
+      "side": 1280,
+      "kind": "isoluminant_color"
+    }
+  ],
+  "synthetic_preprocess": {
+    "jpeg_quality_pair": [
+      95,
+      85
+    ],
+    "noise_standard_deviation": 3,
+    "subpixel_translation_xy": [
+      0.25,
+      0.25
+    ],
+    "exposure_gain_offset": [
+      0.7,
+      10
+    ],
+    "small_content_patch_side": 4,
+    "reference_source": "construction; symbolic content, not portrait or action accuracy"
+  },
+  "quality_inputs": {
+    "A": {
+      "total": 1.0,
+      "sharpness": 1.0,
+      "exposure": 1.0
+    },
+    "B": {
+      "total": 1.0,
+      "sharpness": 1.0,
+      "exposure": 1.0
+    }
+  },
+  "selector": "direct_coverage.select, unchanged, two-frame diagnostic only; A/B score tie by stable ID",
+  "rgb_local_parameters": {
+    "smoothing_sigma": 1.0,
+    "global_mean_limit": 2.0,
+    "global_p95_limit": 6.0,
+    "local_absolute_floor": 12.0,
+    "local_mad_multiplier": 6.0,
+    "connected_component_minimum_pixels": 8
+  },
+  "limits": {
+    "maximum_cases": 4,
+    "maximum_case_seconds_observed": 90,
+    "process_rss_limit_bytes_observed": 2000000000
+  }
+}
