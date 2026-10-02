@@ -46,6 +46,52 @@ def test_frozen_config_rejects_path_like_and_duplicate_kind_ids(tmp_path):
         m.load_protocol(path)
 
 
+@pytest.mark.parametrize(
+    "key,value",
+    [
+        ("maximum_case_seconds_observed", float("inf")),
+        ("maximum_case_seconds_observed", float("nan")),
+        ("maximum_case_seconds_observed", 0),
+        ("maximum_case_seconds_observed", -1),
+        ("maximum_case_seconds_observed", True),
+        ("maximum_case_seconds_observed", "90"),
+        ("maximum_case_seconds_observed", 91),
+        ("process_rss_limit_bytes_observed", float("inf")),
+        ("process_rss_limit_bytes_observed", 1.5),
+        ("process_rss_limit_bytes_observed", 2_000_000_001),
+        ("maximum_cases", 4.0),
+        ("maximum_cases", 5),
+    ],
+)
+def test_invalid_resource_limits_fail_before_output_or_evaluation(tmp_path, monkeypatch, key, value):
+    monkeypatch.setattr(m, "ROOT", tmp_path)
+    plan = json.loads(PLAN.read_text())
+    plan["limits"][key] = value
+    # Encode infinity as a standard JSON number, reproducing the 1e309 bypass.
+    path = tmp_path / "invalid-limits.json"
+    path.write_text(json.dumps(plan).replace("Infinity", "1e309"))
+    out = tmp_path / ".local/representation-control-invalid-limits"
+    monkeypatch.setattr(m, "controls", lambda *args: pytest.fail("must not generate inputs"))
+    with pytest.raises(ValueError, match="invalid resource limit"):
+        m.run(path, out)
+    assert not out.exists()
+
+
+@pytest.mark.parametrize("name", ["summary.json", "identity.json", "nested/protocol.json"])
+def test_resume_rejects_protocol_inside_output_without_changing_inputs(tmp_path, monkeypatch, name):
+    monkeypatch.setattr(m, "ROOT", tmp_path)
+    out = tmp_path / ".local/representation-control-collision"
+    path = out / name
+    path.parent.mkdir(parents=True)
+    path.write_bytes(PLAN.read_bytes())
+    before = path.read_bytes()
+    monkeypatch.setattr(m, "controls", lambda *args: pytest.fail("must not generate inputs"))
+    with pytest.raises(ValueError, match="protocol must be outside"):
+        m.run(path, out, resume=True)
+    assert path.read_bytes() == before
+    assert [p for p in out.rglob("*") if p.is_file()] == [path]
+
+
 def test_center_aware_homography_uses_actual_unequal_shapes():
     H = np.array([[1.0, 0.1, 20.0], [0.05, 1.0, 10.0], [0.0002, 0.0001, 1.0]])
     source = np.zeros((600, 900, 3), np.uint8)

@@ -2,6 +2,12 @@
 
 ## Completed
 
+- added bounded human-reference validation, constructed candidate-graph diagnostics
+  and shared-geometry synthetic representation comparisons; October 2 review
+  hardened reference counting, resource limits and resume paths, with 1,057 local
+  tests passing / ten skipped. See the [publication review](operations/2026-10-02-culling-tooling-review.md);
+  real-human G1/G2 evidence and production promotion remain pending
+
 - fixed missing-thumbnail RAW hashing and completed bounded HDR+ model comparisons,
   independent opposite-order panels and whole-sequence cooking diagnostics;
   no candidate is promoted. See the [current ledger](operations/2026-09-16-plan-status.md)

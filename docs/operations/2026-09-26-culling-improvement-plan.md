@@ -89,6 +89,21 @@ acquisition or photo/XMP writes. Source/runtime/default behavior remains unchang
 The next deliverable uses existing authorized local evidence and
 experiment code; historical acquisition budgets remain closed.
 
+### October 2 publication review
+
+The user authorized continuing and pushing the reviewed tooling batch. G1
+counting now excludes abstention-only pairs/families from the overall minimum;
+one definite direction qualifies its pair once. Independent review additionally
+identified nonfinite/unbounded resource limits and protocol/output path
+collisions. The runner now rejects both before generating inputs or writing
+output. Original synthetic code/evidence is preserved in commit `61d3b3f`;
+the hardened runner intentionally rejects records with that older code digest.
+
+Final controller checks passed **1,057 tests, ten skipped**, with lint and public
+artifact hygiene passing. See the [publication review](2026-10-02-culling-tooling-review.md).
+This completes the local review/fix batch, not G1/G2 or photographic acceptance.
+No new experiment or production integration is needed to publish these tools.
+
 ### Interruption and quota recovery for this continuation
 
 The user requested durable progress when account limits interrupt a task. Keep

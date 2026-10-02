@@ -136,7 +136,7 @@ Unknown/unjudgeable/preference-dependent directions do not fill either quota;
 an abstention-only pair also supplies neither a labeled pair nor a scene family
 to the overall minimum. A pair with one definite direction counts once, and only
 that definite direction contributes to its class quota.
-limited/invisible/ambiguous regions do not count. Directions from the same pair
+Limited/invisible/ambiguous regions do not count. Directions from the same pair
 or related events cannot create additional independent families. Duplicate or
 reversed pairs, renamed byte-identical content pairs, cross-event source/preview
 digests and cross-split family/lineage reuse are rejected. A historical event

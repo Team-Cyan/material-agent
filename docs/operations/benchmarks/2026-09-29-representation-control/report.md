@@ -54,6 +54,16 @@ both hashes and all identities; stale or corrupted cases stop rather than
 silently reusing their result. `--verify-only` requires all cases and the matching
 summary, returns computed 0/reused 4 and does not write the report.
 
+October 2 publication review preserves this result's exact runner in commit
+`61d3b3f`. Subsequent resource-limit and output-path validation hardening changes
+the runner digest without changing the relation algorithm or frozen protocol.
+The current runner intentionally rejects these September 29 records as stale;
+the verify-only command above describes verification under the recorded runner
+revision. Use a matching revision for old-record verification and a fresh output
+directory for any separately authorized new run. Do not overwrite evidence hashes
+to make old records match new code. See the
+[publication review](../../2026-10-02-culling-tooling-review.md).
+
 Observed bounds are 90 seconds per case and 2,000,000,000 bytes process peak
 RSS, matching the plan's initial units. An observed overrun is atomically saved
 as that case, then processing stops; resume also stops on it. The measurements

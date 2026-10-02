@@ -5,6 +5,7 @@ import hashlib
 import importlib.metadata
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path
 import resource
@@ -110,7 +111,24 @@ def load_protocol(path):
         for key in plan["synthetic_preprocess"]
     ):
         raise ValueError("synthetic preview recipe differs from historical plan")
-    if plan["limits"]["maximum_cases"] < len(plan["cases"]):
+    limits = plan.get("limits")
+    bounds = {
+        "maximum_cases": (int, 4),
+        "maximum_case_seconds_observed": ((int, float), 90),
+        "process_rss_limit_bytes_observed": (int, 2_000_000_000),
+    }
+    if not isinstance(limits, dict) or set(limits) != set(bounds):
+        raise ValueError("unexpected resource limit fields")
+    for key, (kind, maximum) in bounds.items():
+        value = limits[key]
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, kind)
+            or not 0 < value <= maximum
+            or not math.isfinite(value)
+        ):
+            raise ValueError(f"invalid resource limit: {key}")
+    if limits["maximum_cases"] < len(plan["cases"]):
         raise ValueError("case budget exceeded")
     if plan["quality_inputs"] != {
         "A": {"total": 1.0, "sharpness": 1.0, "exposure": 1.0},
@@ -406,6 +424,8 @@ def verified_record(path, expected):
 def run(protocol_path, output_dir, resume=False, verify_only=False):
     protocol_path = protocol_path.resolve()
     output_dir = output_dir.resolve()
+    if protocol_path.is_relative_to(output_dir):
+        raise ValueError("protocol must be outside the output directory")
     if not output_dir.is_relative_to(ROOT / ".local") or not output_dir.name.startswith(
         "representation-control-"
     ):

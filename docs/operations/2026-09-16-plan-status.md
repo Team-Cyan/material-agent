@@ -39,7 +39,10 @@ October 2 publication review: the user authorized continuing and pushing the
 reviewed batch. The controller corrected G1 counting: abstention-only pairs and
 their families cannot pad the minimum labeled-reference totals. The
 [publication review](2026-10-02-culling-tooling-review.md) records current checks
-and release status. This changes evaluation tooling only; G1/G2 remain unmet.
+and release status. Independent review also led to finite bounded resource-limit
+checks and protocol/output collision prevention. Original synthetic evidence is
+preserved under its matching code revision. This changes evaluation tooling only;
+G1/G2 remain unmet.
 
 ## Rules and authorization
 
