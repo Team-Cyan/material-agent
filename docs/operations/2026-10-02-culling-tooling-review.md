@@ -60,6 +60,23 @@ checkpoint remote CI/image publication has not yet run; its result must be
 checked after push. Git push, image publication and deployment remain separate
 outcomes. Deployment is outside this batch.
 
+### Remote acceptance follow-up
+
+Commit `acb52de` was pushed normally to `main`. The matching
+[workflow run](https://github.com/Team-Cyan/material-agent/actions/runs/36969418207)
+completed successfully: remote quality checks passed **1,024 tests, 43 skipped
+in 23.85 seconds**, lint passed, and image build/publication, immutable-image
+smoke and verified-tag promotion all passed. Local and CI skip counts differ;
+these checks do not establish browser acceptance or real-photo selection quality.
+No live service was deployed and no source-photo/XMP writes occurred.
+
+The user requested continuing with one reviewed, verified push per completed
+step. This follow-up closes the publication verification step. The next
+substantive algorithm step still needs concrete source paths and genuinely
+independent human judgments. A request for the available input inventory is
+pending; no annotation assignment, new acquisition or threshold/model sweep is
+presumed. Do not dispatch another algorithm experiment before resolving it.
+
 Controller and reviewer checkpoints are saved under ignored
 `.local/task-handoffs/culling-2026-10-02/`. Current algorithm evidence remains
 the [four-case synthetic report](benchmarks/2026-09-29-representation-control/report.md)

@@ -15,7 +15,7 @@ The supplied review, `deep-research-report (2).md`, is supporting analysis,
 not independent execution authorization. The user authorized coordinated work
 in separate tasks, with this controller owning review and plan updates. This
 revision changes the work priority, not the evidence required for algorithm
-admission. The baseline remains local HEAD
+admission. The frozen experiment baseline remains commit
 `175e87e6ea927e40e735717c1a1d3eeb3a1c6753`; no real-photo quality gain is claimed.
 
 ## Execution tracking
@@ -103,6 +103,13 @@ Final controller checks passed **1,057 tests, ten skipped**, with lint and publi
 artifact hygiene passing. See the [publication review](2026-10-02-culling-tooling-review.md).
 This completes the local review/fix batch, not G1/G2 or photographic acceptance.
 No new experiment or production integration is needed to publish these tools.
+
+The pushed tooling commit `acb52de` also passed remote quality, image smoke and
+publication; see the linked review for exact CI counts. The continuation now
+uses one reviewed, verified push per completed step. The next step is resolving
+actual independent-reference paths and label provenance, not repeating the
+completed synthetic protocol. Available input details have been requested; no
+person is assigned annotation work and historical acquisition limits stay closed.
 
 ### Interruption and quota recovery for this continuation
 

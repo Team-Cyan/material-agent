@@ -44,6 +44,14 @@ checks and protocol/output collision prevention. Original synthetic evidence is
 preserved under its matching code revision. This changes evaluation tooling only;
 G1/G2 remain unmet.
 
+October 2 remote acceptance: tooling commit `acb52de` is on `main`; its
+[workflow](https://github.com/Team-Cyan/material-agent/actions/runs/36969418207)
+passed remote quality (1,024 passed / 43 skipped), image publication, immutable
+smoke and verified-tag promotion. No deployment occurred. The user now requests
+one review/verification/push per completed continuation step. The next algorithm
+step awaits concrete independent-reference input paths and label provenance;
+do not substitute repeated preparation or auxiliary UI work for those inputs.
+
 ## Rules and authorization
 
 Grouping remains adjacent capture-time proximity AND adjacent pHash proximity;
@@ -53,8 +61,8 @@ has been approved. Quality and selection remain separate; readable groups can
 retain a quality-reject for coverage without score inflation.
 
 Local experiments, fixes, verification and reviewed local commits are authorized.
-The user now authorizes reviewed batch commits and normal pushes. The reviewed
-reference and audit commits through `a2db712` have been pushed, with remote
+The user now authorizes reviewed step commits and normal pushes. The reviewed
+reference, audit and tooling commits through `acb52de` have been pushed, with remote
 quality and image publication successful. Git push, publication and deployment
 remain distinct; no deployment occurred. Deployment, private-host operations,
 production review and actual photo/XMP writes remain excluded. Synthetic, video,
