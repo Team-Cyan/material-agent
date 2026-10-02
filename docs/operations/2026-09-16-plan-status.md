@@ -48,8 +48,8 @@ October 2 remote acceptance: tooling commit `acb52de` is on `main`; its
 [workflow](https://github.com/Team-Cyan/material-agent/actions/runs/36969418207)
 passed remote quality (1,024 passed / 43 skipped), image publication, immutable
 smoke and verified-tag promotion. No deployment occurred. The user now requests
-one review/verification/push per completed continuation step. The next algorithm
-step awaits concrete independent-reference input paths and label provenance;
+one review/verification/push per completed continuation step. The directed-coverage
+acceptance step awaits independent-reference input paths and label provenance;
 do not substitute repeated preparation or auxiliary UI work for those inputs.
 
 October 2 public benchmark search: the user requested labeled standard test sets
@@ -62,6 +62,30 @@ directed coverage acceptance remains separate from preference/MOS metrics.
 The user's public-dataset direction now owns source investigation; a new private
 photo or annotation assignment is not the prerequisite for this diagnostic track.
 
+October 2 composite execution: the user separately authorized downloading
+multiple public datasets. The new [composite corpus and baseline](benchmarks/2026-10-02-public-composite/README.md)
+contain 20,965 actual images (20,584 labeled-task items) plus 5,124 retained
+AlbumBench tasks. KonIQ has 300 extra unrated images; AlbumBench has six repeated
+rating-target ID records; these source anomalies are preserved and recorded.
+KADID covers 81 references, 25 distortion types and five levels. The linked
+AlbumBench image host remains inaccessible here, and query-conditioned prediction
+is unsupported; it has no fabricated metric.
+
+The frozen baseline evaluates 1,024 KonIQ and 1,024 KADID images, plus all 229
+Copydays strong queries against 157 gallery originals. Local heuristic SROCC is
+0.3643 / 0.0694; pHash retrieval top-1 is 20.52% with MRR 0.2558. All 2,434 feature
+records succeeded; resume reused every record with identical identity/metrics.
+These are native-target diagnostics, not deployed learned-model measurements,
+leaderboard results or directed coverage acceptance. Full tests passed 1,101 /
+10 skipped with Ruff; independent review findings were fixed and re-reviewed.
+Archive receipts, image checksums and atomic checkpoints preserve recovery.
+
+Next compare an unchanged existing scorer after asset/training-exposure checks;
+freeze family-disjoint development/holdout boundaries before any tuning. The
+weak KADID/pHash baseline identifies measurable improvement targets. Independent
+directed coverage evidence remains required for safe culling promotion. Do not
+reopen annotation UI work or change the production defaults for this benchmark.
+
 ## Rules and authorization
 
 Grouping remains adjacent capture-time proximity AND adjacent pHash proximity;
@@ -71,7 +95,8 @@ has been approved. Quality and selection remain separate; readable groups can
 retain a quality-reject for coverage without score inflation.
 
 Local experiments, fixes, verification and reviewed local commits are authorized.
-The user now authorizes reviewed step commits and normal pushes. The reviewed
+The user now authorizes reviewed step commits, normal pushes and a separate
+bounded public-composite acquisition (8 GB compressed / 15 GB expanded). The reviewed
 reference, audit and tooling commits through `acb52de` have been pushed, with remote
 quality and image publication successful. Git push, publication and deployment
 remain distinct; no deployment occurred. Deployment, private-host operations,

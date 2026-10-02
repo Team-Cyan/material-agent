@@ -1,0 +1,40 @@
+{
+  "schema_version": "material-agent.public-composite-protocol.v1",
+  "stage": "fixed-untrained-diagnostic",
+  "selection": {
+    "algorithm": "SHA256 stable item id ascending, first N per quality track and Copydays query; retain every gallery original",
+    "limit_per_track": 1024,
+    "use_native_official_splits": {
+      "albumbench": "retain train/test album assignments; no prediction or metric until query-conditioned predictor and images available",
+      "koniq": "no training or threshold fitting; declared diagnostic subset, not official test leaderboard",
+      "kadid": "no training or threshold fitting; reference family preserved as group; not official test leaderboard",
+      "copydays": "all available strong queries against all original gallery, no distractors; not full Copydays suite"
+    }
+  },
+  "predictors": {
+    "quality": "existing AsyncLocalClient heuristic, mean VISION_DIMS; no learned models or target calibration",
+    "copy": "64-bit pHash nearest gallery by Hamming distance; lexicographic gallery id resolves ties",
+    "albumbench": "unsupported by current predictor"
+  },
+  "metrics": {
+    "quality": [
+      "unfitted PLCC",
+      "SROCC with average ranks for ties",
+      "failed count",
+      "KADID per-distortion correlations"
+    ],
+    "copy": [
+      "top1",
+      "MRR",
+      "failed/missing gallery count",
+      "first-place tie count"
+    ],
+    "aggregation": "disaggregated tracks only; no cross-task scalar"
+  },
+  "limits": {
+    "download_bytes": 8000000000,
+    "expanded_bytes": 15000000000,
+    "max_entries": 60000
+  },
+  "interpretation": "Preference, MOS/DMOS and copy correspondences are not directed semantic coverage labels. This run cannot pass G1/G2 or authorize production promotion. Labels were available for schema inspection; this is a frozen diagnostic, not a blinded independent test."
+}

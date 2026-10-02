@@ -1,0 +1,227 @@
+{
+  "base_revision": "f114a49219c14ab3f000e637c48bf15713f3dd4e",
+  "benchmark_identity": "c497653307a97d9798f20c299e9a905feef5bddc9b717d0e252d96ea8e2bc0be",
+  "code_sha256": {
+    "scripts/benchmark_public_composite.py": "d3e2f55d1870d299ed12c11fade1f250fd29275aa73b500a447758d13becace6",
+    "scripts/prepare_public_composite.py": "7b0e046bccb00ddf692ea364b4d9455c72e2c74440bcd35a2e7e656222edb2f8"
+  },
+  "config_identity": "9bee7cbeb58b2f1623931b6fd86a668ddb101e6edbc3943fb38bf0860dfdd6bb",
+  "cross_source_exact_byte_duplicate_count": 0,
+  "feature_records": 2434,
+  "inventory": {
+    "albumbench": {
+      "albums": 641,
+      "images": 26973,
+      "splits": {
+        "test": 133,
+        "train": 508
+      },
+      "task_types": {
+        "group_labeling": 1278,
+        "intent_rating": 1923,
+        "intent_selection": 1923
+      },
+      "tasks": 5124,
+      "tasks_with_duplicate_target_ids": 6
+    },
+    "items": 20584,
+    "raw_image_files": 20965,
+    "tracks": {
+      "copydays": 386,
+      "kadid": 10125,
+      "koniq": 10073
+    },
+    "unlabelled_counts": {
+      "koniq": 300
+    }
+  },
+  "kadid_inventory": {
+    "distortions": 25,
+    "levels": 5,
+    "reference_families": 81
+  },
+  "limits": "Frozen untrained diagnostic; not deployed learned scorer, official leaderboard, independent blinded holdout or G1/G2 coverage acceptance.",
+  "manifest_sha256": "33e9d754efd98956502097d14b75fa25952c109bdd98005f665c0d3b6d5e28c6",
+  "protocol_sha256": "17d91b1530ad5e648358c5fb64687895ca664743578e2f35b6b05cd776917fc4",
+  "resume": {
+    "metric_and_identity_parity": true,
+    "records_reused": 2434,
+    "verified": true
+  },
+  "schema_version": "material-agent.public-composite-summary.v1",
+  "selected_membership_sha256": "da76c0f10474dbec71eb59934519b961cbb7eaae9087dd639364d85d6a8c5533",
+  "sources_sha256": "c76186c08d5e04e97cbd989ef76231db92eaac2177e2787d369e0f4bc4f92e2a",
+  "tracks": {
+    "albumbench": {
+      "reason": "existing heuristic has no query-conditioned selection predictor",
+      "retained_tasks": 5124,
+      "status": "unsupported"
+    },
+    "copydays": {
+      "evaluated_queries": 229,
+      "failed_or_missing_gallery": 0,
+      "gallery_count": 157,
+      "gallery_failed_count": 0,
+      "mrr": 0.2558026280129831,
+      "predictor": "64-bit pHash Hamming distance; copy correspondence only",
+      "selected_queries": 229,
+      "status": "complete",
+      "tie_break": "lexicographic gallery id",
+      "tied_first_queries": 87,
+      "top1": 0.2052401746724891,
+      "usable_gallery_count": 157
+    },
+    "kadid": {
+      "evaluated": 1024,
+      "failed": 0,
+      "per_distortion": {
+        "1": {
+          "evaluated": 37,
+          "plcc": 0.49845889407799565,
+          "srocc": 0.5171126752388447
+        },
+        "10": {
+          "evaluated": 34,
+          "plcc": 0.10793483537220458,
+          "srocc": 0.13316008127349127
+        },
+        "11": {
+          "evaluated": 43,
+          "plcc": -0.04828760887543207,
+          "srocc": -0.04237480474427432
+        },
+        "12": {
+          "evaluated": 46,
+          "plcc": -0.2141220562537546,
+          "srocc": -0.28098006967910627
+        },
+        "13": {
+          "evaluated": 45,
+          "plcc": 0.033484927411100096,
+          "srocc": 0.013519313291773511
+        },
+        "14": {
+          "evaluated": 41,
+          "plcc": -0.27734384039605364,
+          "srocc": -0.2579633395818445
+        },
+        "15": {
+          "evaluated": 47,
+          "plcc": -0.12195832423315532,
+          "srocc": -0.07838885151512823
+        },
+        "16": {
+          "evaluated": 34,
+          "plcc": 0.5657985964212456,
+          "srocc": 0.5737429581806692
+        },
+        "17": {
+          "evaluated": 48,
+          "plcc": 0.772393013394696,
+          "srocc": 0.6902545451127776
+        },
+        "18": {
+          "evaluated": 45,
+          "plcc": 0.40969917941780265,
+          "srocc": 0.3962284624046452
+        },
+        "19": {
+          "evaluated": 50,
+          "plcc": 0.20798109096907733,
+          "srocc": 0.16581418365085432
+        },
+        "2": {
+          "evaluated": 34,
+          "plcc": 0.2941230886365123,
+          "srocc": 0.35700639619704677
+        },
+        "20": {
+          "evaluated": 43,
+          "plcc": -0.16737887928264883,
+          "srocc": -0.08835418282856147
+        },
+        "21": {
+          "evaluated": 41,
+          "plcc": -0.18515837091876175,
+          "srocc": -0.22411541259854675
+        },
+        "22": {
+          "evaluated": 29,
+          "plcc": 0.11051486029737745,
+          "srocc": -0.003205129081850812
+        },
+        "23": {
+          "evaluated": 29,
+          "plcc": -0.38847081626264623,
+          "srocc": -0.42210474281939614
+        },
+        "24": {
+          "evaluated": 47,
+          "plcc": -0.018597122357934374,
+          "srocc": 0.2513238475201714
+        },
+        "25": {
+          "evaluated": 46,
+          "plcc": 0.2199610788151227,
+          "srocc": 0.1453345187995377
+        },
+        "3": {
+          "evaluated": 36,
+          "plcc": 0.1153297967363941,
+          "srocc": 0.1009789070207089
+        },
+        "4": {
+          "evaluated": 33,
+          "plcc": -0.07885841475181139,
+          "srocc": 0.008692745387211766
+        },
+        "5": {
+          "evaluated": 41,
+          "plcc": -0.2584007398955596,
+          "srocc": -0.1266175863114057
+        },
+        "6": {
+          "evaluated": 47,
+          "plcc": -0.08421055662137962,
+          "srocc": -0.009486898684631106
+        },
+        "7": {
+          "evaluated": 46,
+          "plcc": -0.14855835093357833,
+          "srocc": -0.04540828093230063
+        },
+        "8": {
+          "evaluated": 45,
+          "plcc": -0.3470288310765299,
+          "srocc": -0.36825283749940074
+        },
+        "9": {
+          "evaluated": 37,
+          "plcc": 0.3581485275224064,
+          "srocc": 0.23099728723636878
+        }
+      },
+      "plcc": 0.07459412433062074,
+      "predictor": "existing local heuristic mean of VISION_DIMS; no target calibration",
+      "selected": 1024,
+      "srocc": 0.06944679684451534,
+      "target_direction": "higher is better"
+    },
+    "koniq": {
+      "evaluated": 1024,
+      "failed": 0,
+      "plcc": 0.3845865166538484,
+      "predictor": "existing local heuristic mean of VISION_DIMS; no target calibration",
+      "selected": 1024,
+      "srocc": 0.3642614528231658,
+      "target_direction": "higher is better"
+    }
+  },
+  "validation": {
+    "extraction_resume_full_hash_parity": "passed",
+    "full_pytest_passed": 1101,
+    "full_pytest_skipped": 10,
+    "independent_review": "passed; initial findings fixed, narrowed source-anomaly and final aggregate re-reviews passed",
+    "ruff": "passed"
+  }
+}

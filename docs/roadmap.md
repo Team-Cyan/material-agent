@@ -171,10 +171,17 @@
 
 ## Next
 
+- use the frozen [public composite diagnostic](operations/benchmarks/2026-10-02-public-composite/README.md)
+  to compare an unchanged existing scorer after checking available assets and
+  training exposure. Freeze reference-family development/holdout boundaries
+  before tuning; report quality and copy retrieval separately. Query-conditioned
+  AlbumBench prediction remains unsupported and image access is unresolved
+
 - resolve independent culling reference inputs after the completed
   [evidence inventory and synthetic protocol](operations/benchmarks/2026-09-29-representation-control/report.md).
   Shared-geometry checks and resume are verified; G1/G2 and real-data binding
-  remain required before labeled quality evaluation. Follow the
+  remain required before directed coverage acceptance. Native MOS/copy diagnostics
+  have their own targets and do not pass these gates. Follow the
   [continuation plan](operations/2026-09-26-culling-improvement-plan.md#next-substantive-step-and-dispatch-boundary);
   do not reopen the closed annotation-viewer branch or change the admin WebUI
 

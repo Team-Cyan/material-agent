@@ -1,0 +1,87 @@
+{
+  "sources": [
+    {
+      "file": "downloads/koniq-images.zip",
+      "url": "https://datasets.vqa.mmsp-kn.de/archives/koniq10k_512x384.zip",
+      "primary": "https://database.mmsp-kn.de/koniq-10k-database.html",
+      "bytes": 766965996,
+      "sha256": "d8f6a0eac53a8f2ce26a2812688c03f7adb8656804e52e2296188afc15e21b97",
+      "state": "extraction_integrity_verified"
+    },
+    {
+      "file": "downloads/koniq-scores.zip",
+      "url": "https://datasets.vqa.mmsp-kn.de/archives/koniq10k_scores_and_distributions.zip",
+      "primary": "https://database.mmsp-kn.de/koniq-10k-database.html",
+      "bytes": 303515,
+      "sha256": "d895af9428523f4f14723ed28beaf7ddcff00b5c54ab78697d9d4001a417b440",
+      "state": "extraction_integrity_verified"
+    },
+    {
+      "file": "downloads/copydays-original.tar.gz",
+      "url": "https://dl.fbaipublicfiles.com/vissl/datasets/copydays_original.tar.gz",
+      "primary": "https://thoth.inrialpes.fr/~jegou/data.php.html",
+      "bytes": 217895397,
+      "sha256": "8b85b7914fd0145bc258bde3440f6a622243ca91ee085fe2025ce7bdeb0bfb8e",
+      "state": "extraction_integrity_verified"
+    },
+    {
+      "file": "downloads/copydays-strong.tar.gz",
+      "url": "https://dl.fbaipublicfiles.com/vissl/datasets/copydays_strong.tar.gz",
+      "primary": "https://thoth.inrialpes.fr/~jegou/data.php.html",
+      "bytes": 62884651,
+      "sha256": "7852c64aa4a37e8329ce08159fc947c16f09c66737db0a2479a90fc9ae40760c",
+      "state": "extraction_integrity_verified"
+    },
+    {
+      "file": "albumbench/README.md",
+      "url": "https://raw.githubusercontent.com/byu-vision/albumbench/20c3e1e5841398f702df77aaf28c08b5b327c5e7/README.md",
+      "bytes": 4817,
+      "sha256": "2bba8bacf8be2b5b78daedee1ef4611a9cbe147a25e4731b89f583f0419f54e9",
+      "state": "pinned_metadata"
+    },
+    {
+      "file": "albumbench/albums.jsonl",
+      "url": "https://raw.githubusercontent.com/byu-vision/albumbench/20c3e1e5841398f702df77aaf28c08b5b327c5e7/albums.jsonl",
+      "bytes": 3176061,
+      "sha256": "53ed045f2fc019d399ed966563d33b4ad66a7726901a8c49bdb466f8513d3d94",
+      "state": "pinned_metadata"
+    },
+    {
+      "file": "albumbench/splits.json",
+      "url": "https://raw.githubusercontent.com/byu-vision/albumbench/20c3e1e5841398f702df77aaf28c08b5b327c5e7/splits.json",
+      "bytes": 11867,
+      "sha256": "99765bdc39a00a6d114bc236e160c9619805b28c06c22c7578e1c9a9b3bfc71c",
+      "state": "pinned_metadata"
+    },
+    {
+      "file": "albumbench/tasks.jsonl",
+      "url": "https://raw.githubusercontent.com/byu-vision/albumbench/20c3e1e5841398f702df77aaf28c08b5b327c5e7/tasks.jsonl",
+      "bytes": 4939852,
+      "sha256": "9bc4b9125797c0a89e302351f0cebb8c08c3681435a4b9ce0a5391da8be6fa6b",
+      "state": "pinned_metadata"
+    },
+    {
+      "file": "downloads/kadid.zip",
+      "url": "https://datasets.vqa.mmsp-kn.de/archives/kadid10k.zip",
+      "primary": "https://database.mmsp-kn.de/kadid-10k-database.html",
+      "bytes": 3067408471,
+      "sha256": "fe59ace86a2525d5785ff011a2119fa88839e0329f5029f7b23994727efd185c",
+      "state": "extraction_integrity_verified"
+    }
+  ],
+  "pending": [],
+  "unavailable": [
+    "AlbumBench HF images: TLS connection failure after bounded retries"
+  ],
+  "schema_version": "material-agent.public-composite-sources.v1",
+  "acquired_date": "2026-10-02",
+  "publisher_checks": {
+    "koniq_images_md5": "dc213332574e8431a86c7ff34e1fa924",
+    "koniq_scores_csv_md5": "0bc91efacab484f87f7aaf22bd0fd9b4"
+  },
+  "copydays_source": "Meta VISSL hosted mirror; original publisher links failed here. SHA256 is a receipt, not independently supplied publisher gold.",
+  "albumbench_revision": "20c3e1e5841398f702df77aaf28c08b5b327c5e7",
+  "artifact_download_bytes": 4123590627,
+  "compressed_archive_bytes": 4115458030,
+  "expanded_archive_bytes": 4123471676
+}

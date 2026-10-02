@@ -91,3 +91,19 @@ uv run pytest tests/test_local_benchmark.py tests/test_main.py
 uv run ruff check src/material_agent/app/local_benchmark_service.py \
   src/material_agent/commands/benchmark.py tests/test_local_benchmark.py
 ```
+
+## Public composite diagnostics
+
+`scripts/prepare_public_composite.py` and `scripts/benchmark_public_composite.py`
+use the separate `material-agent.public-composite.v1` schema. They preserve
+native KonIQ MOS, KADID DMOS, Copydays correspondences and AlbumBench tasks;
+they do not extend or reinterpret the local-benchmark v1 reject labels.
+Media, raw targets and feature checkpoints stay in an ignored local corpus.
+Preparation bounds compressed input to 8 GB and expanded archives to 15 GB,
+validates joins and freezes per-image checksums. The runner has deterministic
+bounded selection, preserves the complete copy gallery, and reports native
+metrics separately. Missing query-conditioned predictions remain unsupported.
+
+See the [frozen protocol and recovery commands](../../operations/benchmarks/2026-10-02-public-composite/README.md).
+Verify changes with `tests/test_prepare_public_composite.py`,
+`tests/test_public_composite.py` and the existing local-benchmark checks.

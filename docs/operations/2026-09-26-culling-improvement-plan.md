@@ -437,19 +437,27 @@ substitute more UI work, proxy labels or repeated historical tuning for it.
 ### Next substantive step and dispatch boundary
 
 October 2 public-benchmark search, explicitly requested by the user, found
-existing standard targets and published results; see the
-[source review](2026-10-02-public-benchmark-search.md). Photo Triage is the closest
-within-series preference benchmark, with download access still unconfirmed;
-KonIQ-10k has verified public artifact listings for quality diagnostics.
-AlbumBench and copy-detection datasets provide complementary targets with
-different semantics. The next bounded step is source-access/metadata verification
-for this standards-based diagnostic track, preserving official splits and native
-labels. This track does not require a new personal annotation assignment, and it
-does not turn ranking/quality labels into directed coverage witnesses or pass G1/G2.
+standard targets and published results; see the
+[source review](2026-10-02-public-benchmark-search.md). The user's subsequent
+request to download several datasets authorizes a new bounded composite
+acquisition: KonIQ quality, KADID distortion quality, Copydays correspondence
+and pinned AlbumBench task metadata. See the
+[composite protocol and recovery commands](benchmarks/2026-10-02-public-composite/README.md).
+Native targets and official AlbumBench splits are preserved. This diagnostic
+does not require new personal annotation work and cannot pass G1/G2.
+
+The first comparison is a frozen, untrained local-heuristic/pHash baseline,
+with separate quality and copy metrics and explicit unsupported AlbumBench
+predictions. Complete the actual corpus inventory, baseline, independent review
+and normal push before selecting improvements. The next algorithm comparison
+must freeze a development/holdout boundary by reference family before any tuning,
+identify existing model assets and training exposure, and compare an unchanged
+existing scorer under the same inputs. Do not compare the heuristic diagnostic
+with a published trained-model result as if they shared a test protocol.
 
 The preparation handoff now contains the input/provenance inventory, exact G1
 shortfall, runnable commands, frozen synthetic protocol and parity/isolation
-checks. Its decision is **no-go for labeled quality evaluation** while G1/G2 are
+checks. Its decision is **no-go for directed-coverage evaluation** while G1/G2 are
 unmet. Do not restart completed preparation, polish the viewer, tune thresholds
 on historical samples or launch another model merely to keep tasks busy.
 
@@ -458,16 +466,18 @@ the minimum is 24 qualifying
 pairs / 12 independent families, including the specified positive/negative and
 illumination/hand-expression/nuisance coverage. Existing inspected or model-labeled
 examples do not fill those quotas. No person has been assigned annotation work,
-and no new source acquisition is included in this batch. With suitable authorized
+and standard benchmark targets do not fill those quotas. With suitable authorized
 inputs and independent judgments available, freeze a real-data manifest, add only
 its minimal runner binding, then execute G2 and the development/holdout sequence.
 
-Both existing sessions completed their implementation/review scopes. Reuse them
-for a concrete next scope when its inputs are ready; no additional session or
-parallel model sweep is justified now. Keep controller review here and continue
-atomic checkpoints and bounded hashed snapshots at each handoff.
+The composite scope uses bounded preparation, execution and independent review
+assignments. Keep design, integration and final review in the controller. Each
+owner saves files and atomic checkpoints before final chat output; acquisition
+partials and verified archives remain available after quota interruption. Do not
+launch a parallel model sweep until this baseline has been reviewed.
 
 The [current status ledger](2026-09-16-plan-status.md) owns execution status.
-The October 2 push authorization applies to this reviewed tooling batch and does
-not reopen closed acquisition budgets. The direct-witness invariant, conservative unknown handling,
+The user authorizes one review/verification/push per completed step and separately
+authorizes this new composite download. Historical acquisition budgets remain
+closed for their earlier scopes. The direct-witness invariant, conservative unknown handling,
 quality/selection separation and production time-plus-pHash behavior remain intact.
