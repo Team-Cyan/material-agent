@@ -52,6 +52,16 @@ one review/verification/push per completed continuation step. The next algorithm
 step awaits concrete independent-reference input paths and label provenance;
 do not substitute repeated preparation or auxiliary UI work for those inputs.
 
+October 2 public benchmark search: the user requested labeled standard test sets
+with published results. The [primary-source shortlist](2026-10-02-public-benchmark-search.md)
+identifies Photo Triage for within-series preference, KonIQ-10k for quality,
+AlbumBench for query-conditioned selection and MFND/DISC21 for near-duplicate
+diagnostics. Next verify source access/metadata for a native-target diagnostic;
+current search did not download image archives or execute evaluation. G1/G2
+directed coverage acceptance remains separate from preference/MOS metrics.
+The user's public-dataset direction now owns source investigation; a new private
+photo or annotation assignment is not the prerequisite for this diagnostic track.
+
 ## Rules and authorization
 
 Grouping remains adjacent capture-time proximity AND adjacent pHash proximity;

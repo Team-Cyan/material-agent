@@ -436,13 +436,25 @@ substitute more UI work, proxy labels or repeated historical tuning for it.
 
 ### Next substantive step and dispatch boundary
 
+October 2 public-benchmark search, explicitly requested by the user, found
+existing standard targets and published results; see the
+[source review](2026-10-02-public-benchmark-search.md). Photo Triage is the closest
+within-series preference benchmark, with download access still unconfirmed;
+KonIQ-10k has verified public artifact listings for quality diagnostics.
+AlbumBench and copy-detection datasets provide complementary targets with
+different semantics. The next bounded step is source-access/metadata verification
+for this standards-based diagnostic track, preserving official splits and native
+labels. This track does not require a new personal annotation assignment, and it
+does not turn ranking/quality labels into directed coverage witnesses or pass G1/G2.
+
 The preparation handoff now contains the input/provenance inventory, exact G1
 shortfall, runnable commands, frozen synthetic protocol and parity/isolation
 checks. Its decision is **no-go for labeled quality evaluation** while G1/G2 are
 unmet. Do not restart completed preparation, polish the viewer, tune thresholds
 on historical samples or launch another model merely to keep tasks busy.
 
-Resolve the independent-reference input scope next: the minimum is 24 qualifying
+For the directed-coverage track, resolve the independent-reference input scope:
+the minimum is 24 qualifying
 pairs / 12 independent families, including the specified positive/negative and
 illumination/hand-expression/nuisance coverage. Existing inspected or model-labeled
 examples do not fill those quotas. No person has been assigned annotation work,
