@@ -178,8 +178,10 @@
 ## Next
 
 - follow the [fixed NIMA comparison](operations/benchmarks/2026-10-03-public-nima/README.md)
-  with one existing technical-IQA candidate after asset and training-exposure
-  checks. Freeze the next protocol before execution; keep the diagnostic cohort
+  with the existing MUSIQ checkpoint after asset and training-exposure
+  checks; the [controller self-review](operations/benchmarks/2026-10-03-public-nima/self-review.md)
+  found no scoped implementation defect and requires paired uncertainty estimates
+  with KADID family resampling. Freeze the next protocol before execution; keep the diagnostic cohort
   unchanged and do not claim a blinded holdout or independent KonIQ generalization
   from KonIQ-trained weights. Evaluate copy retrieval separately. Query-conditioned
   AlbumBench prediction remains unsupported and image access is unresolved

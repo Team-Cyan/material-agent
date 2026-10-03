@@ -92,8 +92,15 @@ replacement. Copydays and unsupported AlbumBench results are inherited unchanged
 Full tests passed 1,125 / 10 skipped, with Ruff; model-identity review findings
 were fixed and independently re-reviewed. No production policy was changed.
 
-Next inspect one existing technical-IQA candidate's asset and training exposure;
-freeze a comparison on the unchanged cohort before execution. KonIQ-trained
+October 3 controller [self-review](benchmarks/2026-10-03-public-nima/self-review.md)
+independently verified original native-label joins, all selected byte/cache
+identities, exact partitions and all twelve baseline/NIMA correlations. No scoped
+implementation defect was found. Commit `6b0b6e9` passed remote quality (1,092 /
+43 skipped), publication, immutable smoke and verified promotion; no deployment.
+
+Next verify the existing MUSIQ checkpoint's asset and training exposure;
+freeze a comparison on the unchanged cohort before execution. Add paired uncertainty
+estimates, keeping KADID reference families together in bootstrap draws. KonIQ-trained
 weights cannot establish independent KonIQ generalization. Keep pHash/copy retrieval
 improvement separate, and do not fit fusion or thresholds on the comparison
 partition. Independent directed coverage evidence remains required for safe

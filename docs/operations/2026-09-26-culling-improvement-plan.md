@@ -457,9 +457,16 @@ SROCC improved sampled KADID (0.0694 to 0.3630), but regressed sampled KonIQ
 These are diagnostic partitions with prior label exposure and unknown training
 overlap, not blinded holdouts. No fusion or thresholds were fitted.
 
-The next substantive experiment inspects one existing technical-IQA candidate's
+The [controller self-review](benchmarks/2026-10-03-public-nima/self-review.md)
+verified native-label joins, exact cohorts, source/cache identities and all twelve
+baseline/NIMA correlations without finding a scoped implementation defect.
+The next substantive experiment verifies the existing MUSIQ checkpoint's
 asset and training exposure, freezes its protocol against the unchanged quality
-cohort, then executes and independently reviews it. KonIQ-trained models cannot
+cohort, then executes and independently reviews it. It must report paired
+uncertainty estimates with whole-reference-family bootstrap draws on KADID;
+KonIQ image resampling does not establish semantic independence. Fix offline
+loading, CPU settings, preprocessing and resource limits before inference.
+KonIQ-trained models cannot
 establish independent KonIQ generalization. Copy retrieval remains a separate
 experiment with its frozen gallery/query cohort. Do not compare this diagnostic
 with published trained-model results as if they shared a test protocol, or tune
