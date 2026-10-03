@@ -2,6 +2,16 @@
 
 ## Completed
 
+- deployed the reviewed release through native DockerMan after explicit user
+  authorization and placed the verified public corpus on Unraid SSD appdata.
+  The 2,434-item baseline matches original metrics within floating-point rounding;
+  frozen DINOv3 Copydays top-1 improves from 0.2052 to 0.8341, with 386 native CPU
+  predictions, exact resume and independently reproduced ranks/bootstrap.
+  A 256-image/two-repeat default-stack pilot has deterministic scores and native
+  NIMA/SSD CPU execution without fallback; YuNet device readback remains unknown.
+  Production policy/photo metadata are unchanged. See the
+  [target report](operations/benchmarks/2026-10-03-unraid-public/README.md)
+
 - assembled a labeled public composite corpus and executed a frozen heuristic
   baseline plus pinned NIMA and MUSIQ component comparisons on 2,048 quality images;
   all predictions and resume checks passed, with 1,167 local tests / ten skipped.
@@ -180,12 +190,13 @@
 
 ## Next
 
-- follow the [completed MUSIQ diagnostic](operations/benchmarks/2026-10-03-public-musiq/README.md)
-  with one existing embedding candidate versus pHash on the frozen Copydays gallery
-  and strong-query cohort. Verify assets/exposure, freeze similarity/tie/resource
-  rules before execution, and retain separate correspondence metrics. Do not
-  promote grouping/discard policies. Technical-quality runtime/product utility
-  remains unaccepted; KonIQ-trained scores are training-exposed. Query-conditioned
+- evaluate Intel technical-quality runtime feasibility for the existing
+  [MUSIQ candidate](operations/benchmarks/2026-10-03-public-musiq/README.md)
+  in a separate bounded experiment environment; the lean production image excludes
+  Torch/PyIQA. The [Copydays comparison](operations/benchmarks/2026-10-03-unraid-public/README.md)
+  is complete and does not admit grouping/discard promotion. Technical-quality
+  runtime/product utility remains unaccepted; KonIQ-trained scores are
+  training-exposed. Query-conditioned
   AlbumBench prediction remains unsupported and image access is unresolved
 
 - resolve independent culling reference inputs after the completed

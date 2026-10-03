@@ -471,16 +471,30 @@ or cure training exposure. Observed peak RSS was 988,086,272 bytes; the lean
 Intel image excludes Torch/PyIQA, so runtime and product utility remain unaccepted.
 Do not promote default quality/fusion/rejection settings from this diagnostic.
 
-The next substantive experiment compares pHash with one existing embedding
-candidate on the unchanged Copydays gallery/query cohort (157 originals / 229
-strong queries). Verify asset/training exposure, freeze preprocessing, similarity,
-tie handling and resource limits before inference, then execute, review and push.
-Preserve complete-gallery correspondence checks and separate top-1/MRR/failure/tie
-metrics. Do not convert a copy match into semantic grouping/coverage or discard
-authorization. Technical-quality runtime feasibility remains a distinct later
-decision. Do not compare diagnostics with published trained-model results as if
-they shared a protocol or tune on the comparison partition. Complete this step's
-review and normal push before another candidate; do not launch a parallel sweep.
+The [frozen Copydays target experiment](benchmarks/2026-10-03-unraid-public/README.md)
+is complete: all 386 native OpenVINO CPU predictions succeeded with no fallback;
+exact-command resume reused every record. DINOv3 top-1 is 191/229 (0.8341) versus
+pHash 47/229 (0.2052), MRR 0.8792 versus 0.2558. Family-bootstrap delta intervals
+are positive; independent SciPy ranks, all source/record checks, pHashes and
+expanded-family bootstrap were reproduced. Training overlap and upstream export
+revision remain unknown. No semantic grouping/coverage or discard admission follows.
+
+The user separately authorized Unraid corpus storage, latest deployment and real
+environment tests. Native DockerMan deployment and rollback metadata are retained
+by the controller; 23,414 target files (20,965 media) are checksum-verified and
+read-only on SSD. The complete baseline rerun matches original metrics within
+2.22e-16; 256 public images/two repeats verify the native default NIMA/SSD CPU stack
+and deterministic scores. YuNet actual device readback remains unknown. Production
+library statistics and read-only photo mount are unchanged. Controller self-review
+completed after implementation/reviewer sessions hit usage limits; independent
+numerical recomputation passed, but no independent completed code-review claim is made.
+
+Next evaluate existing MUSIQ technical-quality runtime feasibility on Intel in
+a separate bounded environment, preserving the lean production dependency set.
+Freeze the runtime/asset/protocol and resource gate before execution; do not tune
+on comparison data or promote policy without product utility/coverage acceptance.
+Complete this step's review and normal push before another candidate; no parallel
+model sweep or new model download is implied by the target-test authorization.
 
 The preparation handoff now contains the input/provenance inventory, exact G1
 shortfall, runnable commands, frozen synthetic protocol and parity/isolation
@@ -505,6 +519,7 @@ launch a parallel model sweep until this baseline has been reviewed.
 
 The [current status ledger](2026-09-16-plan-status.md) owns execution status.
 The user authorizes one review/verification/push per completed step and separately
-authorizes this new composite download. Historical acquisition budgets remain
+authorizes this composite download plus Unraid corpus storage/latest deployment/
+isolated target testing. Historical acquisition budgets remain
 closed for their earlier scopes. The direct-witness invariant, conservative unknown handling,
 quality/selection separation and production time-plus-pHash behavior remain intact.

@@ -1,0 +1,236 @@
+{
+  "baseline": {
+    "albumbench": {
+      "reason": "existing heuristic has no query-conditioned selection predictor",
+      "retained_tasks": 5124,
+      "status": "unsupported"
+    },
+    "copydays": {
+      "evaluated_queries": 229,
+      "failed_or_missing_gallery": 0,
+      "gallery_count": 157,
+      "gallery_failed_count": 0,
+      "mrr": 0.2558026280129831,
+      "predictor": "64-bit pHash Hamming distance; copy correspondence only",
+      "selected_queries": 229,
+      "status": "complete",
+      "tie_break": "lexicographic gallery id",
+      "tied_first_queries": 87,
+      "top1": 0.2052401746724891,
+      "usable_gallery_count": 157
+    },
+    "evaluated": 2434,
+    "failed": 0,
+    "maximum_metric_rounding_difference": 2.220446049250313e-16,
+    "quality": {
+      "kadid": {
+        "evaluated": 1024,
+        "failed": 0,
+        "plcc": 0.07459412433062068,
+        "srocc": 0.06944679684451534
+      },
+      "koniq": {
+        "evaluated": 1024,
+        "failed": 0,
+        "plcc": 0.38458651665384846,
+        "srocc": 0.3642614528231658
+      }
+    },
+    "selected_ids_and_input_fingerprints_match_original": true
+  },
+  "copydays": {
+    "baseline": {
+      "evaluated_queries": 229,
+      "gallery_count": 157,
+      "gallery_source_family_count": 157,
+      "mrr": 0.2558026280129831,
+      "query_source_family_count": 157,
+      "tie_break": "lexicographic gallery id",
+      "tied_first_queries": 87,
+      "top1": 0.2052401746724891
+    },
+    "candidate": {
+      "evaluated_queries": 229,
+      "gallery_count": 157,
+      "gallery_source_family_count": 157,
+      "mrr": 0.8792112331861944,
+      "query_source_family_count": 157,
+      "tie_break": "lexicographic gallery id",
+      "tied_first_queries": 0,
+      "top1": 0.834061135371179
+    },
+    "comparison": {
+      "mrr": {
+        "ci95": [
+          0.5654345318906016,
+          0.6806977781415288
+        ],
+        "point_delta": 0.6234086051732114
+      },
+      "top1": {
+        "ci95": [
+          0.5635533084153653,
+          0.6936189380870232
+        ],
+        "point_delta": 0.62882096069869
+      }
+    },
+    "config": {
+      "allow_batch_fallback": false,
+      "baseline": "64-bit pHash Hamming ascending then lexicographic gallery id",
+      "batch_size": 1,
+      "calibration": "none",
+      "device": "CPU",
+      "fallback_device": "",
+      "infer_requests": 1,
+      "max_in_flight": 1,
+      "offline": true,
+      "performance_hint": "THROUGHPUT",
+      "preprocessing": "existing adapter 224 RGB ImageNet mean/std; normalized CLS",
+      "similarity": "cosine descending then lexicographic gallery id"
+    },
+    "dimensions": 384,
+    "elapsed_seconds": 46.368394643999636,
+    "execution_devices": [
+      "CPU"
+    ],
+    "failure_count": 0,
+    "first_cache_reused": 0,
+    "identity": "820f57fec7b269a4dae70c0104611889ac7325d2bb56ba4d23b1072be11dbe33",
+    "limits": {
+      "max_failure_count": 8,
+      "max_images": 386,
+      "max_peak_rss_bytes": 2000000000,
+      "process_budget_seconds": 1800
+    },
+    "peak_rss_bytes": 1055096832,
+    "protocol_sha256": "519ecb1a6f5f1d1c0858ec515731264f1be79f08439ca8df1f74e13db729b4b5",
+    "resume_cache_reused": 386,
+    "runtime": {
+      "packages": {
+        "ImageHash": "4.3.2",
+        "Pillow": "11.3.0",
+        "numpy": "2.4.4",
+        "onnx": "1.22.0",
+        "openvino": "2026.2.1"
+      },
+      "platform": "Linux-6.18.38-Unraid-x86_64-with-glibc2.41",
+      "python": "3.14.6",
+      "source_code_sha256": {
+        "benchmark_public_composite.py": "d3e2f55d1870d299ed12c11fade1f250fd29275aa73b500a447758d13becace6",
+        "benchmark_public_copydays.py": "d5af6909a0c17047bc0ee1a5c358a33c195d3382730bd176eb167ec4fcce577f",
+        "inference_contract.py": "cb1c3395014f6dc8bd0673d3d861f6ef78bfebaccc3e4ad3f9cc4ba33c089b48",
+        "openvino_embedding.py": "98d8b8c01124382a8ea44462ca3a857bd94a4a01c0de2a3846e0bb854cff2e8e",
+        "openvino_session.py": "e9b629b80b89abe7d95d30bc51e8ed4754b5d09d59c14f880d5e2d0f9be29f23"
+      }
+    },
+    "selected": 386,
+    "semantic_digest": "35923be7053d229e4ecc8bac1d887947659f4c462deb54ac07391b594c228f59",
+    "statistics": {
+      "confidence_level": 0.95,
+      "method": "paired percentile bootstrap candidate-minus-baseline top1 and MRR",
+      "replicates": 2000,
+      "resampling_units": "whole source_id query families; fixed complete gallery",
+      "scope": "conditional fixed-corpus sampling uncertainty only",
+      "seed": 20261003
+    },
+    "successful": 386,
+    "training_exposure": "Exact training overlap unknown; LVD public images may include exposure. Copydays correspondences are not semantic coverage or rejection evidence. No generalization, tuning, fusion or promotion claim.",
+    "valid_delta_and_ci": true,
+    "verification": {
+      "bootstrap_max_tolerance": 1e-12,
+      "bootstrap_replicates": 2000,
+      "independently_recomputed_query_ranks": 229,
+      "native_cpu_no_fallback": 386,
+      "phash_operator_recomputed": 386,
+      "resume_identical_reused": 386,
+      "script_sha256": "45236779ed184e8d28cad9618be49536ae2abb8635f7ee7783a34c39642e508f",
+      "semantic_digest": "35923be7053d229e4ecc8bac1d887947659f4c462deb54ac07391b594c228f59",
+      "source_and_record_checks": 386,
+      "status": "passed"
+    }
+  },
+  "corpus": {
+    "content_bytes": 4164688472,
+    "index_sha256": "5886b19c704267b6602fe82afa7d4701b90f5574175479e3d4f218eaba26d7b4",
+    "inputs": "root-owned read-only, SSD appdata",
+    "manifest_sha256": "33e9d754efd98956502097d14b75fa25952c109bdd98005f665c0d3b6d5e28c6",
+    "media_files": 20965,
+    "package_sha256": "b491c150868d5987e67789e43036c9e4981982d656b9949ce448bf3ef3d291e6",
+    "reports": "separate experiment-owned directory",
+    "verified_files": 23414
+  },
+  "default_stack": {
+    "cold_run_seconds": 18.690775,
+    "deterministic_scores": true,
+    "elapsed_seconds": 31.890275,
+    "images_per_second_observational": 16.0551,
+    "item_count": 256,
+    "native_nima_cpu_no_fallback": 256,
+    "native_ssd_cpu_no_fallback": 256,
+    "observed_peak_rss_bytes": 579842048,
+    "repeat_count": 2,
+    "runtime": {
+      "backend": "local",
+      "platform": "Linux-6.18.38-Unraid-x86_64-with-glibc2.41",
+      "python": "3.14.6",
+      "quality_reject_threshold": 5.0,
+      "reject_threshold": 4.0,
+      "repeat_count": 2,
+      "runtime": "cpu+openvino:CPU+openvino:CPU",
+      "scoring_mode": "hybrid"
+    },
+    "unsupported": "No reviewed scene/preference/reject/culling labels; those acceptance metrics are not measured",
+    "verification": {
+      "cold_run_seconds": 18.690775,
+      "deterministic_scores": true,
+      "elapsed_seconds": 31.890275,
+      "images": 256,
+      "images_per_second_observational": 16.0551,
+      "limitations": "runtime/determinism only; no reviewed culling labels or image-policy promotion",
+      "native_aesthetic_cpu_no_fallback": 256,
+      "native_ssd_cpu_no_fallback": 256,
+      "repeat_count": 2,
+      "report_sha256": "cbd65c63a16a8ca12932994576f0b3eaec7132631618c85ec62c553f63cde51e",
+      "status": "passed",
+      "warm_run_seconds": 13.198751
+    },
+    "warm_run_seconds": 13.198751,
+    "yunet": {
+      "execution_devices": [
+        "unknown"
+      ],
+      "missing_evidence": [
+        "execution_device_readback"
+      ],
+      "successful_records": 256
+    }
+  },
+  "limitations": [
+    "Strong Copydays queries only; no distractors or complete release.",
+    "LVD training-image overlap and upstream export revision/quantization recipe remain unknown; local bytes pinned.",
+    "Conditional family-bootstrap uncertainty is not independent generalization evidence.",
+    "Runtime/determinism checks do not accept grouping, coverage, culling or XMP interoperability.",
+    "MUSIQ target-runtime and product-utility feasibility remain pending."
+  ],
+  "operations": {
+    "after_test_dockerman_and_mounts": "Running, managed, approved revision, photo library read-only",
+    "deployment": "Native DockerMan update completed; previous registry digest and template backup retained in controller receipts",
+    "library_before_after": {
+      "active_task": null,
+      "errors": 0,
+      "indexed": 40620,
+      "scored": 40620
+    },
+    "photo_or_xmp_writes": false,
+    "production_configuration": "NIMA/SSD CPU enabled, embedding disabled; no policy change",
+    "review": "Controller self-review and independent numerical recomputation passed. Separate reviewer and workers hit usage limit; no completed independent code-review claim."
+  },
+  "schema_version": "material-agent.unraid-public-evaluation.v1",
+  "tested_image_revision": "098ccb044e9c1bc642baf132ebf1c5ab30d28319",
+  "tests": {
+    "application": "1183 passed,10 skipped",
+    "lint": "passed",
+    "transport": "50 passed"
+  }
+}

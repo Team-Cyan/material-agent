@@ -1,0 +1,69 @@
+{
+  "candidate": "dinov3-vits16-openvino-cls",
+  "config": {
+    "allow_batch_fallback": false,
+    "baseline": "64-bit pHash Hamming ascending then lexicographic gallery id",
+    "batch_size": 1,
+    "calibration": "none",
+    "device": "CPU",
+    "fallback_device": "",
+    "infer_requests": 1,
+    "max_in_flight": 1,
+    "offline": true,
+    "performance_hint": "THROUGHPUT",
+    "preprocessing": "existing adapter 224 RGB ImageNet mean/std; normalized CLS",
+    "similarity": "cosine descending then lexicographic gallery id"
+  },
+  "counts": {
+    "gallery": 157,
+    "query": 229,
+    "source_families": 157
+  },
+  "items_redacted": "Full386-item frozen protocol stays in ignored corpus; protocol hash covers IDs/source/checksums.",
+  "limits": {
+    "max_failure_count": 8,
+    "max_images": 386,
+    "max_peak_rss_bytes": 2000000000,
+    "process_budget_seconds": 1800
+  },
+  "manifest_sha256": "33e9d754efd98956502097d14b75fa25952c109bdd98005f665c0d3b6d5e28c6",
+  "model_assets": {
+    "external/model_quantized.onnx_data": {
+      "sha256": "51572f7fc3c272eb574a70509ea1eeb7e674e5ca2cd96fec1632edb38983d529",
+      "size_bytes": 21762048
+    },
+    "model/model_quantized.onnx": {
+      "sha256": "7686e8c849202c4fdd67d1cd336449c29bdddbcca535d765d3014f50d04d516d",
+      "size_bytes": 183889
+    },
+    "processor/preprocessor_config.json": {
+      "sha256": "960c41d1f3a7778b936365769a2d90550b318a6c0a53a0296957adacfe5e0dd7",
+      "size_bytes": 585
+    }
+  },
+  "parent_baseline_identity": "c497653307a97d9798f20c299e9a905feef5bddc9b717d0e252d96ea8e2bc0be",
+  "parent_baseline_sha256": "241ea16328913ca7e84c17c69021b72d9c240363e049a250176f9babdc729ef5",
+  "parent_config_identity": "9bee7cbeb58b2f1623931b6fd86a668ddb101e6edbc3943fb38bf0860dfdd6bb",
+  "parent_runtime": {
+    "imagehash": "4.3.2",
+    "numpy": "2.4.4",
+    "pillow": "11.3.0",
+    "python": "3.14.3"
+  },
+  "protocol_sha256": "519ecb1a6f5f1d1c0858ec515731264f1be79f08439ca8df1f74e13db729b4b5",
+  "schema_version": "material-agent.public-copydays-protocol.v1",
+  "source_code_sha256": {
+    "benchmark_public_composite.py": "d3e2f55d1870d299ed12c11fade1f250fd29275aa73b500a447758d13becace6",
+    "clients/local.py": "411ad77e7ab7d7e45ef6da7b54960ab619a4bee92e324cce77892178cb7db3fc",
+    "utils/constants.py": "570f7529044fc671e9dba0915610a295f568b0de5eadf1f81b426e93e0d67530"
+  },
+  "statistics": {
+    "confidence_level": 0.95,
+    "method": "paired percentile bootstrap candidate-minus-baseline top1 and MRR",
+    "replicates": 2000,
+    "resampling_units": "whole source_id query families; fixed complete gallery",
+    "scope": "conditional fixed-corpus sampling uncertainty only",
+    "seed": 20261003
+  },
+  "training_exposure": "Exact training overlap unknown; LVD public images may include exposure. Copydays correspondences are not semantic coverage or rejection evidence. No generalization, tuning, fusion or promotion claim."
+}

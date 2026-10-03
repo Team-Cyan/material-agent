@@ -117,18 +117,35 @@ remains a diagnostic candidate with runtime/product-utility feasibility pending.
 The NIMA timing wording now explicitly excludes CLI imports; its scores and local
 artifacts remain unchanged. No production policy or photo metadata was changed.
 
-Next compare one existing embedding candidate against pHash on the frozen
-Copydays 157-original / 229-strong-query cohort, after asset and training-exposure
-checks. Freeze similarity/tie rules and resource limits before execution; report
-top-1/MRR/failures/ties separately. Copy correspondence cannot admit a semantic
-grouping or discard policy. Technical-quality runtime feasibility and independent
-directed coverage evidence remain separate gates; annotation UI work stays closed.
+October 3 authorized target execution: the [Unraid public-corpus report](benchmarks/2026-10-03-unraid-public/README.md)
+records native DockerMan deployment of reviewed revision `098ccb0`, retained
+rollback metadata, SSD storage of 23,414 checksum-verified read-only files and
+three isolated runs. The 2,434-item baseline has identical selected IDs/inputs,
+zero failures and metrics equal within 2.22e-16. The fixed DINOv3 candidate has
+386 successful actual CPU predictions, zero fallback, 0.8341 top-1 / 0.8792 MRR
+versus pHash 0.2052 / 0.2558. Exact resume reused all 386; all 229 ranks and
+paired 2,000-draw family bootstrap intervals were independently reproduced.
+Training overlap and upstream export recipe/revision remain unknown.
+
+The baked default stack ran 256 public images twice with deterministic scores;
+NIMA/SSD native CPU execution passed with no fallback, while YuNet execution
+readback remains unknown. Observational total time is 31.89 seconds, not a
+controlled performance improvement. Production library counts remain 40,620
+indexed/scored with zero errors and idle state; no photo/XMP or policy writes.
+Application checks passed 1,183 / ten skipped, 50 transport checks and lint passed.
+Controller self-review completed saved work after other sessions hit usage limits;
+numerical recomputation is independent, completed independent code review is not claimed.
+
+Next evaluate existing MUSIQ technical-quality runtime feasibility on Intel in
+a separate bounded environment. Copy correspondence cannot admit semantic grouping
+or discard policies. Technical-quality product utility and independent directed
+coverage references remain separate gates; annotation UI work stays closed.
 
 The inherited composite commit `d746815` passed [remote quality and image publication](https://github.com/Team-Cyan/material-agent/actions/runs/37018657320)
 (1,068 passed / 43 skipped), immutable smoke and verified-tag promotion. The NIMA
 step's code, aggregate and plan review passed with no remaining must-fix findings.
-Its Git/CI receipts are retained in the local controller handoff; no deployment
-is authorized or performed.
+Its original Git/CI receipts are retained in the local controller handoff. Those
+earlier steps did not deploy; the later explicit target authorization above is separate.
 
 ## Rules and authorization
 
@@ -143,8 +160,10 @@ The user now authorizes reviewed step commits, normal pushes and a separate
 bounded public-composite acquisition (8 GB compressed / 15 GB expanded). The reviewed
 reference, audit and tooling commits through `acb52de` have been pushed, with remote
 quality and image publication successful. Git push, publication and deployment
-remain distinct; no deployment occurred. Deployment, private-host operations,
-production review and actual photo/XMP writes remain excluded. Synthetic, video,
+remain distinct. The October 3 user request explicitly authorizes test-set storage
+on Unraid, latest native DockerMan deployment and isolated real-environment tests;
+those operations are now verified as described above. Production photo/XMP writes
+and score/grouping/discard policy changes remain excluded. Synthetic, video,
 real RAW, model proxy and human evidence must be distinguished. Historical external operations do not expand this scope.
 
 ## Task ledger

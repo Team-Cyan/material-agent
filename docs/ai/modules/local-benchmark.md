@@ -134,3 +134,21 @@ Atomic successful records resume only with intact matching identities. The
 controller must also supply the frozen external process deadline because native
 calls may defer Python signals. See the [protocol, bounds and results](../../operations/benchmarks/2026-10-03-public-musiq/README.md).
 Verify changes with `tests/test_public_musiq.py` and the immutable helper tests.
+
+`scripts/benchmark_public_copydays.py` compares one pinned existing OpenVINO
+embedding with the immutable pHash operator on all 157 gallery originals and
+229 strong queries. CPU execution, no fallback, normalized finite vectors,
+protocol/source/model/parent identities and output isolation are mandatory.
+The frozen parent runtime is distinct from actual target runtime provenance;
+`COPYDAYS_PROTOCOL_SHA256` must come from a reviewed controller package index.
+Successful atomic predictions resume only with intact identities. Incomplete
+runs cannot publish valid deltas/intervals. Paired bootstrap resamples complete
+native source families with the gallery fixed. Correspondence does not authorize
+semantic grouping, directed coverage or rejection. Verify with
+`tests/test_public_copydays.py`; see the [target runtime results](../../operations/benchmarks/2026-10-03-unraid-public/README.md).
+
+The homelab controller owns authorized target transport/deployment through its
+fixed approved-plan wrapper. Source files and models are root-owned read-only;
+experiments run unprivileged with separate reports/caches and process deadlines.
+The native default-stack pilot uses the baked configuration with only compilation
+cache paths relocated; reviewed culling labels are not inferred from MOS or copies.
