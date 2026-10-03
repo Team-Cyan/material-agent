@@ -1,0 +1,25 @@
+{
+  "cohort_counts": {
+    "kadid": {
+      "comparison": 494,
+      "development": 530
+    },
+    "koniq": {
+      "comparison": 512,
+      "development": 512
+    }
+  },
+  "interpretation": "Untrained frozen diagnostic partitions; parent aggregate and labels already available, not a blinded independent holdout. NIMA aesthetic versus native MOS/DMOS technical quality; training-image overlap unknown. No tuning or policy promotion.",
+  "items_sha256": "9b3d16d41622c40ecd8654763c8d3e4f91500df7a723118f94c9df2c471bd235",
+  "kadid_family_counts": {
+    "comparison": 41,
+    "development": 40
+  },
+  "model_revision": "litert-community-15308061",
+  "model_sha256": "a5051a0fcced735682735e3e0fd58ee54c83ed664282a003f52235b3dbcb9320",
+  "parent_baseline_identity": "c497653307a97d9798f20c299e9a905feef5bddc9b717d0e252d96ea8e2bc0be",
+  "parent_manifest_sha256": "33e9d754efd98956502097d14b75fa25952c109bdd98005f665c0d3b6d5e28c6",
+  "partition_algorithm": "public-quality-partition-v1: SHA256(prefix + group/id) order, floor half development; KADID reference families, KonIQ individual image IDs",
+  "protocol_sha256": "c836c40b322d0448cda17da9cf6dad2fbfe1ba7d461e52a6dcc5ac505208c097",
+  "schema_version": "material-agent.public-nima-protocol.v1"
+}

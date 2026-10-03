@@ -1,0 +1,240 @@
+{
+  "identity": "8cbcfcd0433d445627764d7674a68ece70df4bd103e1b4c97a6df0551270c464",
+  "inherited_tracks": {
+    "albumbench": {
+      "reason": "existing heuristic has no query-conditioned selection predictor",
+      "retained_tasks": 5124,
+      "status": "unsupported"
+    },
+    "copydays": {
+      "evaluated_queries": 229,
+      "failed_or_missing_gallery": 0,
+      "gallery_count": 157,
+      "gallery_failed_count": 0,
+      "mrr": 0.2558026280129831,
+      "predictor": "64-bit pHash Hamming distance; copy correspondence only",
+      "selected_queries": 229,
+      "status": "complete",
+      "tie_break": "lexicographic gallery id",
+      "tied_first_queries": 87,
+      "top1": 0.2052401746724891,
+      "usable_gallery_count": 157
+    }
+  },
+  "limitations": "Diagnostic partitions; labels previously observed. Raw aesthetics only; no calibration, tuning, full-pipeline or G1/G2 claim.",
+  "observational_first_pass": {
+    "actual_devices": [
+      "CPU"
+    ],
+    "cache_reused": 0,
+    "elapsed_seconds": 18.378015708178282,
+    "failed_predictions": 0,
+    "interpretation": "Includes preflight, startup, inference and writes; concurrent test activity. Not a controlled speed comparison or deployment-hardware measurement.",
+    "successful_predictions": 2048
+  },
+  "parent_baseline_identity": "c497653307a97d9798f20c299e9a905feef5bddc9b717d0e252d96ea8e2bc0be",
+  "parent_manifest_sha256": "33e9d754efd98956502097d14b75fa25952c109bdd98005f665c0d3b6d5e28c6",
+  "provenance": {
+    "code": {
+      "benchmark_public_composite.py": "d3e2f55d1870d299ed12c11fade1f250fd29275aa73b500a447758d13becace6",
+      "benchmark_public_nima.py": "413c4565bb3f87653f29bfe60c8c9aa040983d25f028244cddd2cc40fc14d2a3",
+      "constants.py": "570f7529044fc671e9dba0915610a295f568b0de5eadf1f81b426e93e0d67530",
+      "inference_contract.py": "cb1c3395014f6dc8bd0673d3d861f6ef78bfebaccc3e4ad3f9cc4ba33c089b48",
+      "local.py": "411ad77e7ab7d7e45ef6da7b54960ab619a4bee92e324cce77892178cb7db3fc",
+      "openvino_embedding.py": "98d8b8c01124382a8ea44462ca3a857bd94a4a01c0de2a3846e0bb854cff2e8e",
+      "openvino_nima_aesthetic.py": "a6899193ecd0852f91806120a9ec20d17ed667f0ac8bae4e406ca737071c2c80",
+      "openvino_session.py": "e9b629b80b89abe7d95d30bc51e8ed4754b5d09d59c14f880d5e2d0f9be29f23"
+    },
+    "config": {
+      "batch_size": 1,
+      "calibration": "none",
+      "device": "CPU",
+      "fallback_device": "",
+      "infer_requests": 1,
+      "max_in_flight": 1,
+      "performance_hint": "THROUGHPUT",
+      "preprocessing": "existing adapter default"
+    },
+    "model_revision": "litert-community-15308061",
+    "model_sha256": "a5051a0fcced735682735e3e0fd58ee54c83ed664282a003f52235b3dbcb9320",
+    "protocol_sha256": "c836c40b322d0448cda17da9cf6dad2fbfe1ba7d461e52a6dcc5ac505208c097",
+    "python": "3.14.3",
+    "runtime_versions": {
+      "imagehash": "4.3.2",
+      "numpy": "2.4.4",
+      "openvino": "2026.2.1",
+      "pillow": "11.3.0",
+      "scipy": "1.17.1"
+    }
+  },
+  "schema_version": "material-agent.public-nima-report.v1",
+  "semantic_records_sha256": "3f93e5458f3f5e73fe66f870bc640d9362bc34b32bbd55ea1260c1f71e926c6a",
+  "tracks": {
+    "kadid": {
+      "all": {
+        "baseline_full": {
+          "n": 1024,
+          "plcc": 0.07459412433062074,
+          "srocc": 0.06944679684451534
+        },
+        "baseline_paired": {
+          "n": 1024,
+          "plcc": 0.07459412433062074,
+          "srocc": 0.06944679684451534
+        },
+        "delta": {
+          "plcc": 0.27451166513128034,
+          "srocc": 0.29351541808896336
+        },
+        "failed": 0,
+        "nima_paired": {
+          "n": 1024,
+          "plcc": 0.3491057894619011,
+          "srocc": 0.3629622149334787
+        },
+        "status": "complete",
+        "total": 1024
+      },
+      "comparison": {
+        "baseline_full": {
+          "n": 494,
+          "plcc": 0.07703258771390327,
+          "srocc": 0.06555014228184093
+        },
+        "baseline_paired": {
+          "n": 494,
+          "plcc": 0.07703258771390327,
+          "srocc": 0.06555014228184093
+        },
+        "delta": {
+          "plcc": 0.3460651950510621,
+          "srocc": 0.3565893672118975
+        },
+        "failed": 0,
+        "nima_paired": {
+          "n": 494,
+          "plcc": 0.42309778276496535,
+          "srocc": 0.4221395094937384
+        },
+        "status": "complete",
+        "total": 494
+      },
+      "development": {
+        "baseline_full": {
+          "n": 530,
+          "plcc": 0.0665779889028643,
+          "srocc": 0.07393660278992127
+        },
+        "baseline_paired": {
+          "n": 530,
+          "plcc": 0.0665779889028643,
+          "srocc": 0.07393660278992127
+        },
+        "delta": {
+          "plcc": 0.22056642585273828,
+          "srocc": 0.24029989863664525
+        },
+        "failed": 0,
+        "nima_paired": {
+          "n": 530,
+          "plcc": 0.2871444147556026,
+          "srocc": 0.3142365014265665
+        },
+        "status": "complete",
+        "total": 530
+      }
+    },
+    "koniq": {
+      "all": {
+        "baseline_full": {
+          "n": 1024,
+          "plcc": 0.3845865166538484,
+          "srocc": 0.3642614528231658
+        },
+        "baseline_paired": {
+          "n": 1024,
+          "plcc": 0.3845865166538484,
+          "srocc": 0.3642614528231658
+        },
+        "delta": {
+          "plcc": -0.09167214759618053,
+          "srocc": -0.08367059017780054
+        },
+        "failed": 0,
+        "nima_paired": {
+          "n": 1024,
+          "plcc": 0.2929143690576679,
+          "srocc": 0.28059086264536526
+        },
+        "status": "complete",
+        "total": 1024
+      },
+      "comparison": {
+        "baseline_full": {
+          "n": 512,
+          "plcc": 0.3677099511679739,
+          "srocc": 0.3441575489955221
+        },
+        "baseline_paired": {
+          "n": 512,
+          "plcc": 0.3677099511679739,
+          "srocc": 0.3441575489955221
+        },
+        "delta": {
+          "plcc": -0.07008764804411038,
+          "srocc": -0.06689356485778336
+        },
+        "failed": 0,
+        "nima_paired": {
+          "n": 512,
+          "plcc": 0.2976223031238635,
+          "srocc": 0.27726398413773873
+        },
+        "status": "complete",
+        "total": 512
+      },
+      "development": {
+        "baseline_full": {
+          "n": 512,
+          "plcc": 0.3985480536803626,
+          "srocc": 0.38377504310905125
+        },
+        "baseline_paired": {
+          "n": 512,
+          "plcc": 0.3985480536803626,
+          "srocc": 0.38377504310905125
+        },
+        "delta": {
+          "plcc": -0.11144219582128667,
+          "srocc": -0.1000144188765334
+        },
+        "failed": 0,
+        "nima_paired": {
+          "n": 512,
+          "plcc": 0.28710585785907594,
+          "srocc": 0.28376062423251786
+        },
+        "status": "complete",
+        "total": 512
+      }
+    }
+  },
+  "validation": {
+    "full_pytest": {
+      "passed": 1125,
+      "seconds": 32.08,
+      "skipped": 10
+    },
+    "independent_metric_recomputation": "All six dataset/partition NIMA PLCC/SROCC values independently reproduced from cached predictions with scipy, tolerance 1e-12.",
+    "native_cli_exit_code": 0,
+    "resume": {
+      "identity_equal": true,
+      "metrics_equal": true,
+      "provenance_equal": true,
+      "semantic_records_equal": true,
+      "successful_predictions_reused": 2048
+    },
+    "review": "Independent code review finding fixed and re-reviewed; final aggregate, provenance, recovery and plan review passed with no must-fix findings.",
+    "ruff": "passed"
+  }
+}

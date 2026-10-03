@@ -107,3 +107,16 @@ metrics separately. Missing query-conditioned predictions remain unsupported.
 See the [frozen protocol and recovery commands](../../operations/benchmarks/2026-10-02-public-composite/README.md).
 Verify changes with `tests/test_prepare_public_composite.py`,
 `tests/test_public_composite.py` and the existing local-benchmark checks.
+
+`scripts/benchmark_public_nima.py` compares the pinned existing native aesthetic
+adapter against that unchanged heuristic quality cohort. Its separate frozen
+protocol keeps KADID reference families in one development/comparison partition;
+the labels were already available, so these are not blinded holdouts. It accepts
+only a non-empty, at most 50 MB, single-file TFLite model with `TFL3` magic and
+verifies model, input, protocol, parent-cache, code and runtime identities.
+Each successful native CPU prediction is atomic and resumable; missing execution
+evidence, invalid distributions or errors cannot become fallback scores or valid
+improvement deltas. It writes only experiment-owned outputs/caches, reports raw
+aesthetic/native-MOS agreement, and does not change production scoring or G1/G2.
+See the [fixed comparison and measured limits](../../operations/benchmarks/2026-10-03-public-nima/README.md).
+Verify runner changes with `tests/test_public_nima.py` and the parent checks.

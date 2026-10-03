@@ -2,6 +2,12 @@
 
 ## Completed
 
+- assembled a labeled public composite corpus and executed a frozen heuristic
+  baseline plus a pinned native NIMA component comparison on 2,048 quality images;
+  all predictions and resume checks passed, with 1,125 local tests / ten skipped.
+  NIMA improves sampled KADID agreement but regresses sampled KonIQ; no quality
+  replacement is admitted. See the [results](operations/benchmarks/2026-10-03-public-nima/README.md)
+
 - added bounded human-reference validation, constructed candidate-graph diagnostics
   and shared-geometry synthetic representation comparisons; October 2 review
   hardened reference counting, resource limits and resume paths, with 1,057 local
@@ -171,10 +177,11 @@
 
 ## Next
 
-- use the frozen [public composite diagnostic](operations/benchmarks/2026-10-02-public-composite/README.md)
-  to compare an unchanged existing scorer after checking available assets and
-  training exposure. Freeze reference-family development/holdout boundaries
-  before tuning; report quality and copy retrieval separately. Query-conditioned
+- follow the [fixed NIMA comparison](operations/benchmarks/2026-10-03-public-nima/README.md)
+  with one existing technical-IQA candidate after asset and training-exposure
+  checks. Freeze the next protocol before execution; keep the diagnostic cohort
+  unchanged and do not claim a blinded holdout or independent KonIQ generalization
+  from KonIQ-trained weights. Evaluate copy retrieval separately. Query-conditioned
   AlbumBench prediction remains unsupported and image access is unresolved
 
 - resolve independent culling reference inputs after the completed

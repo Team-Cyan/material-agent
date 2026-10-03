@@ -446,14 +446,25 @@ and pinned AlbumBench task metadata. See the
 Native targets and official AlbumBench splits are preserved. This diagnostic
 does not require new personal annotation work and cannot pass G1/G2.
 
-The first comparison is a frozen, untrained local-heuristic/pHash baseline,
-with separate quality and copy metrics and explicit unsupported AlbumBench
-predictions. Complete the actual corpus inventory, baseline, independent review
-and normal push before selecting improvements. The next algorithm comparison
-must freeze a development/holdout boundary by reference family before any tuning,
-identify existing model assets and training exposure, and compare an unchanged
-existing scorer under the same inputs. Do not compare the heuristic diagnostic
-with a published trained-model result as if they shared a test protocol.
+The frozen local-heuristic/pHash baseline is complete and pushed as `d746815`,
+with separate quality/copy metrics and explicit unsupported AlbumBench predictions.
+The [October 3 NIMA comparison](benchmarks/2026-10-03-public-nima/README.md)
+uses the same 2,048 quality images, fixed existing weights and CPU settings,
+with KADID reference-family development/comparison boundaries frozen before
+inference. All predictions succeeded and exact-command resume matched. NIMA
+SROCC improved sampled KADID (0.0694 to 0.3630), but regressed sampled KonIQ
+(0.3643 to 0.2806); do not replace the quality scorer with raw NIMA aesthetics.
+These are diagnostic partitions with prior label exposure and unknown training
+overlap, not blinded holdouts. No fusion or thresholds were fitted.
+
+The next substantive experiment inspects one existing technical-IQA candidate's
+asset and training exposure, freezes its protocol against the unchanged quality
+cohort, then executes and independently reviews it. KonIQ-trained models cannot
+establish independent KonIQ generalization. Copy retrieval remains a separate
+experiment with its frozen gallery/query cohort. Do not compare this diagnostic
+with published trained-model results as if they shared a test protocol, or tune
+on the comparison partition. Complete review and normal push for this step
+before starting the next candidate; do not launch a parallel model sweep.
 
 The preparation handoff now contains the input/provenance inventory, exact G1
 shortfall, runnable commands, frozen synthetic protocol and parity/isolation

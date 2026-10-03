@@ -1,6 +1,6 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 2, 2026. The dated filename is
+Single status entrypoint, updated October 3, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
@@ -80,11 +80,30 @@ leaderboard results or directed coverage acceptance. Full tests passed 1,101 /
 10 skipped with Ruff; independent review findings were fixed and re-reviewed.
 Archive receipts, image checksums and atomic checkpoints preserve recovery.
 
-Next compare an unchanged existing scorer after asset/training-exposure checks;
-freeze family-disjoint development/holdout boundaries before any tuning. The
-weak KADID/pHash baseline identifies measurable improvement targets. Independent
-directed coverage evidence remains required for safe culling promotion. Do not
-reopen annotation UI work or change the production defaults for this benchmark.
+October 3 fixed component comparison: the existing pinned NIMA aesthetic asset
+was evaluated on the same 2,048 quality images; see the [protocol and results](benchmarks/2026-10-03-public-nima/README.md).
+KADID reference families stay disjoint between frozen development/comparison
+partitions. These are diagnostic partitions, not blinded holdouts; training-image
+overlap remains unknown. All predictions succeeded on CPU without fallback.
+Resume reused all 2,048 with identical identity, semantic records and metrics.
+NIMA SROCC improved KADID from 0.0694 to 0.3630, but regressed KonIQ from 0.3643
+to 0.2806. This raw aesthetic component is not admitted as a universal quality
+replacement. Copydays and unsupported AlbumBench results are inherited unchanged.
+Full tests passed 1,125 / 10 skipped, with Ruff; model-identity review findings
+were fixed and independently re-reviewed. No production policy was changed.
+
+Next inspect one existing technical-IQA candidate's asset and training exposure;
+freeze a comparison on the unchanged cohort before execution. KonIQ-trained
+weights cannot establish independent KonIQ generalization. Keep pHash/copy retrieval
+improvement separate, and do not fit fusion or thresholds on the comparison
+partition. Independent directed coverage evidence remains required for safe
+culling promotion; annotation UI work stays closed.
+
+The inherited composite commit `d746815` passed [remote quality and image publication](https://github.com/Team-Cyan/material-agent/actions/runs/37018657320)
+(1,068 passed / 43 skipped), immutable smoke and verified-tag promotion. The NIMA
+step's code, aggregate and plan review passed with no remaining must-fix findings.
+Its Git/CI receipts are retained in the local controller handoff; no deployment
+is authorized or performed.
 
 ## Rules and authorization
 
