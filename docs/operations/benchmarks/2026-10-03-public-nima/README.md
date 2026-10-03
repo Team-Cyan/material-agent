@@ -55,7 +55,7 @@ NIMA and the baseline use the exact same cohort. Native PLCC/SROCC are reported
 per dataset and partition, along with failure counts. An incomplete NIMA cohort
 cannot receive a valid improvement delta. Missing execution evidence, invalid
 distributions or model errors are failures, never heuristic fallback scores.
-Timing is an observational first pass including startup, not a throughput gain
+Timing is an observational first pass including model initialization, not a throughput gain
 claim or evidence about Intel deployment.
 
 ## Execution and recovery
@@ -120,8 +120,9 @@ then freeze one comparison on these same inputs before executing it. KonIQ-train
 models cannot provide independent KonIQ generalization evidence. Keep copy
 retrieval improvement as a separately frozen experiment with its own target.
 
-The first pass took 18.38 seconds including preflight, startup, inference and
-writes, with concurrent tests; this is observational, not a speedup measurement.
+The first pass took 18.38 seconds from run entry after CLI module imports,
+including preflight, model initialization, inference and writes, with concurrent
+tests; this is observational, not a speedup or whole-process launch measurement.
 Full local tests passed (1,125 passed / 10 skipped), with Ruff. Independent code
 review found a multi-file model identity gap; the runner now rejects those
 containers before writing, and the fix passed independent re-review.

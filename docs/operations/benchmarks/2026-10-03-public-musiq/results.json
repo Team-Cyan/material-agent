@@ -1,0 +1,489 @@
+{
+  "complete": true,
+  "error": null,
+  "failed": 0,
+  "identity": "156b2c70250a102d31cd30023f0527ba314d40aa995ff1f639e52b4e8db485b4",
+  "inherited_tracks": {
+    "albumbench": {
+      "reason": "existing heuristic has no query-conditioned selection predictor",
+      "retained_tasks": 5124,
+      "status": "unsupported"
+    },
+    "copydays": {
+      "evaluated_queries": 229,
+      "failed_or_missing_gallery": 0,
+      "gallery_count": 157,
+      "gallery_failed_count": 0,
+      "mrr": 0.2558026280129831,
+      "predictor": "64-bit pHash Hamming distance; copy correspondence only",
+      "selected_queries": 229,
+      "status": "complete",
+      "tie_break": "lexicographic gallery id",
+      "tied_first_queries": 87,
+      "top1": 0.2052401746724891,
+      "usable_gallery_count": 157
+    }
+  },
+  "limitations": "Fixed-corpus diagnostic only; native raw scores, no fitting/fusion or promotion; training overlap unaudited, no independent generalization or full-pipeline G1/G2 claim. Signal budgets interrupt Python execution; a native call may defer delivery until returning.",
+  "observational_first_pass": {
+    "cache_reused": 0,
+    "description": "Run-entry timer after CLI imports: preflight, runtime/model initialization, inference, stability checks, bootstrap and writes. Not controlled speed comparison or deployment hardware evidence.",
+    "elapsed_seconds": 316.71277670934796,
+    "peak_rss_bytes": 988086272,
+    "prediction_elapsed_ms": {
+      "description": "Per-image scoring, execution validation and record checksum before atomic file write; observational.",
+      "p50": 163.77197951078415,
+      "p95": 167.6696645328775
+    }
+  },
+  "parent_baseline_identity": "c497653307a97d9798f20c299e9a905feef5bddc9b717d0e252d96ea8e2bc0be",
+  "parent_manifest_sha256": "33e9d754efd98956502097d14b75fa25952c109bdd98005f665c0d3b6d5e28c6",
+  "processed": 2048,
+  "provenance": {
+    "code": {
+      "pyiqa/__init__.py": "100e6d52846b06a87810f486c41e5930baa2e8aacb01672916d5fc50e61f57eb",
+      "pyiqa/api_helpers.py": "78f9c3e8cbe601e00366f6a720701469cc15df5299ea1080656a917f864ad899",
+      "pyiqa/archs/__init__.py": "32d5531f56c8ec3dfcb2da0d3ab46edc08f9ba6cf8f068a899b56117d1fbdac8",
+      "pyiqa/archs/arch_util.py": "26929cdb1f06cf064e44200640c2be1a1686a5836aa134fd95e93f3c6deda4b7",
+      "pyiqa/archs/constants.py": "811a450a48fa15882fd68ce765bbba99ea6e7452b14ff74935acee55b5f16681",
+      "pyiqa/archs/musiq_arch.py": "42d5b3c986537da66d8c9b52615acc93237f25d9cadd4b8bee4d5c4d9ff8812f",
+      "pyiqa/data/__init__.py": "4fda2cfe187185025d4a649edee9f2ccecf02e36401b41008cce970ca985c59f",
+      "pyiqa/data/dataset_api.py": "777803c1e095af9a09b7159b70c214ba3716b95eeb8c77792d1d74745b888a4f",
+      "pyiqa/data/multiscale_trans_util.py": "6d13c02ec4c93112282342a803ca5efca1d4eef3ddd033bf1aad6423c7904133",
+      "pyiqa/data/prefetch_dataloader.py": "82f4ab5e100a555cc7519d4264e9d6648ba60d49c865c65a879c50fc849595cf",
+      "pyiqa/default_model_configs.py": "03f5a2388c3ab669b32a7b704e6ddedef3a51ff8a42ac503911a208c2ebf7e83",
+      "pyiqa/losses/__init__.py": "6bb8be70fe1f63f27922ba52f7a28513d6a45c7cd00a7b0f8eadb8720a8ad5c1",
+      "pyiqa/losses/iqa_losses.py": "9d291b36820858b85643f8043d72caf5e0d207017b56a8a795c71c3d2b7e0d4b",
+      "pyiqa/losses/loss_util.py": "82f853d6ea416606e7a1871143cda4dc72cf47640eebeca2e96118748d290b59",
+      "pyiqa/losses/losses.py": "3f67d2a06ba18a389fffe75b0dd37b2234ccd75d6083d294f59148561ed8331a",
+      "pyiqa/matlab_utils/__init__.py": "31cc0dab6363c61999823365abaad06d0f716b46111ef9fad30776a7a862d53d",
+      "pyiqa/matlab_utils/functions.py": "2ac58a8f3d99e6958f3c40508a2eab39a12e8957cf8e90b04be5c6a244357401",
+      "pyiqa/matlab_utils/math_util.py": "3f167d16cbd0abe1fcba15c2567a4cbb7a7ce7c3d641353ae34f52f49dd79939",
+      "pyiqa/matlab_utils/padding.py": "51693f915b64ffd03b72bea2ef7d709146fcf336fb1298739c13199ab87dd4f3",
+      "pyiqa/matlab_utils/resize.py": "78ac30b90681011cd05e9ac44ded00cf20672e154194ecc38ddc979a2d27c92a",
+      "pyiqa/matlab_utils/scfpyr_util.py": "7828ea1ba442a006d9b4995f8e83fedf663ed5b1be2efa0f813892e8abbb42e8",
+      "pyiqa/models/__init__.py": "b7970b48c974643e0b4d8a8c990b2c8fd6deced68dad4bdf275b164275318b74",
+      "pyiqa/models/inference_model.py": "6aa002fd6a64bfd7d52ed5cd8ad401556ed306f202107283000544fbff3fac5f",
+      "pyiqa/utils/__init__.py": "c5e219286c3cbbe239b008583f4441c8a3390391c3c5f091d371197646277aed",
+      "pyiqa/utils/color_util.py": "dbbfe5bd05fa9639c3d2d3073bb08fa8ef8eca7fc303a132ad0fa7aeef094967",
+      "pyiqa/utils/dist_util.py": "d910bebd0145ecc361a4e4d771f182abb7b3597627ed937169b67d7d999d12ce",
+      "pyiqa/utils/download_util.py": "c714911e2be37424447d64629247d9881c1886eec14f7d5e2e8cfc3dc30b1890",
+      "pyiqa/utils/img_util.py": "deb448a1b7c742ea829bf275b4c9c981e2d5b078101dc98544b89c7e2b36e230",
+      "pyiqa/utils/logger.py": "77f2e9aedad0783d8b27d9659717c2fbe8a170fd3257340a698c9aa74b20da33",
+      "pyiqa/utils/misc.py": "686fedde895f3bad2f3d5ee06fe6a67b19eb8d5cc0e002ea5a8e577211ee3d7a",
+      "pyiqa/utils/registry.py": "a6561e19d92745cdb18bb5321491a3abdfaa592730aff3b5454fe0ac7c89d4bb",
+      "pyiqa/version.py": "d9a46ac9e2c2e05af30f9693781636e7e07a5bec34637143c0ccaef7cbfa3c4b",
+      "scripts/benchmark_public_composite.py": "d3e2f55d1870d299ed12c11fade1f250fd29275aa73b500a447758d13becace6",
+      "scripts/benchmark_public_musiq.py": "490845e642b2a88ae61ccf9a1648939c9b16885e25a4b1b6e1262decce0907d1",
+      "scripts/benchmark_public_nima.py": "413c4565bb3f87653f29bfe60c8c9aa040983d25f028244cddd2cc40fc14d2a3"
+    },
+    "config": {
+      "batch_size": 1,
+      "device": "cpu",
+      "max_pixels": 1000000,
+      "offline": true,
+      "preprocessing": "native corpus resolution RGB float32 NCHW [0,1]; PyIQA default original/224/384 scales; no resize, calibration or score fusion",
+      "seed": 0,
+      "threads": 4
+    },
+    "model_execution": {
+      "batch_size_actual": 1,
+      "deterministic_algorithms": true,
+      "execution_devices": [
+        "CPU"
+      ],
+      "execution_status": "success",
+      "fallback_used": false,
+      "lower_better": false,
+      "preprocess": {
+        "hse_grid_size": 10,
+        "longer_side_lengths": [
+          224,
+          384
+        ],
+        "max_seq_len_from_original_res": -1,
+        "patch_size": 32,
+        "patch_stride": 32
+      },
+      "seed": 0,
+      "torch_interop_threads": 4,
+      "torch_threads": 4
+    },
+    "model_revision": "pyiqa-musiq-koniq-e95806b9",
+    "model_sha256": "e95806b9eae5f3814c410f574ba8e552362bd5bc63d758ed5b97860f5d6185aa",
+    "protocol_sha256": "a73c197c2216c99a8038c320309c8837d0f7a9417a21c6f20bb6459ca735861a",
+    "public_projection": "Source paths normalized; input hashes and host fields retained only in full ignored receipt. Identity refers to that full local receipt.",
+    "python": "3.14.3",
+    "runtime_versions": {
+      "Pillow": "11.3.0",
+      "numpy": "2.5.3",
+      "pyiqa": "0.1.16",
+      "scipy": "1.18.1",
+      "timm": "1.0.29",
+      "torch": "2.14.0",
+      "torchvision": "0.29.0",
+      "transformers": "5.17.0"
+    },
+    "statistics": {
+      "confidence_level": 0.95,
+      "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+      "replicates": 2000,
+      "resampling_units": {
+        "kadid": "whole native reference families",
+        "koniq": "image IDs; semantic dependence unaudited"
+      },
+      "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+      "seed": 20261003
+    }
+  },
+  "reference_protocol_sha256": "c836c40b322d0448cda17da9cf6dad2fbfe1ba7d461e52a6dcc5ac505208c097",
+  "schema_version": "material-agent.public-musiq-report.v1",
+  "semantic_records_sha256": "a72843969a8c929ff064fb66c2103d10828f8d4fa75bf79664e221d625fa5915",
+  "stop_reason": null,
+  "successful": 2048,
+  "total": 2048,
+  "tracks": {
+    "kadid": {
+      "all": {
+        "baseline_full": {
+          "n": 1024,
+          "plcc": 0.07459412433062074,
+          "srocc": 0.06944679684451534
+        },
+        "baseline_paired": {
+          "n": 1024,
+          "plcc": 0.07459412433062074,
+          "srocc": 0.06944679684451534
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.4013051748997956,
+                0.5732010819012829
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.3934582468630401,
+                0.5610050301250631
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "whole native reference families",
+          "units": 81
+        },
+        "delta": {
+          "plcc": 0.49023344257612045,
+          "srocc": 0.4792062933708316
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 1024,
+          "plcc": 0.5648275669067412,
+          "srocc": 0.5486530902153469
+        },
+        "status": "complete",
+        "total": 1024,
+        "training_exposure": "cross-dataset diagnostic; source-image training overlap unaudited"
+      },
+      "comparison": {
+        "baseline_full": {
+          "n": 494,
+          "plcc": 0.07703258771390327,
+          "srocc": 0.06555014228184093
+        },
+        "baseline_paired": {
+          "n": 494,
+          "plcc": 0.07703258771390327,
+          "srocc": 0.06555014228184093
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.37881334068268535,
+                0.6214409351855646
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.4045391691661602,
+                0.6481143437535711
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "whole native reference families",
+          "units": 41
+        },
+        "delta": {
+          "plcc": 0.5040936057801733,
+          "srocc": 0.5308560004352971
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 494,
+          "plcc": 0.5811261934940766,
+          "srocc": 0.5964061427171381
+        },
+        "status": "complete",
+        "total": 494,
+        "training_exposure": "cross-dataset diagnostic; source-image training overlap unaudited"
+      },
+      "development": {
+        "baseline_full": {
+          "n": 530,
+          "plcc": 0.0665779889028643,
+          "srocc": 0.07393660278992127
+        },
+        "baseline_paired": {
+          "n": 530,
+          "plcc": 0.0665779889028643,
+          "srocc": 0.07393660278992127
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.38225562878303676,
+                0.5867647315981663
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.3334193008150304,
+                0.5467394776178349
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "whole native reference families",
+          "units": 40
+        },
+        "delta": {
+          "plcc": 0.4845639355088373,
+          "srocc": 0.43797637248975524
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 530,
+          "plcc": 0.5511419244117016,
+          "srocc": 0.5119129752796765
+        },
+        "status": "complete",
+        "total": 530,
+        "training_exposure": "cross-dataset diagnostic; source-image training overlap unaudited"
+      }
+    },
+    "koniq": {
+      "all": {
+        "baseline_full": {
+          "n": 1024,
+          "plcc": 0.3845865166538484,
+          "srocc": 0.3642614528231658
+        },
+        "baseline_paired": {
+          "n": 1024,
+          "plcc": 0.3845865166538484,
+          "srocc": 0.3642614528231658
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.4607562303870478,
+                0.5677608533091019
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.45248906256510335,
+                0.5578415481897301
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "image IDs; semantic dependence unaudited",
+          "units": 1024
+        },
+        "delta": {
+          "plcc": 0.5137663455568355,
+          "srocc": 0.505279317298235
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 1024,
+          "plcc": 0.8983528622106839,
+          "srocc": 0.8695407701214009
+        },
+        "status": "complete",
+        "total": 1024,
+        "training_exposure": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
+      },
+      "comparison": {
+        "baseline_full": {
+          "n": 512,
+          "plcc": 0.3677099511679739,
+          "srocc": 0.3441575489955221
+        },
+        "baseline_paired": {
+          "n": 512,
+          "plcc": 0.3677099511679739,
+          "srocc": 0.3441575489955221
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.45085775348994683,
+                0.6049659307520163
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.44712606615706635,
+                0.5997939250556242
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "image IDs; semantic dependence unaudited",
+          "units": 512
+        },
+        "delta": {
+          "plcc": 0.5268920479843651,
+          "srocc": 0.5230569693470885
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 512,
+          "plcc": 0.894601999152339,
+          "srocc": 0.8672145183426105
+        },
+        "status": "complete",
+        "total": 512,
+        "training_exposure": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
+      },
+      "development": {
+        "baseline_full": {
+          "n": 512,
+          "plcc": 0.3985480536803626,
+          "srocc": 0.38377504310905125
+        },
+        "baseline_paired": {
+          "n": 512,
+          "plcc": 0.3985480536803626,
+          "srocc": 0.38377504310905125
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.42877375253177596,
+                0.579773755820826
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.41288448839232755,
+                0.5604155244866948
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "image IDs; semantic dependence unaudited",
+          "units": 512
+        },
+        "delta": {
+          "plcc": 0.5038801472902439,
+          "srocc": 0.48700789217379276
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 512,
+          "plcc": 0.9024282009706065,
+          "srocc": 0.870782935282844
+        },
+        "status": "complete",
+        "total": 512,
+        "training_exposure": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
+      }
+    }
+  },
+  "training_exposure": {
+    "kadid": "cross-dataset diagnostic; source-image training overlap unaudited",
+    "koniq": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
+  },
+  "validation": {
+    "first_cli_exit_code": 0,
+    "full_pytest": {
+      "passed": 1167,
+      "seconds": 54.52,
+      "skipped": 10
+    },
+    "resume_cli_exit_code": 0,
+    "review": "Independent protocol, frozen-code and final aggregate/document/plan reviews passed with no must-fix findings.",
+    "ruff": "passed",
+    "verification": {
+      "first_resume_identity_provenance_metrics_ci_semantic_digest": "identical",
+      "independent_bootstrap": "All six dataset/partition paired 2000-draw percentile intervals reproduced using independent group-choice assembly and scipy pearsonr/spearmanr, tolerance1e-12",
+      "independent_metrics": "12 baseline/MUSIQ PLCC/SROCC pairs, tolerance1e-12",
+      "input_cache_and_semantic_integrity": "passed",
+      "native_cpu_tensor_and_seed_thread_determinism_evidence": "passed",
+      "predictions": 2048,
+      "resume_reused": 2048,
+      "status": "passed",
+      "verification_script_sha256": "af242ab7273a37e7b36cd95360662771657212840e8bd3a24e8b5ec6253f66fd"
+    }
+  }
+}

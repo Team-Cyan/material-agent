@@ -120,3 +120,17 @@ improvement deltas. It writes only experiment-owned outputs/caches, reports raw
 aesthetic/native-MOS agreement, and does not change production scoring or G1/G2.
 See the [fixed comparison and measured limits](../../operations/benchmarks/2026-10-03-public-nima/README.md).
 Verify runner changes with `tests/test_public_nima.py` and the parent checks.
+
+`scripts/benchmark_public_musiq.py` pins a separate single-checkpoint protocol and
+reads the NIMA protocol/model only to validate the unchanged heuristic cohort.
+It initializes the existing PyIQA metric offline with an explicit local weight;
+experiment-owned cache/tmp paths preserve `HOME`. Actual CPU parameters/tensors,
+threads, seed and deterministic state are checked. Raw technical-quality scores
+are separate from deployed normalization/fusion. KonIQ remains training-exposed.
+The 2,000-draw paired percentile bootstrap uses identical indexes for predictor,
+heuristic and target, with entire KADID reference families sampled together.
+Any failure, budget stop or identity drift invalidates the run's deltas/intervals.
+Atomic successful records resume only with intact matching identities. The
+controller must also supply the frozen external process deadline because native
+calls may defer Python signals. See the [protocol, bounds and results](../../operations/benchmarks/2026-10-03-public-musiq/README.md).
+Verify changes with `tests/test_public_musiq.py` and the immutable helper tests.

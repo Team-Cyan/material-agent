@@ -460,18 +460,27 @@ overlap, not blinded holdouts. No fusion or thresholds were fitted.
 The [controller self-review](benchmarks/2026-10-03-public-nima/self-review.md)
 verified native-label joins, exact cohorts, source/cache identities and all twelve
 baseline/NIMA correlations without finding a scoped implementation defect.
-The next substantive experiment verifies the existing MUSIQ checkpoint's
-asset and training exposure, freezes its protocol against the unchanged quality
-cohort, then executes and independently reviews it. It must report paired
-uncertainty estimates with whole-reference-family bootstrap draws on KADID;
-KonIQ image resampling does not establish semantic independence. Fix offline
-loading, CPU settings, preprocessing and resource limits before inference.
-KonIQ-trained models cannot
-establish independent KonIQ generalization. Copy retrieval remains a separate
-experiment with its frozen gallery/query cohort. Do not compare this diagnostic
-with published trained-model results as if they shared a test protocol, or tune
-on the comparison partition. Complete review and normal push for this step
-before starting the next candidate; do not launch a parallel model sweep.
+The [fixed MUSIQ experiment](benchmarks/2026-10-03-public-musiq/README.md) is now
+executed on the unchanged quality cohort. All 2,048 offline CPU predictions and
+exact-command resume passed, with identical metrics/intervals and provenance.
+Independent recomputation verified all twelve baseline/MUSIQ correlations and
+six paired 2,000-draw bootstrap interval sets. KADID SROCC improved to 0.5487
+from 0.0694, with family-resampled delta interval +0.3935 to +0.5610. KonIQ 0.8695
+remains training-exposed; image resampling does not establish semantic independence
+or cure training exposure. Observed peak RSS was 988,086,272 bytes; the lean
+Intel image excludes Torch/PyIQA, so runtime and product utility remain unaccepted.
+Do not promote default quality/fusion/rejection settings from this diagnostic.
+
+The next substantive experiment compares pHash with one existing embedding
+candidate on the unchanged Copydays gallery/query cohort (157 originals / 229
+strong queries). Verify asset/training exposure, freeze preprocessing, similarity,
+tie handling and resource limits before inference, then execute, review and push.
+Preserve complete-gallery correspondence checks and separate top-1/MRR/failure/tie
+metrics. Do not convert a copy match into semantic grouping/coverage or discard
+authorization. Technical-quality runtime feasibility remains a distinct later
+decision. Do not compare diagnostics with published trained-model results as if
+they shared a protocol or tune on the comparison partition. Complete this step's
+review and normal push before another candidate; do not launch a parallel sweep.
 
 The preparation handoff now contains the input/provenance inventory, exact G1
 shortfall, runnable commands, frozen synthetic protocol and parity/isolation

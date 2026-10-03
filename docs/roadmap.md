@@ -3,10 +3,13 @@
 ## Completed
 
 - assembled a labeled public composite corpus and executed a frozen heuristic
-  baseline plus a pinned native NIMA component comparison on 2,048 quality images;
-  all predictions and resume checks passed, with 1,125 local tests / ten skipped.
+  baseline plus pinned NIMA and MUSIQ component comparisons on 2,048 quality images;
+  all predictions and resume checks passed, with 1,167 local tests / ten skipped.
   NIMA improves sampled KADID agreement but regresses sampled KonIQ; no quality
-  replacement is admitted. See the [results](operations/benchmarks/2026-10-03-public-nima/README.md)
+  replacement is admitted. MUSIQ KADID SROCC is 0.5487 with positive paired
+  family-resampled delta intervals; KonIQ remains training-exposed and runtime
+  integration is unaccepted. See [NIMA](operations/benchmarks/2026-10-03-public-nima/README.md)
+  and [MUSIQ results](operations/benchmarks/2026-10-03-public-musiq/README.md)
 
 - added bounded human-reference validation, constructed candidate-graph diagnostics
   and shared-geometry synthetic representation comparisons; October 2 review
@@ -177,13 +180,12 @@
 
 ## Next
 
-- follow the [fixed NIMA comparison](operations/benchmarks/2026-10-03-public-nima/README.md)
-  with the existing MUSIQ checkpoint after asset and training-exposure
-  checks; the [controller self-review](operations/benchmarks/2026-10-03-public-nima/self-review.md)
-  found no scoped implementation defect and requires paired uncertainty estimates
-  with KADID family resampling. Freeze the next protocol before execution; keep the diagnostic cohort
-  unchanged and do not claim a blinded holdout or independent KonIQ generalization
-  from KonIQ-trained weights. Evaluate copy retrieval separately. Query-conditioned
+- follow the [completed MUSIQ diagnostic](operations/benchmarks/2026-10-03-public-musiq/README.md)
+  with one existing embedding candidate versus pHash on the frozen Copydays gallery
+  and strong-query cohort. Verify assets/exposure, freeze similarity/tie/resource
+  rules before execution, and retain separate correspondence metrics. Do not
+  promote grouping/discard policies. Technical-quality runtime/product utility
+  remains unaccepted; KonIQ-trained scores are training-exposed. Query-conditioned
   AlbumBench prediction remains unsupported and image access is unresolved
 
 - resolve independent culling reference inputs after the completed

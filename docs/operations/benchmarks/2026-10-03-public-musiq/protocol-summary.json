@@ -1,0 +1,53 @@
+{
+  "cohort_counts": {
+    "kadid": {
+      "comparison": 494,
+      "development": 530
+    },
+    "koniq": {
+      "comparison": 512,
+      "development": 512
+    }
+  },
+  "config": {
+    "batch_size": 1,
+    "device": "cpu",
+    "max_pixels": 1000000,
+    "offline": true,
+    "preprocessing": "native corpus resolution RGB float32 NCHW [0,1]; PyIQA default original/224/384 scales; no resize, calibration or score fusion",
+    "seed": 0,
+    "threads": 4
+  },
+  "items_sha256": "9b3d16d41622c40ecd8654763c8d3e4f91500df7a723118f94c9df2c471bd235",
+  "limits": {
+    "max_failure_count": 8,
+    "max_images": 2048,
+    "max_model_bytes": 150000000,
+    "max_peak_rss_bytes": 2500000000,
+    "process_budget_seconds": 1800
+  },
+  "metric": "musiq",
+  "model_revision": "pyiqa-musiq-koniq-e95806b9",
+  "model_sha256": "e95806b9eae5f3814c410f574ba8e552362bd5bc63d758ed5b97860f5d6185aa",
+  "model_size_bytes": 108610983,
+  "parent_baseline_identity": "c497653307a97d9798f20c299e9a905feef5bddc9b717d0e252d96ea8e2bc0be",
+  "parent_manifest_sha256": "33e9d754efd98956502097d14b75fa25952c109bdd98005f665c0d3b6d5e28c6",
+  "protocol_sha256": "a73c197c2216c99a8038c320309c8837d0f7a9417a21c6f20bb6459ca735861a",
+  "reference_protocol_sha256": "c836c40b322d0448cda17da9cf6dad2fbfe1ba7d461e52a6dcc5ac505208c097",
+  "schema_version": "material-agent.public-musiq-protocol.v1",
+  "statistics": {
+    "confidence_level": 0.95,
+    "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+    "replicates": 2000,
+    "resampling_units": {
+      "kadid": "whole native reference families",
+      "koniq": "image IDs; semantic dependence unaudited"
+    },
+    "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+    "seed": 20261003
+  },
+  "training_exposure": {
+    "kadid": "cross-dataset diagnostic; source-image training overlap unaudited",
+    "koniq": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
+  }
+}

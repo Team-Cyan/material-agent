@@ -29,7 +29,7 @@
     "cache_reused": 0,
     "elapsed_seconds": 18.378015708178282,
     "failed_predictions": 0,
-    "interpretation": "Includes preflight, startup, inference and writes; concurrent test activity. Not a controlled speed comparison or deployment-hardware measurement.",
+    "interpretation": "Measured from run entry after CLI module imports; includes preflight, model initialization, inference and writes with concurrent test activity. Not a controlled speed comparison, whole-process launch latency or deployment-hardware measurement.",
     "successful_predictions": 2048
   },
   "parent_baseline_identity": "c497653307a97d9798f20c299e9a905feef5bddc9b717d0e252d96ea8e2bc0be",

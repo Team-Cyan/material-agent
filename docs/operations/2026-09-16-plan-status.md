@@ -98,13 +98,31 @@ identities, exact partitions and all twelve baseline/NIMA correlations. No scope
 implementation defect was found. Commit `6b0b6e9` passed remote quality (1,092 /
 43 skipped), publication, immutable smoke and verified promotion; no deployment.
 
-Next verify the existing MUSIQ checkpoint's asset and training exposure;
-freeze a comparison on the unchanged cohort before execution. Add paired uncertainty
-estimates, keeping KADID reference families together in bootstrap draws. KonIQ-trained
-weights cannot establish independent KonIQ generalization. Keep pHash/copy retrieval
-improvement separate, and do not fit fusion or thresholds on the comparison
-partition. Independent directed coverage evidence remains required for safe
-culling promotion; annotation UI work stays closed.
+October 3 technical-IQA execution: the [frozen MUSIQ comparison](benchmarks/2026-10-03-public-musiq/README.md)
+used the unchanged 2,048 quality images, existing checksum-verified KonIQ-trained
+weights and offline CPU batch 1 / four threads. All predictions succeeded; actual
+parameter/input/output devices and seed/determinism were verified. Exact-command
+resume reused all records with identical identity, provenance, metrics, intervals
+and semantic digest. All twelve baseline/MUSIQ correlations and six paired
+2,000-draw bootstrap interval sets were independently reproduced within 1e-12.
+
+KADID SROCC rose from 0.0694 to 0.5487; its family-resampled delta interval is
++0.3935 to +0.5610 (comparison partition: 0.0656 to 0.5964, delta interval
++0.4045 to +0.6481). KonIQ SROCC 0.8695 is training-exposed and cannot establish
+independent generalization. Source-image training overlap remains unaudited.
+Observed run-entry elapsed time was 316.71 seconds including statistical work;
+observed peak RSS 988,086,272 bytes stayed below 2.5 GB. Full tests passed 1,167 /
+10 skipped, with lint. The current Intel image excludes Torch/PyIQA, so MUSIQ
+remains a diagnostic candidate with runtime/product-utility feasibility pending.
+The NIMA timing wording now explicitly excludes CLI imports; its scores and local
+artifacts remain unchanged. No production policy or photo metadata was changed.
+
+Next compare one existing embedding candidate against pHash on the frozen
+Copydays 157-original / 229-strong-query cohort, after asset and training-exposure
+checks. Freeze similarity/tie rules and resource limits before execution; report
+top-1/MRR/failures/ties separately. Copy correspondence cannot admit a semantic
+grouping or discard policy. Technical-quality runtime feasibility and independent
+directed coverage evidence remain separate gates; annotation UI work stays closed.
 
 The inherited composite commit `d746815` passed [remote quality and image publication](https://github.com/Team-Cyan/material-agent/actions/runs/37018657320)
 (1,068 passed / 43 skipped), immutable smoke and verified-tag promotion. The NIMA

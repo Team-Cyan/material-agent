@@ -37,6 +37,10 @@ production acceptance review.
   No deployment or production-state/photo/XMP write occurred.
 
 No implementation defect requiring a change was found in this scoped review.
+Timing wording was subsequently clarified: the timer starts at run entry after
+CLI module imports and includes model initialization; the 18.38-second receipt
+does not measure the complete process launch. Metrics and original local
+artifacts are unchanged.
 The implementation and original artifacts remain frozen. The local controller
 receipt records the replayed checks and its verification-script hash.
 
