@@ -2,6 +2,12 @@
 
 ## Completed
 
+- verified the same fixed-shape MUSIQ graph on all 2,048 original quality images
+  on Intel CPU: no fallback, maximum raw error 0.0003052, exact 2,048-record
+  resume and independently reproduced correlations/paired intervals. Native
+  KADID SROCC remains 0.5487; KonIQ remains training-exposed. No production
+  policy promotion. See [full Intel diagnostic](operations/benchmarks/2026-10-04-musiq-intel-full/README.md)
+
 - converted the unchanged MUSIQ checkpoint into a whole-image fixed-shape
   OpenVINO graph and verified Intel CPU parity on 32 public images, two inferences
   each, with maximum raw-score error 0.0000534 and exact resume. Production
@@ -196,15 +202,18 @@
 
 ## Next
 
-- expand the verified fixed-shape OpenVINO graph to the unchanged 2,048-image
-  quality cohort on Intel with a separate frozen resource/statistics gate;
-  see [Intel feasibility](operations/benchmarks/2026-10-04-musiq-intel/README.md)
+- audit the actual scoring input contract and existing real RAW/JPEG fixtures
+  against the accepted 512×384 MUSIQ graph before designing an optional runtime
+  adapter. Freeze an explicit preprocessing/shape contract and bounded evaluation;
+  no implicit resizing, dynamic-shape/GPU claim or scoring-default change.
+  The [full Intel cohort](operations/benchmarks/2026-10-04-musiq-intel-full/README.md)
+  is complete; do not repeat it or acquire another model by default
 - retain separate product-utility/coverage acceptance for the existing
   [MUSIQ candidate](operations/benchmarks/2026-10-03-public-musiq/README.md)
   in a separate bounded experiment environment; the lean production image excludes
   Torch/PyIQA. The [Copydays comparison](operations/benchmarks/2026-10-03-unraid-public/README.md)
-  is complete and does not admit grouping/discard promotion. Technical-quality
-  full-cohort/runtime/product utility remains unaccepted; KonIQ-trained scores are
+  is complete and does not admit grouping/discard promotion. Fixed-shape full-cohort CPU feasibility is accepted; broader input/runtime
+  compatibility and product utility remain unaccepted; KonIQ-trained scores are
   training-exposed. Query-conditioned
   AlbumBench prediction remains unsupported and image access is unresolved
 

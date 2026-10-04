@@ -1,0 +1,448 @@
+{
+  "cache_reused": 0,
+  "complete": true,
+  "content_files": 2053,
+  "elapsed_seconds": 275.15179302403703,
+  "execution_devices": [
+    "CPU"
+  ],
+  "failures": 0,
+  "fallback_used": false,
+  "hardware": "11th Gen Intel Core i7-11700T",
+  "identity": "ec64045c612ecd6ac2e3ab7798c9427cf891b6fee2a204b9e12b162e7c698acf",
+  "independent_verification": {
+    "association_fields_verified": 24,
+    "bootstrap_sets_verified": 6,
+    "identity": "ec64045c612ecd6ac2e3ab7798c9427cf891b6fee2a204b9e12b162e7c698acf",
+    "raw_max_abs_error": 0.00030517578125,
+    "raw_mean_abs_error": 2.332078292965889e-05,
+    "raw_p95_abs_error": 6.103515625e-05,
+    "records_sha256": "f07535073379ca57df752740327e4e5c48cf0786f905b21896abc4bc1ffec4de",
+    "records_verified": 2048,
+    "reference_association_max_abs_drift": {
+      "plcc": 2.3660183046114724e-07,
+      "srocc": 7.617551685434876e-06
+    },
+    "status": "passed",
+    "verifier_sha256": "f84dead0b103320e42acef6f1e8b6b762e9742000fa0bd4e0b791b89448f34ec"
+  },
+  "limitations": "Native scores are uncalibrated; no production policy admission or new improvement threshold. External process watchdog required.",
+  "max_abs_error": 0.00030517578125,
+  "mean_abs_error": 2.332078292965889e-05,
+  "package_bytes": 500756480,
+  "package_sha256": "e41d1329ad797f0cd2af176c52d202b444c4f609d367c7571b6ddd13fc83458b",
+  "peak_rss_bytes": 509554688,
+  "production_snapshot": {
+    "active_task": null,
+    "errors": 0,
+    "indexed": 40620,
+    "library_config_equal": true,
+    "photo_mount_readonly": true,
+    "scored": 40620
+  },
+  "provenance": {
+    "config": {
+      "device": "CPU",
+      "precision": "f32",
+      "streams": 1,
+      "threads": 4
+    },
+    "graph": {
+      "models/musiq.bin": {
+        "sha256": "09c37d5322ff14e0008f191899eac80f780b97eeea3c5bf27f440964791ba999",
+        "size": 108504308
+      },
+      "models/musiq.xml": {
+        "sha256": "0dd4bb0b77223a7d446a19e1d0a8b898a44257c420821c1033b7b8f8bfe3dfd8",
+        "size": 651979
+      }
+    },
+    "openvino": "2026.2.1-21919-ede283a88e3-releases/2026/2",
+    "platform": "linux",
+    "protocol_sha256": "ef9841b0bf34d3f7d63ccf694f8a1d8312c915f95e08cddb0addd15f20315bf2",
+    "python": "3.14.6 (main, Jun 24 2026, 04:50:39) [GCC 14.2.0]",
+    "runtime_versions": {
+      "Pillow": "11.3.0",
+      "numpy": "2.4.4",
+      "scipy": "1.17.1"
+    },
+    "source_hashes": {
+      "benchmark_musiq_openvino.py": "31da83e4700be28e6a6baa127cc50004530a813731dc770215e3d40067c248d7",
+      "benchmark_musiq_openvino_full.py": "197ea017e16072fd4cf89f5e5e60420cd739895f51079e171bffaf51904054b0"
+    }
+  },
+  "resume": {
+    "cache_reused": 2048,
+    "elapsed_seconds": 28.584884318057448,
+    "identity_equal": true,
+    "new_native_inferences": 0,
+    "records_equal": true,
+    "tracks_equal": true
+  },
+  "schema_version": "material-agent.musiq-openvino-full.v1",
+  "status": "passed",
+  "successful": 2048,
+  "tested_image_revision": "380bbbcf44251bcb69052e53e1d504cce643ab7e",
+  "timing_scope": "Preflight, compilation, decode, inference, writes and statistics; observational only, not controlled speedup.",
+  "tracks": {
+    "kadid": {
+      "all": {
+        "baseline_full": {
+          "n": 1024,
+          "plcc": 0.07459412433062076,
+          "srocc": 0.06944679684451534
+        },
+        "baseline_paired": {
+          "n": 1024,
+          "plcc": 0.07459412433062076,
+          "srocc": 0.06944679684451534
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.40130479676117126,
+                0.573200904110776
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.3934582468630401,
+                0.561011766669828
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "whole native reference families",
+          "units": 81
+        },
+        "delta": {
+          "plcc": 0.4902332523968491,
+          "srocc": 0.479208087196438
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 1024,
+          "plcc": 0.5648273767274699,
+          "srocc": 0.5486548840409533
+        },
+        "reference": {
+          "n": 1024,
+          "plcc": 0.5648275669067414,
+          "srocc": 0.548653090215347
+        },
+        "status": "complete",
+        "total": 1024,
+        "training_exposure": "cross-dataset diagnostic; source-image training overlap unaudited"
+      },
+      "comparison": {
+        "baseline_full": {
+          "n": 494,
+          "plcc": 0.07703258771390331,
+          "srocc": 0.06555014228184092
+        },
+        "baseline_paired": {
+          "n": 494,
+          "plcc": 0.07703258771390331,
+          "srocc": 0.06555014228184092
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.3788131086994093,
+                0.6214408699267454
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.4045391691661602,
+                0.6481143437535711
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "whole native reference families",
+          "units": 41
+        },
+        "delta": {
+          "plcc": 0.5040934787912348,
+          "srocc": 0.5308560004352973
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 494,
+          "plcc": 0.5811260665051381,
+          "srocc": 0.5964061427171382
+        },
+        "reference": {
+          "n": 494,
+          "plcc": 0.5811261934940767,
+          "srocc": 0.5964061427171382
+        },
+        "status": "complete",
+        "total": 494,
+        "training_exposure": "cross-dataset diagnostic; source-image training overlap unaudited"
+      },
+      "development": {
+        "baseline_full": {
+          "n": 530,
+          "plcc": 0.06657798890286429,
+          "srocc": 0.07393660278992129
+        },
+        "baseline_paired": {
+          "n": 530,
+          "plcc": 0.06657798890286429,
+          "srocc": 0.07393660278992129
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.3822552363647272,
+                0.5867645117279614
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.3334256078214248,
+                0.5467401936790202
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "whole native reference families",
+          "units": 40
+        },
+        "delta": {
+          "plcc": 0.4845636989070068,
+          "srocc": 0.43798399004144073
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 530,
+          "plcc": 0.551141687809871,
+          "srocc": 0.511920592831362
+        },
+        "reference": {
+          "n": 530,
+          "plcc": 0.5511419244117015,
+          "srocc": 0.5119129752796765
+        },
+        "status": "complete",
+        "total": 530,
+        "training_exposure": "cross-dataset diagnostic; source-image training overlap unaudited"
+      }
+    },
+    "koniq": {
+      "all": {
+        "baseline_full": {
+          "n": 1024,
+          "plcc": 0.3845865166538486,
+          "srocc": 0.3642614528231658
+        },
+        "baseline_paired": {
+          "n": 1024,
+          "plcc": 0.3845865166538486,
+          "srocc": 0.3642614528231658
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.46075622224114493,
+                0.5677608312453015
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.45248906256510335,
+                0.5578415481897301
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "image IDs; semantic dependence unaudited",
+          "units": 1024
+        },
+        "delta": {
+          "plcc": 0.5137663378052679,
+          "srocc": 0.5052793172982352
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 1024,
+          "plcc": 0.8983528544591165,
+          "srocc": 0.869540770121401
+        },
+        "reference": {
+          "n": 1024,
+          "plcc": 0.8983528622106837,
+          "srocc": 0.869540770121401
+        },
+        "status": "complete",
+        "total": 1024,
+        "training_exposure": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
+      },
+      "comparison": {
+        "baseline_full": {
+          "n": 512,
+          "plcc": 0.36770995116797384,
+          "srocc": 0.34415754899552203
+        },
+        "baseline_paired": {
+          "n": 512,
+          "plcc": 0.36770995116797384,
+          "srocc": 0.34415754899552203
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.4508577421721479,
+                0.6049659270580756
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.44712606615706635,
+                0.5997939250556242
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "image IDs; semantic dependence unaudited",
+          "units": 512
+        },
+        "delta": {
+          "plcc": 0.5268920107592159,
+          "srocc": 0.5230569693470886
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 512,
+          "plcc": 0.8946019619271898,
+          "srocc": 0.8672145183426107
+        },
+        "reference": {
+          "n": 512,
+          "plcc": 0.8946019991523393,
+          "srocc": 0.8672145183426107
+        },
+        "status": "complete",
+        "total": 512,
+        "training_exposure": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
+      },
+      "development": {
+        "baseline_full": {
+          "n": 512,
+          "plcc": 0.39854805368036256,
+          "srocc": 0.38377504310905125
+        },
+        "baseline_paired": {
+          "n": 512,
+          "plcc": 0.39854805368036256,
+          "srocc": 0.38377504310905125
+        },
+        "bootstrap": {
+          "confidence_level": 0.95,
+          "delta": {
+            "plcc": {
+              "interval": [
+                0.42877370894249683,
+                0.5797737606887462
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            },
+            "srocc": {
+              "interval": [
+                0.41288448839232755,
+                0.5604155244866948
+              ],
+              "invalid_replicates": 0,
+              "valid_replicates": 2000
+            }
+          },
+          "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+          "replicates": 2000,
+          "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+          "seed": 20261003,
+          "unit": "image IDs; semantic dependence unaudited",
+          "units": 512
+        },
+        "delta": {
+          "plcc": 0.5038801669445261,
+          "srocc": 0.48700789217379287
+        },
+        "failed": 0,
+        "musiq_paired": {
+          "n": 512,
+          "plcc": 0.9024282206248886,
+          "srocc": 0.8707829352828441
+        },
+        "reference": {
+          "n": 512,
+          "plcc": 0.9024282009706068,
+          "srocc": 0.8707829352828441
+        },
+        "status": "complete",
+        "total": 512,
+        "training_exposure": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
+      }
+    }
+  },
+  "training_exposure": {
+    "kadid": "cross-dataset diagnostic; source-image training overlap unaudited",
+    "koniq": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
+  },
+  "verification": {
+    "focused_runner_and_helper": "46 passed",
+    "full_tests": "1229 passed,10 skipped",
+    "independent_code_review": "no remaining mustfix; documentation findings corrected",
+    "lint": "passed",
+    "repository_boundary": "2 passed",
+    "wrapper_tests": "133 passed"
+  },
+  "wrapper_observed_peak_rss_bytes": 511033344
+}

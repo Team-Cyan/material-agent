@@ -20,7 +20,8 @@ admission. The frozen experiment baseline remains commit
 
 October 4 current diagnostic milestone: public-corpus comparison and authorized
 Unraid tests are complete; fixed-shape MUSIQ OpenVINO CPU parity is verified.
-Next expand that same graph to the unchanged full quality cohort. The directed
+The same graph now passes the unchanged full quality cohort. Next audit actual
+RAW/JPEG scoring inputs against its fixed shape before any optional adapter. The directed
 human-reference track below remains separately gated.
 
 ## Execution tracking
@@ -34,7 +35,7 @@ human-reference track below remains separately gated.
 | G2 human-labeled oracle diagnostic | Pending G1 | Measure candidate omissions and selector limitations on actually labeled pairs |
 | Batch 3 representation comparison | Synthetic runner prepared; real labeled evaluation pending G1/G2 | Fixed 512/1024 geometry x gray/RGB-local matrix with residual512; bind a frozen real-data manifest only after evidence readiness; no threshold/model sweep |
 | Batches 4–6 | Conditional | Escalation, integration and target acceptance retain their gates |
-| Public quality/copy and Intel feasibility diagnostics | Bounded steps complete | [Intel MUSIQ parity](benchmarks/2026-10-04-musiq-intel/README.md); next same-graph 2,048-image Intel evaluation, without policy promotion |
+| Public quality/copy and Intel feasibility diagnostics | Bounded steps complete | [Full Intel MUSIQ cohort](benchmarks/2026-10-04-musiq-intel-full/README.md); next actual-input/RAW compatibility audit, without policy promotion |
 
 ### September 29 controller acceptance
 
@@ -503,10 +504,21 @@ production dependencies/policy and source library are unchanged. Independent
 runner/wrapper reviews and separate numerical verification passed; temporary-directory
 and UTF8 recovery findings were fixed and re-reviewed.
 
-Next expand this graph to the unchanged 2,048-image quality cohort on Intel,
-preserving the lean production dependency set. Freeze a separate full
-runtime/asset/protocol/resource/statistics gate before execution; do not tune
-on comparison data or promote policy without product utility/coverage acceptance.
+The [full Intel diagnostic](benchmarks/2026-10-04-musiq-intel-full/README.md) now
+passes all 2,048 original quality images with no fallback, maximum raw error
+0.0003052 and exact full-record resume. Independent correlation/bootstrap
+recomputation and completed code review passed; 1,229 full tests / ten skipped
+and 133 wrapper checks passed. This accepts only fixed-shape CPU feasibility,
+not product utility.
+
+Next audit actual scoring input/previews using the existing real RAW/JPEG fixtures
+and owning runtime code. Establish which inputs fit the accepted shape and
+freeze any required preprocessing/shape contract before an optional adapter.
+Do not implicitly resize or make a variable-shape/GPU claim. Retain production
+quality/selection separation, default policy and the lean dependency set. The
+completed full cohort is frozen. Define a separate bounded actual-input protocol
+before further inference; do not tune on comparison data or promote policy
+without product utility/coverage acceptance.
 Complete this step's review and normal push before another candidate; no parallel
 model sweep or new model download is implied by the target-test authorization.
 

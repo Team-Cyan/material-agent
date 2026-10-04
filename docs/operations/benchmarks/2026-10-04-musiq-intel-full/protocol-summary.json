@@ -1,0 +1,78 @@
+{
+  "checkpoint_sha256": "e95806b9eae5f3814c410f574ba8e552362bd5bc63d758ed5b97860f5d6185aa",
+  "cohort_counts": {
+    "kadid_comparison": 494,
+    "kadid_development": 530,
+    "koniq_comparison": 512,
+    "koniq_development": 512
+  },
+  "config": {
+    "device": "CPU",
+    "precision": "f32",
+    "streams": 1,
+    "threads": 4
+  },
+  "graph": {
+    "models/musiq.bin": {
+      "sha256": "09c37d5322ff14e0008f191899eac80f780b97eeea3c5bf27f440964791ba999",
+      "size": 108504308
+    },
+    "models/musiq.xml": {
+      "sha256": "0dd4bb0b77223a7d446a19e1d0a8b898a44257c420821c1033b7b8f8bfe3dfd8",
+      "size": 651979
+    }
+  },
+  "inferences_per_image": 1,
+  "input_shape": [
+    1,
+    3,
+    384,
+    512
+  ],
+  "input_shapes": {
+    "512x384": 2048
+  },
+  "items_sha256": "8b0c66add2f7e9b67dd635e9ee894e4c324c30adf48b1a77a918fc77a6a27476",
+  "limits": {
+    "max_abs_error": 0.001,
+    "max_graph_bytes": 150000000,
+    "max_items": 2048,
+    "max_rss_bytes": 2500000000,
+    "max_seconds": 1800
+  },
+  "parent_baseline_identity": "c497653307a97d9798f20c299e9a905feef5bddc9b717d0e252d96ea8e2bc0be",
+  "parent_manifest_sha256": "33e9d754efd98956502097d14b75fa25952c109bdd98005f665c0d3b6d5e28c6",
+  "parent_prediction_identity": "156b2c70250a102d31cd30023f0527ba314d40aa995ff1f639e52b4e8db485b4",
+  "parent_protocol_sha256": "a73c197c2216c99a8038c320309c8837d0f7a9417a21c6f20bb6459ca735861a",
+  "process_watchdog": {
+    "address_space_bytes": 12884901888,
+    "cpu_seconds_hard": 6510,
+    "cpu_seconds_soft": 6500,
+    "file_bytes": 134217728,
+    "max_observed_rss_bytes": 2500000000,
+    "open_files": 1024,
+    "wall_seconds": 1800
+  },
+  "protocol_sha256": "ef9841b0bf34d3f7d63ccf694f8a1d8312c915f95e08cddb0addd15f20315bf2",
+  "reference_parity_gate": 0.001,
+  "reference_validation": "all 2048 original CPU success records and heuristic cache records verified before protocol freeze",
+  "schema_version": "material-agent.musiq-openvino-full.v1",
+  "selection": "unchanged complete original 2048 quality cohort, original partitions and labels",
+  "source_records_verified": 2048,
+  "statistics": {
+    "confidence_level": 0.95,
+    "method": "paired percentile bootstrap delta SROCC and PLCC versus fixed heuristic",
+    "replicates": 2000,
+    "resampling_units": {
+      "kadid": "whole native reference families",
+      "koniq": "image IDs; semantic dependence unaudited"
+    },
+    "scope": "conditional fixed-corpus sampling uncertainty; no training-overlap or promotion claim",
+    "seed": 20261003
+  },
+  "total": 2048,
+  "training_exposure": {
+    "kadid": "cross-dataset diagnostic; source-image training overlap unaudited",
+    "koniq": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
+  }
+}

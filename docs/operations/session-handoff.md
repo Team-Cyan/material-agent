@@ -7,8 +7,10 @@ not duplicate changing experiment counts or append historical progress logs.
 Current authorization includes local experiments, fixes, verification and one
 reviewed normal push per completed step. The October 2 request also authorizes
 a bounded multi-dataset public composite acquisition and native-target diagnostic.
-Deployment, private-host operations, production review and actual photo/XMP
-writes remain excluded. Preserve the user's adjacent time AND hash rule and
+The later explicit user request also authorizes Unraid corpus storage, latest
+native DockerMan deployment and isolated real-target testing through the homelab
+controller. Actual production photo/XMP writes and scoring/grouping policy
+promotion remain excluded. Preserve the user's adjacent time AND hash rule and
 threshold-zero bypass until a concrete product change is chosen.
 
 The independent HDR+ panels are complete. Existing replacement hashes and model

@@ -163,3 +163,15 @@ resume only with matching identities; malformed/UTF8-corrupt records recompute.
 Unknown execution, incomplete runs or failed parity cannot pass. The controller
 supplies external export/target process watchdogs. Verify with
 `tests/test_musiq_openvino.py`; see the [Intel feasibility report](../../operations/benchmarks/2026-10-04-musiq-intel/README.md).
+
+`scripts/benchmark_musiq_openvino_full.py` reuses that exact graph and helper
+source for the unchanged 2,048-image quality cohort. It performs one native
+CPU/F32 inference per image, compares raw scores against the frozen original
+Torch records, and reproduces six paired-bootstrap sets against the immutable
+heuristic. KADID draws preserve entire native reference families; KonIQ draws
+image IDs and remains training-exposed. Protocol, graph, source, runtime and
+input identities control atomic cache reuse. Partial execution, failed parity,
+asset drift or resource failure invalidate improvement deltas and intervals.
+The homelab controller provides the external watchdog, read-only corpus and
+unprivileged output isolation. Verify with `tests/test_musiq_openvino_full.py`
+and the existing helper tests; see the [full Intel diagnostic](../../operations/benchmarks/2026-10-04-musiq-intel-full/README.md).
