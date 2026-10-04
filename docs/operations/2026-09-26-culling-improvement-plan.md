@@ -507,7 +507,7 @@ and UTF8 recovery findings were fixed and re-reviewed.
 The [full Intel diagnostic](benchmarks/2026-10-04-musiq-intel-full/README.md) now
 passes all 2,048 original quality images with no fallback, maximum raw error
 0.0003052 and exact full-record resume. Independent correlation/bootstrap
-recomputation and completed code review passed; 1,229 full tests / ten skipped
+recomputation and completed code review passed; 1,230 full tests / ten skipped
 and 133 wrapper checks passed. This accepts only fixed-shape CPU feasibility,
 not product utility.
 

@@ -150,7 +150,7 @@ is also complete: all 2,048 native CPU predictions passed, with maximum raw erro
 0.0003052, zero fallback and exact full-record resume. Independent SciPy
 recomputation verified 24 candidate/heuristic correlation fields and six paired
 bootstrap sets. Observed time is 275.15 seconds and peak RSS 509,554,688 bytes,
-not a controlled speedup. Full checks passed 1,229 / ten skipped; 133 wrapper
+not a controlled speedup. Full checks passed 1,230 / ten skipped; 133 wrapper
 checks, lint and completed independent code review passed. Library/config
 snapshots remain unchanged and photo inputs are read-only.
 
@@ -199,7 +199,7 @@ or photographic product acceptance. The baseline and one attribution-driven hypo
 | XMP policy / projection-attempt ledger | Implemented locally | `2c6ec47` and linked audit; missing/zero rating rules, protected nonzero values, malformed/duplicate failures, rewrite preflight, append-only outcomes | External watching/crash reconciliation and professional software readback remain unverified |
 | Evidence applicability / opt-in refinement | Implemented; not promoted | Observed/unknown contracts and conservative no-gain guard; 100-frame run had 18 completed/22 no-gain/60 untriggered observations | No demonstrated ranking gain; keep disabled. No automatic back-view/silhouette producer or accepted context dataset |
 | TOPIQ / MUSIQ / MediaPipe experiments | Accepted locally as diagnostics only | `74998da`; [100-frame comparison](benchmarks/2026-09-17-hdrplus-holdout/report.md), [completed proxy results](benchmarks/2026-09-18-hdrplus-completed/report.md) | Freeze negative promotion conclusion; do not rerun/fuse by default |
-| Fixed-shape MUSIQ Intel OpenVINO feasibility | Full quality cohort accepted as diagnostic | [2,048-image report](benchmarks/2026-10-04-musiq-intel-full/README.md); zero fallback, exact resume, independent numerical/code review, 1,229 full tests / ten skipped | Next actual-input/RAW compatibility audit; no variable-shape/GPU/product policy acceptance |
+| Fixed-shape MUSIQ Intel OpenVINO feasibility | Full quality cohort accepted as diagnostic | [2,048-image report](benchmarks/2026-10-04-musiq-intel-full/README.md); zero fallback, exact resume, independent numerical/code review, 1,230 full tests / ten skipped | Next actual-input/RAW compatibility audit; no variable-shape/GPU/product policy acceptance |
 | Independent HDR+ A/B proxy evaluation | Execution complete; acceptance gate failed | `4b76ce8`; both panels 20/20; prior responses unchanged; 1/20 preferred-set agreement, 7 stable strict pairs vs minimum 30 | Quota blocker resolved. References remain unstable; no human-accuracy or product-acceptance claim |
 | Exposure and action hard negatives | Accepted locally as diagnostic evidence | `5caaacb`, `2811b9d`, `a90e3ef`; [real RAW](benchmarks/2026-09-17-exposure-brackets/report.md), [synthetic](benchmarks/2026-09-17-hash-hardcases/report.md), [video pairs](benchmarks/2026-09-18-cooking-hashes/report.md) | Current candidates fail some known controls. Do not tune these inspected inputs further |
 | Whole-sequence closure / reproducible runner | Accepted locally | `4b76ce8`; [sequence report](benchmarks/2026-09-18-cooking-sequences/report.md); 29 focused tests, 2 boundary tests, Ruff, source hashes, 25-pair exact parity and runner/plan fingerprints | No algorithm promoted; decision boundary below |

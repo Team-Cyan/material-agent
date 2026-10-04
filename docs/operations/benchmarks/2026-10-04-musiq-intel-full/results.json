@@ -8,7 +8,7 @@
   ],
   "failures": 0,
   "fallback_used": false,
-  "hardware": "11th Gen Intel Core i7-11700T",
+  "hardware": "Intel CPU; exact hardware identity retained in private receipts",
   "identity": "ec64045c612ecd6ac2e3ab7798c9427cf891b6fee2a204b9e12b162e7c698acf",
   "independent_verification": {
     "association_fields_verified": 24,
@@ -437,11 +437,12 @@
     "koniq": "KonIQ-trained weights; exact train/test overlap unaudited; training-exposed diagnostic only"
   },
   "verification": {
+    "boundary_scope": "tracked and newly created nonignored public text files; ignored private receipts excluded",
     "focused_runner_and_helper": "46 passed",
-    "full_tests": "1229 passed,10 skipped",
+    "full_tests": "1230 passed,10 skipped",
     "independent_code_review": "no remaining mustfix; documentation findings corrected",
     "lint": "passed",
-    "repository_boundary": "2 passed",
+    "repository_boundary": "3 passed",
     "wrapper_tests": "133 passed"
   },
   "wrapper_observed_peak_rss_bytes": 511033344

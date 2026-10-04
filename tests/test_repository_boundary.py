@@ -18,18 +18,33 @@ _TEXT_SUFFIXES = {
 
 
 def _public_text_files() -> list[Path]:
-    tracked = subprocess.run(
-        ["git", "ls-files", "-z"],
+    public = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
         check=True,
         capture_output=True,
     ).stdout.decode("utf-8").split("\0")
     return [
         path
-        for value in tracked
+        for value in public
         if value
         if (path := Path(value)).suffix.lower() in _TEXT_SUFFIXES
         or path.name in {"AGENTS.md", "Dockerfile", "Makefile"}
     ]
+
+
+def test_boundary_checks_untracked_public_files_but_excludes_ignored(tmp_path, monkeypatch) -> None:
+    subprocess.run(["git", "init", "--quiet", str(tmp_path)], check=True)
+    (tmp_path / ".gitignore").write_text("private.md\n")
+    (tmp_path / "tracked.md").write_text("Public document.\n")
+    (tmp_path / "untracked.md").write_text("/Users/" + "lancer")
+    (tmp_path / "private.md").write_text("/Users/" + "lancer")
+    subprocess.run(["git", "-C", str(tmp_path), "add", "tracked.md"], check=True)
+    monkeypatch.chdir(tmp_path)
+    assert set(_public_text_files()) == {Path("tracked.md"), Path("untracked.md")}
+    import pytest
+
+    with pytest.raises(AssertionError, match="untracked.md"):
+        test_public_tree_excludes_private_machine_identifiers()
 
 
 def test_public_tree_excludes_private_machine_identifiers() -> None:

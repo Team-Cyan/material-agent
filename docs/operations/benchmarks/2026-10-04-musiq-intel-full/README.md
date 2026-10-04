@@ -116,8 +116,8 @@ for SROCC and 0.0000002366 for PLCC.
 
 The service remains idle with the same library/config snapshots: 40,620 indexed
 and scored, zero errors. No production scoring/grouping/XMP policy changed.
-Application checks passed 1,229 / ten skipped; 46 focused runner/helper tests,
-133 wrapper checks, lint and two repository-boundary checks passed. Completed
+Application checks passed 1,230 / ten skipped; 46 focused runner/helper tests,
+133 wrapper checks, lint and three repository-boundary checks passed. Completed
 independent source review has no remaining mustfix findings.
 
 Next audit the actual scoring input contract and existing real RAW/JPEG previews
