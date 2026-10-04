@@ -1,6 +1,6 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 3, 2026. The dated filename is
+Single status entrypoint, updated October 4, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
@@ -136,8 +136,17 @@ Application checks passed 1,183 / ten skipped, 50 transport checks and lint pass
 Controller self-review completed saved work after other sessions hit usage limits;
 numerical recomputation is independent, completed independent code review is not claimed.
 
-Next evaluate existing MUSIQ technical-quality runtime feasibility on Intel in
-a separate bounded environment. Copy correspondence cannot admit semantic grouping
+October 4 [MUSIQ Intel feasibility](benchmarks/2026-10-04-musiq-intel/README.md)
+is complete: the unchanged checkpoint exports as a whole-image fixed-shape graph
+with native preprocessing/eager parity. All 32 public images and 64 Intel CPU
+inferences passed the fixed 0.001 error gate (maximum 0.0000534); repeats and
+exact-command resume match. Production remains free of Torch/PyIQA dependencies.
+Independent runner/wrapper reviews and separate numerical verification passed
+after temporary-directory and UTF8 recovery fixes. Full tests passed 1,197 /
+ten skipped; 80 wrapper checks and lint passed. Production state is unchanged.
+
+Next expand this graph to the unchanged 2,048-image quality cohort on Intel
+with a separate frozen resource/statistics gate. Copy correspondence cannot admit semantic grouping
 or discard policies. Technical-quality product utility and independent directed
 coverage references remain separate gates; annotation UI work stays closed.
 
@@ -180,6 +189,7 @@ or photographic product acceptance. The baseline and one attribution-driven hypo
 | XMP policy / projection-attempt ledger | Implemented locally | `2c6ec47` and linked audit; missing/zero rating rules, protected nonzero values, malformed/duplicate failures, rewrite preflight, append-only outcomes | External watching/crash reconciliation and professional software readback remain unverified |
 | Evidence applicability / opt-in refinement | Implemented; not promoted | Observed/unknown contracts and conservative no-gain guard; 100-frame run had 18 completed/22 no-gain/60 untriggered observations | No demonstrated ranking gain; keep disabled. No automatic back-view/silhouette producer or accepted context dataset |
 | TOPIQ / MUSIQ / MediaPipe experiments | Accepted locally as diagnostics only | `74998da`; [100-frame comparison](benchmarks/2026-09-17-hdrplus-holdout/report.md), [completed proxy results](benchmarks/2026-09-18-hdrplus-completed/report.md) | Freeze negative promotion conclusion; do not rerun/fuse by default |
+| Fixed-shape MUSIQ Intel OpenVINO feasibility | Bounded parity accepted | [32-image/64-inference report](benchmarks/2026-10-04-musiq-intel/README.md); exact resume, independent numerical/code review, 1,197 full tests / ten skipped | Next same-graph full 2,048-image Intel cohort; no variable-shape/GPU/product policy acceptance |
 | Independent HDR+ A/B proxy evaluation | Execution complete; acceptance gate failed | `4b76ce8`; both panels 20/20; prior responses unchanged; 1/20 preferred-set agreement, 7 stable strict pairs vs minimum 30 | Quota blocker resolved. References remain unstable; no human-accuracy or product-acceptance claim |
 | Exposure and action hard negatives | Accepted locally as diagnostic evidence | `5caaacb`, `2811b9d`, `a90e3ef`; [real RAW](benchmarks/2026-09-17-exposure-brackets/report.md), [synthetic](benchmarks/2026-09-17-hash-hardcases/report.md), [video pairs](benchmarks/2026-09-18-cooking-hashes/report.md) | Current candidates fail some known controls. Do not tune these inspected inputs further |
 | Whole-sequence closure / reproducible runner | Accepted locally | `4b76ce8`; [sequence report](benchmarks/2026-09-18-cooking-sequences/report.md); 29 focused tests, 2 boundary tests, Ruff, source hashes, 25-pair exact parity and runner/plan fingerprints | No algorithm promoted; decision boundary below |

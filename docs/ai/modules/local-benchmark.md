@@ -152,3 +152,14 @@ fixed approved-plan wrapper. Source files and models are root-owned read-only;
 experiments run unprivileged with separate reports/caches and process deadlines.
 The native default-stack pilot uses the baked configuration with only compilation
 cache paths relocated; reviewed culling labels are not inferred from MOS or copies.
+
+`scripts/benchmark_musiq_openvino.py` provides fixed-shape conversion/parity for
+the existing MUSIQ checkpoint. Native eval preprocessing/network exports as
+uncompressed-FP32 XML/BIN with only known resize dimensions specialized.
+Exactly 32 original CPU predictions are references, not human selection labels.
+Graph/input/protocol/source identity, native CPU and F32 precision-hint readback,
+raw-score/repeat gates and isolated outputs are required. Successful atomic records
+resume only with matching identities; malformed/UTF8-corrupt records recompute.
+Unknown execution, incomplete runs or failed parity cannot pass. The controller
+supplies external export/target process watchdogs. Verify with
+`tests/test_musiq_openvino.py`; see the [Intel feasibility report](../../operations/benchmarks/2026-10-04-musiq-intel/README.md).

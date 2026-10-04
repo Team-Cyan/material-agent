@@ -1,0 +1,66 @@
+{
+  "checkpoint_sha256": "e95806b9eae5f3814c410f574ba8e552362bd5bc63d758ed5b97860f5d6185aa",
+  "cohort_counts": {
+    "kadid": 16,
+    "koniq": 16
+  },
+  "config": {
+    "device": "CPU",
+    "precision": "f32",
+    "streams": 1,
+    "threads": 4
+  },
+  "export_gate": {
+    "eager_max_abs_error": 1e-05,
+    "fp16_compression": false,
+    "max_rss_bytes": 2500000000,
+    "max_seconds": 300,
+    "static_resize": {
+      "224": [
+        168,
+        224
+      ],
+      "384": [
+        288,
+        384
+      ]
+    }
+  },
+  "export_source_hashes": {
+    "benchmark_musiq_openvino.py": "b25cab1d3a97ec904a18dcbb2a15e170b8f55452f4f6a8037c6fb26db879ea7b",
+    "benchmark_public_musiq.py": "490845e642b2a88ae61ccf9a1648939c9b16885e25a4b1b6e1262decce0907d1",
+    "multiscale_trans_util.py": "6d13c02ec4c93112282342a803ca5efca1d4eef3ddd033bf1aad6423c7904133",
+    "musiq_arch.py": "42d5b3c986537da66d8c9b52615acc93237f25d9cadd4b8bee4d5c4d9ff8812f"
+  },
+  "graph": {
+    "models/musiq.bin": {
+      "sha256": "09c37d5322ff14e0008f191899eac80f780b97eeea3c5bf27f440964791ba999",
+      "size": 108504308
+    },
+    "models/musiq.xml": {
+      "sha256": "0dd4bb0b77223a7d446a19e1d0a8b898a44257c420821c1033b7b8f8bfe3dfd8",
+      "size": 651979
+    }
+  },
+  "input_shape": [
+    1,
+    3,
+    384,
+    512
+  ],
+  "items_sha256": "beea919785ad47f3d7bfbb2bd1ca7ac4d80d0712305a05c383e2b88de3f4fef0",
+  "limits": {
+    "max_abs_error": 0.001,
+    "max_graph_bytes": 150000000,
+    "max_items": 32,
+    "max_repeat_error": 1e-06,
+    "max_rss_bytes": 2500000000,
+    "max_seconds": 900
+  },
+  "parent_prediction_identity": "156b2c70250a102d31cd30023f0527ba314d40aa995ff1f639e52b4e8db485b4",
+  "parent_protocol_sha256": "a73c197c2216c99a8038c320309c8837d0f7a9417a21c6f20bb6459ca735861a",
+  "preexport_protocol_sha256": "e50e3c6736f565339ad011cc3ea1d2dd252e064bea26b9eb3976c80623f9ed6d",
+  "protocol_sha256": "17bbcbde5072d65c5365b18925d0ac5d9d3d039440a7ba3fb6eefc5b8c4e14eb",
+  "schema_version": "material-agent.musiq-openvino-parity.v1",
+  "selection": "first16_sha256_id_order_per_track_from_unchanged2048_native_torch_cohort"
+}

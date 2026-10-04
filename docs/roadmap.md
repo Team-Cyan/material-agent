@@ -2,6 +2,12 @@
 
 ## Completed
 
+- converted the unchanged MUSIQ checkpoint into a whole-image fixed-shape
+  OpenVINO graph and verified Intel CPU parity on 32 public images, two inferences
+  each, with maximum raw-score error 0.0000534 and exact resume. Production
+  dependencies/policy remain unchanged; variable-shape/GPU/product acceptance
+  are separate. See [Intel feasibility](operations/benchmarks/2026-10-04-musiq-intel/README.md)
+
 - deployed the reviewed release through native DockerMan after explicit user
   authorization and placed the verified public corpus on Unraid SSD appdata.
   The 2,434-item baseline matches original metrics within floating-point rounding;
@@ -190,12 +196,15 @@
 
 ## Next
 
-- evaluate Intel technical-quality runtime feasibility for the existing
+- expand the verified fixed-shape OpenVINO graph to the unchanged 2,048-image
+  quality cohort on Intel with a separate frozen resource/statistics gate;
+  see [Intel feasibility](operations/benchmarks/2026-10-04-musiq-intel/README.md)
+- retain separate product-utility/coverage acceptance for the existing
   [MUSIQ candidate](operations/benchmarks/2026-10-03-public-musiq/README.md)
   in a separate bounded experiment environment; the lean production image excludes
   Torch/PyIQA. The [Copydays comparison](operations/benchmarks/2026-10-03-unraid-public/README.md)
   is complete and does not admit grouping/discard promotion. Technical-quality
-  runtime/product utility remains unaccepted; KonIQ-trained scores are
+  full-cohort/runtime/product utility remains unaccepted; KonIQ-trained scores are
   training-exposed. Query-conditioned
   AlbumBench prediction remains unsupported and image access is unresolved
 

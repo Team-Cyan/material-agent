@@ -18,6 +18,11 @@ revision changes the work priority, not the evidence required for algorithm
 admission. The frozen experiment baseline remains commit
 `175e87e6ea927e40e735717c1a1d3eeb3a1c6753`; no real-photo quality gain is claimed.
 
+October 4 current diagnostic milestone: public-corpus comparison and authorized
+Unraid tests are complete; fixed-shape MUSIQ OpenVINO CPU parity is verified.
+Next expand that same graph to the unchanged full quality cohort. The directed
+human-reference track below remains separately gated.
+
 ## Execution tracking
 
 | Work | Status | Next action or acceptance boundary |
@@ -29,6 +34,7 @@ admission. The frozen experiment baseline remains commit
 | G2 human-labeled oracle diagnostic | Pending G1 | Measure candidate omissions and selector limitations on actually labeled pairs |
 | Batch 3 representation comparison | Synthetic runner prepared; real labeled evaluation pending G1/G2 | Fixed 512/1024 geometry x gray/RGB-local matrix with residual512; bind a frozen real-data manifest only after evidence readiness; no threshold/model sweep |
 | Batches 4–6 | Conditional | Escalation, integration and target acceptance retain their gates |
+| Public quality/copy and Intel feasibility diagnostics | Bounded steps complete | [Intel MUSIQ parity](benchmarks/2026-10-04-musiq-intel/README.md); next same-graph 2,048-image Intel evaluation, without policy promotion |
 
 ### September 29 controller acceptance
 
@@ -489,9 +495,17 @@ library statistics and read-only photo mount are unchanged. Controller self-revi
 completed after implementation/reviewer sessions hit usage limits; independent
 numerical recomputation passed, but no independent completed code-review claim is made.
 
-Next evaluate existing MUSIQ technical-quality runtime feasibility on Intel in
-a separate bounded environment, preserving the lean production dependency set.
-Freeze the runtime/asset/protocol and resource gate before execution; do not tune
+The [October 4 MUSIQ Intel feasibility](benchmarks/2026-10-04-musiq-intel/README.md)
+step is complete: one whole-image fixed-shape graph retains native eval semantics;
+32 public inputs/two inferences each pass CPU parity (maximum raw-score error
+0.0000534 versus the fixed 0.001 gate), exact repeats and resume. Original weights,
+production dependencies/policy and source library are unchanged. Independent
+runner/wrapper reviews and separate numerical verification passed; temporary-directory
+and UTF8 recovery findings were fixed and re-reviewed.
+
+Next expand this graph to the unchanged 2,048-image quality cohort on Intel,
+preserving the lean production dependency set. Freeze a separate full
+runtime/asset/protocol/resource/statistics gate before execution; do not tune
 on comparison data or promote policy without product utility/coverage acceptance.
 Complete this step's review and normal push before another candidate; no parallel
 model sweep or new model download is implied by the target-test authorization.

@@ -1,0 +1,133 @@
+{
+  "checkpoint_sha256": "e95806b9eae5f3814c410f574ba8e552362bd5bc63d758ed5b97860f5d6185aa",
+  "checks": {
+    "controller_wrapper_passed": 80,
+    "focused": 14,
+    "full_passed": 1197,
+    "full_skipped": 10,
+    "independent_runner_review": "findings_fixed_re_reviewed",
+    "independent_wrapper_review": "no_must_fix",
+    "lint": "passed"
+  },
+  "decision": "fixed_shape_CPU_parity_passed_no_policy_promotion",
+  "export": {
+    "eager_inputs": 32,
+    "eager_max_abs_error": 0.0,
+    "elapsed_seconds": 17.94012024998665,
+    "fp16_compression": false,
+    "openvino_version": "2026.2.1-21919-ede283a88e3-releases/2026/2",
+    "preprocess_token_shape": [
+      1,
+      385,
+      3075
+    ],
+    "preprocess_tokens_equal": true,
+    "torch_version": "2.14.0"
+  },
+  "export_watchdog": {
+    "elapsed_seconds": 22.006064916960895,
+    "observed_peak_rss_bytes": 894746624,
+    "returncode": 0,
+    "stop": null
+  },
+  "graph": {
+    "models/musiq.bin": {
+      "sha256": "09c37d5322ff14e0008f191899eac80f780b97eeea3c5bf27f440964791ba999",
+      "size": 108504308
+    },
+    "models/musiq.xml": {
+      "sha256": "0dd4bb0b77223a7d446a19e1d0a8b898a44257c420821c1033b7b8f8bfe3dfd8",
+      "size": 651979
+    }
+  },
+  "graph_size_bytes": 109156287,
+  "input_files": 36,
+  "limitations": [
+    "32 fixed-shape conversion inputs; no new quality metric",
+    "KonIQ-trained checkpoint; source training overlap unaudited",
+    "CPU F32 precision hint readback; no per-node precision audit",
+    "No controlled speedup, GPU, variable-shape, RAW, coverage or discard admission"
+  ],
+  "numerical_verification": {
+    "identity": "fa29f65922d51b30f81cd60af82cae7b03a4c5331650df23ae2377a3703736a2",
+    "max_abs_error": 5.340576171875e-05,
+    "max_repeat_error": 0.0,
+    "mean_abs_error": 2.4020671844482422e-05,
+    "native_cpu_records": 32,
+    "p95_abs_error": 4.9209594726562495e-05,
+    "records_digest": "555265c9b6e447c188c8ef4a5adeda8483a1031ca00e61a50c1244eac56945b2",
+    "records_verified": 32,
+    "stable_order_pairs_with_reference_gap_over_0_002": 496,
+    "status": "passed",
+    "verification_script_sha256": "3718a4e8b9572347e3c19c6c746a5b2b9e34ddce9fc1ea241f144b33ffd2889c"
+  },
+  "package_sha256": "d10ad45771bdb47d2d52f692b1c000755dc03aa3c4b090acf791371ca7f34749",
+  "package_size": 115650560,
+  "photo_mount_readonly": true,
+  "production_library_and_config_equal": true,
+  "production_library_count": 40620,
+  "protocol_sha256": "17bbcbde5072d65c5365b18925d0ac5d9d3d039440a7ba3fb6eefc5b8c4e14eb",
+  "resume_records_and_identity_equal": true,
+  "schema_version": "material-agent.musiq-intel-aggregate.v1",
+  "target_first": {
+    "cache_reused": 0,
+    "complete": true,
+    "elapsed_seconds": 8.80765523808077,
+    "execution_devices": [
+      "CPU"
+    ],
+    "failures": 0,
+    "fallback_used": false,
+    "identity": "fa29f65922d51b30f81cd60af82cae7b03a4c5331650df23ae2377a3703736a2",
+    "max_abs_error": 5.340576171875e-05,
+    "max_repeat_error": 0.0,
+    "mean_abs_error": 2.4020671844482422e-05,
+    "peak_rss_bytes": 447688704,
+    "status": "passed",
+    "successful": 32
+  },
+  "target_resume": {
+    "cache_reused": 32,
+    "complete": true,
+    "elapsed_seconds": 1.0144454697147012,
+    "execution_devices": [
+      "CPU"
+    ],
+    "failures": 0,
+    "fallback_used": false,
+    "identity": "fa29f65922d51b30f81cd60af82cae7b03a4c5331650df23ae2377a3703736a2",
+    "max_abs_error": 5.340576171875e-05,
+    "max_repeat_error": 0.0,
+    "mean_abs_error": 2.4020671844482422e-05,
+    "peak_rss_bytes": 353017856,
+    "status": "passed",
+    "successful": 32
+  },
+  "target_runtime": {
+    "config": {
+      "device": "CPU",
+      "precision": "f32",
+      "streams": 1,
+      "threads": 4
+    },
+    "graph": {
+      "models/musiq.bin": {
+        "sha256": "09c37d5322ff14e0008f191899eac80f780b97eeea3c5bf27f440964791ba999",
+        "size": 108504308
+      },
+      "models/musiq.xml": {
+        "sha256": "0dd4bb0b77223a7d446a19e1d0a8b898a44257c420821c1033b7b8f8bfe3dfd8",
+        "size": 651979
+      }
+    },
+    "numpy": "2.4.4",
+    "openvino": "2026.2.1-21919-ede283a88e3-releases/2026/2",
+    "pillow": "11.3.0",
+    "platform": "linux",
+    "protocol_sha256": "17bbcbde5072d65c5365b18925d0ac5d9d3d039440a7ba3fb6eefc5b8c4e14eb",
+    "python": "3.14.6 (main, Jun 24 2026, 04:50:39) [GCC 14.2.0]",
+    "runner_sha256": "31da83e4700be28e6a6baa127cc50004530a813731dc770215e3d40067c248d7"
+  },
+  "tested_image_revision": "4296779af6f6badb747d5ba0a337adb0400efcde",
+  "wrapper_sampled_peak_rss_bytes": 449261568
+}
