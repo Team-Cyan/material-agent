@@ -1,0 +1,114 @@
+{
+  "checkpoint_sha256": "e95806b9eae5f3814c410f574ba8e552362bd5bc63d758ed5b97860f5d6185aa",
+  "checkpoint_size_bytes": 108610983,
+  "config": {
+    "device": "CPU",
+    "precision": "f32",
+    "streams": 1,
+    "threads": 4
+  },
+  "export_gate": {
+    "eager_max_abs_error": 1e-05,
+    "fp16_compression": false,
+    "max_graph_bytes": 150000000,
+    "max_rss_bytes": 2500000000,
+    "max_seconds": 300
+  },
+  "graphs": {
+    "control": {
+      "models/control/musiq.bin": {
+        "sha256": "09c37d5322ff14e0008f191899eac80f780b97eeea3c5bf27f440964791ba999",
+        "size": 108504308
+      },
+      "models/control/musiq.xml": {
+        "sha256": "0dd4bb0b77223a7d446a19e1d0a8b898a44257c420821c1033b7b8f8bfe3dfd8",
+        "size": 651979
+      }
+    },
+    "landscape": {
+      "models/landscape/musiq.bin": {
+        "sha256": "d25e665ffecd2900cfb22cc1c9f8bfd825930d92f20680e50b9f3c041eb8736d",
+        "size": 108506280
+      },
+      "models/landscape/musiq.xml": {
+        "sha256": "cb75e3cb625d64d729604daa692baca749889952d0618ff0ca3cfc17e46ca215",
+        "size": 651982
+      }
+    },
+    "portrait": {
+      "models/portrait/musiq.bin": {
+        "sha256": "48c8ac6512f2ab8c97778449d709c5780c5e0ae7e161ce52565e3926aec44b37",
+        "size": 108506280
+      },
+      "models/portrait/musiq.xml": {
+        "sha256": "afc4fc12b48ca97fb648c177045d777fdd020228f4834a44054adea0d113ce46",
+        "size": 651982
+      }
+    }
+  },
+  "input_contract": {
+    "color": "RGB",
+    "dtype": "float32",
+    "preprocessing": "native PyIQA original/224/384; no external resize",
+    "range": [
+      0,
+      1
+    ],
+    "scope": "bounded exact shape buckets; derived portrait is not actual RAW orientation acceptance"
+  },
+  "items_sha256": "fb2384d8a1bc7a22ad6dbef1aa1b59c652df8bcdfe3c8d6c7a6642245929cf70",
+  "limits": {
+    "max_abs_error": 0.001,
+    "max_decode_pixels": 4194304,
+    "max_graph_bytes": 150000000,
+    "max_input_bytes": 16777216,
+    "max_items": 9,
+    "max_repeat_error": 1e-06,
+    "max_rss_bytes": 2500000000,
+    "max_seconds": 900,
+    "max_supported": 3,
+    "max_supported_side": 1024,
+    "max_total_graph_bytes": 450000000
+  },
+  "phase": "evaluation",
+  "preexport_protocol_sha256": "24c82fd888d31070fc8b0bb23e9d6eb8992516f4c571afc4fed78b2f059297f2",
+  "process_watchdog": {
+    "address_space_bytes": 12884901888,
+    "cpu_seconds_hard": 2510,
+    "cpu_seconds_soft": 2500,
+    "file_bytes": 134217728,
+    "max_observed_rss_bytes": 2500000000,
+    "open_files": 1024,
+    "wall_seconds": 900
+  },
+  "protocol_sha256": "dffa681fb4612f4a343ba50bbc94e062641fd145c14821dc2be9d99533a373da",
+  "schema_version": "material-agent.musiq-native-shapes.v1",
+  "shapes": {
+    "control": [
+      1,
+      3,
+      384,
+      512
+    ],
+    "landscape": [
+      1,
+      3,
+      682,
+      1024
+    ],
+    "portrait": [
+      1,
+      3,
+      1024,
+      682
+    ]
+  },
+  "source_hashes": {
+    "benchmark_musiq_native_shapes.py": "11c959d0f3b150bd747bcdf2904330d71eb9fe8cdab3cb2451332787e3f5cc34",
+    "benchmark_musiq_openvino.py": "31da83e4700be28e6a6baa127cc50004530a813731dc770215e3d40067c248d7"
+  },
+  "source_inventory_sha256": "89b44533a5b62eb1be566b493f344ca7e9ea494fde9c2f9e645ea1f207004e29",
+  "supported": 3,
+  "total": 9,
+  "unsupported": 6
+}

@@ -1,0 +1,62 @@
+{
+  "cache_reused": 0,
+  "complete": true,
+  "elapsed_seconds": 4.931534786242992,
+  "execution_devices": [
+    "CPU"
+  ],
+  "failures": 0,
+  "fallback_used": false,
+  "first_run_sampled_peak_rss_bytes": 1401778176,
+  "hardware": "Intel CPU; exact hardware identity retained in private receipts",
+  "identity": "8bbbc4974f6b32bc92894348f6394a227ec801ef513c24c05318d74fb524f32a",
+  "limitations": "Three exact supported shapes; no quality bootstrap, MOS labels, policy admission or actual RAW portrait acceptance.",
+  "max_abs_error": 9.1552734375e-05,
+  "max_repeat_error": 0.0,
+  "mean_abs_error": 4.76837158203125e-05,
+  "new_native_inferences": 6,
+  "peak_rss_bytes": 1490309120,
+  "production_state": {
+    "active_task": null,
+    "api_config_equal": true,
+    "errors": 0,
+    "indexed": 40620,
+    "library_equal": true,
+    "photo_mount_readonly": true,
+    "scored": 40620
+  },
+  "resume": {
+    "cache_reused": 9,
+    "cpu_f32_recompiled": true,
+    "elapsed_seconds": 3.415759224910289,
+    "exact_records_and_identity": true,
+    "identity": "8bbbc4974f6b32bc92894348f6394a227ec801ef513c24c05318d74fb524f32a",
+    "new_native_inferences": 0,
+    "peak_rss_bytes": 998789120,
+    "sampled_peak_rss_bytes": 1000579072,
+    "status": "passed"
+  },
+  "schema_version": "material-agent.musiq-native-shapes.v1",
+  "status": "passed",
+  "successful": 3,
+  "tested_revision": "20b6f53c0be3358fdd35ceba70b51217e31481a2",
+  "unsupported": 6,
+  "validation": {
+    "aggregate_review": "passed; no remaining must-fix",
+    "code_protocol_package_review": "passed",
+    "focused_tests": 92,
+    "full_tests": "1308 passed,10 skipped",
+    "homelab_wrapper_tests": 232
+  },
+  "verification": {
+    "identity": "8bbbc4974f6b32bc92894348f6394a227ec801ef513c24c05318d74fb524f32a",
+    "max_abs_error": 9.1552734375e-05,
+    "max_repeat_error": 0.0,
+    "mean_abs_error": 4.76837158203125e-05,
+    "records_sha256": "1ab14661bd7daf315f00b193948c059cb8a666c9d41244060fc0265ce9d11ecc",
+    "records_verified": 9,
+    "status": "passed",
+    "unsupported_verified": 6,
+    "verifier_sha256": "ee1e74c369bafc83fa7b9c7c1dbb9ff7fbebe57d7551c62c855f7483a358e6f3"
+  }
+}

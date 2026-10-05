@@ -175,3 +175,18 @@ asset drift or resource failure invalidate improvement deltas and intervals.
 The homelab controller provides the external watchdog, read-only corpus and
 unprivileged output isolation. Verify with `tests/test_musiq_openvino_full.py`
 and the existing helper tests; see the [full Intel diagnostic](../../operations/benchmarks/2026-10-04-musiq-intel-full/README.md).
+
+`scripts/benchmark_musiq_native_shapes.py` freezes nine existing public inputs
+and three exact native shape buckets with the same MUSIQ checkpoint. The old
+control graph/reference remain immutable; new native CPU references are saved
+before tracing. Whole preprocessing tokens must match exactly and eager error
+must remain below 0.00001; evaluation requires native CPU/F32 readback, raw error
+at most 0.001 and repeat error at most 0.000001. Six unsupported inputs produce
+neither a graph selection nor a score. Atomic identity-bound resume recompiles
+all three graphs and makes zero inference calls. Graph/source/input/runtime
+drift, incomplete execution or resource failure cannot pass. The controller
+owns external watchdogs and read-only target transport. Verify with
+`tests/test_musiq_native_shapes.py` and the parity helper tests; see the
+[native-shape diagnostic](../../operations/benchmarks/2026-10-04-musiq-native-shapes/README.md).
+This does not implement a production adapter, dynamic shapes, actual portrait
+RAW/EXIF acceptance or product-utility admission.

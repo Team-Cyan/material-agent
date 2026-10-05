@@ -35,7 +35,7 @@ human-reference track below remains separately gated.
 | G2 human-labeled oracle diagnostic | Pending G1 | Measure candidate omissions and selector limitations on actually labeled pairs |
 | Batch 3 representation comparison | Synthetic runner prepared; real labeled evaluation pending G1/G2 | Fixed 512/1024 geometry x gray/RGB-local matrix with residual512; bind a frozen real-data manifest only after evidence readiness; no threshold/model sweep |
 | Batches 4–6 | Conditional | Escalation, integration and target acceptance retain their gates |
-| Public quality/copy and Intel feasibility diagnostics | Bounded steps complete | [Full Intel MUSIQ cohort](benchmarks/2026-10-04-musiq-intel-full/README.md); next actual-input/RAW compatibility audit, without policy promotion |
+| Public quality/copy and Intel feasibility diagnostics | Bounded steps complete | [Full Intel MUSIQ cohort](benchmarks/2026-10-04-musiq-intel-full/README.md), [native-shape diagnostic](benchmarks/2026-10-04-musiq-native-shapes/README.md); next bounded optional adapter contract, without policy promotion |
 
 ### September 29 controller acceptance
 
@@ -511,14 +511,19 @@ recomputation and completed code review passed; 1,230 full tests / ten skipped
 and 133 wrapper checks passed. This accepts only fixed-shape CPU feasibility,
 not product utility.
 
-Next audit actual scoring input/previews using the existing real RAW/JPEG fixtures
-and owning runtime code. Establish which inputs fit the accepted shape and
-freeze any required preprocessing/shape contract before an optional adapter.
-Do not implicitly resize or make a variable-shape/GPU claim. Retain production
-quality/selection separation, default policy and the lean dependency set. The
-completed full cohort is frozen. Define a separate bounded actual-input protocol
-before further inference; do not tune on comparison data or promote policy
-without product utility/coverage acceptance.
+The [actual-input/native-shape diagnostic](benchmarks/2026-10-04-musiq-native-shapes/README.md)
+freezes nine existing public inputs and verifies three exact CPU/F32 buckets,
+native token/eager parity, maximum raw error 0.00009155, zero repeat error and
+exact resume. Six inputs produce `unsupported_shape` with no graph or score.
+Five actual RAW preview shapes remain unsupported; lossless derived portrait is
+not real portrait RAW/EXIF acceptance. The completed full cohort remains frozen.
+
+Next design bounded graph lifetime/storage and explicit unknown handling before
+an optional adapter. Freeze further shape scope/resource gates before inference;
+do not implicitly resize or make a variable-shape/GPU claim. Retain production
+quality/selection separation, default policy and the lean dependency set; do not
+tune on comparison data or promote policy without product utility/coverage
+acceptance.
 Complete this step's review and normal push before another candidate; no parallel
 model sweep or new model download is implied by the target-test authorization.
 

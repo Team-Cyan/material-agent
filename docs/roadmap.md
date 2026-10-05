@@ -202,9 +202,11 @@
 
 ## Next
 
-- audit the actual scoring input contract and existing real RAW/JPEG fixtures
-  against the accepted 512×384 MUSIQ graph before designing an optional runtime
-  adapter. Freeze an explicit preprocessing/shape contract and bounded evaluation;
+- design bounded graph lifetime/storage and explicit unsupported-input handling
+  before an optional MUSIQ adapter. The [actual-input/native-shape diagnostic](operations/benchmarks/2026-10-04-musiq-native-shapes/README.md)
+  accepts three exact CPU shapes with native preprocessing; five actual RAW
+  preview shapes remain unsupported and derived portrait is not real RAW/EXIF
+  acceptance. Freeze any further shape scope and resource gates before inference;
   no implicit resizing, dynamic-shape/GPU claim or scoring-default change.
   The [full Intel cohort](operations/benchmarks/2026-10-04-musiq-intel-full/README.md)
   is complete; do not repeat it or acquire another model by default
