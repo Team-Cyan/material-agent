@@ -518,8 +518,16 @@ exact resume. Six inputs produce `unsupported_shape` with no graph or score.
 Five actual RAW preview shapes remain unsupported; lossless derived portrait is
 not real portrait RAW/EXIF acceptance. The completed full cohort remains frozen.
 
-Next design bounded graph lifetime/storage and explicit unknown handling before
-an optional adapter. Freeze further shape scope/resource gates before inference;
+The [shared-core resource diagnostic](benchmarks/2026-10-06-musiq-shared-core/README.md)
+completed six fresh Intel rounds. Corrected native-basis resizing passes all
+token/raw gates, but median RSS -31.56% is accompanied by warm latency +38.27%,
+failing the frozen 10% bound. The shared optimization is not admitted; sources
+and all failure/success checkpoints are retained. Final deltas were self-reviewed
+after independent reviewer quota exhaustion; full tests pass 1,338 / ten skipped.
+
+Next design bounded static whole-graph lifetime and explicit unknown handling
+before an optional adapter; do not integrate the rejected shared runtime.
+Freeze further shape scope/resource gates before inference;
 do not implicitly resize or make a variable-shape/GPU claim. Retain production
 quality/selection separation, default policy and the lean dependency set; do not
 tune on comparison data or promote policy without product utility/coverage

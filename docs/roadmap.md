@@ -2,6 +2,12 @@
 
 ## Completed
 
+- completed six fresh Intel CPU whole/shared MUSIQ rounds with unchanged raw
+  and token gates: all 288 scores pass, but shared-core median RSS -31.56% comes
+  with warm latency +38.27%, failing resource admission. The corrected resize
+  lowering is a diagnostic only; defaults and photo metadata remain unchanged.
+  See [shared-core result](operations/benchmarks/2026-10-06-musiq-shared-core/README.md)
+
 - verified the same fixed-shape MUSIQ graph on all 2,048 original quality images
   on Intel CPU: no fallback, maximum raw error 0.0003052, exact 2,048-record
   resume and independently reproduced correlations/paired intervals. Native
@@ -202,8 +208,12 @@
 
 ## Next
 
-- design bounded graph lifetime/storage and explicit unsupported-input handling
-  before an optional MUSIQ adapter. The [actual-input/native-shape diagnostic](operations/benchmarks/2026-10-04-musiq-native-shapes/README.md)
+- design bounded static whole-graph lifetime and explicit unsupported-input
+  handling before an optional MUSIQ adapter. The
+  [shared-core diagnostic](operations/benchmarks/2026-10-06-musiq-shared-core/README.md)
+  passed numerical parity but failed the frozen latency bound; retain that
+  negative result and do not integrate the rejected runtime. The
+  [actual-input/native-shape diagnostic](operations/benchmarks/2026-10-04-musiq-native-shapes/README.md)
   accepts three exact CPU shapes with native preprocessing; five actual RAW
   preview shapes remain unsupported and derived portrait is not real RAW/EXIF
   acceptance. Freeze any further shape scope and resource gates before inference;

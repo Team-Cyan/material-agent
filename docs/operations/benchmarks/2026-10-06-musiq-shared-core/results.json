@@ -1,0 +1,157 @@
+{
+  "baseline_graph_bytes": 327472811,
+  "checkpoint_sha256": "e95806b9eae5f3814c410f574ba8e552362bd5bc63d758ed5b97860f5d6185aa",
+  "configuration": {
+    "device": "CPU",
+    "precision": "f32",
+    "streams": 1,
+    "threads": 4
+  },
+  "core_bytes_identical_to_v1": true,
+  "export_watchdog": {
+    "elapsed_seconds": 32.49387995805591,
+    "exit_code": 0,
+    "failure": null,
+    "max_rss_bytes": 2500000000,
+    "max_seconds": 300,
+    "protocol_sha256": "3670e3d3ff90c35b0221f67878c8ffc44bc5b5b455f9f895ff042affcdb651c3",
+    "runner_sha256": "1df49a84dd423105e7f29feb4ab727f191e2ec0f45b8400b5f7e56e32bd54706",
+    "sampled_peak_rss_bytes": 2036056064,
+    "source_preserved": true,
+    "status": "passed"
+  },
+  "frozen_admission": {
+    "complete_paired_rounds": 3,
+    "max_package_bytes": 160000000,
+    "max_total_graph_bytes": 150000000,
+    "median_peak_rss_max_ratio": 0.85,
+    "median_warm_latency_max_ratio": 1.1
+  },
+  "frozen_export_gate": {
+    "eager_max_abs_error": 1e-05,
+    "fp16_compression": false,
+    "max_rss_bytes": 2500000000,
+    "max_seconds": 300,
+    "token_pixel_max_abs_error": 1e-06,
+    "token_pixel_rtol": 0
+  },
+  "gates": {
+    "model_storage": true,
+    "package": true,
+    "raw_parity": true,
+    "rss_reduction": true,
+    "token_parity": true,
+    "warm_latency": false
+  },
+  "limitations": [
+    "Nine existing public inputs only; six unsupported",
+    "Derived portrait does not establish real portrait RAW/EXIF acceptance",
+    "Process high-water RSS and prepared-array timing; no container/leak or production throughput claim",
+    "No policy/product utility/default adapter admission; no production metadata writes"
+  ],
+  "logical_scores_verified": 288,
+  "max_raw_error": 9.1552734375e-05,
+  "max_repeat_error": 0.0,
+  "max_target_photo_pixel_error": 2.384185791015625e-07,
+  "max_target_structural_pixel_error": 1.7881393432617188e-07,
+  "median_peak_rss_ratio": 0.6843558838562879,
+  "median_warm_latency_ratio": 1.3827429121074637,
+  "model_total_bytes": 109636947,
+  "package_bytes": 143339520,
+  "package_sha256": "bda7d524497c7b9c928389bf9ec40e6dd55554d9074e9db637df78e5bfcaed18",
+  "photo_token_target_checks_verified": 9,
+  "production_unchanged_after_benchmark": true,
+  "protocol_sha256": "6fa430d17395da18f6431d15a317d50bfe52350cda15e6b59ff0bb18b8778eea",
+  "report_sha256_by_round": {
+    "shared/1": "8983d0a8d3ccc092767311c261fced74444d1b692dd5e2f7e809b7a6ff46e2a5",
+    "shared/2": "ce9b4f28b66af68be041f42209221b7b0ed38054fa75d790847c44612ba9139c",
+    "shared/3": "772946fa1968d54f6bbd672859f08af9927125004d7bbab4f1111fde17c3a9a5",
+    "whole/1": "4d79850538f768af398e55611412d67aaf6fdf69969444fb7399aec9cde21eb6",
+    "whole/2": "77a8de90e78c4251290dc30ec21b21fe55efe0d9f25353c1e5077dac696f93ac",
+    "whole/3": "9e801d921d5f76c2ead6c6bd9a7db3c324739a966ce5afa316d5bc75c0684431"
+  },
+  "runner_schema": "material-agent.musiq-shared-core.v2",
+  "schema_version": "material-agent.musiq-shared-core-result.v1",
+  "source_hashes": {
+    "benchmark_musiq_native_shapes.py": "11c959d0f3b150bd747bcdf2904330d71eb9fe8cdab3cb2451332787e3f5cc34",
+    "benchmark_musiq_openvino.py": "31da83e4700be28e6a6baa127cc50004530a813731dc770215e3d40067c248d7",
+    "benchmark_musiq_shared_core.py": "1df49a84dd423105e7f29feb4ab727f191e2ec0f45b8400b5f7e56e32bd54706"
+  },
+  "status": "optimization_not_accepted",
+  "structural_target_checks_verified": 54,
+  "summaries": {
+    "shared": {
+      "median_peak_rss_bytes": 1020039168,
+      "median_warm_latency_ms": 281.08945419080555,
+      "rounds": [
+        {
+          "elapsed_seconds": 17.62522200588137,
+          "max_abs_error": 9.1552734375e-05,
+          "max_repeat_error": 0.0,
+          "peak_rss_bytes": 1020039168,
+          "round": 1,
+          "warm_median_latency_ms": 277.672803029418
+        },
+        {
+          "elapsed_seconds": 17.785968297161162,
+          "max_abs_error": 9.1552734375e-05,
+          "max_repeat_error": 0.0,
+          "peak_rss_bytes": 1033752576,
+          "round": 2,
+          "warm_median_latency_ms": 281.08945419080555
+        },
+        {
+          "elapsed_seconds": 17.116634252946824,
+          "max_abs_error": 9.1552734375e-05,
+          "max_repeat_error": 0.0,
+          "peak_rss_bytes": 1019924480,
+          "round": 3,
+          "warm_median_latency_ms": 284.3024453613907
+        }
+      ]
+    },
+    "whole": {
+      "median_peak_rss_bytes": 1490509824,
+      "median_warm_latency_ms": 203.28395953401923,
+      "rounds": [
+        {
+          "elapsed_seconds": 15.438579793088138,
+          "max_abs_error": 9.1552734375e-05,
+          "max_repeat_error": 0.0,
+          "peak_rss_bytes": 1489174528,
+          "round": 1,
+          "warm_median_latency_ms": 207.76940206997097
+        },
+        {
+          "elapsed_seconds": 14.19671555608511,
+          "max_abs_error": 9.1552734375e-05,
+          "max_repeat_error": 0.0,
+          "peak_rss_bytes": 1490595840,
+          "round": 2,
+          "warm_median_latency_ms": 202.10311538539827
+        },
+        {
+          "elapsed_seconds": 14.0352430799976,
+          "max_abs_error": 9.1552734375e-05,
+          "max_repeat_error": 0.0,
+          "peak_rss_bytes": 1490509824,
+          "round": 3,
+          "warm_median_latency_ms": 203.28395953401923
+        }
+      ]
+    }
+  },
+  "target_image_revision": "94ae50d0789789f5e0c2f66403041a27c1a0b193",
+  "timed_calls_verified": 240,
+  "verification": {
+    "controller_aggregate_recomputation": "passed",
+    "full_tests_passed": 1338,
+    "full_tests_skipped": 10,
+    "independent_numerical_verifier": "passed; expected report/provenance pair and unique rounds bound",
+    "independent_source_review": "no actionable findings before quota; controller reviewed final durability and codec deltas",
+    "independent_wrapper_review": "completed",
+    "lint": "passed",
+    "wrapper_tests_passed": 131
+  },
+  "verifier_sha256": "fa7dc13529d8aec5122c57cb2a33175e37615c630e27d1077122b18e1b77940e"
+}

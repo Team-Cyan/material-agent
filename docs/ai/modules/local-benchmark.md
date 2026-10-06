@@ -190,3 +190,22 @@ owns external watchdogs and read-only target transport. Verify with
 [native-shape diagnostic](../../operations/benchmarks/2026-10-04-musiq-native-shapes/README.md).
 This does not implement a production adapter, dynamic shapes, actual portrait
 RAW/EXIF acceptance or product-utility admission.
+
+`scripts/benchmark_musiq_shared_core.py` uses a separate v2 protocol to compare
+the immutable three whole-image graphs against three static preprocessors plus
+one token core bounded to lengths 385–897. Dispatch accepts only 385 and 897.
+The graph-only native-float32 basis cubic candidate retains native eval weights,
+preprocessing, token metadata and raw-score gates. Eighteen complete native
+structural token references precede three photo-token checks and 48 logical
+scores per shared process. Exact archive headers/bounds, source identities,
+actual CPU/F32 readback and partial validation/call checkpoints are required.
+Scheduled preprocessing calls (51) are separate from actual calls (69).
+No predictions or compiled disk cache are reused. All six ordered fresh rounds,
+strict token/raw/repeat parity, storage bounds and frozen median RSS/latency
+ratios are required for resource admission. Failed or incomplete parity cannot
+be converted into performance evidence. The controller owns independent report
+verification and external watchdogs. Verify with `tests/test_musiq_shared_core.py`
+and the native/helper checks; see the
+[shared-core diagnostic](../../operations/benchmarks/2026-10-06-musiq-shared-core/README.md).
+This does not change production dependencies, defaults, photo metadata or
+selection/coverage acceptance.
