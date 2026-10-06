@@ -22,8 +22,9 @@ October 6 current milestone: public-corpus, full-cohort, actual-input/native-sha
 and shared-core diagnostics are complete. Shared-core resource admission failed;
 the static lifecycle review selected no further performance experiment. The
 confirmed finite-quality-evidence fix passed reviewed publication and native
-release verification. Current bounded work is historical outlier provenance and
-enabled-quality cache isolation. Optional MUSIQ adapter admission and
+release verification. Historical provenance and enabled-quality cache isolation
+are also complete. Current bounded work is explicit historical job comparison
+with full evidence accounting and no preview decoding. Optional MUSIQ adapter admission and
 the directed human-reference track below remain separately gated.
 
 ## Execution tracking
@@ -537,8 +538,11 @@ The finite-evidence fix `beab0ae` passed exact CI/publication and authorized nat
 release verification with unchanged library/config. The next
 [persisted-score audit/cache isolation](2026-10-06-persisted-score-audit-cache-validity.md)
 binds the existing results to their August 28 job; it does not treat them as
-current-policy output. Complete reviewed publication/release verification of
-enabled-quality cache isolation, then add job-pinned historical comparison support. Keep the optional adapter
+current-policy output. Enabled-quality cache isolation `b389e92` passed exact
+CI and native release verification. The
+[job-pinned diagnostic](2026-10-06-job-pinned-score-diagnostic.md) is implemented
+and independently reviewed: 1,448 full tests / ten skipped and 124 focused checks
+pass. Complete its exact release and approved historical target comparison. Keep the optional adapter
 deferred until a credible bounded resource contract and real-input acceptance
 exist; do not integrate the rejected shared runtime.
 Freeze further shape scope/resource gates before inference;

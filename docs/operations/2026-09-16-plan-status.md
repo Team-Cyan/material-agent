@@ -192,8 +192,16 @@ distribution comparison remains unverified and requires job-pinned diagnostics.
 The conditional pre-guard local-quality processed-cache reuse defect is fixed
 with an enabled-quality-only evidence revision: 1,416 full tests / ten skipped,
 26 focused cache checks, three boundary checks and lint pass. No global cache
-invalidation, production rerun or metadata migration is performed. Next complete
-reviewed publication/release, then job-pinned historical comparison support.
+invalidation, production rerun or metadata migration is performed. Commit
+`b389e92` passed exact CI (1,383 / 43 skipped), publication and native release
+verification with unchanged config/library summaries.
+The [job-pinned diagnostic](2026-10-06-job-pinned-score-diagnostic.md) now reads
+explicit historical cohorts in one read-only transaction without photo decoding
+when previews are disabled. It preserves all members, errors/invalid numbers,
+raw quality/selection facts and actual/legacy runtime metadata separately.
+Independent review and 1,448 full tests / ten skipped, 124 focused checks, three
+boundary checks and lint pass. Next finish this exact release and approved
+historical target comparison; retain all acceptance gates.
 Variable-shape/GPU, real portrait RAW/EXIF and product utility remain separate.
 Copy correspondence cannot admit semantic grouping or discard policies. Technical-quality product utility and independent directed
 coverage references remain separate gates; annotation UI work stays closed.

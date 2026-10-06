@@ -95,6 +95,41 @@ configuration and the current decoder, including the explicit RGB-to-BGR
 conversion immediately before OpenCV JPEG encoding. Historical byte identity
 cannot be proven because prior scoring jobs did not persist their JPEG inputs.
 
+For a complete, job-pinned historical comparison without photo reconstruction:
+
+```bash
+material-agent review-scores \
+  --input-dir /photos \
+  --work-dir /config \
+  --output-dir /config/reviews/historical-comparison \
+  --job-id JOB_A \
+  --compare-job-id JOB_B \
+  --no-previews
+```
+
+Replace `JOB_A` and `JOB_B` with two distinct stored review-job IDs. This v3
+diagnostic accepts only `finished` or `finished_with_errors` review jobs and
+reads both cohorts, session snapshots and artifacts in one read-only SQLite
+transaction. Missing or unsupported IDs fail; there is no fallback to the latest
+job. Default invocation without the new flags retains the v2 preview behavior.
+`--no-previews` requires an explicit job; comparison requires both IDs and that
+flag. A single explicit job can still reconstruct bounded previews if requested.
+
+The report accounts for every stored job-file row, including errors, unscored
+and nonfinite values. Group membership and rank diagnostics use complete cohorts;
+quality/selection facts and their versions remain separate from legacy top-level
+decisions. Missing, malformed, ambiguous and unsupported evidence is reported,
+never inferred as a current policy decision. Configuration snapshots are redacted;
+unrecorded historical application revisions remain unknown. Comparison uses exact
+stored paths and exposes root, configuration and coverage differences; it does
+not attribute observed differences to current policy or quality improvement.
+
+With `--no-previews`, no photo existence, image decoding, thumbnail creation,
+model call, rescore or selection recomputation is needed. Only private diagnostic
+output is written, outside the current and historical photo roots and runtime
+database. These reports can contain private paths and model metadata; keep them
+in operator storage, not the public repository.
+
 ## Verification
 
 - `uv run pytest -q tests/test_web_service.py`

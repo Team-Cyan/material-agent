@@ -2,6 +2,12 @@
 
 ## Completed
 
+- implemented explicit historical job selection and no-preview persisted-score
+  comparison with full cohort/group/rank accounting, missing/ambiguous evidence
+  diagnostics and strict finite JSON. Default v2 previews remain unchanged.
+  Independent review, 1,448 full tests / ten skipped and 124 focused checks pass.
+  See [job-pinned diagnostic](operations/2026-10-06-job-pinned-score-diagnostic.md)
+
 - rechecked historical persisted score outliers and separated them from current
   policy acceptance. Added enabled-local-quality cache isolation to prevent
   pre-guard results from bypassing finite-evidence validation. See the
@@ -255,8 +261,11 @@
   [persisted-score audit](operations/2026-10-06-persisted-score-audit-cache-validity.md)
   confirms the live 40,620 results are from August 28, not current-policy output;
   bounded outliers were rechecked but the full baseline distribution is unverified.
-  Add job-pinned diagnostic support before claiming that comparison; no production
-  rerun/rescore or policy promotion is implied
+  [Job-pinned support](operations/2026-10-06-job-pinned-score-diagnostic.md) is
+  implemented and locally verified. Bind the two historical jobs through the
+  approved no-preview target workflow, then interpret complete distributions
+  alongside their snapshots; no production rerun/rescore or policy promotion
+  is implied
 
 ## Later
 

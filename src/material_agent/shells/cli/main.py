@@ -274,6 +274,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_review_scores.add_argument("--input-dir", required=True, dest="input_dir")
     p_review_scores.add_argument("--work-dir", required=True, dest="work_dir")
     p_review_scores.add_argument("--output-dir", required=True, dest="output_dir")
+    p_review_scores.add_argument("--job-id", dest="job_id")
+    p_review_scores.add_argument("--compare-job-id", dest="compare_job_id")
+    p_review_scores.add_argument("--no-previews", action="store_true", dest="no_previews")
     p_review_scores.add_argument(
         "--sample-count", type=int, default=18, choices=range(6, 25), dest="sample_count"
     )

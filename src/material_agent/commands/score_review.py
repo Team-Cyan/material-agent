@@ -355,7 +355,24 @@ def build_score_review(
     database_path: Path,
     output_root: Path,
     sample_count: int,
+    job_id: str | None = None,
+    compare_job_id: str | None = None,
+    no_previews: bool = False,
 ) -> dict[str, Any]:
+    if compare_job_id is not None and (job_id is None or not no_previews):
+        raise ValueError("comparison requires --job-id, --compare-job-id and --no-previews")
+    if no_previews and job_id is None:
+        raise ValueError("--no-previews requires an explicit --job-id")
+    if job_id is not None:
+        return _build_job_pinned_review(
+            input_root=input_root,
+            database_path=database_path,
+            output_root=output_root,
+            sample_count=sample_count,
+            job_id=job_id,
+            compare_job_id=compare_job_id,
+            no_previews=no_previews,
+        )
     if not 6 <= sample_count <= 24:
         raise ValueError("sample_count must be between 6 and 24")
     if not input_root.is_dir():
@@ -469,6 +486,84 @@ def build_score_review(
     return result
 
 
+def _build_job_pinned_review(
+    *,
+    input_root: Path,
+    database_path: Path,
+    output_root: Path,
+    sample_count: int,
+    job_id: str,
+    compare_job_id: str | None,
+    no_previews: bool,
+) -> dict[str, Any]:
+    from .persisted_score_audit import load_job_audit
+
+    if not no_previews and not 6 <= sample_count <= 24:
+        raise ValueError("sample_count must be between 6 and 24")
+    result = load_job_audit(
+        database_path=database_path,
+        input_root=input_root,
+        output_root=output_root,
+        job_id=job_id,
+        compare_job_id=compare_job_id,
+    )
+    output_root = _private_directory(output_root)
+    result["sample_count_requested"] = sample_count
+    result["previews_enabled"] = not no_previews
+    if not no_previews:
+        cohort = result["cohorts"][0]
+        rows = [
+            dict(fact, id=fact["job_file_id"])
+            for fact in cohort["rows"]
+            if fact["score"]["status"] == "finite"
+        ]
+        if rows:
+            selections = select_score_samples(rows, sample_count)
+            samples = []
+            for entry in selections:
+                row = entry["row"]
+                samples.append(
+                    {
+                        key: row[key]
+                        for key in (
+                            "job_file_id",
+                            "file_path",
+                            "group_id",
+                            "rank",
+                            "status",
+                            "score_total",
+                            "scene",
+                            "scene_raw",
+                        )
+                    }
+                )
+                samples[-1].update(
+                    decision=row["legacy_decision"]["value"], selection_reasons=entry["reasons"]
+                )
+            preview = cohort["config"].get("preview", {})
+            if not isinstance(preview, dict):
+                raise ValueError("recorded job preview configuration is malformed")
+            result["contact_sheet"] = _render_contact_sheet(
+                samples,
+                input_root=Path(cohort["job"]["input_root"]),
+                output_root=output_root,
+                preview_config=preview,
+            )
+            result["samples"] = samples
+            result["sample_count_rendered"] = sum("image" in sample for sample in samples)
+        result["image_note"] = (
+            "Previews use the selected recorded job configuration and current decoder; "
+            "historical JPEG byte identity cannot be proven."
+        )
+    _write_private_bytes(
+        output_root / "review.json",
+        (
+            json.dumps(result, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n"
+        ).encode("utf-8"),
+    )
+    return result
+
+
 def cmd_review_scores(args: Any) -> int:
     output_root = Path(args.output_dir).expanduser()
     result = build_score_review(
@@ -476,6 +571,9 @@ def cmd_review_scores(args: Any) -> int:
         database_path=Path(args.work_dir).expanduser() / "state.db",
         output_root=output_root,
         sample_count=args.sample_count,
+        job_id=getattr(args, "job_id", None),
+        compare_job_id=getattr(args, "compare_job_id", None),
+        no_previews=bool(getattr(args, "no_previews", False)),
     )
     print(
         json.dumps(
