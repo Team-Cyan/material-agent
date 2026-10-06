@@ -2,6 +2,11 @@
 
 ## Completed
 
+- rechecked historical persisted score outliers and separated them from current
+  policy acceptance. Added enabled-local-quality cache isolation to prevent
+  pre-guard results from bypassing finite-evidence validation. See the
+  [audit and cache boundary](operations/2026-10-06-persisted-score-audit-cache-validity.md)
+
 - closed the static MUSIQ lifecycle feasibility review without another inference
   experiment; constant payload sharing does not establish the required RSS gain.
   Fixed invalid PyIQA raw/configuration/aggregate values becoming accepted quality
@@ -245,8 +250,13 @@
   [continuation plan](operations/2026-09-26-culling-improvement-plan.md#next-substantive-step-and-dispatch-boundary);
   do not reopen the closed annotation-viewer branch or change the admin WebUI
 
-- review score/photo outliers from the grouping-enabled full-library rerun and
-  compare the new group-size/rank distribution with the singleton-only baseline
+- compare explicit historical job cohorts and their effective snapshots for
+  group-size/rank and quality/selection evidence. The
+  [persisted-score audit](operations/2026-10-06-persisted-score-audit-cache-validity.md)
+  confirms the live 40,620 results are from August 28, not current-policy output;
+  bounded outliers were rechecked but the full baseline distribution is unverified.
+  Add job-pinned diagnostic support before claiming that comparison; no production
+  rerun/rescore or policy promotion is implied
 
 ## Later
 

@@ -21,8 +21,9 @@ admission. The frozen experiment baseline remains commit
 October 6 current milestone: public-corpus, full-cohort, actual-input/native-shape
 and shared-core diagnostics are complete. Shared-core resource admission failed;
 the static lifecycle review selected no further performance experiment. The
-confirmed finite-quality-evidence fix passes full checks and is ready for reviewed
-publication and native release verification. Optional MUSIQ adapter admission and
+confirmed finite-quality-evidence fix passed reviewed publication and native
+release verification. Current bounded work is historical outlier provenance and
+enabled-quality cache isolation. Optional MUSIQ adapter admission and
 the directed human-reference track below remain separately gated.
 
 ## Execution tracking
@@ -532,7 +533,12 @@ is not measured RSS savings; buffer retention and per-model packed caches leave
 no credible resource experiment selected. The same review found and fixed
 nonfinite/bool quality values becoming accepted scores. Independent code/client
 review found no actionable defect; 1,402 full tests / ten skipped and lint pass.
-Next complete the finite-evidence fix release, then keep the optional adapter
+The finite-evidence fix `beab0ae` passed exact CI/publication and authorized native
+release verification with unchanged library/config. The next
+[persisted-score audit/cache isolation](2026-10-06-persisted-score-audit-cache-validity.md)
+binds the existing results to their August 28 job; it does not treat them as
+current-policy output. Complete reviewed publication/release verification of
+enabled-quality cache isolation, then add job-pinned historical comparison support. Keep the optional adapter
 deferred until a credible bounded resource contract and real-input acceptance
 exist; do not integrate the rejected shared runtime.
 Freeze further shape scope/resource gates before inference;

@@ -43,7 +43,8 @@ loads lazily and must preserve the service-free heuristic fallback.
   evidence, not clipped scores. Bounds and weights must be finite, range width
   positive and finite, weights nonnegative with an enabled positive weight.
   A failed block emits no accepted quality signals/aggregates; normal client
-  fallback and `enforce_available` behavior remain intact.
+  fallback and `enforce_available` behavior remain intact. Enabled local quality
+  also versions the processed score cache identity to prevent pre-guard reuse.
 - Configured runtime and actual runtime are different provenance fields.
 - Enabled NIMA already supplies `overall_aesthetic` to the existing layered
   policy. Other candidate signals must not enter fusion without a versioned

@@ -62,6 +62,10 @@ It uses one runtime database path but models two different concerns:
   including aesthetic, object-detection, and face-detection model files,
   declared ONNX external-data files, and OpenVINO IR `.bin` companions; enabled
   runtime distribution versions are part of the same identity
+- enabled local PyIQA quality includes a finite-evidence cache revision, so
+  processed scores made before the validity guard cannot bypass it through reuse.
+  Quality-disabled and nonlocal configurations retain their existing identity;
+  this changes future cache lookup, not stored metadata or production policy
 - cache identity inspection failures must degrade to an explicit deterministic
   state rather than aborting an otherwise valid heuristic fallback run
 - bulk cache reads must split path lists into bounded SQLite parameter batches

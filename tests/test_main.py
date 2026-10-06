@@ -1,6 +1,8 @@
 """Regression tests for CLI command handlers in material_agent/main.py."""
 
 import copy
+import hashlib
+import json
 import os
 import sqlite3
 import sys
@@ -302,6 +304,152 @@ def test_score_cache_key_tracks_score_grouping_and_terminal_output_inputs():
     output_change = copy.deepcopy(config)
     output_change["commentary_enabled"] = not config["commentary_enabled"]
     assert build_score_cache_key(output_change) != baseline
+
+
+def _score_cache_key_before_finite_quality_guard(config):
+    """Reproduce the prior payload exactly, including model/runtime provenance."""
+    from material_agent.commands import scoring
+
+    distributions = set(scoring._SCORE_RUNTIME_DISTRIBUTIONS)
+    distributions.update(scoring._enabled_model_distributions(config))
+    payload = {
+        "pipeline_revision": scoring._SCORE_PIPELINE_CACHE_REVISION,
+        "runtime_versions": {
+            name: scoring._distribution_version(name) for name in sorted(distributions)
+        },
+        "config": scoring.redact_secrets(
+            {key: config.get(key) for key in scoring._SCORE_CACHE_CONFIG_KEYS}
+        ),
+    }
+    embedding = config.get("local", {}).get("embedding", {})
+    if (
+        config.get("backend") == "local"
+        and isinstance(embedding, dict)
+        and bool(embedding.get("enabled", False))
+    ):
+        payload["local_embedding_cache_key"] = scoring.build_local_embedding_cache_key(config)
+    assets = scoring._local_model_asset_identity(config)
+    if assets:
+        payload["local_model_assets"] = assets
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
+    return "score-output-v2:" + hashlib.sha256(encoded).hexdigest()
+
+
+def test_default_score_cache_identity_keeps_legacy_pipeline_revision():
+    from material_agent.commands import scoring
+
+    config = load_config("config.yaml")
+    assert not config["local"]["quality"]["enabled"]
+    assert scoring._SCORE_PIPELINE_CACHE_REVISION == "2026-09-16-evidence-v1"
+    assert build_score_cache_key(config) == _score_cache_key_before_finite_quality_guard(config)
+
+
+@pytest.mark.parametrize(
+    "backend,enabled,changes",
+    [
+        ("local", True, True),
+        ("local", 1, True),
+        ("local", "false", True),
+        ("local", False, False),
+        ("local", 0, False),
+        ("local", None, False),
+        ("omlx", True, False),
+        ("ollama", True, False),
+    ],
+)
+def test_finite_quality_revision_changes_only_enabled_local_quality(
+    monkeypatch, backend, enabled, changes
+):
+    config = load_config("config.yaml")
+    config["backend"] = backend
+    config["local"]["quality"]["enabled"] = enabled
+    legacy_key = _score_cache_key_before_finite_quality_guard(config)
+    current_key = build_score_cache_key(config)
+    assert (current_key != legacy_key) is changes
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._LOCAL_QUALITY_EVIDENCE_CACHE_REVISION",
+        "finite-quality-evidence-fixture-next",
+    )
+    assert (build_score_cache_key(config) != current_key) is changes
+    assert _score_cache_key_before_finite_quality_guard(config) == legacy_key
+
+
+@pytest.mark.parametrize("quality", [None, [], True, "enabled"])
+def test_finite_quality_revision_requires_dictionary_block(monkeypatch, quality):
+    config = load_config("config.yaml")
+    config["local"]["quality"] = quality
+    # Invalid blocks are rejected upstream; isolate this conditional from the old
+    # runtime-distribution helper's mapping assumption rather than broaden its contract.
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._enabled_model_distributions", lambda config: set()
+    )
+    legacy_key = _score_cache_key_before_finite_quality_guard(config)
+    assert build_score_cache_key(config) == legacy_key
+    monkeypatch.setattr(
+        "material_agent.commands.scoring._LOCAL_QUALITY_EVIDENCE_CACHE_REVISION",
+        "finite-quality-evidence-fixture-next",
+    )
+    assert build_score_cache_key(config) == legacy_key
+
+
+def test_enabled_quality_old_processed_cache_misses_but_current_cache_hits(tmp_path):
+    from material_agent.adapters.state.processed_sqlite import SQLiteProcessedRepository
+
+    config = load_config("config.yaml")
+    config["local"]["quality"]["enabled"] = True
+    old_key = _score_cache_key_before_finite_quality_guard(config)
+    current_key = build_score_cache_key(config)
+    photo = tmp_path / "same-photo.ARW"
+    photo.write_bytes(b"unchanged fixture fingerprint; no decoding or model calls")
+    database = tmp_path / "processed.db"
+    legacy_metadata = {
+        "_quality": {
+            "status": "model",
+            "aggregate_score": 0.0,
+            "signals": {"musiq": {"raw_score": float("nan")}},
+        }
+    }
+    with SQLiteProcessedRepository(database, score_cache_key=old_key) as repository:
+        repository.mark_done(
+            str(photo),
+            total_score=7.0,
+            star_rating=4,
+            group_boosted=False,
+            scores={},
+            metadata=legacy_metadata,
+            group_info={},
+        )
+        assert repository.is_done(str(photo))
+        assert repository.get_cached_score_payload(str(photo)) is not None
+    with SQLiteProcessedRepository(database, score_cache_key=current_key) as repository:
+        assert not repository.is_done(str(photo))
+        assert repository.get_cached_score_payload(str(photo)) is None
+        current_metadata = {
+            "_quality": {
+                "status": "model",
+                "aggregate_score": 7.0,
+                "signals": {"musiq": {"raw_score": 70.0}},
+            }
+        }
+        repository.mark_done(
+            str(photo),
+            total_score=7.0,
+            star_rating=4,
+            group_boosted=False,
+            scores={},
+            metadata=current_metadata,
+            group_info={},
+        )
+    with SQLiteProcessedRepository(database, score_cache_key=current_key) as repository:
+        assert repository.is_done(str(photo))
+        payload = repository.get_cached_score_payload(str(photo))
+        assert payload is not None and payload["score_total"] == 7.0
+        assert payload["meta"]["_quality"] == current_metadata["_quality"]
+        json.dumps(payload, allow_nan=False)
+    with SQLiteProcessedRepository(database, score_cache_key=old_key) as repository:
+        assert repository.get_cached_score_payload(str(photo)) is None
 
 
 def test_score_cache_key_redacts_credentials_before_hashing():

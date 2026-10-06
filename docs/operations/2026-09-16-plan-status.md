@@ -179,10 +179,21 @@ savings, weight-buffer retention and per-model packed caches remain constraints,
 and no new performance experiment is selected. Invalid PyIQA raw/configuration
 and aggregate values now fail as unavailable instead of known quality evidence.
 Independent code/client review found no actionable defect; 1,402 full tests / ten
-skipped, 155 focused checks and lint pass. Next finish exact-revision publication
-and native release verification for this fix; retain optional adapter deferral
+skipped, 155 focused checks and lint pass. Commit `beab0ae` passed exact-revision
+CI (1,369 / 43 skipped), immutable smoke and promotion, then authorized native
+release verification: idle API, unchanged config/40,620 records and zero DockerMan
+audit issues. Retain optional adapter deferral
 until a credible bounded resource contract and input acceptance exist. Do not
 integrate the rejected shared runtime or repeat the full cohort.
+The [persisted-score audit/cache boundary](2026-10-06-persisted-score-audit-cache-validity.md)
+rechecked bounded historical outliers. The latest full-library job is August 28,
+2026; inspected old payloads lack current quality/selection facts. Full group/rank
+distribution comparison remains unverified and requires job-pinned diagnostics.
+The conditional pre-guard local-quality processed-cache reuse defect is fixed
+with an enabled-quality-only evidence revision: 1,416 full tests / ten skipped,
+26 focused cache checks, three boundary checks and lint pass. No global cache
+invalidation, production rerun or metadata migration is performed. Next complete
+reviewed publication/release, then job-pinned historical comparison support.
 Variable-shape/GPU, real portrait RAW/EXIF and product utility remain separate.
 Copy correspondence cannot admit semantic grouping or discard policies. Technical-quality product utility and independent directed
 coverage references remain separate gates; annotation UI work stays closed.

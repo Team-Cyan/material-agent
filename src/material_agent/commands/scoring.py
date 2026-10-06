@@ -50,6 +50,7 @@ _SCORE_CACHE_CONFIG_KEYS = (
     "xmp",
 )
 _SCORE_PIPELINE_CACHE_REVISION = "2026-09-16-evidence-v1"
+_LOCAL_QUALITY_EVIDENCE_CACHE_REVISION = "finite-quality-evidence-v1"
 _SCORE_RUNTIME_DISTRIBUTIONS = (
     "numpy",
     "opencv-python",
@@ -127,6 +128,14 @@ def build_score_cache_key(config: dict) -> str:
         "runtime_versions": {name: _distribution_version(name) for name in sorted(distributions)},
         "config": redact_secrets({key: config.get(key) for key in _SCORE_CACHE_CONFIG_KEYS}),
     }
+    local = config.get("local", {})
+    quality = local.get("quality", {}) if isinstance(local, dict) else {}
+    if (
+        config.get("backend") == "local"
+        and isinstance(quality, dict)
+        and bool(quality.get("enabled", False))
+    ):
+        payload["local_quality_evidence_revision"] = _LOCAL_QUALITY_EVIDENCE_CACHE_REVISION
     embedding = config.get("local", {}).get("embedding", {})
     if (
         config.get("backend") == "local"
