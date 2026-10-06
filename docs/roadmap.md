@@ -2,6 +2,12 @@
 
 ## Completed
 
+- closed the static MUSIQ lifecycle feasibility review without another inference
+  experiment; constant payload sharing does not establish the required RSS gain.
+  Fixed invalid PyIQA raw/configuration/aggregate values becoming accepted quality
+  evidence. Independent review and 1,402 full tests / ten skipped pass. See
+  [lifecycle decision and validity fix](operations/2026-10-06-static-lifecycle-quality-validity.md)
+
 - completed six fresh Intel CPU whole/shared MUSIQ rounds with unchanged raw
   and token gates: all 288 scores pass, but shared-core median RSS -31.56% comes
   with warm latency +38.27%, failing resource admission. The corrected resize
@@ -208,8 +214,10 @@
 
 ## Next
 
-- design bounded static whole-graph lifetime and explicit unsupported-input
-  handling before an optional MUSIQ adapter. The
+- retain optional MUSIQ adapter deferral after the
+  [completed static lifecycle review](operations/2026-10-06-static-lifecycle-quality-validity.md).
+  No new resource experiment is selected; require a credible bounded ownership
+  and resource contract before execution. The
   [shared-core diagnostic](operations/benchmarks/2026-10-06-musiq-shared-core/README.md)
   passed numerical parity but failed the frozen latency bound; retain that
   negative result and do not integrate the rejected runtime. The

@@ -18,11 +18,12 @@ revision changes the work priority, not the evidence required for algorithm
 admission. The frozen experiment baseline remains commit
 `175e87e6ea927e40e735717c1a1d3eeb3a1c6753`; no real-photo quality gain is claimed.
 
-October 4 current diagnostic milestone: public-corpus comparison and authorized
-Unraid tests are complete; fixed-shape MUSIQ OpenVINO CPU parity is verified.
-The same graph now passes the unchanged full quality cohort. Next audit actual
-RAW/JPEG scoring inputs against its fixed shape before any optional adapter. The directed
-human-reference track below remains separately gated.
+October 6 current milestone: public-corpus, full-cohort, actual-input/native-shape
+and shared-core diagnostics are complete. Shared-core resource admission failed;
+the static lifecycle review selected no further performance experiment. The
+confirmed finite-quality-evidence fix passes full checks and is ready for reviewed
+publication and native release verification. Optional MUSIQ adapter admission and
+the directed human-reference track below remain separately gated.
 
 ## Execution tracking
 
@@ -35,7 +36,7 @@ human-reference track below remains separately gated.
 | G2 human-labeled oracle diagnostic | Pending G1 | Measure candidate omissions and selector limitations on actually labeled pairs |
 | Batch 3 representation comparison | Synthetic runner prepared; real labeled evaluation pending G1/G2 | Fixed 512/1024 geometry x gray/RGB-local matrix with residual512; bind a frozen real-data manifest only after evidence readiness; no threshold/model sweep |
 | Batches 4–6 | Conditional | Escalation, integration and target acceptance retain their gates |
-| Public quality/copy and Intel feasibility diagnostics | Bounded steps complete | [Full Intel MUSIQ cohort](benchmarks/2026-10-04-musiq-intel-full/README.md), [native-shape diagnostic](benchmarks/2026-10-04-musiq-native-shapes/README.md); next bounded optional adapter contract, without policy promotion |
+| Public quality/copy and Intel feasibility diagnostics | Bounded steps complete | [Full Intel MUSIQ cohort](benchmarks/2026-10-04-musiq-intel-full/README.md), [native-shape diagnostic](benchmarks/2026-10-04-musiq-native-shapes/README.md), [lifecycle review](2026-10-06-static-lifecycle-quality-validity.md); optional adapter deferred, no resource experiment selected or policy promotion |
 
 ### September 29 controller acceptance
 
@@ -525,8 +526,15 @@ failing the frozen 10% bound. The shared optimization is not admitted; sources
 and all failure/success checkpoints are retained. Final deltas were self-reviewed
 after independent reviewer quota exhaustion; full tests pass 1,338 / ten skipped.
 
-Next design bounded static whole-graph lifetime and explicit unknown handling
-before an optional adapter; do not integrate the rejected shared runtime.
+The [static lifecycle review](2026-10-06-static-lifecycle-quality-validity.md)
+is complete without new compilation or inference. Constant payload duplication
+is not measured RSS savings; buffer retention and per-model packed caches leave
+no credible resource experiment selected. The same review found and fixed
+nonfinite/bool quality values becoming accepted scores. Independent code/client
+review found no actionable defect; 1,402 full tests / ten skipped and lint pass.
+Next complete the finite-evidence fix release, then keep the optional adapter
+deferred until a credible bounded resource contract and real-input acceptance
+exist; do not integrate the rejected shared runtime.
 Freeze further shape scope/resource gates before inference;
 do not implicitly resize or make a variable-shape/GPU claim. Retain production
 quality/selection separation, default policy and the lean dependency set; do not

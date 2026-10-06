@@ -38,6 +38,12 @@ loads lazily and must preserve the service-free heuristic fallback.
   the default DINOv2-small revision is pinned in configuration and provenance.
 - Missing packages or weights produce explicit fallback metadata unless the
   block's `enforce_available` flag is true.
+- Quality raw scores must be finite real scalars before normalization or signal
+  assembly. Boolean/nonfinite output and aggregate overflow are unavailable
+  evidence, not clipped scores. Bounds and weights must be finite, range width
+  positive and finite, weights nonnegative with an enabled positive weight.
+  A failed block emits no accepted quality signals/aggregates; normal client
+  fallback and `enforce_available` behavior remain intact.
 - Configured runtime and actual runtime are different provenance fields.
 - Enabled NIMA already supplies `overall_aesthetic` to the existing layered
   policy. Other candidate signals must not enter fusion without a versioned
