@@ -127,7 +127,10 @@ not attribute observed differences to current policy or quality improvement.
 With `--no-previews`, no photo existence, image decoding, thumbnail creation,
 model call, rescore or selection recomputation is needed. Only private diagnostic
 output is written, outside the current and historical photo roots and runtime
-database. These reports can contain private paths and model metadata; keep them
+database. V3 validation/output streams strict compact JSON without whole-report
+serialization buffers. A private same-directory temporary file is fsynced, then
+published atomically without overwriting an existing report; choose a fresh
+output directory for a new run. Default v2 preview output is unchanged. These reports can contain private paths and model metadata; keep them
 in operator storage, not the public repository.
 
 ## Verification

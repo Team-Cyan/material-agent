@@ -158,7 +158,9 @@ def test_build_score_review_rejects_database_path_outside_input_root(
     assert all("escapes input root" in sample["image_error"] for sample in result["samples"])
 
 
-def test_score_distribution_treats_missing_group_ids_as_singletons(tmp_path: Path, monkeypatch) -> None:
+def test_score_distribution_treats_missing_group_ids_as_singletons(
+    tmp_path: Path, monkeypatch
+) -> None:
     input_root = tmp_path / "photos"
     input_root.mkdir()
     photos = []
@@ -216,3 +218,162 @@ def test_build_score_review_rejects_output_inside_input_root(tmp_path: Path) -> 
             output_root=input_root / "review",
             sample_count=6,
         )
+
+
+def test_v3_private_json_stream_matches_original_unicode_serializer(tmp_path, monkeypatch):
+    from material_agent.commands import score_review
+
+    value = {
+        "schema": "material-agent-score-review-v3",
+        "cohorts": [
+            {
+                "job": {"id": "一号"},
+                "rows": [
+                    {
+                        "file_path": "/照片/街景😀.ARW",
+                        "score_total": None,
+                        "quality_assessment": {"status": "unresolved", "raw": None},
+                        "model_evidence": {
+                            "quality": {
+                                "signals": {"musiq": {"raw_score": {"invalid_number": "NaN"}}}
+                            }
+                        },
+                    }
+                ],
+            }
+        ],
+        "comparison": {"finite_pairs": []},
+    }
+    expected = (
+        json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n"
+    ).encode("utf-8")
+    monkeypatch.setattr(
+        score_review.json, "dumps", lambda *a, **k: pytest.fail("no whole-report dumps")
+    )
+    monkeypatch.setattr(
+        json.JSONEncoder, "encode", lambda *a, **k: pytest.fail("no whole-report encode")
+    )
+    output = score_review._private_directory(tmp_path / "stream")
+    score_review._write_private_json(output / "review.json", value)
+    assert (output / "review.json").read_bytes() == expected
+    assert os.stat(output / "review.json").st_mode & 0o777 == 0o600
+    assert os.stat(output).st_mode & 0o777 == 0o700
+    assert list(output.iterdir()) == [output / "review.json"]
+
+
+@pytest.mark.parametrize("bad", [float("nan"), float("inf"), -float("inf"), {1, 2}])
+def test_v3_late_encoding_failure_never_publishes_and_cleans_only_owned_temp(tmp_path, bad):
+    from material_agent.commands import score_review
+
+    output = score_review._private_directory(tmp_path / "stream")
+    unrelated = output / ".unrelated.tmp"
+    unrelated.write_bytes(b"keep me")
+    value = {"valid_prefix": ["hello", 1, 2], "late_bad_value": bad}
+    with pytest.raises((ValueError, TypeError)):
+        score_review._write_private_json(output / "review.json", value)
+    assert not (output / "review.json").exists()
+    assert list(output.iterdir()) == [unrelated]
+    assert unrelated.read_bytes() == b"keep me"
+
+
+def test_v3_mid_generator_memory_error_leaves_no_published_report(tmp_path, monkeypatch):
+    from material_agent.commands import persisted_score_audit, score_review
+
+    output = score_review._private_directory(tmp_path / "stream")
+
+    def chunks(value):
+        yield '{"valid_prefix":['
+        yield '"中文"'
+        raise MemoryError("late diagnostic serialization failure")
+
+    monkeypatch.setattr(persisted_score_audit, "iter_strict_json", chunks)
+    with pytest.raises(MemoryError):
+        score_review._write_private_json(output / "review.json", {})
+    assert not list(output.iterdir())
+
+
+@pytest.mark.parametrize("stage", ["write", "fsync"])
+def test_v3_write_or_fsync_failure_cannot_publish(tmp_path, monkeypatch, stage):
+    from material_agent.commands import score_review
+
+    output = score_review._private_directory(tmp_path / "stream")
+    if stage == "fsync":
+        monkeypatch.setattr(
+            score_review.os,
+            "fsync",
+            lambda descriptor: (_ for _ in ()).throw(OSError("fsync failed")),
+        )
+    else:
+        original_fdopen = score_review.os.fdopen
+        writes = []
+
+        class FailingWriter:
+            def __init__(self, descriptor, mode):
+                self.handle = original_fdopen(descriptor, mode)
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return self.handle.__exit__(*args)
+
+            def write(self, chunk):
+                writes.append(chunk)
+                if len(writes) == 2:
+                    raise OSError("stream write failed")
+                return self.handle.write(chunk)
+
+        monkeypatch.setattr(score_review.os, "fdopen", FailingWriter)
+    with pytest.raises(OSError, match="failed"):
+        score_review._write_private_json(output / "review.json", {"data": [1, 2, 3]})
+    assert not list(output.iterdir())
+    if stage == "write":
+        assert len(writes) == 2
+
+
+@pytest.mark.parametrize("kind", ["file", "directory", "dangling_symlink"])
+def test_v3_writer_refuses_existing_or_conflicting_target(tmp_path, monkeypatch, kind):
+    from material_agent.commands import persisted_score_audit, score_review
+
+    output = score_review._private_directory(tmp_path / "stream")
+    target = output / "review.json"
+    if kind == "file":
+        target.write_bytes(b"existing authoritative bytes")
+    elif kind == "directory":
+        target.mkdir()
+    else:
+        target.symlink_to(output / "missing-target")
+    monkeypatch.setattr(
+        persisted_score_audit,
+        "iter_strict_json",
+        lambda value: pytest.fail("do not encode over an existing target"),
+    )
+    with pytest.raises(FileExistsError):
+        score_review._write_private_json(target, {"new": "content"})
+    assert list(output.iterdir()) == [target]
+    if kind == "file":
+        assert target.read_bytes() == b"existing authoritative bytes"
+    elif kind == "dangling_symlink":
+        assert target.is_symlink() and not target.exists()
+    else:
+        assert target.is_dir()
+
+
+def test_v3_publication_race_preserves_competing_destination(tmp_path, monkeypatch):
+    from material_agent.commands import score_review
+
+    output = score_review._private_directory(tmp_path / "stream")
+    target = output / "review.json"
+    original_link = score_review.os.link
+
+    def raced_link(source, destination):
+        assert source.parent == target.parent
+        assert json.loads(source.read_text()) == {"complete": [1, 2, 3]}
+        destination.write_bytes(b"competing completed report")
+        return original_link(source, destination)
+
+    monkeypatch.setattr(score_review.os, "link", raced_link)
+    with pytest.raises(FileExistsError):
+        score_review._write_private_json(target, {"complete": [1, 2, 3]})
+    assert target.read_bytes() == b"competing completed report"
+    assert list(output.iterdir()) == [target]

@@ -291,6 +291,34 @@ def _write_private_bytes(path: Path, payload: bytes) -> None:
         raise
 
 
+
+def _write_private_json(path: Path, value: Any) -> None:
+    """Stream v3 JSON to a private temporary; publish complete bytes without replacing a target."""
+    from .persisted_score_audit import iter_strict_json
+
+    if os.path.lexists(path):
+        raise FileExistsError("review report destination already exists")
+    descriptor, temporary_name = tempfile.mkstemp(
+        prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
+    )
+    temporary_path = Path(temporary_name)
+    try:
+        os.fchmod(descriptor, 0o600)
+        handle = os.fdopen(descriptor, "wb")
+        descriptor = None  # The handle now owns the descriptor, including failure cleanup.
+        with handle:
+            for chunk in iter_strict_json(value):
+                handle.write(chunk.encode("utf-8"))
+            handle.write(b"\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        # Same-directory hard-link creation is atomic and fails if any target already exists.
+        os.link(temporary_path, path)
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        temporary_path.unlink(missing_ok=True)
+
 def _render_contact_sheet(
     samples: list[dict[str, Any]],
     *,
@@ -500,6 +528,8 @@ def _build_job_pinned_review(
 
     if not no_previews and not 6 <= sample_count <= 24:
         raise ValueError("sample_count must be between 6 and 24")
+    if os.path.lexists(output_root / "review.json"):
+        raise FileExistsError("review report destination already exists")
     result = load_job_audit(
         database_path=database_path,
         input_root=input_root,
@@ -555,12 +585,7 @@ def _build_job_pinned_review(
             "Previews use the selected recorded job configuration and current decoder; "
             "historical JPEG byte identity cannot be proven."
         )
-    _write_private_bytes(
-        output_root / "review.json",
-        (
-            json.dumps(result, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n"
-        ).encode("utf-8"),
-    )
+    _write_private_json(output_root / "review.json", result)
     return result
 
 

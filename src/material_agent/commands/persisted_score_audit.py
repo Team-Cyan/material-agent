@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 import sqlite3
 import sys
-from typing import Any
+from typing import Any, Iterator
 
 from ..adapters.state.sqlite_runtime import redact_secrets
 
@@ -637,6 +637,13 @@ def compare_cohorts(a: dict, b: dict) -> dict:
     }
 
 
+def iter_strict_json(value: Any) -> Iterator[str]:
+    """Yield compact strict JSON without constructing the complete serialization."""
+    return json.JSONEncoder(ensure_ascii=False, separators=(",", ":"), allow_nan=False).iterencode(
+        value
+    )
+
+
 def load_job_audit(
     *,
     database_path: Path,
@@ -685,7 +692,8 @@ def load_job_audit(
             "samples": [],
             "image_note": "No previews reconstructed; paths are exact stored identities, not file acceptance evidence.",
         }
-        json.dumps(result, allow_nan=False)
+        for _chunk in iter_strict_json(result):
+            pass
         return result
     finally:
         connection.close()

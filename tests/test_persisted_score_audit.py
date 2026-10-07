@@ -711,3 +711,77 @@ def test_quality_actual_key_is_preferred_only_when_aliases_match_and_legacy_can_
         audit.quality_metric_diagnostics({"quality": None, "_quality": value})["status"]
         == "ambiguous_aliases"
     )
+
+
+def test_full_job_report_streaming_preserves_all_facts_and_source_bytes(corpus, monkeypatch):
+    with sqlite3.connect(corpus["database"]) as connection:
+        connection.execute(
+            "UPDATE sessions SET config_snapshot=? WHERE id=?",
+            (
+                json.dumps(
+                    {
+                        "preview": {"max_size": 1024, "jpeg_quality": 85},
+                        "中文": {"说明": "保留完整事实😀"},
+                        "api_key": "private-key",
+                    },
+                    ensure_ascii=False,
+                ),
+                "s-" + A,
+            ),
+        )
+    before_db = corpus["database"].read_bytes()
+    before_photo = corpus["photo"].read_bytes()
+    original_dumps = json.dumps
+
+    def dumps(value, *args, **kwargs):
+        if isinstance(value, dict) and value.get("schema") == "material-agent-score-review-v3":
+            pytest.fail("whole-report validation or writing used json.dumps")
+        return original_dumps(value, *args, **kwargs)
+
+    monkeypatch.setattr(audit.json, "dumps", dumps)
+    monkeypatch.setattr(
+        "material_agent.commands.score_review.decode_raw", lambda *a, **k: pytest.fail("no decoder")
+    )
+    result = review(corpus, compare_job_id=B)
+    expected = (
+        original_dumps(result, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n"
+    ).encode("utf-8")
+    assert (corpus["output"] / "review.json").read_bytes() == expected
+    assert len(result["cohorts"][0]["rows"]) == len(result["cohorts"][1]["rows"]) == 6
+    assert result["cohorts"][0]["config"]["中文"] == {"说明": "保留完整事实😀"}
+    assert (
+        corpus["database"].read_bytes() == before_db
+        and corpus["photo"].read_bytes() == before_photo
+    )
+    assert os.stat(corpus["output"] / "review.json").st_mode & 0o777 == 0o600
+
+
+def test_job_validation_stream_rejects_late_nonfinite_value_without_whole_encode(
+    corpus, monkeypatch
+):
+    original = audit._cohort
+
+    def cohort(connection, selected):
+        result = original(connection, selected)
+        result["late_nonfinite"] = float("nan")
+        return result
+
+    monkeypatch.setattr(audit, "_cohort", cohort)
+    monkeypatch.setattr(audit.json, "dumps", lambda *a, **k: pytest.fail("no whole-report dumps"))
+    with pytest.raises(ValueError, match="Out of range float"):
+        review(corpus)
+    assert not corpus["output"].exists()
+
+
+def test_v3_existing_destination_is_protected_before_loading_or_preview_work(corpus, monkeypatch):
+    corpus["output"].mkdir()
+    target = corpus["output"] / "review.json"
+    target.write_bytes(b"existing authoritative report")
+    monkeypatch.setattr(
+        audit,
+        "load_job_audit",
+        lambda **kwargs: pytest.fail("existing destination must be rejected first"),
+    )
+    with pytest.raises(FileExistsError):
+        review(corpus)
+    assert target.read_bytes() == b"existing authoritative report"

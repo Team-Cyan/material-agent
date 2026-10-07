@@ -334,3 +334,14 @@ test import. The import now uses the existing `tests` package. Direct spatial
 tests pass 15/15 without added `PYTHONPATH`; repository-boundary tests pass 2/2,
 with Ruff and diff checks passing. This test-only fix does not change the frozen
 reference results or authorize more collection.
+
+### October 7 diagnostic recovery
+
+The [streaming recovery](2026-10-07-job-pinned-streaming-recovery.md) continues
+the implemented `d5446a5` diagnostic. Exact CI/publication and native image/source
+verification passed; the native SSH acknowledgement timeout was reconciled
+without a second update. The actual two-cohort historical command failed with
+a bounded serialization `MemoryError`, while approved durable source identities
+remained unchanged. Preserve the original partial output. Implement and verify
+strict streaming validation/atomic v3 output, then use a new approved namespace
+under the same resource gates. No production scoring or metadata migration.

@@ -580,3 +580,12 @@ authorizes this composite download plus Unraid corpus storage/latest deployment/
 isolated target testing. Historical acquisition budgets remain
 closed for their earlier scopes. The direct-witness invariant, conservative unknown handling,
 quality/selection separation and production time-plus-pHash behavior remain intact.
+
+### October 7 job-pinned recovery
+
+The [job-pinned streaming recovery](2026-10-07-job-pinned-streaming-recovery.md)
+closes a real serialization-memory failure after verified `d5446a5` publication
+and native deployment. Source guards remain intact; the failed namespace is
+retained. Next verify strict streamed v3 output and a fresh approved historical
+comparison under the original limits. Do not infer current-policy facts from
+legacy payloads, broaden model/shape scope or re-score the production library.

@@ -262,8 +262,10 @@
   confirms the live 40,620 results are from August 28, not current-policy output;
   bounded outliers were rechecked but the full baseline distribution is unverified.
   [Job-pinned support](operations/2026-10-06-job-pinned-score-diagnostic.md) is
-  implemented and locally verified. Bind the two historical jobs through the
-  approved no-preview target workflow, then interpret complete distributions
+  implemented and deployed. The initial target command hit a serialization
+  MemoryError with unchanged durable sources; complete the
+  [streaming recovery](operations/2026-10-07-job-pinned-streaming-recovery.md)
+  under unchanged caps in a new approved namespace, then interpret complete distributions
   alongside their snapshots; no production rerun/rescore or policy promotion
   is implied
 
