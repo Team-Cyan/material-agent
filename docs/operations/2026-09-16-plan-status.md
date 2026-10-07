@@ -188,7 +188,7 @@ integrate the rejected shared runtime or repeat the full cohort.
 The [persisted-score audit/cache boundary](2026-10-06-persisted-score-audit-cache-validity.md)
 rechecked bounded historical outliers. The latest full-library job is August 28,
 2026; inspected old payloads lack current quality/selection facts. Full group/rank
-distribution comparison remains unverified and requires job-pinned diagnostics.
+distribution comparison is now verified in the [historical results](benchmarks/2026-10-07-job-pinned-historical/README.md).
 The conditional pre-guard local-quality processed-cache reuse defect is fixed
 with an enabled-quality-only evidence revision: 1,416 full tests / ten skipped,
 26 focused cache checks, three boundary checks and lint pass. No global cache
@@ -200,8 +200,9 @@ explicit historical cohorts in one read-only transaction without photo decoding
 when previews are disabled. It preserves all members, errors/invalid numbers,
 raw quality/selection facts and actual/legacy runtime metadata separately.
 Independent review and 1,448 full tests / ten skipped, 124 focused checks, three
-boundary checks and lint pass. Next finish this exact release and approved
-historical target comparison; retain all acceptance gates.
+boundary checks and lint pass. Publication/native deployment and the subsequent
+streaming recovery/full historical comparison are complete; retain all current-policy
+and independent-reference acceptance gates.
 Variable-shape/GPU, real portrait RAW/EXIF and product utility remain separate.
 Copy correspondence cannot admit semantic grouping or discard policies. Technical-quality product utility and independent directed
 coverage references remain separate gates; annotation UI work stays closed.
@@ -335,13 +336,17 @@ tests pass 15/15 without added `PYTHONPATH`; repository-boundary tests pass 2/2,
 with Ruff and diff checks passing. This test-only fix does not change the frozen
 reference results or authorize more collection.
 
-### October 7 diagnostic recovery
+### October 7 diagnostic recovery and completed comparisons
 
-The [streaming recovery](2026-10-07-job-pinned-streaming-recovery.md) continues
-the implemented `d5446a5` diagnostic. Exact CI/publication and native image/source
-verification passed; the native SSH acknowledgement timeout was reconciled
-without a second update. The actual two-cohort historical command failed with
-a bounded serialization `MemoryError`, while approved durable source identities
-remained unchanged. Preserve the original partial output. Implement and verify
-strict streaming validation/atomic v3 output, then use a new approved namespace
-under the same resource gates. No production scoring or metadata migration.
+The [streaming recovery](2026-10-07-job-pinned-streaming-recovery.md) resolved
+serialization MemoryError without loosening caps or discarding facts. Commit
+`76ec1db` passed full local checks (1,463 / ten skipped), exact CI (1,430 / 43
+skipped), publication and authorized native deployment. Two full comparisons of
+40,620-row jobs, independent aggregate/integrity recomputation and completed-output
+reuse passed with unchanged durable sources and idle service/config/library.
+The [sanitized result](benchmarks/2026-10-07-job-pinned-historical/README.md) verifies
+July 16 as a true 40,620-singleton baseline, versus 2,824 groups on August 28.
+Nineteen configuration differences and unknown historical code prevent causal
+or current-policy claims. This bounded diagnostic is closed. Next retain the
+unmet real RAW/portrait utility, independent G1/G2 and optional MUSIQ resource
+gates; no repeated cohort run, model rotation or annotation UI work is selected.

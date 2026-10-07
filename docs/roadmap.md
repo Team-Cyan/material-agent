@@ -2,6 +2,13 @@
 
 ## Completed
 
+- completed two full 40,620-row historical job comparisons after strict streaming
+  serialization recovery. Exact CI/native deployment, independent recomputation
+  and completed-output reuse passed with unchanged durable sources and service.
+  July 16 is a true singleton baseline; historical config/code confounding and
+  missing current quality/selection facts prevent policy or quality claims. See
+  [historical results](operations/benchmarks/2026-10-07-job-pinned-historical/README.md)
+
 - implemented explicit historical job selection and no-preview persisted-score
   comparison with full cohort/group/rank accounting, missing/ambiguous evidence
   diagnostics and strict finite JSON. Default v2 previews remain unchanged.
@@ -255,19 +262,6 @@
   have their own targets and do not pass these gates. Follow the
   [continuation plan](operations/2026-09-26-culling-improvement-plan.md#next-substantive-step-and-dispatch-boundary);
   do not reopen the closed annotation-viewer branch or change the admin WebUI
-
-- compare explicit historical job cohorts and their effective snapshots for
-  group-size/rank and quality/selection evidence. The
-  [persisted-score audit](operations/2026-10-06-persisted-score-audit-cache-validity.md)
-  confirms the live 40,620 results are from August 28, not current-policy output;
-  bounded outliers were rechecked but the full baseline distribution is unverified.
-  [Job-pinned support](operations/2026-10-06-job-pinned-score-diagnostic.md) is
-  implemented and deployed. The initial target command hit a serialization
-  MemoryError with unchanged durable sources; complete the
-  [streaming recovery](operations/2026-10-07-job-pinned-streaming-recovery.md)
-  under unchanged caps in a new approved namespace, then interpret complete distributions
-  alongside their snapshots; no production rerun/rescore or policy promotion
-  is implied
 
 ## Later
 

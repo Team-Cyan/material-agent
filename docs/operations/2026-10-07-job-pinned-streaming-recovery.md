@@ -47,12 +47,20 @@ no actionable defect. Full checks pass 1,463 tests / ten skipped; 139 focused
 checks, three repository-boundary checks and lint pass. The read-only status
 transport passed 80 focused checks and independent review.
 
-Complete normal push, exact-revision CI and authorized native deployment before
-the target retry.
+Commit `76ec1db` passed [exact-revision CI](https://github.com/Team-Cyan/material-agent/actions/runs/37618966435)
+(1,430 passed / 43 skipped), immutable-image smoke and promotion. Authorized
+native DockerMan deployment verified the exact revision, running idle API,
+unchanged config/library, template audit, backup and validated rollback context.
+Docker healthcheck is undefined; running/API verification does not claim a
+Docker healthy status.
 
-After success, export only the report and integrity receipt, independently
-recompute aggregate counts and group/rank diagnostics, and verify exact completed
-reuse without launching the command again. Preserve source hashes, private
-permissions and unchanged idle service/config/library snapshots. The report
-belongs to the recorded historical jobs and image; it is not a current-policy
-photographic acceptance or a human-reference substitute.
+Two new approved namespaces completed the full August 28/August 27 and
+August 28/July 16 comparisons under unchanged caps. Both exported complete
+reports and integrity receipts; independent recomputation found zero mismatches
+and exact completed-output reuse passed without another application invocation.
+Durable source identities, private permissions and idle service/config/library
+snapshots remain unchanged. July 16 is a true singleton baseline; historical
+configuration differences and unknown code revisions prevent causal or
+current-policy acceptance. See the [sanitized results](benchmarks/2026-10-07-job-pinned-historical/README.md).
+A subsequent documentation-only deployment does not change the recorded
+diagnostic revision or relabel these historical results as current-policy output.

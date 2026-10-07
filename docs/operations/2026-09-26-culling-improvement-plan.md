@@ -23,9 +23,11 @@ and shared-core diagnostics are complete. Shared-core resource admission failed;
 the static lifecycle review selected no further performance experiment. The
 confirmed finite-quality-evidence fix passed reviewed publication and native
 release verification. Historical provenance and enabled-quality cache isolation
-are also complete. Current bounded work is explicit historical job comparison
-with full evidence accounting and no preview decoding. Optional MUSIQ adapter admission and
-the directed human-reference track below remain separately gated.
+are also complete. The full historical job comparison
+and serialization recovery are complete with independent accounting and verified
+output reuse; see the [results](benchmarks/2026-10-07-job-pinned-historical/README.md).
+Optional MUSIQ adapter admission and the directed human-reference track below
+remain separately gated.
 
 ## Execution tracking
 
@@ -542,7 +544,8 @@ current-policy output. Enabled-quality cache isolation `b389e92` passed exact
 CI and native release verification. The
 [job-pinned diagnostic](2026-10-06-job-pinned-score-diagnostic.md) is implemented
 and independently reviewed: 1,448 full tests / ten skipped and 124 focused checks
-pass. Complete its exact release and approved historical target comparison. Keep the optional adapter
+pass. Its exact release and full historical comparisons are complete after
+streaming recovery. Keep the optional adapter
 deferred until a credible bounded resource contract and real-input acceptance
 exist; do not integrate the rejected shared runtime.
 Freeze further shape scope/resource gates before inference;
@@ -581,11 +584,15 @@ isolated target testing. Historical acquisition budgets remain
 closed for their earlier scopes. The direct-witness invariant, conservative unknown handling,
 quality/selection separation and production time-plus-pHash behavior remain intact.
 
-### October 7 job-pinned recovery
+### October 7 job-pinned recovery and closure
 
-The [job-pinned streaming recovery](2026-10-07-job-pinned-streaming-recovery.md)
-closes a real serialization-memory failure after verified `d5446a5` publication
-and native deployment. Source guards remain intact; the failed namespace is
-retained. Next verify strict streamed v3 output and a fresh approved historical
-comparison under the original limits. Do not infer current-policy facts from
-legacy payloads, broaden model/shape scope or re-score the production library.
+The [streaming recovery](2026-10-07-job-pinned-streaming-recovery.md) and
+[complete historical results](benchmarks/2026-10-07-job-pinned-historical/README.md)
+close the serialization failure and two full 40,620-row comparisons. Original
+failed output remains preserved. Exact CI/native deployment, independent
+recomputation, completed-output reuse and source/service invariants pass under
+unchanged caps. July 16 is the true singleton baseline; configuration/code
+confounding prevents a current-policy or causal grouping claim. Historical
+comparison is closed. Keep real-input/product utility, independent G1/G2 and
+optional resource admission gated; no further model, cohort or viewer task is
+selected without the required new evidence.
