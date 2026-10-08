@@ -2,6 +2,13 @@
 
 ## Completed
 
+- verified the newly author-linked FGAesthetics label release: nine lists /
+  44,225 rows with exact archive identity, independent counts and split-ID checks.
+  One duplicate and 92 fourth-column 0.5 values remain preserved. Metadata access
+  is accepted; field semantics, source terms/lineage and image inventory remain
+  unverified, with no G1/G2 or preference-execution admission. See
+  [reference-source preflight](operations/benchmarks/2026-10-08-reference-source-preflight/README.md)
+
 - verified two existing public DNGs with native EXIF 6/8 on Unraid: default
   LibRaw, actual production decode/focus/JPEG and Grouper fallback match an
   independent rotation oracle exactly, with eight native calls and unchanged
@@ -271,9 +278,12 @@
   training-exposed. Query-conditioned
   AlbumBench prediction remains unsupported and image access is unresolved
 
-- resolve independent culling reference inputs after the completed
-  [evidence inventory and synthetic protocol](operations/benchmarks/2026-09-29-representation-control/report.md).
-  Shared-geometry checks and resume are verified; G1/G2 and real-data binding
+- resolve independent culling reference inputs using the new
+  [release preflight](operations/benchmarks/2026-10-08-reference-source-preflight/README.md):
+  establish field definitions, applicable terms and source/scene crosswalk before
+  image acquisition or an existing-scorer preference diagnostic. The
+  [evidence inventory and synthetic protocol](operations/benchmarks/2026-09-29-representation-control/report.md)
+  is complete. Shared-geometry checks and resume are verified; G1/G2 and real-data binding
   remain required before directed coverage acceptance. Native MOS/copy diagnostics
   have their own targets and do not pass these gates. Follow the
   [continuation plan](operations/2026-09-26-culling-improvement-plan.md#next-substantive-step-and-dispatch-boundary);

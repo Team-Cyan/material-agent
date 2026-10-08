@@ -381,3 +381,18 @@ Previews 768x1023 and 768x1024 match none of the three validated MUSIQ buckets;
 no graph selection/inference or source writes occurred. General RAW/embedded,
 real-person/eye quality, photographic utility, G1/G2 and resource admission remain
 separate unmet gates. The bounded validation is complete; no further sweep is selected.
+
+
+### October 8 independent-reference release preflight
+
+The [FGAesthetics metadata audit](benchmarks/2026-10-08-reference-source-preflight/README.md)
+verified a newly published author-linked label archive and nine official
+train/val/test lists. Independent recomputation confirms 44,225 rows / 9,878
+first-field IDs / 31,661 referenced image tuples, zero within-category split-ID
+intersections, one identical duplicate and 92 fourth-column 0.5 values.
+Precise field semantics, source terms, scene/capture lineage and actual image
+inventory remain unverified; list counts cannot establish independent families.
+This is a source-access result with zero images, models or inference. Existing
+quality/coverage gates remain separate; G1 still has zero qualifying human
+coverage pairs and G2 remains pending. Resolve those published input facts before
+any bounded preference diagnostic; do not force aesthetic labels into coverage.

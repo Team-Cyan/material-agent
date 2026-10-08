@@ -622,3 +622,26 @@ configured native DNG fallback paths. Both preview shapes remain outside the
 validated MUSIQ buckets; existing graph results are not relabeled, no new model
 experiment is selected, and general input, photographic utility/G1/G2 and
 resource gates remain unmet.
+
+
+### October 8 independent-reference source continuation
+
+The [new source preflight](benchmarks/2026-10-08-reference-source-preflight/README.md)
+verified the author-linked September 30 FGAesthetics release and its 201,749-byte
+label archive, without image/model acquisition or inference. Nine official lists
+contain 44,225 rows; independent checks confirm counts and zero within-category
+split-ID overlap. Preserve the identical AIGC training duplicate and 92 Natural
+training fourth-column 0.5 values. Six-column semantics are not established;
+label-reference counts differ from paper totals and are not image inventories.
+Dataset-specific terms and per-item still/video, capture and scene-family lineage
+were not found in the examined pinned release. Website-template licensing cannot
+fill that source-permission requirement. Metadata access is closed as verified.
+
+The next bounded input step is published field-definition, source-term and
+lineage evidence. Once established, freeze a separate existing-scorer preference
+diagnostic on actual official partitions before acquiring inputs/predicting.
+Do not infer score direction, silently deduplicate or tune on exposed test labels.
+No new scorer/model sweep is selected. Aesthetic labels do not fill G1's zero
+qualifying directed still-photo pairs/families; obtain independent rubric labels
+and meet split/category quotas before G2 or real-data representation evaluation.
+No annotation UI work or production rescore is implied.
