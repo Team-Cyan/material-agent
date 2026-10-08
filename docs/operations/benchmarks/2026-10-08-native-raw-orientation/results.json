@@ -1,0 +1,114 @@
+{
+  "schema": "material-agent-public-native-raw-orientation-v1",
+  "diagnostic_application_revision": "5274e944ab53653847f303564e94bfd842dca1d9",
+  "execution": "native Linux Unraid container, unprivileged99:100",
+  "source_scope": "two existing official HDR+ DNGs, previously inspected public inputs; not fresh holdout",
+  "metadata_event_inventory": {
+    "events": 22,
+    "first_frame_per_event": true,
+    "orientation1": 18,
+    "orientation6": 1,
+    "orientation8": 1,
+    "missing": 2
+  },
+  "source_bytes": 30767682,
+  "package_files": 4,
+  "package_bytes": 30781440,
+  "limits": {
+    "max_inputs": 2,
+    "max_postprocess_calls": 8,
+    "address_space_bytes": 4294967296,
+    "external_wall_seconds": 120,
+    "cpu_soft_seconds": 120,
+    "cpu_hard_seconds": 125,
+    "output_file_bytes": 1048576
+  },
+  "completed": true,
+  "errors": 0,
+  "actual_postprocess_calls": 8,
+  "records": [
+    {
+      "focus_hw": [
+        2024,
+        1518
+      ],
+      "grouping_hash_distance": 0,
+      "jpeg_exact_match": true,
+      "libraw_flip": 6,
+      "native_oracle_max_pixel_error": 0,
+      "native_postprocess_hw": [
+        2024,
+        1518
+      ],
+      "orientation": 6,
+      "original_size": [
+        4048,
+        3036
+      ],
+      "original_source_unchanged": true,
+      "preview_source": "raw_postprocess",
+      "preview_wh": [
+        768,
+        1023
+      ],
+      "production_decode_and_group_fallback_proven": true,
+      "status": "passed"
+    },
+    {
+      "focus_hw": [
+        2016,
+        1512
+      ],
+      "grouping_hash_distance": 0,
+      "jpeg_exact_match": true,
+      "libraw_flip": 5,
+      "native_oracle_max_pixel_error": 0,
+      "native_postprocess_hw": [
+        2016,
+        1512
+      ],
+      "orientation": 8,
+      "original_size": [
+        4032,
+        3024
+      ],
+      "original_source_unchanged": true,
+      "preview_source": "raw_postprocess",
+      "preview_wh": [
+        768,
+        1024
+      ],
+      "production_decode_and_group_fallback_proven": true,
+      "status": "passed"
+    }
+  ],
+  "source_identity_verified": true,
+  "service_config_library_unchanged": true,
+  "production_score_records": 40620,
+  "production_errors": 0,
+  "models_or_inference": false,
+  "photo_XMP_metadata_writes": false,
+  "MUSIQ_graph_selection_or_score": false,
+  "MUSIQ_validated_bucket_shapes_nchw": [
+    [
+      1,
+      3,
+      384,
+      512
+    ],
+    [
+      1,
+      3,
+      682,
+      1024
+    ],
+    [
+      1,
+      3,
+      1024,
+      682
+    ]
+  ],
+  "new_preview_shapes_match_validated_MUSIQ_buckets": false,
+  "acceptance": "two DNG native fallback orientation conformance only; allRAW/embedded/fullsensor/realpersonquality/G1G2/resourcepromotion remain unaccepted"
+}

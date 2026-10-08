@@ -2,6 +2,13 @@
 
 ## Completed
 
+- verified two existing public DNGs with native EXIF 6/8 on Unraid: default
+  LibRaw, actual production decode/focus/JPEG and Grouper fallback match an
+  independent rotation oracle exactly, with eight native calls and unchanged
+  sources/service. This accepts two configured DNG fallback paths; their previews
+  match no validated MUSIQ bucket and do not establish photographic/G1/G2 utility.
+  See [native orientation results](operations/benchmarks/2026-10-08-native-raw-orientation/README.md)
+
 - aligned standard-image and embedded-JPEG grouping hashes with EXIF display
   orientation and versioned only the visual-hash cache. Independent review and
   1,499 full tests / ten skipped pass; all six existing public RAW hashes remain
@@ -248,7 +255,10 @@
   [actual-input/native-shape diagnostic](operations/benchmarks/2026-10-04-musiq-native-shapes/README.md)
   accepts three exact CPU shapes with native preprocessing; five actual RAW
   preview shapes remain unsupported and derived portrait is not real RAW/EXIF
-  acceptance. Freeze any further shape scope and resource gates before inference;
+  acceptance. Two additional [native DNG orientation inputs](operations/benchmarks/2026-10-08-native-raw-orientation/README.md)
+  now pass decode/fallback conformance, but neither preview matches these MUSIQ
+  buckets. This does not add model-input or product-utility acceptance.
+  Freeze any further shape scope and resource gates before inference;
   no implicit resizing, dynamic-shape/GPU claim or scoring-default change.
   The [full Intel cohort](operations/benchmarks/2026-10-04-musiq-intel-full/README.md)
   is complete; do not repeat it or acquire another model by default

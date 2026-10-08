@@ -608,3 +608,17 @@ ten skipped and independent review. Six normal-orientation public RAWs retain
 exact hash/source parity. This resolves one decoding defect; it does not satisfy
 real rotated RAW/portrait or human-reference/product-utility gates. Keep the
 bounded source probe closed; no model or threshold sweep is selected.
+
+### October 8 native-input verification closure
+
+The [native DNG orientation diagnostic](benchmarks/2026-10-08-native-raw-orientation/README.md)
+found source EXIF6/8 in existing HDR+ inputs, without repeating the closed generic
+RAW metadata search or downloading new sources. Two original DNGs passed exact
+LibRaw/default production/focus/JPEG/grouping fallback parity on Unraid with eight
+calls and unchanged source/service identities. The Mac guard failure was retained;
+Linux preserved 4 GiB/120-second limits. Independent result/integrity review and
+73 focused/203 related private transport checks pass. This accepts only those
+configured native DNG fallback paths. Both preview shapes remain outside the
+validated MUSIQ buckets; existing graph results are not relabeled, no new model
+experiment is selected, and general input, photographic utility/G1/G2 and
+resource gates remain unmet.

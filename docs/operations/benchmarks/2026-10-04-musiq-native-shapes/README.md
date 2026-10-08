@@ -80,3 +80,9 @@ The next design must address bounded graph lifetime, model storage and explicit
 unknown handling before any optional adapter is wired. Product utility and
 independent directed-coverage references remain separate acceptance gates;
 default-policy promotion, GPU and XMP writes are excluded.
+
+A later [native DNG orientation diagnostic](../2026-10-08-native-raw-orientation/README.md)
+verified two original HDR+ EXIF6/8 sources through actual decode/group fallback.
+It is not a MUSIQ inference experiment: their previews 768x1023 and 768x1024
+match none of this protocol's three shape buckets. The original nine inputs,
+references, graph results and admission boundaries remain unchanged.
