@@ -6,9 +6,11 @@ They cover five embedded previews and one RAW-postprocess fallback, but cannot
 establish real portrait RAW or rotated-EXIF acceptance. A bounded public metadata
 probe made 48 requests: 31 normal orientation, four missing values and 13 failed
 reads. No non-normal candidate was found and no RAW was downloaded. Failed reads
-remain unknown. The probe conservatively accounted for 2,329,918 metadata bytes
+remain unknown. The probe conservatively accounted for 2,329,931 metadata bytes
 under the frozen 4 MiB limit; its two initial requests reserve their full read
-limits because their actual response sizes were not retained. The source
+limits because their actual response sizes were not retained. Failed bounded reads
+also include the extra overflow sentinel byte; no fetch was rerun for this
+accounting correction. The source
 [RAW sample repository](https://raw.pixls.us/) asks for landscape inputs, so this
 negative search does not prove that portrait RAWs are unsupported or unavailable.
 
