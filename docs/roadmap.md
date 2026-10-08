@@ -2,6 +2,12 @@
 
 ## Completed
 
+- aligned standard-image and embedded-JPEG grouping hashes with EXIF display
+  orientation and versioned only the visual-hash cache. Independent review and
+  1,499 full tests / ten skipped pass; all six existing public RAW hashes remain
+  unchanged. Synthetic orientation checks do not establish real rotated RAW or
+  photographic acceptance. See [orientation consistency](operations/2026-10-08-grouping-exif-orientation.md)
+
 - completed two full 40,620-row historical job comparisons after strict streaming
   serialization recovery. Exact CI/native deployment, independent recomputation
   and completed-output reuse passed with unchanged durable sources and service.

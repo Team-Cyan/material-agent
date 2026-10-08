@@ -265,6 +265,7 @@ def test_hash_cache_covers_within_time_group_and_reuses_results():
     ):
         assert Grouper(_cfg(True)).group(files, state) == [files]
         assert hashing.call_count == 2
+        assert state.cache == dict.fromkeys(files, "phash-exif-v1:" + "0" * 16)
         assert Grouper(_cfg(True)).group(files, state) == [files]
         assert hashing.call_count == 2
 
@@ -276,9 +277,12 @@ def test_zero_threshold_never_accesses_hash_cache():
     state = Mock()
     config = _cfg(True)
     config["hash_threshold"] = 0
-    with patch(
-        "material_agent.core.grouper.read_exif_datetimes",
-        return_value=dict.fromkeys(files, datetime(2024, 1, 1)),
+    with (
+        patch(
+            "material_agent.core.grouper.read_exif_datetimes",
+            return_value=dict.fromkeys(files, datetime(2024, 1, 1)),
+        ),
+        patch.object(Grouper, "_hash_file", side_effect=AssertionError("no decode")),
     ):
         assert Grouper(config).group(files, state) == [files]
     state.get_visual_hash_cache.assert_not_called()
@@ -351,3 +355,205 @@ def test_raw_embedded_thumbnail_hash_does_not_postprocess(monkeypatch):
     monkeypatch.setattr(grouper.rawpy, "imread", Mock(return_value=raw))
     assert grouper.Grouper._hash_file("embedded.dng") == imagehash.phash(Image.fromarray(rgb))
     raw.postprocess.assert_not_called()
+
+
+def _oriented_jpeg(tmp_path, orientation):
+    """Return stored JPEG pixels and an independently applied display transform."""
+    import numpy as np
+    from PIL import Image
+
+    # Asymmetry in both axes makes all eight display transforms observable.
+    rgb = np.random.default_rng(23).integers(0, 256, (73, 119, 3), dtype=np.uint8)
+    rgb[:30, :40] = (240, 20, 40)
+    rgb[40:, 60:] = (20, 220, 50)
+    rgb[10:65, 85:100] = (30, 40, 230)
+    path = tmp_path / f"orientation-{orientation}.jpg"
+    exif = Image.Exif()
+    exif[274] = orientation
+    Image.fromarray(rgb).save(path, quality=97, exif=exif)
+    with Image.open(path) as source:
+        stored = source.convert("RGB")
+    transforms = {
+        2: Image.Transpose.FLIP_LEFT_RIGHT,
+        3: Image.Transpose.ROTATE_180,
+        4: Image.Transpose.FLIP_TOP_BOTTOM,
+        5: Image.Transpose.TRANSPOSE,
+        6: Image.Transpose.ROTATE_270,
+        7: Image.Transpose.TRANSVERSE,
+        8: Image.Transpose.ROTATE_90,
+    }
+    displayed = stored.transpose(transforms[orientation]) if orientation != 1 else stored.copy()
+    return path, stored, displayed
+
+
+@pytest.mark.parametrize("orientation", range(1, 9))
+@pytest.mark.parametrize("embedded", [False, True], ids=["standard", "embedded-jpeg"])
+def test_jpeg_hash_uses_display_orientation_once(tmp_path, monkeypatch, orientation, embedded):
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock, Mock
+
+    import numpy as np
+    from material_agent.domain import grouper
+
+    path, stored, displayed = _oriented_jpeg(tmp_path, orientation)
+    expected = displayed.copy()
+    expected.thumbnail((256, 256))
+    raw = MagicMock()
+    raw.__enter__.return_value = raw
+    raw.extract_thumb.return_value = SimpleNamespace(
+        format=grouper.rawpy.ThumbFormat.JPEG, data=path.read_bytes()
+    )
+    image_open = grouper.Image.open
+
+    def open_image(source):
+        if source == "embedded.dng":
+            raise OSError("RAW")
+        return image_open(source)
+
+    monkeypatch.setattr(grouper.Image, "open", open_image)
+    imread = Mock(return_value=raw, side_effect=None if embedded else AssertionError("not RAW"))
+    monkeypatch.setattr(grouper.rawpy, "imread", imread)
+    phash = grouper.imagehash.phash
+    captured = []
+
+    def hash_displayed(image):
+        captured.append(np.asarray(image).copy())
+        return phash(image)
+
+    monkeypatch.setattr(grouper.imagehash, "phash", hash_displayed)
+    assert Grouper._hash_file("embedded.dng" if embedded else str(path)) == phash(expected)
+    assert len(captured) == 1
+    np.testing.assert_array_equal(captured[0], np.asarray(expected))
+    if orientation == 1:
+        assert phash(expected) == phash(stored)
+    else:
+        assert phash(expected) - phash(stored) > 10
+    raw.postprocess.assert_not_called()
+    if embedded:
+        raw.extract_thumb.assert_called_once()
+    else:
+        imread.assert_not_called()
+
+
+@pytest.mark.parametrize("orientation", range(1, 9))
+def test_display_equivalent_jpeg_and_png_group_at_existing_threshold(tmp_path, orientation):
+    path, _, displayed = _oriented_jpeg(tmp_path, orientation)
+    canonical = tmp_path / "canonical.png"
+    displayed.save(canonical)
+    files = [str(path), str(canonical)]
+    times = dict.fromkeys(files, datetime(2024, 1, 1))
+    assert Grouper(_cfg(True))._group_with_times(files, times) == [files]
+
+
+@pytest.mark.parametrize(
+    "cached",
+    [
+        "0" * 16,
+        "phash-exif-v0:" + "0" * 16,
+        "phash-exif-v1:" + "0" * 15,
+        "phash-exif-v1:" + "0" * 17,
+        "phash-exif-v1:" + "g" * 16,
+        "phash-exif-v1:" + "0" * 16 + "\n",
+        None,
+        123,
+    ],
+)
+def test_stale_or_malformed_hash_cache_recomputes(cached):
+    from unittest.mock import Mock
+
+    files = ["a", "b"]
+    times = dict.fromkeys(files, datetime(2024, 1, 1))
+    state = Mock()
+    state.get_visual_hash_cache.return_value = dict.fromkeys(files, cached)
+    with patch.object(
+        Grouper, "_hash_file", return_value=imagehash.hex_to_hash("0" * 16)
+    ) as hashing:
+        assert Grouper(_cfg(True))._group_with_times(files, times, state) == [files]
+    assert hashing.call_count == 2
+    state.set_visual_hash_cache.assert_called_once_with(
+        dict.fromkeys(files, "phash-exif-v1:" + "0" * 16)
+    )
+
+
+def test_failed_hash_retries_without_persisting_missing():
+    from unittest.mock import Mock
+
+    files = ["a", "b"]
+    times = dict.fromkeys(files, datetime(2024, 1, 1))
+    state = Mock()
+    state.get_visual_hash_cache.return_value = {}
+    with patch.object(Grouper, "_hash_file", return_value=None) as hashing:
+        instance = Grouper(_cfg(True))
+        assert instance._group_with_times(files, times, state) == [["a"], ["b"]]
+        assert instance._group_with_times(files, times, state) == [["a"], ["b"]]
+    assert hashing.call_count == 4
+    state.set_visual_hash_cache.assert_not_called()
+
+
+@pytest.mark.parametrize("embedded", [False, True], ids=["postprocess", "bitmap"])
+def test_raw_array_pixels_are_not_transposed(monkeypatch, embedded):
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock, Mock
+
+    import numpy as np
+    from PIL import Image
+    from material_agent.domain import grouper
+
+    rgb = np.random.default_rng(7).integers(0, 256, (51, 89, 3), dtype=np.uint8)
+    raw = MagicMock()
+    raw.__enter__.return_value = raw
+    raw.sizes.flip = 6
+    if embedded:
+        raw.extract_thumb.return_value = SimpleNamespace(
+            format=grouper.rawpy.ThumbFormat.BITMAP, data=rgb
+        )
+    else:
+        raw.extract_thumb.side_effect = grouper.rawpy.LibRawNoThumbnailError()
+        raw.postprocess.return_value = rgb
+    monkeypatch.setattr(grouper.Image, "open", Mock(side_effect=OSError("RAW")))
+    monkeypatch.setattr(grouper.rawpy, "imread", Mock(return_value=raw))
+    monkeypatch.setattr(
+        grouper.ImageOps, "exif_transpose", Mock(side_effect=AssertionError("already oriented"))
+    )
+    assert Grouper._hash_file("array.dng") == imagehash.phash(Image.fromarray(rgb))
+    grouper.ImageOps.exif_transpose.assert_not_called()
+    if embedded:
+        raw.postprocess.assert_not_called()
+    else:
+        raw.postprocess.assert_called_once_with(
+            use_camera_wb=True, output_bps=8, half_size=True
+        )
+
+
+def test_orientation_cache_revision_crosses_real_sqlite_boundary(tmp_path):
+    from PIL import Image
+    from material_agent.adapters.state.processed_sqlite import SQLiteProcessedRepository
+
+    path, stored, displayed = _oriented_jpeg(tmp_path, 6)
+    canonical = tmp_path / "canonical.png"
+    displayed.save(canonical)
+    files = [str(path), str(canonical)]
+    times = dict.fromkeys(files, datetime(2024, 1, 1))
+    database = tmp_path / "state.db"
+    legacy = {files[0]: str(imagehash.phash(stored)), files[1]: str(imagehash.phash(displayed))}
+    assert imagehash.hex_to_hash(legacy[files[0]]) - imagehash.hex_to_hash(legacy[files[1]]) > 10
+    with SQLiteProcessedRepository(database) as state:
+        state.set_visual_hash_cache(legacy)
+        state.conn.execute(
+            "INSERT INTO processed (file_path, status, total_score) VALUES (?, ?, ?)",
+            (files[0], "done", 4.25),
+        )
+        state.conn.commit()
+        before = tuple(state.conn.execute("SELECT * FROM processed").fetchone())
+        assert Grouper(_cfg(True))._group_with_times(files, times, state) == [files]
+        cached = state.get_visual_hash_cache(files)
+        assert set(cached) == set(files)
+        assert all(value.startswith("phash-exif-v1:") for value in cached.values())
+        assert tuple(state.conn.execute("SELECT * FROM processed").fetchone()) == before
+    with SQLiteProcessedRepository(database) as reopened:
+        with patch.object(Grouper, "_hash_file", side_effect=AssertionError("cache must persist")):
+            assert Grouper(_cfg(True))._group_with_times(files, times, reopened) == [files]
+        assert reopened.get_visual_hash_cache(files) == cached
+        assert tuple(reopened.conn.execute("SELECT * FROM processed").fetchone()) == before
+    with Image.open(path) as unchanged:
+        assert unchanged.getexif()[274] == 6

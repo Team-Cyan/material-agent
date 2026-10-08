@@ -28,6 +28,7 @@ The retained CLI flag `--no-visual-merge` sets the new threshold to 0.
 - read `DateTimeOriginal` values with cache support
 - split at any adjacent time or enabled hash mismatch
 - cache successful 64-bit perceptual hashes for RAW previews and standard images
+  with a preprocessing revision
 - report progress for grouping phases
 
 ## Non-Goals
@@ -52,6 +53,12 @@ The retained CLI flag `--no-visual-merge` sets the new threshold to 0.
 
 - file order inside the grouping result must be stable and time-oriented
 - hash similarity never bypasses the time limit; embedding never bypasses either limit
+- standard images and embedded JPEG previews are hashed in their EXIF-displayed
+  orientation exactly once; BITMAP and LibRaw-postprocessed pixels are not blindly
+  rotated using outer RAW metadata
+- persisted visual hashes must match the current preprocessing revision; legacy
+  or invalid entries are cache misses, without changing processed-score caches
+  or the database schema
 - missing EXIF timestamps must not crash grouping
 - bulk EXIF reads must use bounded batches so large libraries do not exceed the
   operating-system command-line limit

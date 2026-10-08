@@ -1,14 +1,17 @@
 import io
 import json
 import logging
+import re
 import subprocess
 from datetime import datetime
 
 import imagehash
 import rawpy
-from PIL import Image
+from PIL import Image, ImageOps
 
 _EXIFTOOL_BATCH_SIZE = 256
+_VISUAL_HASH_PREFIX = "phash-exif-v1:"
+_VISUAL_HASH_PATTERN = re.compile(r"phash-exif-v1:([0-9a-f]{16})")
 _log = logging.getLogger("material_agent")
 
 
@@ -150,19 +153,18 @@ class Grouper:
         cache = {}
         if threshold > 0 and state is not None and hasattr(state, "get_visual_hash_cache"):
             for path, value in state.get_visual_hash_cache(ordered).items():
-                try:
-                    cached_hash = imagehash.hex_to_hash(value)
-                    if cached_hash.hash.size == 64:
-                        cache[path] = cached_hash
-                except ValueError, TypeError:
-                    pass
+                # Legacy hashes used stored pixels rather than EXIF display
+                # orientation. Treat unknown preprocessing revisions as misses.
+                match = _VISUAL_HASH_PATTERN.fullmatch(value) if isinstance(value, str) else None
+                if match:
+                    cache[path] = imagehash.hex_to_hash(match[1])
         new_entries = {}
 
         def get_hash(path):
             if path not in cache:
                 cache[path] = self._hash_file(path)
                 if cache[path] is not None:
-                    new_entries[path] = str(cache[path])
+                    new_entries[path] = _VISUAL_HASH_PREFIX + str(cache[path])
             return cache[path]
 
         groups = []
@@ -196,7 +198,7 @@ class Grouper:
         try:
             try:
                 with Image.open(file_path) as source:
-                    img = source.convert("RGB")
+                    img = ImageOps.exif_transpose(source).convert("RGB")
             except OSError, ValueError:
                 with rawpy.imread(file_path) as raw:
                     try:
@@ -211,7 +213,7 @@ class Grouper:
                     else:
                         if thumb.format == rawpy.ThumbFormat.JPEG:
                             with Image.open(io.BytesIO(thumb.data)) as source:
-                                img = source.convert("RGB")
+                                img = ImageOps.exif_transpose(source).convert("RGB")
                         else:
                             img = Image.fromarray(thumb.data)
             img.thumbnail((256, 256))

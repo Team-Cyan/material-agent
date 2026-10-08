@@ -596,3 +596,15 @@ confounding prevents a current-policy or causal grouping claim. Historical
 comparison is closed. Keep real-input/product utility, independent G1/G2 and
 optional resource admission gated; no further model, cohort or viewer task is
 selected without the required new evidence.
+
+### October 8 input-consistency continuation
+
+A bounded native-orientation input audit found no qualifying rotation among
+existing public RAW fixtures or 48 metadata requests; failed/missing values stay
+unknown. The related code trace reproduced an EXIF display-orientation mismatch
+in JPEG grouping hashes and [corrected it](2026-10-08-grouping-exif-orientation.md),
+with versioned visual hashes, unchanged score caches/schema, 1,499 full tests /
+ten skipped and independent review. Six normal-orientation public RAWs retain
+exact hash/source parity. This resolves one decoding defect; it does not satisfy
+real rotated RAW/portrait or human-reference/product-utility gates. Keep the
+bounded source probe closed; no model or threshold sweep is selected.

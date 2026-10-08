@@ -350,3 +350,17 @@ Nineteen configuration differences and unknown historical code prevent causal
 or current-policy claims. This bounded diagnostic is closed. Next retain the
 unmet real RAW/portrait utility, independent G1/G2 and optional MUSIQ resource
 gates; no repeated cohort run, model rotation or annotation UI work is selected.
+
+### October 8 orientation consistency correction
+
+The [orientation audit/fix](2026-10-08-grouping-exif-orientation.md) found a concrete
+JPEG input mismatch: scoring decoded EXIF display orientation, while grouping
+hashed stored pixels. Normalize both JPEG hash paths once, with a strict
+preprocessing revision for the existing visual-hash cache. The schema and
+processed-score cache remain unchanged. Independent review and 1,499 full tests /
+ten skipped pass; six existing public RAW hashes/source bytes retain exact parity.
+Real SQLite replacement/reopen reuse passes without changing an existing score
+row. No production run or history migration occurs; already-written resume groups
+remain untouched. Native rotated RAW evidence is still absent after a bounded
+48-request metadata probe; this corrects deterministic JPEG decoding and does
+not pass RAW-portrait, photographic utility, G1/G2 or MUSIQ resource gates.
