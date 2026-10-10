@@ -1,6 +1,14 @@
 # Culling improvement plan after the September 26 review
 
-Status: mainline evidence inventory and synthetic runner preparation verified
+Status: follow-up priorities reviewed October 10, 2026 against commit
+`493b04853c044916ab9c2ef300a6739eeab8da66` and the supplied
+`deep-research-report (3).md` (dated October 8). The current engineering queue
+below supersedes historical next-step statements on this page. This revision
+updates the plan only; none of the new engineering batches is implemented.
+The [current gate ledger](2026-09-16-plan-status.md#current-gate-ledger)
+owns status; this plan owns scope and acceptance.
+
+Historical preparation: mainline evidence inventory and synthetic runner preparation verified
 on September 29, 2026; controller finalization completed September 30 after an
 execution-session quota interruption. October 2 continues with evaluation-gate
 hardening and reviewed publication under the user's new push authorization;
@@ -18,7 +26,7 @@ revision changes the work priority, not the evidence required for algorithm
 admission. The frozen experiment baseline remains commit
 `175e87e6ea927e40e735717c1a1d3eeb3a1c6753`; no real-photo quality gain is claimed.
 
-October 6 current milestone: public-corpus, full-cohort, actual-input/native-shape
+October 6 milestone: public-corpus, full-cohort, actual-input/native-shape
 and shared-core diagnostics are complete. Shared-core resource admission failed;
 the static lifecycle review selected no further performance experiment. The
 confirmed finite-quality-evidence fix passed reviewed publication and native
@@ -29,10 +37,101 @@ output reuse; see the [results](benchmarks/2026-10-07-job-pinned-historical/READ
 Optional MUSIQ adapter admission and the directed human-reference track below
 remain separately gated.
 
-## Execution tracking
+## Current follow-up queue after the October 8 review
+
+The report's central distinction is accepted: production grouping remains adjacent
+time AND pHash; most added complexity is evaluation/provenance tooling. No new
+legacy release blocker was established by this scoped review. Its P0 items are
+future coverage admission conditions, not reasons to roll back the current app.
+Retain the EXIF hash revision, finite-quality validation, conditional score-cache
+revision and job-pinned historical diagnostics. When enabled and at least one
+eligible finite-scored candidate exists, `group_coverage_fallback` ensures a keeper
+per hard group, not preservation of every distinct readable content.
+
+The report is supporting analysis, not execution authorization. Its opaque external
+citations, model FPS/license claims and person-day estimates are not independently
+validated or adopted here. Model/runtime selection would require a fresh primary-source
+check. The current task changes docs only under the user's review/plan request.
+
+### Engineering batches that do not depend on G1
+
+Run these in order, one bounded review/verification/push at a time. G1 prevents
+real directed-coverage claims and promotion; it does not block these engineering
+tasks. A1 is the next implementation scope. Preserve the local default, CPU fallback
+and Intel runtime direction throughout.
+
+| Batch / owner | Deliverable and boundary | Acceptance / stop condition |
+| --- | --- | --- |
+| A1 — grouping domain | In `grouper.py`, its tests and grouping contract, add invocation-level aggregate diagnostics for observed cache reuse/rejection, computed hash success/missing, pair split reasons, group lengths and time spans. Keep the grouping result, `_hash_file` signature, cache API and progress callbacks unchanged; begin with a completion log, not a job DB/API schema. | Exact ordered-group, hash-call, cache-write and progress-event parity on threshold 0, missing time/hash, cold/warm/old cache, boundary equality, chaining and EXIF/fallback cases. No extra image read/hash or all-pairs work. Stop and rescope any behavior or persistence change. |
+| A2 — review-job preparation | Measure prepared payload bytes/live counts and process memory around prepare/prime/score in `review_photos.py` and the concrete runtime preparation seam. Freeze metric definitions before implementation; retain the current window cap of 32 and scheduling. | Include array `nbytes` and JPEG bytes with shared-buffer accounting; label estimated payload bytes separately from current RSS and process high-water RSS, with platform/units/sampling scope. Unavailable measurements stay unknown. Preserve bounded prepare, prime/score order, cancellation, resume and output parity; no new waits or model/image work just for telemetry. Measure overhead before proposing tuning. |
+| A3 — runtime finalization | Extract only cohesive helpers from `review_runtime.py::finalize_group` where this removes actual responsibility overlap: refinement, commentary and existing selection remain in their current order. Document future relation/selection and cache identity seams against the existing module boundaries. | Compare full payloads and writer projections for refinement enabled/disabled, commentary on/off, missing/nonfinite quality, ties, cached/resumed groups and cancellation/error propagation. Preserve mutation/aliasing expectations, `skip_write`, ranks and protected ratings. No strategy framework, graph/persistence integration or production mode switch. Use owning-module checks plus full suite for shared runtime changes. |
+| A4 — existing evaluator maintenance | Inventory actual duplicate validation, identity/resume and result-schema logic; extract only shared pure helpers with demonstrated reuse. Reuse current runners and keep versioned protocols explicit. | Historical runners, frozen source/protocol hashes and results remain reproducible; any changed runner gets an explicit new identity. Old records must not be silently reused under new semantics. Semantic decision/metric parity and interruption/resource-guard tests pass; timing/RSS need not be byte-identical. If no worthwhile duplication is found, close the audit without a new framework. |
+
+A1's minimum checks are `uv run pytest -q tests/test_grouper.py tests/test_pipeline.py`
+and `make check`, including the new parity cases. A2/A3 use the review-pipeline
+contract's `tests/test_review_job.py`, `tests/test_app_services.py` and
+`tests/test_runtime_state.py`; shared runtime changes also require `make test`.
+Select A4's exact runner-specific tests only after its ownership inventory. These
+are future batch checks, not checks performed by this planning-only update.
+
+For A1, the processed-state adapter filters absent cache entries and fingerprint
+mismatches; legacy rows without stored fingerprints remain readable. The grouper
+can observe only returned cache items and their validity. Do not call
+every rejected cache value a proven revision miss. Cache outcome, successful decode
+source and terminal failure are separate concepts: fallback can succeed after an
+earlier decoder failed. Detailed decoder categories require a separately reviewed
+internal evidence seam if they cannot be captured without changing this scope.
+Length/span telemetry describes chaining exposure, not a semantic false-merge
+rate or unmeasured endpoint hash distance. Leave the unused embedding constructor
+arguments intact; usage-audited deprecation is a later cleanup, not an A1 dependency.
+
+A3's future-mode design must preserve honest quality assessment for every photo;
+quality chooses among substitutes but never manufactures content coverage. Keep
+feature, ordered directional relation, candidate-set and selection identities
+separate as specified in Batch 5. Stable event/window identity is distinct from
+exact membership identity and must define insert/delete/split/merge semantics.
+Do not replace the legacy membership-derived `_group_id`. Incremental selection
+must match full affected-component recomputation, including reverse witnesses;
+do not promise a fixed-radius update before proving that bound. Design can proceed
+now; implementation of future-mode state/caches remains gated by Batch 5.
+
+### Parallel evidence track and deferred work
+
+G1 remains zero qualifying directed human-reference pairs/families in the audited
+inventory. FGAesthetics field definitions, applicable terms and source/scene lineage
+are a separate preference-source question. Preserve that preflight and unsent
+clarification draft; outreach requires explicit authorization, but neither outreach
+nor a reply is a prerequisite for A1–A4. Do not repeat source searches or acquire
+models merely to fill this gap. An aesthetic ranking cannot become a safe-discard
+witness without independent directed-coverage judgments.
+
+The scientific dependency remains **G1 → G2 human-labeled oracle diagnostic →
+the frozen Batch 3 representation comparison**. G2 must first distinguish candidate
+omissions, selector limits and relation errors. RGB/local residual is a bounded
+hypothesis in the existing gray/RGB matrix, not an accepted improvement. Escalate to
+another representation/matcher only when measured failure attribution supports it;
+retain the rejected SIFT/residual predicate and do not wire it into production.
+Freeze statistical and resource gates before evaluation. Keep Batch 4's 30–50
+events / 200–400 photos and Batch 6's at least 100 events / 1,000–3,000 photos;
+the review does not lower these existing acceptance scopes.
+
+Optional MUSIQ admission, further matcher/model sweeps and the annotation-viewer
+branch remain deferred/closed. Professional-app XMP round trips and recovery retain
+their independent acceptance track. None of these engineering checks establishes
+photographic gain, current deployment health or permission to rescore/write photos.
+
+Each dispatch records owned files, base commit, acceptance command, evidence paths
+and the next safe step in an ignored atomic checkpoint before substantive work.
+Keep design/integration with the controller, use one owner for a shared code seam,
+and save partial results before quota exhaustion. Review the diff and verify the
+bounded batch before committing/pushing under the existing user authorization;
+publication, deployment and target acceptance remain separately reported.
+
+## Evidence tracking
 
 | Work | Status | Next action or acceptance boundary |
 | --- | --- | --- |
+| A1–A4 engineering follow-up | Planned October 10; not implemented | Start A1 above; no independent-reference prerequisite |
 | Existing evidence inventory and experiment protocol | Completed locally | [Inventory](benchmarks/2026-09-29-representation-control/inventory.md), [protocol and checks](benchmarks/2026-09-29-representation-control/report.md); 4 synthetic cases / 16 arm cells, no real-photo quality result |
 | Reference tooling and offline viewer | Closed supporting work | Preserve [tooling results](benchmarks/2026-09-27-reference-tooling/report.md) and [handler checks](benchmarks/2026-09-27-reference-tooling/2026-09-28-viewer-contract-report.md); no further UI task |
 | Constructed candidate/selection graphs | Structural portion accepted locally | [14-snapshot report](benchmarks/2026-09-27-reference-tooling/candidate-graph/report.md); reuse the evaluator, do not repeat completed graph experiments |
@@ -41,6 +140,11 @@ remain separately gated.
 | Batch 3 representation comparison | Synthetic runner prepared; real labeled evaluation pending G1/G2 | Fixed 512/1024 geometry x gray/RGB-local matrix with residual512; bind a frozen real-data manifest only after evidence readiness; no threshold/model sweep |
 | Batches 4–6 | Conditional | Escalation, integration and target acceptance retain their gates |
 | Public quality/copy and Intel feasibility diagnostics | Bounded steps complete | [Full Intel MUSIQ cohort](benchmarks/2026-10-04-musiq-intel-full/README.md), [native-shape diagnostic](benchmarks/2026-10-04-musiq-native-shapes/README.md), [lifecycle review](2026-10-06-static-lifecycle-quality-validity.md); optional adapter deferred, no resource experiment selected or policy promotion |
+
+### Historical execution notes
+
+The dated entries below retain their original evidence and then-current scope;
+use the current queue above for dispatch decisions.
 
 ### September 29 controller acceptance
 
@@ -448,6 +552,9 @@ substitute more UI work, proxy labels or repeated historical tuning for it.
 
 ### Next substantive step and dispatch boundary
 
+Historical October 2–8 sequence; current priorities are in the
+[October 10 queue](#current-follow-up-queue-after-the-october-8-review).
+
 October 2 public-benchmark search, explicitly requested by the user, found
 standard targets and published results; see the
 [source review](2026-10-02-public-benchmark-search.md). The user's subsequent
@@ -637,8 +744,8 @@ Dataset-specific terms and per-item still/video, capture and scene-family lineag
 were not found in the examined pinned release. Website-template licensing cannot
 fill that source-permission requirement. Metadata access is closed as verified.
 
-The next bounded input step is published field-definition, source-term and
-lineage evidence. Once established, freeze a separate existing-scorer preference
+This parallel source track still needs published field-definition, source-term and
+lineage evidence; it is not a dependency of A1–A4. Once established, freeze a separate existing-scorer preference
 diagnostic on actual official partitions before acquiring inputs/predicting.
 Do not infer score direction, silently deduplicate or tune on exposed test labels.
 No new scorer/model sweep is selected. Aesthetic labels do not fill G1's zero

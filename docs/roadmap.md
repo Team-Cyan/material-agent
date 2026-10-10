@@ -252,6 +252,28 @@
 
 ## Next
 
+- follow the [October 10 engineering queue](operations/2026-09-26-culling-improvement-plan.md#current-follow-up-queue-after-the-october-8-review),
+  checked against the new review's exact base `493b048`. These batches are planned,
+  not implemented: A1 grouping/hash/cache/chaining diagnostics with exact legacy
+  behavior parity; A2 prepared-byte/live-count/RSS measurement before prefetch
+  tuning; A3 equivalent finalization helper extraction and future contract design;
+  A4 only justified shared evaluator helpers with historical reproducibility.
+  Complete one bounded review/check/push before the next. None depends on G1
+- keep the [current gate ledger](operations/2026-09-16-plan-status.md#current-gate-ledger)
+  as the status entrypoint. Preserve G1 → G2 human-labeled oracle → frozen
+  representation comparison; cache/event identity and direct-final-keeper witness
+  design do not authorize a new production mode. Retain current acceptance sample
+  sizes and unknown/unique-content protections
+- retain independent-reference acquisition as a parallel evidence track. The
+  [FGAesthetics preflight](operations/benchmarks/2026-10-08-reference-source-preflight/README.md)
+  needs published field definitions, applicable terms and source/scene lineage
+  before image acquisition or an existing-scorer preference diagnostic. Aesthetic
+  targets cannot fill G1's directed coverage quotas. Author outreach remains unsent
+  without explicit authorization and does not block A1–A4. Do not reopen the
+  annotation viewer or change the admin WebUI
+
+## Conditional research follow-up
+
 - retain optional MUSIQ adapter deferral after the
   [completed static lifecycle review](operations/2026-10-06-static-lifecycle-quality-validity.md).
   No new resource experiment is selected; require a credible bounded ownership
@@ -278,16 +300,12 @@
   training-exposed. Query-conditioned
   AlbumBench prediction remains unsupported and image access is unresolved
 
-- resolve independent culling reference inputs using the new
-  [release preflight](operations/benchmarks/2026-10-08-reference-source-preflight/README.md):
-  establish field definitions, applicable terms and source/scene crosswalk before
-  image acquisition or an existing-scorer preference diagnostic. The
+- the
   [evidence inventory and synthetic protocol](operations/benchmarks/2026-09-29-representation-control/report.md)
   is complete. Shared-geometry checks and resume are verified; G1/G2 and real-data binding
   remain required before directed coverage acceptance. Native MOS/copy diagnostics
-  have their own targets and do not pass these gates. Follow the
-  [continuation plan](operations/2026-09-26-culling-improvement-plan.md#next-substantive-step-and-dispatch-boundary);
-  do not reopen the closed annotation-viewer branch or change the admin WebUI
+  have their own targets and do not pass these gates. These conditional experiments
+  follow the [existing scientific gates](operations/2026-09-26-culling-improvement-plan.md#delivery-order-and-gates)
 
 ## Later
 

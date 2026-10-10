@@ -1,8 +1,30 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 8, 2026. The dated filename is
+Single status entrypoint, updated October 10, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
+
+## Current gate ledger
+
+The October 8 review (`deep-research-report (3).md`) was checked against its exact
+base `493b04853c044916ab9c2ef300a6739eeab8da66`. This update changes planning only.
+The [current follow-up queue](2026-09-26-culling-improvement-plan.md#current-follow-up-queue-after-the-october-8-review)
+owns batch scope and acceptance; older dated next-step statements below are history.
+
+| Area | Current evidence / status | Next action or gate |
+| --- | --- | --- |
+| Legacy grouping and quality | Adjacent time AND pHash, chaining allowed; EXIF hash and finite-quality/cache fixes retained. Scoped review established no new release blocker. | A1: behavior-preserving aggregate hash/cache/split and group length/span diagnostics. No semantic coverage claim. |
+| Preparation memory | Prefetch is bounded by count (cap 32); payload/RSS telemetry is not implemented. | A2: define and measure bytes/live counts/current versus high-water RSS before tuning; preserve scheduling and cancellation. |
+| Runtime responsibilities | Finalization still sequences refinement, commentary, then existing group selection. | A3: bounded equivalent helper extraction and future contract design; no new production selector/cache implementation. |
+| Evaluation tooling | Existing protocols, resume and provenance checks are valuable; further runner proliferation is not selected. | A4: audit duplication and extract only justified pure shared helpers with explicit identities and historical reproducibility. |
+| G1 independent directed references | Zero qualifying pairs/families in the [audited inventory](benchmarks/2026-09-29-representation-control/inventory.md); minimum 24 pairs / 12 families plus split/category quotas unmet. | Independent human judgments and provenance audit; does not block A1–A4. |
+| G2 oracle / Batch 3 representation | G2 pending G1; [synthetic preparation](benchmarks/2026-09-29-representation-control/report.md) completed, no real-data accuracy result. | G1 → labeled oracle diagnostic → frozen gray/RGB-local comparison; no threshold/model sweep. |
+| Future coverage mode | Direct final-keeper witnesses and unknown preservation are required; rejected SIFT/residual evidence is not admissible. | Preserve G3–G6, separate directional/cache/event identities and full-recomputation parity; no production promotion. |
+| FGAesthetics preference source | [Label-only preflight](benchmarks/2026-10-08-reference-source-preflight/README.md) complete; fields, terms and lineage unresolved. Aesthetic labels do not pass G1. | Parallel/deferred clarification; unsent outreach needs explicit authorization and does not block engineering. |
+| Public models / native input diagnostics | Frozen quality/copy cohorts complete; MUSIQ shared-core resource gate failed. [Two native DNGs](benchmarks/2026-10-08-native-raw-orientation/README.md) pass bounded orientation conformance, not general model-input acceptance. | Retain negative results and optional adapter deferral; no repeat cohort or new model selected. |
+| External acceptance | Real photographic utility, professional-app XMP round trips and recovery are separate gates. | Follow the [external protocol](2026-09-17-external-acceptance-plan.md) in isolated authorized scope. No live deployment check or photo/XMP operation in this plan review. |
+
+## Historical execution record
 
 September 28 mainline correction: the user directed work back to culling
 algorithm improvement. The [updated plan](2026-09-26-culling-improvement-plan.md)
