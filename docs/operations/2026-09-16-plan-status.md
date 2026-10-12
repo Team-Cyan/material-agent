@@ -1,20 +1,21 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 10, 2026. The dated filename is
+Single status entrypoint, updated October 12, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
 ## Current gate ledger
 
 The October 8 review (`deep-research-report (3).md`) was checked against its exact
-base `493b04853c044916ab9c2ef300a6739eeab8da66`. This update changes planning only.
+base `493b04853c044916ab9c2ef300a6739eeab8da66`. The October 12 continuation
+implements the engineering queue with executor self-review followed by controller review.
 The [current follow-up queue](2026-09-26-culling-improvement-plan.md#current-follow-up-queue-after-the-october-8-review)
 owns batch scope and acceptance; older dated next-step statements below are history.
 
 | Area | Current evidence / status | Next action or gate |
 | --- | --- | --- |
-| Legacy grouping and quality | Adjacent time AND pHash, chaining allowed; EXIF hash and finite-quality/cache fixes retained. Scoped review established no new release blocker. | A1: behavior-preserving aggregate hash/cache/split and group length/span diagnostics. No semantic coverage claim. |
-| Preparation memory | Prefetch is bounded by count (cap 32); payload/RSS telemetry is not implemented. | A2: define and measure bytes/live counts/current versus high-water RSS before tuning; preserve scheduling and cancellation. |
+| Legacy grouping and quality | Adjacent time AND pHash, chaining allowed; EXIF hash and finite-quality/cache fixes retained. Scoped review established no new release blocker. | A1 implemented: 93 focused checks, lint and 500 controller baseline-parity cases pass. Aggregate completion logs only; no semantic coverage claim. |
+| Preparation memory | Prefetch is bounded by count (cap 32); payload/RSS telemetry is not implemented. | Next A2: define and measure bytes/live counts/current versus high-water RSS before tuning; preserve scheduling and cancellation. |
 | Runtime responsibilities | Finalization still sequences refinement, commentary, then existing group selection. | A3: bounded equivalent helper extraction and future contract design; no new production selector/cache implementation. |
 | Evaluation tooling | Existing protocols, resume and provenance checks are valuable; further runner proliferation is not selected. | A4: audit duplication and extract only justified pure shared helpers with explicit identities and historical reproducibility. |
 | G1 independent directed references | Zero qualifying pairs/families in the [audited inventory](benchmarks/2026-09-29-representation-control/inventory.md); minimum 24 pairs / 12 families plus split/category quotas unmet. | Independent human judgments and provenance audit; does not block A1–A4. |

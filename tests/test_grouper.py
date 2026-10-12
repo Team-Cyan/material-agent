@@ -243,31 +243,48 @@ def test_time_and_hash_contract(threshold, seconds, hashes, expected):
         hashing.assert_not_called()
 
 
-def test_hash_cache_covers_within_time_group_and_reuses_results():
+def test_hash_cache_covers_within_time_group_and_reuses_results(caplog):
+    import logging
+    from unittest.mock import Mock, call
+
+    caplog.set_level(logging.INFO, logger="material_agent")
     files = ["/a.arw", "/b.arw"]
     times = dict.fromkeys(files, datetime(2024, 1, 1))
 
     class State:
         cache = {}
+        writes = []
 
         def get_visual_hash_cache(self, paths):
             return self.cache
 
         def set_visual_hash_cache(self, entries):
+            self.writes.append(entries.copy())
             self.cache.update(entries)
 
     state = State()
+    progress = Mock()
     with (
         patch("material_agent.core.grouper.read_exif_datetimes", return_value=times),
         patch.object(
             Grouper, "_hash_file", return_value=imagehash.hex_to_hash("0" * 16)
         ) as hashing,
     ):
-        assert Grouper(_cfg(True)).group(files, state) == [files]
+        assert Grouper(_cfg(True)).group(files, state, progress) == [files]
         assert hashing.call_count == 2
+        assert hashing.call_args_list == [call(path) for path in files]
         assert state.cache == dict.fromkeys(files, "phash-exif-v1:" + "0" * 16)
-        assert Grouper(_cfg(True)).group(files, state) == [files]
+        assert Grouper(_cfg(True)).group(files, state, progress) == [files]
         assert hashing.call_count == 2
+    assert progress.mock_calls == (
+        [call.on_phase_start("time/hash grouping", 2)] + [call.on_phase_advance()] * 2
+    ) * 2
+    assert state.writes == [dict.fromkeys(files, "phash-exif-v1:" + "0" * 16)]
+    cold, warm = [record.grouping_diagnostics for record in caplog.records]
+    assert cold["hash_computed_success"] == 2
+    assert cold["cache_returned_accepted"] == cold["cache_reused"] == 0
+    assert warm["hash_computed_success"] == 0
+    assert warm["cache_returned_accepted"] == warm["cache_reused"] == 2
 
 
 def test_zero_threshold_never_accesses_hash_cache():
@@ -299,11 +316,13 @@ def test_standard_image_hash_reads_existing_fixture_without_raw_decode():
 
 
 @pytest.mark.parametrize("error_name", ["LibRawNoThumbnailError", "LibRawUnsupportedThumbnailError"])
-def test_raw_hash_falls_back_to_half_size_decode_and_caches(monkeypatch, error_name):
-    from unittest.mock import MagicMock, Mock
+def test_raw_hash_falls_back_to_half_size_decode_and_caches(monkeypatch, error_name, caplog):
+    import logging
+    from unittest.mock import MagicMock, Mock, call
     import numpy as np
     from material_agent.domain import grouper
 
+    caplog.set_level(logging.INFO, logger="material_agent")
     raw = MagicMock()
     raw.__enter__.return_value = raw
     raw.extract_thumb.side_effect = getattr(grouper.rawpy, error_name)()
@@ -317,13 +336,26 @@ def test_raw_hash_falls_back_to_half_size_decode_and_caches(monkeypatch, error_n
     cache = {}
     state.get_visual_hash_cache.side_effect = lambda _: cache.copy()
     state.set_visual_hash_cache.side_effect = cache.update
+    progress = Mock()
     instance = grouper.Grouper({"time_gap_seconds": 30, "hash_threshold": 10})
-    assert instance._group_with_times(files, times, state=state) == [files]
+    assert instance._group_with_times(files, times, state=state, progress=progress) == [files]
     assert len(cache) == 2
     assert raw.postprocess.call_count == 2
     raw.postprocess.assert_called_with(use_camera_wb=True, output_bps=8, half_size=True)
-    assert instance._group_with_times(files, times, state=state) == [files]
+    assert instance._group_with_times(files, times, state=state, progress=progress) == [files]
     assert raw.postprocess.call_count == 2
+    assert raw.extract_thumb.call_count == 2
+    assert grouper.Image.open.call_count == grouper.rawpy.imread.call_count == 2
+    state.set_visual_hash_cache.assert_called_once_with(cache)
+    assert state.get_visual_hash_cache.call_args_list == [call(files), call(files)]
+    assert progress.mock_calls == (
+        [call.on_phase_start("time/hash grouping", 2)] + [call.on_phase_advance()] * 2
+    ) * 2
+    cold, warm = [record.grouping_diagnostics for record in caplog.records]
+    assert cold["hash_computed_success"] == 2
+    assert cold["hash_computed_missing"] == 0  # Earlier thumbnail failure is not terminal.
+    assert warm["hash_computed_success"] == warm["hash_computed_missing"] == 0
+    assert warm["cache_reused"] == 2
 
 
 def test_raw_hash_decode_failure_remains_missing(monkeypatch):
@@ -436,13 +468,24 @@ def test_jpeg_hash_uses_display_orientation_once(tmp_path, monkeypatch, orientat
 
 
 @pytest.mark.parametrize("orientation", range(1, 9))
-def test_display_equivalent_jpeg_and_png_group_at_existing_threshold(tmp_path, orientation):
+def test_display_equivalent_jpeg_and_png_group_at_existing_threshold(tmp_path, orientation, caplog):
+    import logging
+    from unittest.mock import Mock, call
+
+    caplog.set_level(logging.INFO, logger="material_agent")
     path, _, displayed = _oriented_jpeg(tmp_path, orientation)
     canonical = tmp_path / "canonical.png"
     displayed.save(canonical)
     files = [str(path), str(canonical)]
     times = dict.fromkeys(files, datetime(2024, 1, 1))
-    assert Grouper(_cfg(True))._group_with_times(files, times) == [files]
+    progress = Mock()
+    with patch.object(Grouper, "_hash_file", wraps=Grouper._hash_file) as hashing:
+        assert Grouper(_cfg(True))._group_with_times(files, times, progress=progress) == [files]
+    assert hashing.call_args_list == [call(path) for path in files]
+    assert progress.mock_calls == [call.on_phase_start("time/hash grouping", 2)] + [
+        call.on_phase_advance()
+    ] * 2
+    assert caplog.records[-1].grouping_diagnostics["hash_computed_success"] == 2
 
 
 @pytest.mark.parametrize(
@@ -458,8 +501,11 @@ def test_display_equivalent_jpeg_and_png_group_at_existing_threshold(tmp_path, o
         123,
     ],
 )
-def test_stale_or_malformed_hash_cache_recomputes(cached):
-    from unittest.mock import Mock
+def test_stale_or_malformed_hash_cache_recomputes(cached, caplog):
+    import logging
+    from unittest.mock import Mock, call
+
+    caplog.set_level(logging.INFO, logger="material_agent")
 
     files = ["a", "b"]
     times = dict.fromkeys(files, datetime(2024, 1, 1))
@@ -470,9 +516,14 @@ def test_stale_or_malformed_hash_cache_recomputes(cached):
     ) as hashing:
         assert Grouper(_cfg(True))._group_with_times(files, times, state) == [files]
     assert hashing.call_count == 2
+    assert hashing.call_args_list == [call(path) for path in files]
     state.set_visual_hash_cache.assert_called_once_with(
         dict.fromkeys(files, "phash-exif-v1:" + "0" * 16)
     )
+    diagnostic = caplog.records[-1].grouping_diagnostics
+    assert diagnostic["cache_returned_rejected"] == 2
+    assert diagnostic["cache_returned_accepted"] == diagnostic["cache_reused"] == 0
+    assert diagnostic["hash_computed_success"] == 2
 
 
 def test_failed_hash_retries_without_persisting_missing():
@@ -557,3 +608,201 @@ def test_orientation_cache_revision_crosses_real_sqlite_boundary(tmp_path):
         assert tuple(reopened.conn.execute("SELECT * FROM processed").fetchone()) == before
     with Image.open(path) as unchanged:
         assert unchanged.getexif()[274] == 6
+
+
+@pytest.mark.parametrize("capture_log", [False, True], ids=["logging-off", "logging-on"])
+@pytest.mark.parametrize(
+    "threshold,seconds,bits,expected,hashes_by_step,splits",
+    [
+        (0, [0, 10, 20], [0, 64, 0], [[0, 1, 2]], [[], [], []], {}),
+        (8, [0, 10, 20], [0, 8, 16], [[0, 1, 2]], [[], [0, 1], [2]], {}),
+        (8, [0, 10, 21], [0, 0, 0], [[0, 1], [2]], [[], [0, 1], []],
+         {"split_time_gap": 1}),
+        (8, [0, 2, 4], [0, None, 0], [[0], [1], [2]], [[], [0, 1], [2]],
+         {"split_missing_hash": 2}),
+        (8, [0, 2, 4], [0, 8, 17], [[0, 1], [2]], [[], [0, 1], [2]],
+         {"split_hash_distance": 1}),
+        (8, [0, None, None], [0, 0, 0], [[0], [2], [1]], [[], [], []],
+         {"split_missing_time": 2}),
+        (8, [None], [0], [[0]], [[]], {}),
+        (8, [None, None], [0, 0], [[1], [0]], [[], []], {"split_missing_time": 1}),
+    ],
+)
+def test_completion_diagnostics_preserve_order_and_side_effect_sequence(
+    caplog, capture_log, threshold, seconds, bits, expected, hashes_by_step, splits
+):
+    import logging
+    from datetime import timedelta
+
+    caplog.set_level(logging.INFO if capture_log else logging.WARNING, logger="material_agent")
+    ordered = [f"{i}.arw" for i in range(len(seconds))]
+    times = {
+        path: None if second is None else datetime(2024, 1, 1) + timedelta(seconds=second)
+        for path, second in zip(ordered, seconds, strict=True)
+    }
+    values = {
+        path: None if bit is None else imagehash.hex_to_hash(f"{(1 << bit) - 1:016x}")
+        for path, bit in zip(ordered, bits, strict=True)
+    }
+    events = []
+
+    class State:
+        def get_visual_hash_cache(self, paths):
+            events.append(("cache_read", paths.copy()))
+            return {}
+
+        def set_visual_hash_cache(self, entries):
+            events.append(("cache_write", entries.copy()))
+
+    class Progress:
+        def on_phase_start(self, phase, count):
+            events.append(("start", phase, count))
+
+        def on_phase_advance(self):
+            events.append(("advance",))
+
+    def hash_file(path):
+        events.append(("hash", path))
+        return values[path]
+
+    with patch.object(Grouper, "_hash_file", side_effect=hash_file):
+        groups = Grouper({"time_gap_seconds": 10, "hash_threshold": threshold})._group_with_times(
+            list(reversed(ordered)), times, State(), Progress()
+        )
+    # Stable input order is retained among missing timestamps.
+    assert groups == [[ordered[i] for i in group] for group in expected]
+    expected_events = [("cache_read", [path for group in groups for path in group])] if threshold else []
+    expected_events.append(("start", "time/hash grouping", len(ordered)))
+    for step in hashes_by_step:
+        expected_events.extend(("hash", ordered[i]) for i in step)
+        expected_events.append(("advance",))
+    computed = [ordered[i] for step in hashes_by_step for i in step]
+    writes = {path: "phash-exif-v1:" + str(values[path]) for path in computed if values[path] is not None}
+    if writes:
+        expected_events.append(("cache_write", writes))
+    assert events == expected_events
+    records = [record for record in caplog.records if hasattr(record, "grouping_diagnostics")]
+    assert len(records) == int(capture_log)
+    if capture_log:
+        diagnostic = records[0].grouping_diagnostics
+        assert diagnostic["hash_computed_success"] == len(writes)
+        assert diagnostic["hash_computed_missing"] == len(computed) - len(writes)
+        assert diagnostic["cache_returned_accepted"] == diagnostic["cache_returned_rejected"] == 0
+        assert diagnostic["cache_reused"] == 0
+        assert diagnostic["pairs_merged"] == len(ordered) - len(groups)
+        for reason in ("missing_time", "time_gap", "missing_hash", "hash_distance"):
+            assert diagnostic[f"split_{reason}"] == splits.get(f"split_{reason}", 0)
+        assert sum(diagnostic[f"split_{reason}"] for reason in (
+            "missing_time", "time_gap", "missing_hash", "hash_distance"
+        )) == len(groups) - 1
+        assert diagnostic["groups"] == len(groups)
+        assert diagnostic["files"] == len(ordered)
+        lengths = {}
+        for group in groups:
+            lengths[len(group)] = lengths.get(len(group), 0) + 1
+        assert diagnostic["group_length_counts"] == lengths
+        known_spans = [
+            (times[group[-1]] - times[group[0]]).total_seconds()
+            for group in groups if times[group[0]] is not None and times[group[-1]] is not None
+        ]
+        assert diagnostic["group_span_known"] == len(known_spans)
+        assert diagnostic["group_span_unknown"] == len(groups) - len(known_spans)
+        assert diagnostic["group_span_seconds_min"] == (min(known_spans) if known_spans else None)
+        assert diagnostic["group_span_seconds_max"] == (max(known_spans) if known_spans else None)
+        assert diagnostic["group_span_seconds_total"] == sum(known_spans)
+
+
+def test_empty_group_completion_has_no_cache_hash_exif_or_progress_work(caplog):
+    import logging
+    from unittest.mock import Mock
+    from material_agent.domain.grouper import Grouper as DomainGrouper
+
+    caplog.set_level(logging.INFO, logger="material_agent")
+
+    state, progress = Mock(), Mock()
+    with (
+        patch("material_agent.domain.grouper.read_exif_datetimes") as exif,
+        patch.object(DomainGrouper, "_hash_file") as hashing,
+    ):
+        assert DomainGrouper({}).group([], state, progress) == []
+    assert not state.mock_calls and not progress.mock_calls
+    exif.assert_not_called()
+    hashing.assert_not_called()
+    diagnostic = caplog.records[-1].grouping_diagnostics
+    assert diagnostic["groups"] == diagnostic["files"] == 0
+    assert diagnostic["group_length_counts"] == {}
+    assert diagnostic["group_span_seconds_min"] is None
+    assert diagnostic["group_span_seconds_max"] is None
+
+
+def test_cache_completion_counts_returned_values_and_actual_reuse(caplog):
+    import logging
+    from unittest.mock import Mock, call
+
+    caplog.set_level(logging.INFO, logger="material_agent")
+    files = ["a", "b", "c", "d"]
+    times = dict.fromkeys(files, datetime(2024, 1, 1))
+    valid = "phash-exif-v1:" + "0" * 16
+    state, progress = Mock(), Mock()
+    # A missing adapter entry is not an observed rejection; old/malformed returned values are.
+    state.get_visual_hash_cache.return_value = {"a": "0" * 16, "b": valid, "c": None}
+    with patch.object(Grouper, "_hash_file", return_value=imagehash.hex_to_hash("0" * 16)) as hashing:
+        assert Grouper(_cfg(True))._group_with_times(files, times, state, progress) == [files]
+    assert hashing.call_args_list == [call("a"), call("c"), call("d")]
+    state.get_visual_hash_cache.assert_called_once_with(files)
+    state.set_visual_hash_cache.assert_called_once_with({path: valid for path in ("a", "c", "d")})
+    assert progress.mock_calls == [call.on_phase_start("time/hash grouping", 4)] + [
+        call.on_phase_advance()
+    ] * 4
+    diagnostic = caplog.records[-1].grouping_diagnostics
+    assert diagnostic["cache_returned_accepted"] == 1
+    assert diagnostic["cache_returned_rejected"] == 2
+    assert diagnostic["cache_reused"] == 2  # b is the right then left neighbor.
+    assert diagnostic["hash_computed_success"] == 3
+    assert diagnostic["hash_computed_missing"] == 0
+    assert diagnostic["pairs_merged"] == 3
+
+
+def test_accepted_cache_entry_not_used_after_time_split(caplog):
+    import logging
+    from datetime import timedelta
+    from unittest.mock import Mock
+
+    caplog.set_level(logging.INFO, logger="material_agent")
+    files = ["a", "b"]
+    times = {"a": datetime(2024, 1, 1), "b": datetime(2024, 1, 1) + timedelta(seconds=31)}
+    state = Mock()
+    state.get_visual_hash_cache.return_value = dict.fromkeys(files, "phash-exif-v1:" + "0" * 16)
+    with patch.object(Grouper, "_hash_file", side_effect=AssertionError("no hash on time split")):
+        assert Grouper(_cfg(True))._group_with_times(files, times, state) == [["a"], ["b"]]
+    state.set_visual_hash_cache.assert_not_called()
+    diagnostic = caplog.records[-1].grouping_diagnostics
+    assert diagnostic["cache_returned_accepted"] == 2
+    assert diagnostic["cache_reused"] == 0
+    assert diagnostic["split_time_gap"] == 1
+    assert diagnostic["hash_computed_success"] == diagnostic["hash_computed_missing"] == 0
+
+
+@pytest.mark.parametrize("failure", ["progress", "cache_write"])
+def test_grouping_failure_propagates_without_completion_log(caplog, failure):
+    import logging
+    from unittest.mock import Mock, call
+
+    caplog.set_level(logging.INFO, logger="material_agent")
+    files = ["a", "b"]
+    times = dict.fromkeys(files, datetime(2024, 1, 1))
+    state, progress = Mock(), Mock()
+    state.get_visual_hash_cache.return_value = {}
+    if failure == "progress":
+        progress.on_phase_advance.side_effect = RuntimeError("progress failed")
+    else:
+        state.set_visual_hash_cache.side_effect = RuntimeError("cache_write failed")
+    with (
+        patch.object(Grouper, "_hash_file", return_value=imagehash.hex_to_hash("0" * 16)) as hashing,
+        pytest.raises(RuntimeError, match=f"{failure} failed"),
+    ):
+        Grouper(_cfg(True))._group_with_times(files, times, state, progress)
+    assert hashing.call_args_list == ([] if failure == "progress" else [call(path) for path in files])
+    if failure == "progress":
+        state.set_visual_hash_cache.assert_not_called()
+    assert not [record for record in caplog.records if hasattr(record, "grouping_diagnostics")]

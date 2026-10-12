@@ -15,6 +15,44 @@ _VISUAL_HASH_PATTERN = re.compile(r"phash-exif-v1:([0-9a-f]{16})")
 _log = logging.getLogger("material_agent")
 
 
+def _log_grouping_completion(groups, times, observations):
+    lengths = {}
+    span_count = 0
+    span_min = span_max = None
+    span_total = 0
+    for group in groups:
+        lengths[len(group)] = lengths.get(len(group), 0) + 1
+        first, last = times.get(group[0]), times.get(group[-1])
+        if first is not None and last is not None:
+            span = (last - first).total_seconds()
+            span_count += 1
+            span_min = span if span_min is None else min(span_min, span)
+            span_max = span if span_max is None else max(span_max, span)
+            span_total += span
+    diagnostics = {
+        "cache_returned_accepted": 0,
+        "cache_returned_rejected": 0,
+        "cache_reused": 0,
+        "hash_computed_success": 0,
+        "hash_computed_missing": 0,
+        "pairs_merged": 0,
+        "split_missing_time": 0,
+        "split_time_gap": 0,
+        "split_missing_hash": 0,
+        "split_hash_distance": 0,
+        **observations,
+        "files": sum(length * count for length, count in lengths.items()),
+        "groups": len(groups),
+        "group_length_counts": lengths,
+        "group_span_known": span_count,
+        "group_span_unknown": len(groups) - span_count,
+        "group_span_seconds_min": span_min,
+        "group_span_seconds_max": span_max,
+        "group_span_seconds_total": span_total,
+    }
+    _log.info("Grouping complete: %s", diagnostics, extra={"grouping_diagnostics": diagnostics})
+
+
 def read_exif_datetimes(files: list[str], state=None, progress=None) -> dict[str, datetime | None]:
     if not files:
         return {}
@@ -138,6 +176,7 @@ class Grouper:
 
     def group(self, files: list[str], state=None, progress=None) -> list[list[str]]:
         if not files:
+            _log_grouping_completion([], {}, {})
             return []
         times = read_exif_datetimes(files, state=state, progress=progress)
         return self._group_with_times(files, times, state=state, progress=progress)
@@ -151,6 +190,12 @@ class Grouper:
         )
         ordered = sorted(files, key=lambda f: (times.get(f) is None, times.get(f)))
         cache = {}
+        returned_cache_paths = set()
+        observations = {}
+
+        def observe(key):
+            observations[key] = observations.get(key, 0) + 1
+
         if threshold > 0 and state is not None and hasattr(state, "get_visual_hash_cache"):
             for path, value in state.get_visual_hash_cache(ordered).items():
                 # Legacy hashes used stored pixels rather than EXIF display
@@ -158,6 +203,10 @@ class Grouper:
                 match = _VISUAL_HASH_PATTERN.fullmatch(value) if isinstance(value, str) else None
                 if match:
                     cache[path] = imagehash.hex_to_hash(match[1])
+                    returned_cache_paths.add(path)
+                    observe("cache_returned_accepted")
+                else:
+                    observe("cache_returned_rejected")
         new_entries = {}
 
         def get_hash(path):
@@ -165,6 +214,12 @@ class Grouper:
                 cache[path] = self._hash_file(path)
                 if cache[path] is not None:
                     new_entries[path] = _VISUAL_HASH_PREFIX + str(cache[path])
+                    observe("hash_computed_success")
+                else:
+                    observe("hash_computed_missing")
+            elif path in returned_cache_paths:
+                # Count accesses served by returned cache values, not local computations.
+                observe("cache_reused")
             return cache[path]
 
         groups = []
@@ -182,7 +237,20 @@ class Grouper:
             if matches and threshold > 0:
                 left, right = get_hash(previous), get_hash(path)
                 matches = left is not None and right is not None and left - right <= threshold
+                if not matches:
+                    observe(
+                        "split_missing_hash"
+                        if left is None or right is None
+                        else "split_hash_distance"
+                    )
+            elif previous is not None and not matches:
+                observe(
+                    "split_missing_time"
+                    if before is None or current is None
+                    else "split_time_gap"
+                )
             if matches:
+                observe("pairs_merged")
                 groups[-1].append(path)
             else:
                 groups.append([path])
@@ -191,6 +259,7 @@ class Grouper:
                 progress.on_phase_advance()
         if new_entries and state is not None and hasattr(state, "set_visual_hash_cache"):
             state.set_visual_hash_cache(new_entries)
+        _log_grouping_completion(groups, times, observations)
         return groups
 
     @staticmethod

@@ -48,6 +48,39 @@ The retained CLI flag `--no-visual-merge` sets the new threshold to 0.
 ## Outputs
 
 - ordered `list[list[str]]` groups for downstream review ranking
+- one INFO completion log from the domain grouper, with aggregate values also
+  attached as the `grouping_diagnostics` log-record field; no job/API/DB schema
+  or progress callback changes. The legacy `core.grouper` wrapper retains its
+  early return for empty input, so that wrapper emits no empty completion log.
+
+## Completion Diagnostics
+
+- `cache_returned_accepted/rejected` count returned values accepted by the current
+  hash format or rejected by format validation. The adapter filters missing rows
+  and fingerprint mismatches before returning values, while legacy null stored
+  fingerprints remain readable. Rejection therefore does not identify an exact
+  revision/fingerprint miss cause; accepted entries may never be needed.
+- `cache_reused` counts actual hash accesses served by accepted returned values,
+  not unique files. A cached middle photo can be accessed twice in a chain.
+  Reuse of hashes computed earlier in this invocation is not counted here.
+- `hash_computed_success/missing` count existing `_hash_file` calls by terminal
+  result. They do not identify decode source or intermediate decoder failures;
+  a fallback may succeed after an earlier decoder failed. Threshold zero leaves
+  all cache/hash counts at zero and does no hash/cache/decode work.
+- `pairs_merged` and `split_missing_time/time_gap/missing_hash/hash_distance`
+  describe the actual adjacent comparisons in stable sorted order. The first
+  photo is not a pair or a split. Reasons follow existing short-circuit order:
+  time evidence/gap first, then enabled hash evidence/distance; no unevaluated
+  hash condition is inferred at a time split.
+- `files`, `groups`, and `group_length_counts` describe the returned groups.
+  `group_span_known/unknown` count groups with/without both endpoint timestamps;
+  `group_span_seconds_min/max/total` aggregate known endpoint spans in seconds.
+  A timed singleton has span zero; a missing-time singleton is unknown. Empty
+  known spans have null min/max and zero total. Length/span describes chaining
+  exposure, not semantic error rate or endpoint hash distance.
+
+Only completed invocations emit this log, after existing cache writes. Diagnostics
+reuse existing hashes/timestamps and add no image reads, hashing or all-pairs work.
 
 ## Invariants
 

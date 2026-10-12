@@ -3,8 +3,10 @@
 Status: follow-up priorities reviewed October 10, 2026 against commit
 `493b04853c044916ab9c2ef300a6739eeab8da66` and the supplied
 `deep-research-report (3).md` (dated October 8). The current engineering queue
-below supersedes historical next-step statements on this page. This revision
-updates the plan only; none of the new engineering batches is implemented.
+below supersedes historical next-step statements on this page. On October 12,
+the user authorized continuing the engineering queue: each batch is delegated,
+self-reviewed by its executor, then reviewed and published by the controller.
+Implementation and verification status is recorded below.
 The [current gate ledger](2026-09-16-plan-status.md#current-gate-ledger)
 owns status; this plan owns scope and acceptance.
 
@@ -51,13 +53,14 @@ per hard group, not preservation of every distinct readable content.
 The report is supporting analysis, not execution authorization. Its opaque external
 citations, model FPS/license claims and person-day estimates are not independently
 validated or adopted here. Model/runtime selection would require a fresh primary-source
-check. The current task changes docs only under the user's review/plan request.
+check. The October 10 update was planning-only; the October 12 continuation
+authorizes the bounded engineering batches, not future coverage promotion.
 
 ### Engineering batches that do not depend on G1
 
 Run these in order, one bounded review/verification/push at a time. G1 prevents
 real directed-coverage claims and promotion; it does not block these engineering
-tasks. A1 is the next implementation scope. Preserve the local default, CPU fallback
+tasks. A1 is complete locally; A2 is the next implementation scope. Preserve the local default, CPU fallback
 and Intel runtime direction throughout.
 
 | Batch / owner | Deliverable and boundary | Acceptance / stop condition |
@@ -71,8 +74,8 @@ A1's minimum checks are `uv run pytest -q tests/test_grouper.py tests/test_pipel
 and `make check`, including the new parity cases. A2/A3 use the review-pipeline
 contract's `tests/test_review_job.py`, `tests/test_app_services.py` and
 `tests/test_runtime_state.py`; shared runtime changes also require `make test`.
-Select A4's exact runner-specific tests only after its ownership inventory. These
-are future batch checks, not checks performed by this planning-only update.
+Select A4's exact runner-specific tests only after its ownership inventory. Record actual results per completed batch; planned commands alone are not
+verification evidence.
 
 For A1, the processed-state adapter filters absent cache entries and fingerprint
 mismatches; legacy rows without stored fingerprints remain readable. The grouper
@@ -94,6 +97,17 @@ Do not replace the legacy membership-derived `_group_id`. Incremental selection
 must match full affected-component recomputation, including reverse witnesses;
 do not promise a fixed-radius update before proving that bound. Design can proceed
 now; implementation of future-mode state/caches remains gated by Batch 5.
+
+### October 12 engineering execution
+
+A1 adds one domain grouping completion log with observed cache/hash/split counts
+and group length/span aggregates. Cache reuse counts accesses, not unique photos;
+decoder causes and semantic error rates remain unmeasured. The compatibility
+wrapper retains its empty-input early return. Executor self-review and controller
+diff review passed; 93 grouping/pipeline tests, three repository-boundary tests
+and lint passed. The controller independently compared 500 deterministic constructed
+cases against `db28c00`: exact ordered groups and hash/cache/progress sequences.
+This is behavior-parity evidence, not photographic or performance improvement.
 
 ### Parallel evidence track and deferred work
 
@@ -131,7 +145,8 @@ publication, deployment and target acceptance remain separately reported.
 
 | Work | Status | Next action or acceptance boundary |
 | --- | --- | --- |
-| A1–A4 engineering follow-up | Planned October 10; not implemented | Start A1 above; no independent-reference prerequisite |
+| A1 grouping diagnostics | Implemented and reviewed October 12 | 93 focused tests, lint and 500 controller baseline-parity cases pass; no extra decode/hash or policy change |
+| A2–A4 engineering follow-up | Pending in order | Start A2 above; no independent-reference prerequisite |
 | Existing evidence inventory and experiment protocol | Completed locally | [Inventory](benchmarks/2026-09-29-representation-control/inventory.md), [protocol and checks](benchmarks/2026-09-29-representation-control/report.md); 4 synthetic cases / 16 arm cells, no real-photo quality result |
 | Reference tooling and offline viewer | Closed supporting work | Preserve [tooling results](benchmarks/2026-09-27-reference-tooling/report.md) and [handler checks](benchmarks/2026-09-27-reference-tooling/2026-09-28-viewer-contract-report.md); no further UI task |
 | Constructed candidate/selection graphs | Structural portion accepted locally | [14-snapshot report](benchmarks/2026-09-27-reference-tooling/candidate-graph/report.md); reuse the evaluator, do not repeat completed graph experiments |
