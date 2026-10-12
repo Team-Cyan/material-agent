@@ -1,4 +1,5 @@
 import time
+from functools import partial
 
 from ..adapters.metadata.exiftool_xmp import ExifToolXMPWriter, failed_projection
 from ..adapters.progress import RichEventSink
@@ -26,6 +27,77 @@ from ..domain.scoring_engine import (
 )
 from ..utils.async_tools import run_coro_sync
 from ..utils.constants import scene_label
+
+
+def _refine_candidate(
+    file_path: str,
+    payload: dict,
+    *,
+    config: dict,
+    refinement_config: dict,
+    client,
+    fast_screening,
+) -> dict:
+    """Decode a larger focus observation before publishing replacement scores.
+
+    The domain refinement scheduler owns budgets and recoverable failures. This
+    callback supplies runtime collaborators and leaves interruptions propagating.
+    """
+    preview = {
+        **config["preview"],
+        "prefer_embedded": False,
+        "focus_max_size": refinement_config.get("focus_max_size", 3072),
+    }
+    frame = decode_raw(file_path, preview)
+    before_size = (payload.get("meta") or {}).get("focus_preview_size")
+    after_gray = getattr(frame, "focus_gray", None)
+    if not before_size or after_gray is None:
+        raise NoRefinementGain()
+    before_area = int(before_size[0]) * int(before_size[1])
+    if before_area <= 0 or int(after_gray.size) <= before_area:
+        raise NoRefinementGain()
+    bundle = run_coro_sync(compute_scores(frame, client, config, fast_screening=fast_screening))
+    return {
+        **payload,
+        "score_total": bundle.total,
+        "scores": bundle.scores,
+        "meta": bundle.meta,
+        "scene": bundle.scene,
+        "scene_raw": bundle.scene_raw,
+        "instructions": bundle.instructions,
+        "decision": bundle.decision,
+        "decision_reasons": bundle.decision_reasons,
+        "screening_prior": bundle.screening_prior,
+        "visible_breakdown": bundle.visible_breakdown,
+        "policy_version": bundle.policy_version,
+        "signals": bundle.signals,
+        "skip_write": False,
+    }
+
+
+def _build_group_commentary(
+    group_results: list[tuple[str, dict]], *, commentary, enabled: bool
+) -> str:
+    """Describe refined quality before group selection changes any decision."""
+    if not enabled:
+        return ""
+    return run_coro_sync(
+        commentary.for_group(
+            [
+                (file_path, float(payload.get("score_total", 0.0)))
+                for file_path, payload in group_results
+            ],
+            [
+                {
+                    **payload.get("scores", {}),
+                    "_scene": payload.get("scene", "other"),
+                    "_scene_raw": payload.get("scene_raw", ""),
+                    "_decision": payload.get("decision"),
+                }
+                for _, payload in group_results
+            ],
+        )
+    )
 
 
 def build_review_job_executor(
@@ -165,63 +237,20 @@ def build_review_job_executor(
             return group_results
 
         refinement_config = config.get("focus_integrity", {}).get("selective_refinement", {})
-
-        def refine_candidate(file_path, payload):
-            preview = {
-                **config["preview"],
-                "prefer_embedded": False,
-                "focus_max_size": refinement_config.get("focus_max_size", 3072),
-            }
-            frame = decode_raw(file_path, preview)
-            before_size = (payload.get("meta") or {}).get("focus_preview_size")
-            after_gray = getattr(frame, "focus_gray", None)
-            if not before_size or after_gray is None:
-                raise NoRefinementGain()
-            before_area = int(before_size[0]) * int(before_size[1])
-            if before_area <= 0 or int(after_gray.size) <= before_area:
-                raise NoRefinementGain()
-            bundle = run_coro_sync(
-                compute_scores(frame, client, config, fast_screening=fast_screening)
-            )
-            return {
-                **payload,
-                "score_total": bundle.total,
-                "scores": bundle.scores,
-                "meta": bundle.meta,
-                "scene": bundle.scene,
-                "scene_raw": bundle.scene_raw,
-                "instructions": bundle.instructions,
-                "decision": bundle.decision,
-                "decision_reasons": bundle.decision_reasons,
-                "screening_prior": bundle.screening_prior,
-                "visible_breakdown": bundle.visible_breakdown,
-                "policy_version": bundle.policy_version,
-                "signals": bundle.signals,
-                "skip_write": False,
-            }
-
         group_results = refine_group(
-            group_results, config=refinement_config, refine=refine_candidate
+            group_results,
+            config=refinement_config,
+            refine=partial(
+                _refine_candidate,
+                config=config,
+                refinement_config=refinement_config,
+                client=client,
+                fast_screening=fast_screening,
+            ),
         )
-        group_commentary = ""
-        if commentary_enabled:
-            group_commentary = run_coro_sync(
-                commentary.for_group(
-                    [
-                        (file_path, float(payload.get("score_total", 0.0)))
-                        for file_path, payload in group_results
-                    ],
-                    [
-                        {
-                            **payload.get("scores", {}),
-                            "_scene": payload.get("scene", "other"),
-                            "_scene_raw": payload.get("scene_raw", ""),
-                            "_decision": payload.get("decision"),
-                        }
-                        for _, payload in group_results
-                    ],
-                )
-            )
+        group_commentary = _build_group_commentary(
+            group_results, commentary=commentary, enabled=commentary_enabled
+        )
         results_with_commentary = [
             (
                 file_path,

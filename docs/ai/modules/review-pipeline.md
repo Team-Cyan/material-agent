@@ -134,6 +134,42 @@ Runtime file states distinguish real writes from simulations and cache reuse:
 - Review-related code is heavy enough that CLI entry modules should keep lazy command loading intact, or light admin commands will regress in startup cost.
 - Partial-success recovery now has explicit terminal status semantics, but any future GUI or automation layer must treat `finished_with_errors` as a first-class outcome rather than collapsing it into `finished`.
 
+## Group Finalization Boundary
+
+`review_runtime.py::finalize_group` keeps the sequence: empty short circuit,
+domain-owned bounded refinement, optional commentary from refined quality,
+shallow payload copies attaching commentary, then existing domain selection.
+The same-file `_refine_candidate` helper supplies decode/scoring collaborators
+and rejects a non-larger focus observation before scoring. `_build_group_commentary`
+owns commentary input construction and its existing synchronous async boundary;
+disabled commentary creates no coroutine. Refinement config is read per
+finalization invocation, while commentary enablement is captured when the
+executor is built. Selection config remains read after commentary.
+
+Refinement retains unrelated payload keys and changes `skip_write` only after
+successful decode/gain/scoring; domain validation can still retain the baseline
+on candidate failure. Ordinary refinement failures remain auditable, while
+interruptions propagate. Commentary and selection errors propagate. Commentary
+uses quality decisions before coverage selection. Finalization preserves input
+order and nested aliases according to the existing domain helpers; it does not
+sort for writer ranks. `ReviewPhotosJob` owns ranking, cached/resumed handling and
+the all-`skip_write` group bypass. The terminal writer still owns rating and
+metadata protections.
+
+Future relation and selection rules belong in the domain, feature/cache storage
+in adapters, and collaborator scheduling in this application layer. Follow the
+existing [Batch 5 production/cache design](../../operations/2026-09-26-culling-improvement-plan.md#batch-5--opt-in-production-design-and-cache-integration)
+instead of adding a strategy framework here. Feature identity, ordered
+directional relation identity, candidate-set identity and selection-result
+identity have separate dependencies; a policy revision alone does not identify
+graph contents. Preserve honest per-photo quality independently of content
+coverage. Stable event/window identity is distinct from exact membership identity
+and needs explicit insert/delete/split/merge semantics. Keep the legacy
+membership-derived group ID. Incremental selection must equal full affected
+component recomputation, including reverse witnesses; no fixed-radius bound is
+assumed. These are future design seams, with no new cache, persistence or
+production-mode integration in current finalization.
+
 ## Preparation Memory Observations
 
 `ReviewPhotosJob` emits one best-effort `Preparation memory diagnostics` log per

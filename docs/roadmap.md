@@ -256,9 +256,10 @@
   checked against the new review's exact base `493b048`. A1 grouping/hash/cache/chaining diagnostics
   are implemented and reviewed (93 focused checks and 500 controller baseline-parity
   cases). A2 sampled preparation-memory/RSS logs are implemented with unchanged
-  scheduling (1,539 full tests / ten skipped); no prefetch tuning. Next: A3
-  equivalent finalization helper extraction and future contract design;
-  A4 only justified shared evaluator helpers with historical reproducibility.
+  scheduling (1,539 full tests / ten skipped); no prefetch tuning. A3 equivalent
+  finalization helpers and future contract boundaries are implemented (1,575 full
+  tests / ten skipped and 84 controller baseline-parity cases). Next: A4 audit
+  for justified shared evaluator helpers with historical reproducibility.
   Complete one bounded review/check/push before the next. None depends on G1
 - keep the [current gate ledger](operations/2026-09-16-plan-status.md#current-gate-ledger)
   as the status entrypoint. Preserve G1 → G2 human-labeled oracle → frozen

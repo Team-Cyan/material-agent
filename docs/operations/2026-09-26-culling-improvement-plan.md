@@ -60,7 +60,7 @@ authorizes the bounded engineering batches, not future coverage promotion.
 
 Run these in order, one bounded review/verification/push at a time. G1 prevents
 real directed-coverage claims and promotion; it does not block these engineering
-tasks. A1 and A2 are complete locally; A3 is the next implementation scope. Preserve the local default, CPU fallback
+tasks. A1–A3 are complete locally; A4 is the next bounded audit scope. Preserve the local default, CPU fallback
 and Intel runtime direction throughout.
 
 | Batch / owner | Deliverable and boundary | Acceptance / stop condition |
@@ -125,6 +125,17 @@ A fixed macOS 32-frame, five-by-500-call synthetic comparison measured median
 the final log. This is instrumentation overhead only, not end-to-end or target-host
 performance acceptance.
 
+A3 extracts same-file refinement-candidate and commentary helpers. Empty/refine/
+comment/copy/select ordering, config read timing, async boundaries, payload aliases,
+`skip_write`, cached quality and XMP/rating projection remain compatible. Executor
+self-review strengthened live collaborator/config and cached-metadata cases: all
+36 characterization cases also pass against `0631abb` before extraction. Final
+checks pass 176 related tests, 1,575 full tests / ten skipped and lint. Controller
+review found no blocker; an independent 84-combination replay against `0631abb`
+matches complete payloads, input mutations, collaborator traces and exceptions.
+The module contract records future domain/app/cache/event seams without introducing
+a selector, state migration, framework or new production mode.
+
 ### Parallel evidence track and deferred work
 
 G1 remains zero qualifying directed human-reference pairs/families in the audited
@@ -163,7 +174,8 @@ publication, deployment and target acceptance remain separately reported.
 | --- | --- | --- |
 | A1 grouping diagnostics | Implemented and reviewed October 12 | 93 focused tests, lint and 500 controller baseline-parity cases pass; no extra decode/hash or policy change |
 | A2 preparation memory | Implemented October 12 | Sampled payload/RSS aggregates with unchanged prefetch scheduling; 1,539 full tests / ten skipped, lint pass |
-| A3–A4 engineering follow-up | Pending in order | Start A3 above; no independent-reference prerequisite |
+| A3 finalization seams | Implemented and reviewed October 12 | Same-file refinement/commentary helpers; 1,575 full tests / ten skipped, 84 controller baseline-parity cases and lint pass |
+| A4 evaluator maintenance | Pending bounded duplication audit | Extract only justified shared helpers; no independent-reference prerequisite |
 | Existing evidence inventory and experiment protocol | Completed locally | [Inventory](benchmarks/2026-09-29-representation-control/inventory.md), [protocol and checks](benchmarks/2026-09-29-representation-control/report.md); 4 synthetic cases / 16 arm cells, no real-photo quality result |
 | Reference tooling and offline viewer | Closed supporting work | Preserve [tooling results](benchmarks/2026-09-27-reference-tooling/report.md) and [handler checks](benchmarks/2026-09-27-reference-tooling/2026-09-28-viewer-contract-report.md); no further UI task |
 | Constructed candidate/selection graphs | Structural portion accepted locally | [14-snapshot report](benchmarks/2026-09-27-reference-tooling/candidate-graph/report.md); reuse the evaluator, do not repeat completed graph experiments |
