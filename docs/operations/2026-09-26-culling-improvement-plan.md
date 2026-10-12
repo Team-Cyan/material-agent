@@ -60,7 +60,7 @@ authorizes the bounded engineering batches, not future coverage promotion.
 
 Run these in order, one bounded review/verification/push at a time. G1 prevents
 real directed-coverage claims and promotion; it does not block these engineering
-tasks. A1 is complete locally; A2 is the next implementation scope. Preserve the local default, CPU fallback
+tasks. A1 and A2 are complete locally; A3 is the next implementation scope. Preserve the local default, CPU fallback
 and Intel runtime direction throughout.
 
 | Batch / owner | Deliverable and boundary | Acceptance / stop condition |
@@ -109,6 +109,22 @@ and lint passed. The controller independently compared 500 deterministic constru
 cases against `db28c00`: exact ordered groups and hash/cache/progress sequences.
 This is behavior-parity evidence, not photographic or performance improvement.
 
+A2 adds app-owned sampled preparation diagnostics without loading image/model
+modules or retaining payloads. Shared array/JPEG buffers are deduplicated; logical
+array bytes, known storage subtotals, sampled live counts, Linux current RSS and
+process-lifetime high-water RSS remain distinct. Unsupported components and
+platform measurements stay unknown. Resume, per-file errors, cancellation and
+output/event/artifact parity are covered; no prefetch/window tuning was applied.
+Executor self-review tightened cached-flag handling and documented unknown-component
+counts. A quota interruption was recovered from saved code/logs/checkpoints;
+the same executor completed its self-review and the controller found no blocker.
+Final-source verification passes 1,539 full tests / ten skipped, 71 owning-module
+checks and lint.
+A fixed macOS 32-frame, five-by-500-call synthetic comparison measured median
+71.284 microseconds per observation (71.245 microseconds above no-op), excluding
+the final log. This is instrumentation overhead only, not end-to-end or target-host
+performance acceptance.
+
 ### Parallel evidence track and deferred work
 
 G1 remains zero qualifying directed human-reference pairs/families in the audited
@@ -146,7 +162,8 @@ publication, deployment and target acceptance remain separately reported.
 | Work | Status | Next action or acceptance boundary |
 | --- | --- | --- |
 | A1 grouping diagnostics | Implemented and reviewed October 12 | 93 focused tests, lint and 500 controller baseline-parity cases pass; no extra decode/hash or policy change |
-| A2–A4 engineering follow-up | Pending in order | Start A2 above; no independent-reference prerequisite |
+| A2 preparation memory | Implemented October 12 | Sampled payload/RSS aggregates with unchanged prefetch scheduling; 1,539 full tests / ten skipped, lint pass |
+| A3–A4 engineering follow-up | Pending in order | Start A3 above; no independent-reference prerequisite |
 | Existing evidence inventory and experiment protocol | Completed locally | [Inventory](benchmarks/2026-09-29-representation-control/inventory.md), [protocol and checks](benchmarks/2026-09-29-representation-control/report.md); 4 synthetic cases / 16 arm cells, no real-photo quality result |
 | Reference tooling and offline viewer | Closed supporting work | Preserve [tooling results](benchmarks/2026-09-27-reference-tooling/report.md) and [handler checks](benchmarks/2026-09-27-reference-tooling/2026-09-28-viewer-contract-report.md); no further UI task |
 | Constructed candidate/selection graphs | Structural portion accepted locally | [14-snapshot report](benchmarks/2026-09-27-reference-tooling/candidate-graph/report.md); reuse the evaluator, do not repeat completed graph experiments |

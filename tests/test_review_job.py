@@ -751,3 +751,253 @@ def test_group_coverage_excludes_decode_errors_and_persists_in_artifacts(tmp_pat
     assert payloads[0]["meta"]["quality_assessment"]["decision"] == "reject"
     assert payloads[0]["score_total"] == 0.5
     repo.close()
+
+
+def _preparation_test_job(repo):
+    session_id = SessionService(repo).create_session(
+        kind=SessionKind.CLI,
+        input_root="/tmp/photos",
+        config_snapshot={"backend": "local"},
+    )
+    return JobService(repo).create_job(
+        session_id=session_id,
+        job_type=JobType.REVIEW_PHOTOS,
+        initial_stage=JobStage.DISCOVER,
+    )
+
+
+def _preparation_report(caplog):
+    reports = [
+        json.loads(record.getMessage().split("Preparation memory diagnostics: ", 1)[1])
+        for record in caplog.records
+        if record.getMessage().startswith("Preparation memory diagnostics: ")
+    ]
+    assert len(reports) == 1
+    return reports[0]
+
+
+def test_preparation_memory_observes_existing_prime_aliases_without_changing_order(
+    tmp_path, caplog
+):
+    import numpy as np
+    from material_agent.domain.scoring_engine import RawFrame
+
+    caplog.set_level("INFO", logger="material_agent")
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    job_id = _preparation_test_job(repo)
+    files = [f"/tmp/photos/{index}.ARW" for index in range(3)]
+    calls = []
+
+    def prepare(file_path):
+        return {"file_path": file_path, "frame": RawFrame(b"jpeg", np.zeros((4, 4), np.uint8))}
+
+    def prime(items):
+        calls.append(("prime", [item["file_path"] for item in items]))
+
+    def score(item):
+        calls.append(("score", item["file_path"]))
+        return {"score_total": 5.0, "meta": {"unchanged": True}}
+
+    result = JobExecutor(
+        ReviewPhotosJob(
+            repository=repo,
+            event_sink=_NullEventSink(),
+            prepare_score=prepare,
+            prime_prepared=prime,
+            score_prepared=score,
+            score_prefetch_window=2,
+        )
+    ).run(job_id, files)
+    assert result["status"] == "finished"
+    assert calls == [
+        ("prime", files[:2]),
+        ("score", files[0]),
+        ("score", files[1]),
+        ("prime", files[2:]),
+        ("score", files[2]),
+    ]
+    report = _preparation_report(caplog)
+    assert report["scope"] == "job_owned_prepared_refs_at_stage_samples"
+    assert report["highwater_rss_scope"] == "process_lifetime"
+    assert report["payload_unit"] == report["rss_unit"] == "bytes"
+    assert report["stages"]["after_prepare"]["sampled_max"]["frame_live_count"] == 3
+    assert report["stages"]["before_prime"]["sample_count"] == 2
+    assert report["stages"]["after_score"]["sample_count"] == 3
+    assert report["stages"]["after_prepare"]["sampled_max"]["prepared_payload_bytes"] == 52
+    assert report["observation_errors"] == 0
+
+
+def test_preparation_memory_preserves_full_outputs_errors_cache_and_resume(tmp_path, monkeypatch):
+    import numpy as np
+    from material_agent.app import preparation_memory
+    from material_agent.domain.scoring_engine import RawFrame
+
+    files = ["written", "resumed", "bad-prepare", "bad-score", "cached", "fresh"]
+
+    def run(name):
+        repo = SQLiteRuntimeRepository(tmp_path / f"{name}.db")
+        job_id = _preparation_test_job(repo)
+        for file_path, status in [
+            ("written", JobFileStatus.WRITTEN),
+            ("resumed", JobFileStatus.SCORED),
+        ]:
+            file_id = repo.upsert_job_file(
+                job_id=job_id, file_path=file_path, status=status, score_total=4.0
+            )
+            repo.upsert_artifact(
+                job_id=job_id,
+                job_file_id=file_id,
+                kind="score_payload",
+                uri="memory://existing",
+                metadata={"score_total": 4.0},
+            )
+        calls = []
+
+        def prepare(file_path):
+            if file_path == "bad-prepare":
+                raise ValueError("decode failed")
+            if file_path == "cached":
+                return {"file_path": file_path, "cached": True}
+            return {"file_path": file_path, "frame": RawFrame(b"jpeg", np.zeros((2, 2), np.uint8))}
+
+        def score(item):
+            calls.append(item["file_path"])
+            if item["file_path"] == "bad-score":
+                raise ValueError("score failed")
+            return {"score_total": 5.0, "meta": {"cached": bool(item.get("cached"))}}
+
+        result = JobExecutor(
+            ReviewPhotosJob(
+                repository=repo,
+                event_sink=_NullEventSink(),
+                prepare_score=prepare,
+                prime_prepared=lambda _: None,
+                score_prepared=score,
+                score_prefetch_window=4,
+            )
+        ).run(job_id, files)
+        rows = [
+            tuple(row)
+            for row in repo.conn.execute(
+                "SELECT file_path, status, group_id, rank, score_total, scene, scene_raw, error_message "
+                "FROM job_files ORDER BY file_path"
+            )
+        ]
+        artifacts = [
+            tuple(row)
+            for row in repo.conn.execute(
+                "SELECT f.file_path, a.kind, a.metadata_json FROM artifacts a "
+                "JOIN job_files f ON f.id = a.job_file_id ORDER BY f.file_path, a.kind"
+            )
+        ]
+        events = [
+            tuple(row)
+            for row in repo.conn.execute(
+                "SELECT event_type, payload_json FROM events ORDER BY rowid"
+            )
+        ]
+        return result, calls, rows, artifacts, events
+
+    measured = run("observed")
+    with monkeypatch.context() as patch:
+        patch.setattr(
+            preparation_memory.PreparationMemoryDiagnostics, "observe", lambda *a, **k: None
+        )
+        baseline = run("baseline")
+    assert measured == baseline
+    assert measured[0]["status"] == "finished_with_errors"
+    assert measured[0]["error_files"] == 2
+    assert measured[1] == ["bad-score", "cached", "fresh"]
+
+
+def test_preparation_sampler_failures_do_not_fail_scoring(tmp_path, monkeypatch, caplog):
+    from material_agent.app import preparation_memory
+
+    caplog.set_level("INFO", logger="material_agent")
+
+    def fail():
+        raise RuntimeError("sampler failed")
+
+    monkeypatch.setattr(preparation_memory, "_process_memory", fail)
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    job_id = _preparation_test_job(repo)
+    result = JobExecutor(
+        ReviewPhotosJob(
+            repository=repo,
+            event_sink=_NullEventSink(),
+            score_file=lambda _: {"score_total": 5.0},
+        )
+    ).run(job_id, ["one"])
+    assert result["status"] == "finished"
+    assert _preparation_report(caplog)["observation_errors"] == 3
+
+
+def test_all_resumed_preparation_diagnostics_have_no_memory_samples(tmp_path, caplog):
+    caplog.set_level("INFO", logger="material_agent")
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    job_id = _preparation_test_job(repo)
+    file_id = repo.upsert_job_file(
+        job_id=job_id, file_path="written", status=JobFileStatus.WRITTEN, score_total=4.0
+    )
+    repo.upsert_artifact(
+        job_id=job_id,
+        job_file_id=file_id,
+        kind="score_payload",
+        uri="memory://existing",
+        metadata={"score_total": 4.0},
+    )
+
+    def unexpected(_):
+        raise AssertionError("resume did new preparation/model work")
+
+    result = JobExecutor(
+        ReviewPhotosJob(
+            repository=repo,
+            event_sink=_NullEventSink(),
+            prepare_score=unexpected,
+            prime_prepared=unexpected,
+            score_prepared=unexpected,
+        )
+    ).run(job_id, ["written"])
+    assert result["skipped_files"] == 1
+    assert _preparation_report(caplog)["stages"] == {}
+
+
+def test_preparation_memory_logs_cancellation_without_waiting_on_pending_worker(tmp_path, caplog):
+    import pytest
+
+    caplog.set_level("INFO", logger="material_agent")
+    repo = SQLiteRuntimeRepository(tmp_path / "runtime.db")
+    job_id = _preparation_test_job(repo)
+    started, release, finished = threading.Event(), threading.Event(), threading.Event()
+
+    def prepare(file_path):
+        if file_path == "pending":
+            started.set()
+            release.wait(timeout=5)
+            finished.set()
+        return {"cached": True, "file_path": file_path}
+
+    def cancel(_):
+        assert started.wait(timeout=1)
+        raise KeyboardInterrupt("operator")
+
+    try:
+        with pytest.raises(KeyboardInterrupt, match="operator"):
+            JobExecutor(
+                ReviewPhotosJob(
+                    repository=repo,
+                    event_sink=_NullEventSink(),
+                    prepare_score=prepare,
+                    score_prepared=cancel,
+                    score_prefetch_window=2,
+                )
+            ).run(job_id, ["current", "pending"])
+        assert not finished.is_set()
+        report = _preparation_report(caplog)
+        assert report["status"] == "interrupted"
+        assert "after_score" not in report["stages"]
+        assert report["stages"]["after_prepare"]["sampled_max"]["pending_unready_count"] == 1
+    finally:
+        release.set()
+        assert finished.wait(timeout=2)

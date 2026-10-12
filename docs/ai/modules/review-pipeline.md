@@ -133,3 +133,59 @@ Runtime file states distinguish real writes from simulations and cache reuse:
 - The resumability logic mixes runtime artifacts and processed-state reads, which is practical but conceptually dense for new contributors.
 - Review-related code is heavy enough that CLI entry modules should keep lazy command loading intact, or light admin commands will regress in startup cost.
 - Partial-success recovery now has explicit terminal status semantics, but any future GUI or automation layer must treat `finished_with_errors` as a first-class outcome rather than collapsing it into `finished`.
+
+## Preparation Memory Observations
+
+`ReviewPhotosJob` emits one best-effort `Preparation memory diagnostics` log per
+score-consumption invocation, including interruption/failure exits. It adds no
+runtime events, score fields, persistence or API output. The current prefetch cap
+of 32, prepare/prime/score order, reference lifetimes and resume behavior remain
+unchanged. The app-owned `preparation_memory.py` helper imports no image/model
+stack and observes only the concrete runtime's already loaded `RawFrame` type.
+
+Samples occur before/after consuming a prepared future, before/after an existing
+prime call, after scoring and on per-file scoring failure. Each sample includes
+the existing current preparation (which can still be the previous item), existing
+prime-list aliases (which can retain older frames), and already completed,
+successful pending futures. Unready/failed futures are counted without waiting;
+telemetry introduces no completion callbacks, decode/model calls or GC. Samples
+are not complete lifetime/allocation peaks and omit worker-local and client-owned
+references. Aggregation retains only scalars, never frames or buffers.
+
+The `material-agent.preparation-memory.v1` log contains per-stage `sample_count`,
+`sampled_max` and `unknown_samples`. Maxima for different metrics may come from
+different samples. `prepared_live_count` deduplicates preparation identities;
+cached preparation dictionaries count but contribute no frame storage.
+`frame_live_count` counts distinct supported frames. `unknown_component_count`
+counts each distinct unsupported preparation or frame, or each unsupported
+storage field in a supported frame; it can exceed the number of preparations.
+Memory observations
+inspect only `jpeg_bytes`, `gray`, `pixels` and `focus_gray`:
+
+- `array_field_nbytes` sums logical NumPy `nbytes` across explicit fields of unique
+  frames; aliases can repeat here. It is not resident memory.
+- `array_storage_bytes` and `jpeg_storage_bytes` are supported unique-owner byte
+  subtotals. NumPy view/base chains are bounded to 64 links; contiguous owned
+  array roots and byte-backed buffers are supported. Object arrays, foreign or
+  unrecognized owners stay unknown. JPEG identities deduplicate shared bytes.
+- `known_payload_bytes` deduplicates the union of supported array and JPEG
+  storage, including a JPEG also used as an array buffer. `prepared_payload_bytes`
+  is this estimated total only when all inspected payloads are supported;
+  otherwise it is unknown (absent from maxima, counted in `unknown_samples`).
+  Bookkeeping, Python object overhead, cached score metadata, model tensors,
+  decoder/native allocations and unsampled references are excluded.
+- `current_rss_bytes` samples Linux `/proc/self/statm` resident pages multiplied
+  by page size; other platforms or read failures stay unknown.
+- `process_highwater_rss_bytes` uses `resource.getrusage(RUSAGE_SELF).ru_maxrss`:
+  Linux KiB are converted to bytes, macOS reports bytes. Other platforms or
+  failures stay unknown. This is the process-lifetime high-water mark, including
+  work before the job; it is not a job's peak or a prepared-payload metric.
+
+The log labels platform, sources, bytes units and sampling scope explicitly.
+Its `status` describes the score-consumption exit, so a complete invocation can
+still include per-file failures (observed at `score_failed`).
+Ordinary sampler/log failures cannot fail successful scoring; operator
+interruptions still propagate. An empty/all-resumed invocation has no samples
+and makes no memory claim. Bounded synthetic instrumentation timing measures
+observation overhead only; tuning and production/real-data savings require
+separate evidence and scope.

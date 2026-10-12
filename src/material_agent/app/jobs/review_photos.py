@@ -2,6 +2,7 @@ from concurrent.futures import Future, ThreadPoolExecutor
 import hashlib
 
 from ..dto import JobFileStatus, JobStage, JobStatus
+from ..preparation_memory import PreparationMemoryDiagnostics
 
 
 class _ScorePreparationPool(ThreadPoolExecutor):
@@ -276,6 +277,8 @@ class ReviewPhotosJob:
         started_files: set[str] = set()
         file_indexes = {file_path: index for index, file_path in enumerate(group)}
         error_files = 0
+        prepared = None
+        prime_batch = []
 
         def _emit_started(file_path: str) -> None:
             if file_path in started_files:
@@ -300,7 +303,10 @@ class ReviewPhotosJob:
             pending_prepares[file_path] = executor.submit(self.prepare_score, file_path)
 
         max_workers = min(self.score_prefetch_window, len(group)) or 1
-        with _ScorePreparationPool(max_workers=max_workers) as executor:
+        with (
+            PreparationMemoryDiagnostics() as preparation_memory,
+            _ScorePreparationPool(max_workers=max_workers) as executor,
+        ):
             submit_index = 0
             for index, file_path in enumerate(group):
                 existing_job_file, resumable_payload = self._load_score_payload(
@@ -343,7 +349,19 @@ class ReviewPhotosJob:
                     _submit_prepare(executor, candidate)
 
                 try:
+                    preparation_memory.observe(
+                        "before_prepare",
+                        current=prepared,
+                        prime_batch=prime_batch,
+                        pending=pending_prepares,
+                    )
                     prepared = pending_prepares.pop(file_path).result()
+                    preparation_memory.observe(
+                        "after_prepare",
+                        current=prepared,
+                        prime_batch=prime_batch,
+                        pending=pending_prepares,
+                    )
                     if self.prime_prepared is not None and file_path not in primed_files:
                         prime_batch = [prepared]
                         prime_paths = [file_path]
@@ -355,10 +373,34 @@ class ReviewPhotosJob:
                             except Exception:
                                 continue
                             prime_paths.append(pending_path)
+                        preparation_memory.observe(
+                            "before_prime",
+                            current=prepared,
+                            prime_batch=prime_batch,
+                            pending=pending_prepares,
+                        )
                         self.prime_prepared(prime_batch)
+                        preparation_memory.observe(
+                            "after_prime",
+                            current=prepared,
+                            prime_batch=prime_batch,
+                            pending=pending_prepares,
+                        )
                         primed_files.update(prime_paths)
                     score_payload = self.score_prepared(prepared)
+                    preparation_memory.observe(
+                        "after_score",
+                        current=prepared,
+                        prime_batch=prime_batch,
+                        pending=pending_prepares,
+                    )
                 except Exception as error:
+                    preparation_memory.observe(
+                        "score_failed",
+                        current=prepared,
+                        prime_batch=prime_batch,
+                        pending=pending_prepares,
+                    )
                     job_file_id = self.repository.upsert_job_file(
                         job_id=job_id,
                         file_path=file_path,
