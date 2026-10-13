@@ -1,6 +1,6 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 13, 2026. The dated filename is
+Single status entrypoint, updated October 14, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
@@ -26,6 +26,26 @@ owns batch scope and acceptance; older dated next-step statements below are hist
 | FGAesthetics preference source | [Label-only preflight](benchmarks/2026-10-08-reference-source-preflight/README.md) complete; fields, terms and lineage unresolved. Aesthetic labels do not pass G1. | Parallel/deferred clarification; unsent outreach needs explicit authorization and does not block engineering. |
 | Public models / native input diagnostics | Frozen quality/copy cohorts complete; MUSIQ shared-core resource gate failed. [Two native DNGs](benchmarks/2026-10-08-native-raw-orientation/README.md) pass bounded orientation conformance, not general model-input acceptance. | Retain negative results and optional adapter deferral; no repeat cohort or new model selected. |
 | External acceptance | Real photographic utility, professional-app XMP round trips and recovery are separate gates. | Follow the [external protocol](2026-09-17-external-acceptance-plan.md) in isolated authorized scope. No live deployment check or photo/XMP operation in the October 12–13 engineering continuation. |
+
+## Authorized continuation after engineering closure
+
+The October 14 clarification preserves the user's earlier authorization to acquire
+labeled public test data, deploy the reviewed release on the target NAS and run
+isolated real-environment diagnostics. The completed A1–A4 goal covered the bounded
+engineering queue, not all product acceptance. Continue target inventory, native
+managed deployment with rollback, and bounded tests through the homelab controller;
+do not request the same authorization again. Record deployment and test results
+separately from successful CI.
+
+Existing independent public ground truth can replace new user annotation for the
+task it actually labels. Quality, preference and copy/retrieval diagnostics remain
+executable without directed important-content coverage labels. G1/G2 restrict the
+corresponding coverage claim and promotion, not all algorithm work or deployment.
+A source access or label-semantics gap is initially an investigation task for the
+agent, not a user annotation assignment. Request human participation only for a
+specific unavoidable account interaction, unresolved personal preference or a
+separately scoped action outside the existing authorization. No such immediate
+user action has been established by this clarification.
 
 ## Historical execution record
 

@@ -262,6 +262,13 @@
 
 ## Next
 
+- continue under the existing public-data and target-NAS deployment/test
+  authorization: refresh current runtime identity, deploy the reviewed release
+  through the homelab controller with rollback, then verify bounded isolated
+  native execution and recovery. Use public ground truth for its native task;
+  directed-coverage evidence gaps do not block these diagnostics. See the
+  [authorized continuation](operations/2026-09-16-plan-status.md#authorized-continuation-after-engineering-closure)
+
 - keep the [current gate ledger](operations/2026-09-16-plan-status.md#current-gate-ledger)
   as the status entrypoint. Preserve G1 → G2 human-labeled oracle → frozen
   representation comparison; cache/event identity and direct-final-keeper witness
