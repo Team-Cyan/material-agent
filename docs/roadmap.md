@@ -2,6 +2,16 @@
 
 ## Completed
 
+- completed the [A1–A4 engineering queue](operations/2026-09-26-culling-improvement-plan.md#current-follow-up-queue-after-the-october-8-review)
+  with executor self-review followed by controller review: grouping diagnostics,
+  sampled preparation memory/RSS and equivalent finalization helpers. A1–A3 were
+  pushed with successful release CI; latest application verification is 1,575 full
+  tests / ten skipped, with 500 grouping and 84 finalization controller parity cases.
+  The [17-script A4 audit](operations/2026-10-13-evaluator-maintenance-audit.md)
+  closes without extraction because existing reuse and frozen identities outweigh
+  remaining duplication in this batch. No prefetch tuning, deployment or new
+  photographic-quality claim; G1/G2 and external acceptance remain separate.
+
 - verified the newly author-linked FGAesthetics label release: nine lists /
   44,225 rows with exact archive identity, independent counts and split-ID checks.
   One duplicate and 92 fourth-column 0.5 values remain preserved. Metadata access
@@ -252,15 +262,6 @@
 
 ## Next
 
-- continue the [October 10 engineering queue](operations/2026-09-26-culling-improvement-plan.md#current-follow-up-queue-after-the-october-8-review),
-  checked against the new review's exact base `493b048`. A1 grouping/hash/cache/chaining diagnostics
-  are implemented and reviewed (93 focused checks and 500 controller baseline-parity
-  cases). A2 sampled preparation-memory/RSS logs are implemented with unchanged
-  scheduling (1,539 full tests / ten skipped); no prefetch tuning. A3 equivalent
-  finalization helpers and future contract boundaries are implemented (1,575 full
-  tests / ten skipped and 84 controller baseline-parity cases). Next: A4 audit
-  for justified shared evaluator helpers with historical reproducibility.
-  Complete one bounded review/check/push before the next. None depends on G1
 - keep the [current gate ledger](operations/2026-09-16-plan-status.md#current-gate-ledger)
   as the status entrypoint. Preserve G1 → G2 human-labeled oracle → frozen
   representation comparison; cache/event identity and direct-final-keeper witness
@@ -271,7 +272,7 @@
   needs published field definitions, applicable terms and source/scene lineage
   before image acquisition or an existing-scorer preference diagnostic. Aesthetic
   targets cannot fill G1's directed coverage quotas. Author outreach remains unsent
-  without explicit authorization and does not block A1–A4. Do not reopen the
+  without explicit authorization; the A1–A4 engineering queue is complete. Do not reopen the
   annotation viewer or change the admin WebUI
 
 ## Conditional research follow-up

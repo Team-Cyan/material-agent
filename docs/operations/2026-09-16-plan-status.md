@@ -1,14 +1,16 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 12, 2026. The dated filename is
+Single status entrypoint, updated October 13, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
 ## Current gate ledger
 
 The October 8 review (`deep-research-report (3).md`) was checked against its exact
-base `493b04853c044916ab9c2ef300a6739eeab8da66`. The October 12 continuation
-implements the engineering queue with executor self-review followed by controller review.
+base `493b04853c044916ab9c2ef300a6739eeab8da66`. The October 12–13 continuation
+completed A1–A4 with executor self-review followed by controller review. A1–A3
+were pushed and their exact-commit release CI succeeded; A4 closes with a
+documentation-only maintenance audit.
 The [current follow-up queue](2026-09-26-culling-improvement-plan.md#current-follow-up-queue-after-the-october-8-review)
 owns batch scope and acceptance; older dated next-step statements below are history.
 
@@ -17,13 +19,13 @@ owns batch scope and acceptance; older dated next-step statements below are hist
 | Legacy grouping and quality | Adjacent time AND pHash, chaining allowed; EXIF hash and finite-quality/cache fixes retained. Scoped review established no new release blocker. | A1 implemented: 93 focused checks, lint and 500 controller baseline-parity cases pass. Aggregate completion logs only; no semantic coverage claim. |
 | Preparation memory | A2 implemented: sampled, shared-storage-aware payload/live-count/RSS logs; cap 32 and scheduling unchanged. 1,539 full tests / ten skipped and lint pass. | No tuning or target-host savings claim; unsupported measurements remain unknown. |
 | Runtime responsibilities | A3 implemented: cohesive same-file helpers retain refinement/commentary/selection order; 1,575 full tests / ten skipped and 84 controller baseline-parity cases pass. | Future domain/cache/event boundaries documented; no production selector/cache integration. |
-| Evaluation tooling | Existing protocols, resume and provenance checks are valuable; further runner proliferation is not selected. | Next A4: audit duplication and extract only justified pure shared helpers with explicit identities and historical reproducibility. |
+| Evaluation tooling | A4 complete: [17-script maintenance audit](2026-10-13-evaluator-maintenance-audit.md) found real duplication but no extraction with sufficient benefit; existing shared helpers retained. Three repository-boundary tests, links and diff checks pass. | Preserve frozen identities/recovery packages; reopen the pure resampling seam only for a demonstrated maintenance need with explicit new identities. |
 | G1 independent directed references | Zero qualifying pairs/families in the [audited inventory](benchmarks/2026-09-29-representation-control/inventory.md); minimum 24 pairs / 12 families plus split/category quotas unmet. | Independent human judgments and provenance audit; does not block A1–A4. |
 | G2 oracle / Batch 3 representation | G2 pending G1; [synthetic preparation](benchmarks/2026-09-29-representation-control/report.md) completed, no real-data accuracy result. | G1 → labeled oracle diagnostic → frozen gray/RGB-local comparison; no threshold/model sweep. |
 | Future coverage mode | Direct final-keeper witnesses and unknown preservation are required; rejected SIFT/residual evidence is not admissible. | Preserve G3–G6, separate directional/cache/event identities and full-recomputation parity; no production promotion. |
 | FGAesthetics preference source | [Label-only preflight](benchmarks/2026-10-08-reference-source-preflight/README.md) complete; fields, terms and lineage unresolved. Aesthetic labels do not pass G1. | Parallel/deferred clarification; unsent outreach needs explicit authorization and does not block engineering. |
 | Public models / native input diagnostics | Frozen quality/copy cohorts complete; MUSIQ shared-core resource gate failed. [Two native DNGs](benchmarks/2026-10-08-native-raw-orientation/README.md) pass bounded orientation conformance, not general model-input acceptance. | Retain negative results and optional adapter deferral; no repeat cohort or new model selected. |
-| External acceptance | Real photographic utility, professional-app XMP round trips and recovery are separate gates. | Follow the [external protocol](2026-09-17-external-acceptance-plan.md) in isolated authorized scope. No live deployment check or photo/XMP operation in this plan review. |
+| External acceptance | Real photographic utility, professional-app XMP round trips and recovery are separate gates. | Follow the [external protocol](2026-09-17-external-acceptance-plan.md) in isolated authorized scope. No live deployment check or photo/XMP operation in the October 12–13 engineering continuation. |
 
 ## Historical execution record
 

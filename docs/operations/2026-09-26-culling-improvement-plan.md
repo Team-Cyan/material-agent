@@ -6,7 +6,9 @@ Status: follow-up priorities reviewed October 10, 2026 against commit
 below supersedes historical next-step statements on this page. On October 12,
 the user authorized continuing the engineering queue: each batch is delegated,
 self-reviewed by its executor, then reviewed and published by the controller.
-Implementation and verification status is recorded below.
+The A1–A4 engineering queue is complete as of October 13; implementation,
+audit decisions and verification are recorded below. Conditional scientific and
+external acceptance remains open.
 The [current gate ledger](2026-09-16-plan-status.md#current-gate-ledger)
 owns status; this plan owns scope and acceptance.
 
@@ -60,8 +62,8 @@ authorizes the bounded engineering batches, not future coverage promotion.
 
 Run these in order, one bounded review/verification/push at a time. G1 prevents
 real directed-coverage claims and promotion; it does not block these engineering
-tasks. A1–A3 are complete locally; A4 is the next bounded audit scope. Preserve the local default, CPU fallback
-and Intel runtime direction throughout.
+tasks. A1–A3 are implemented and A4 is closed by an evidence-backed no-extraction
+audit. Preserve the local default, CPU fallback and Intel runtime direction throughout.
 
 | Batch / owner | Deliverable and boundary | Acceptance / stop condition |
 | --- | --- | --- |
@@ -98,7 +100,7 @@ must match full affected-component recomputation, including reverse witnesses;
 do not promise a fixed-radius update before proving that bound. Design can proceed
 now; implementation of future-mode state/caches remains gated by Batch 5.
 
-### October 12 engineering execution
+### October 12–13 engineering execution
 
 A1 adds one domain grouping completion log with observed cache/hash/split counts
 and group length/span aggregates. Cache reuse counts accesses, not unique photos;
@@ -135,6 +137,20 @@ review found no blocker; an independent 84-combination replay against `0631abb`
 matches complete payloads, input mutations, collaborator traces and exceptions.
 The module contract records future domain/app/cache/event seams without introducing
 a selector, state migration, framework or new production mode.
+
+A4 inventories all 17 benchmark scripts and closes without extraction. Existing
+helper chains already share substantial primitives; the remaining real duplicates
+and paired-bootstrap candidate do not justify changing frozen runner/helper
+identities and recovery packages in this batch. The
+[evaluator maintenance audit](2026-10-13-evaluator-maintenance-audit.md)
+records candidate-specific evidence, distinct resume/resource/schema contracts
+and the conditions and tests for any future extraction. Executor self-review
+and controller review found no blocker; three repository-boundary tests, document
+links and diff checks pass. No evaluator source or historical record changed.
+
+A1 (`3533a51`), A2 (`0631abb`) and A3 (`ac65152`) were pushed individually;
+their exact-commit release workflows succeeded. A4 is a documentation-only
+closure. Publication and CI do not establish deployment or target/photo acceptance.
 
 ### Parallel evidence track and deferred work
 
@@ -175,7 +191,7 @@ publication, deployment and target acceptance remain separately reported.
 | A1 grouping diagnostics | Implemented and reviewed October 12 | 93 focused tests, lint and 500 controller baseline-parity cases pass; no extra decode/hash or policy change |
 | A2 preparation memory | Implemented October 12 | Sampled payload/RSS aggregates with unchanged prefetch scheduling; 1,539 full tests / ten skipped, lint pass |
 | A3 finalization seams | Implemented and reviewed October 12 | Same-file refinement/commentary helpers; 1,575 full tests / ten skipped, 84 controller baseline-parity cases and lint pass |
-| A4 evaluator maintenance | Pending bounded duplication audit | Extract only justified shared helpers; no independent-reference prerequisite |
+| A4 evaluator maintenance | Audited and reviewed October 13; no extraction selected | [17-script audit](2026-10-13-evaluator-maintenance-audit.md): existing reuse retained, historical identities unchanged; reopen only for a demonstrated maintenance need |
 | Existing evidence inventory and experiment protocol | Completed locally | [Inventory](benchmarks/2026-09-29-representation-control/inventory.md), [protocol and checks](benchmarks/2026-09-29-representation-control/report.md); 4 synthetic cases / 16 arm cells, no real-photo quality result |
 | Reference tooling and offline viewer | Closed supporting work | Preserve [tooling results](benchmarks/2026-09-27-reference-tooling/report.md) and [handler checks](benchmarks/2026-09-27-reference-tooling/2026-09-28-viewer-contract-report.md); no further UI task |
 | Constructed candidate/selection graphs | Structural portion accepted locally | [14-snapshot report](benchmarks/2026-09-27-reference-tooling/candidate-graph/report.md); reuse the evaluator, do not repeat completed graph experiments |
