@@ -1,6 +1,6 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 14, 2026. The dated filename is
+Single status entrypoint, updated October 16, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
@@ -25,8 +25,9 @@ owns batch scope and acceptance; older dated next-step statements below are hist
 | Future coverage mode | Direct final-keeper witnesses and unknown preservation are required; rejected SIFT/residual evidence is not admissible. | Preserve G3–G6, separate directional/cache/event identities and full-recomputation parity; no production promotion. |
 | FGAesthetics preference source | [Label-only preflight](benchmarks/2026-10-08-reference-source-preflight/README.md) complete; fields, terms and lineage unresolved. Aesthetic labels do not pass G1. | Parallel/deferred clarification; unsent outreach needs explicit authorization and does not block engineering. |
 | Public models / native input diagnostics | Frozen quality/copy cohorts complete; MUSIQ shared-core resource gate failed. [Two native DNGs](benchmarks/2026-10-08-native-raw-orientation/README.md) pass bounded orientation conformance, not general model-input acceptance. | Retain negative results and optional adapter deferral; no repeat cohort or new model selected. |
-| Target deployment | October 14 native DockerMan update to `02d90568b8ec53c0cab85d739683c0d0cfcba299` passed executor self-review and controller review. Exact published image identity, idle API, unchanged DB/config bytes, read-only photo mount and historical backup integrity verified. | Run the separate bounded quality, RAW pipeline, CPU fallback and interruption/recovery cases; deployment alone does not pass them. |
-| External acceptance | Real photographic utility, professional-app XMP round trips and recovery are separate gates. Real ExifTool disposable-fixture checks passed; Adobe Bridge GUI roundtrip is unverified because the Mac remains locked. | Follow the [runtime protocol](2026-10-14-runtime-acceptance-protocol.md) and [external protocol](2026-09-17-external-acceptance-plan.md) in isolated authorized scope. Continue NAS diagnostics independently of Mac unlock. |
+| Target deployment | October 14 native DockerMan update to `02d90568b8ec53c0cab85d739683c0d0cfcba299` passed executor self-review and controller review. Exact published image identity, idle API, unchanged DB/config bytes, read-only photo mount and historical backup integrity verified. | Deployed application remains this revision; separately published helper `f3b01cf` passed [CI](https://github.com/Team-Cyan/material-agent/actions/runs/38738821952). Deployment and helper CI do not pass RAW-pipeline, forced fallback or recovery acceptance. |
+| Native public quality | Quality-v2 passed: all 256 original IDs/source hashes verified, NIMA/SSD actual CPU provenance 256/256, two deterministic repeats. Independent KonIQ MOS/KADID DMOS coefficients (128 images each) and controller recomputation accepted; historical raw/effective max score delta zero. | Retain the [partial native acceptance record](2026-10-15-native-runtime-acceptance.md). Fixed previously exposed cohort, not fresh holdout, full RAW rating, quality improvement or G1/G2 admission. |
+| External acceptance | Initial RAW staging returned failure/no local success receipt. Read-only inspection verifies all 20 DNGs, archive/script/manifest hashes and immutable inputs; production identity is unchanged. Original cause unknown; safe receipt reconciliation pending, with no retransmission currently indicated. All full-run, forced CPU fallback and interruption/restore cases remain unexecuted. ExifTool sidecar checks establish a partial physical subset; Bridge GUI remains unverified after locked-desktop/timeout evidence. | Reconcile the receipt before dispatch; follow the [runtime protocol](2026-10-14-runtime-acceptance-protocol.md) and [external protocol](2026-09-17-external-acceptance-plan.md) in isolated authorized scope. Continue NAS work independently of unavailable GUI interaction. |
 
 ## Authorized continuation after engineering closure
 
@@ -64,6 +65,25 @@ deployment. Production DB/config bytes remained unchanged, and a concrete
 old-digest rollback plan and boot/template backups are retained privately in the
 homelab controller. This backup scope excludes models, caches and logs; no restore
 or algorithm acceptance is inferred from successful deployment.
+
+October 15 quality-v2 evidence is separately accepted: the corrected helper
+`f3b01cf` routes multiprocessing IPC to the existing bounded `/tmp` tmpfs without
+weakening persistent-output guards. Its
+[CI](https://github.com/Team-Cyan/material-agent/actions/runs/38738821952) passed;
+the deployed scoring image remains `02d9056`. The actual 256-image run and
+independently recomputed public MOS/DMOS coefficients are recorded in the
+[partial native acceptance report](2026-10-15-native-runtime-acceptance.md).
+Original/copy hashes and both model execution paths pass for every item. The
+fixed cohort's unchanged historical scores do not demonstrate a quality
+improvement or directed-content coverage. Initial RAW staging returned failure
+without a local success receipt. Read-only inspection now verifies the complete
+20-DNG/archive/script/manifest hash inventory and immutable 0444 files/0555 source,
+with the same production identity before and after. Original failure cause is
+unknown; safe receipt reconciliation is pending, not a recovered-stage claim.
+Verified inputs do not currently require retransmission. Full RAW-pipeline,
+forced fallback and interruption/restore cases remain unexecuted;
+Bridge GUI acceptance remains incomplete. Preserve those separate gates
+and the existing product priorities rather than reopen model sweeps.
 
 ## Historical execution record
 

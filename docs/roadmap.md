@@ -2,6 +2,15 @@
 
 ## Completed
 
+- completed the reviewed quality-v2 native diagnostic on the deployed `02d9056`
+  image: 256 public images, actual NIMA/SSD CPU execution for every item, two
+  deterministic repeats and preserved source bytes. Independent KonIQ/KADID
+  MOS/DMOS coefficients and controller recomputation are accepted for this fixed
+  cohort; historical raw/effective score max delta is zero, with no new quality
+  improvement or G1/G2 claim. Helper `f3b01cf` passed
+  [CI](https://github.com/Team-Cyan/material-agent/actions/runs/38738821952);
+  see the [partial native acceptance record](operations/2026-10-15-native-runtime-acceptance.md).
+
 - completed the [A1–A4 engineering queue](operations/2026-09-26-culling-improvement-plan.md#current-follow-up-queue-after-the-october-8-review)
   with executor self-review followed by controller review: grouping diagnostics,
   sampled preparation memory/RSS and equivalent finalization helpers. A1–A3 were
@@ -264,8 +273,15 @@
 
 - continue under the existing public-data and target-NAS deployment/test
   authorization: the October 14 native deployment of `02d9056` and independent
-  backup/config/DB verification are complete. Next verify bounded isolated
-  native execution, public-label quality, CPU fallback and interruption/recovery.
+  backup/config/DB verification are complete, as is the separately reviewed
+  quality-v2 public-label native diagnostic. Initial RAW staging returned failure
+  without a local success receipt; read-only inspection now verifies all 20 DNGs,
+  archive/script/manifest hashes and immutable input modes, with unchanged
+  production identity. Original cause remains unknown and safe receipt
+  reconciliation is pending; no retransmission is currently indicated. Full
+  RAW-pipeline, forced CPU fallback and recovery cases remain unexecuted.
+  Adobe Bridge GUI roundtrip also
+  remains incomplete; physical ExifTool subset checks do not establish it.
   Use public ground truth for its native task;
   directed-coverage evidence gaps do not block these diagnostics. See the
   [authorized continuation](operations/2026-09-16-plan-status.md#authorized-continuation-after-engineering-closure)
