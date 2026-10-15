@@ -219,13 +219,22 @@ def tree_size(root: Path):
     for path in root.rglob("*"):
         s = path.lstat()
         if stat.S_ISLNK(s.st_mode) or not (stat.S_ISREG(s.st_mode) or stat.S_ISDIR(s.st_mode)):
-            raise ValueError("unsafe experiment output entry")
+            raise ValueError(f"unsafe experiment output entry: {path.relative_to(root)} "
+                             f"stat_type={stat.S_IFMT(s.st_mode)}")
         if stat.S_ISREG(s.st_mode):
             total += s.st_size
             count += 1
     if count > 10000:
         raise ValueError("output file count exceeds bound")
     return total
+
+
+def runtime_environment(work: Path, config: Path):
+    # The transport supplies an isolated 64 MiB /tmp tmpfs for multiprocessing
+    # forkserver sockets and other ephemeral IPC. Persistent evidence stays owned.
+    return dict(os.environ, MATERIAL_AGENT_WORK_DIR=str(work), MATERIAL_AGENT_CONFIG=str(config),
+                PYTHONDONTWRITEBYTECODE="1", TMPDIR="/tmp", TEMP="/tmp", TMP="/tmp",
+                XDG_CACHE_HOME=str(work / "cache"))
 
 
 def snapshot(db: Path):
@@ -550,8 +559,7 @@ def run_case(case, manifest, root, profile, output):
             c.setdefault("model_management", {})["registry_dir"] = str(work / "models")
             path = directory / "config.yaml"
             path.write_text(yaml.safe_dump(c, sort_keys=True))
-            env = dict(os.environ, MATERIAL_AGENT_WORK_DIR=str(work), MATERIAL_AGENT_CONFIG=str(path),
-                       PYTHONDONTWRITEBYTECODE="1", TMPDIR=str(work), XDG_CACHE_HOME=str(work / "cache"))
+            env = runtime_environment(work, path)
             return directory, work, path, env
         def full(name, *, restore=None, interrupt=None):
             directory, work, path, env = setup(name)

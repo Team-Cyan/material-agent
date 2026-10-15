@@ -7,6 +7,9 @@ import json
 import os
 from pathlib import Path
 import signal
+import socket
+import stat
+import subprocess
 import sys
 import time
 
@@ -320,3 +323,59 @@ def test_fallback_validator_rejects_missing_or_nonfinite_execution_evidence(chan
     change(data)
     with pytest.raises(ValueError):
         module.verify_fallback(data)
+
+
+def test_real_forkserver_socket_uses_ephemeral_tmp_not_owned_work(tmp_path, monkeypatch):
+    work = tmp_path / "work"
+    work.mkdir()
+    (work / "retained.txt").write_text("persistent evidence")
+    monkeypatch.setenv("TMPDIR", str(work))
+    env = module.runtime_environment(work, tmp_path / "config.yaml")
+    assert all(env[key] == "/tmp" for key in ("TMPDIR", "TEMP", "TMP"))
+    assert env["MATERIAL_AGENT_WORK_DIR"] == str(work)
+    assert env["XDG_CACHE_HOME"] == str(work / "cache")
+    assert env.get("HOME") == os.environ.get("HOME")
+    code = """
+import json,multiprocessing,os,stat,tempfile
+from multiprocessing import forkserver
+from pathlib import Path
+worker=multiprocessing.get_context('forkserver').Process(target=os.getpid)
+worker.start();worker.join(5)
+if worker.is_alive():
+    worker.kill();worker.join();raise RuntimeError('forkserver worker timed out')
+assert worker.exitcode==0
+address=Path(forkserver._forkserver._forkserver_address)
+assert stat.S_ISSOCK(address.lstat().st_mode)
+assert address.resolve().is_relative_to(Path('/tmp').resolve())
+assert not address.resolve().is_relative_to(Path(os.environ['MATERIAL_AGENT_WORK_DIR']).resolve())
+print(json.dumps({'tempdir':tempfile.gettempdir(),'socket_type':stat.S_IFMT(address.lstat().st_mode)}))
+"""
+    result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True,
+                            text=True, timeout=15, check=True)
+    evidence = json.loads(result.stdout)
+    assert Path(evidence["tempdir"]).resolve() == Path("/tmp").resolve()
+    assert evidence["socket_type"] == stat.S_IFSOCK
+    assert module.tree_size(work) == len("persistent evidence")
+    assert sorted(p.name for p in work.iterdir()) == ["retained.txt"]
+
+
+def test_persistent_output_still_rejects_real_unix_socket_and_symlink(tmp_path):
+    owned = tmp_path / "work"
+    owned.mkdir()
+    endpoint = owned / "ipc.sock"
+    # macOS Unix socket paths have a short limit; tmp_path can be too long.
+    # Bind using a short directory-relative path while preserving the real entry.
+    before = Path.cwd()
+    try:
+        os.chdir(owned)
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as server:
+            server.bind("ipc.sock")
+            assert stat.S_ISSOCK(endpoint.lstat().st_mode)
+            with pytest.raises(ValueError, match=r"ipc\.sock stat_type=49152"):
+                module.tree_size(tmp_path)
+        endpoint.unlink()
+        (owned / "linked").symlink_to("missing-target")
+        with pytest.raises(ValueError, match=r"work/linked stat_type=40960"):
+            module.tree_size(tmp_path)
+    finally:
+        os.chdir(before)

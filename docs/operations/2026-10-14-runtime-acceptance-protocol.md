@@ -56,6 +56,16 @@ RSS is at most 2,560 MiB. Linux sampling reads `/proc`; macOS boundary checks us
 `ps`. Resource/output sampling is observational and stops detected excesses;
 transport filesystem/container limits supply independent hard enforcement.
 
+Child `TMPDIR`, `TEMP` and `TMP` point to the transport's separate 64 MiB `/tmp`
+tmpfs. Python multiprocessing may create legitimate forkserver Unix sockets
+there. These ephemeral IPC/temp entries are outside persistent output accounting
+and the SQLite/config restore scope; the transport caps their filesystem usage.
+DBs, compiled/XDG caches, configs, logs and report artifacts remain in owned
+persistent output. Its guard still rejects every symlink, socket and other
+special entry, identifying the owned relative path and file type on failure.
+The original quality-v1 failure evidence must be retained; this environment-only
+correction requires a new reviewed script hash, plan and output namespace.
+
 ## Actual case behavior
 
 `full-run` launches the actual production CLI in a new process with
