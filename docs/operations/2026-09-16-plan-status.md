@@ -25,7 +25,8 @@ owns batch scope and acceptance; older dated next-step statements below are hist
 | Future coverage mode | Direct final-keeper witnesses and unknown preservation are required; rejected SIFT/residual evidence is not admissible. | Preserve G3–G6, separate directional/cache/event identities and full-recomputation parity; no production promotion. |
 | FGAesthetics preference source | [Label-only preflight](benchmarks/2026-10-08-reference-source-preflight/README.md) complete; fields, terms and lineage unresolved. Aesthetic labels do not pass G1. | Parallel/deferred clarification; unsent outreach needs explicit authorization and does not block engineering. |
 | Public models / native input diagnostics | Frozen quality/copy cohorts complete; MUSIQ shared-core resource gate failed. [Two native DNGs](benchmarks/2026-10-08-native-raw-orientation/README.md) pass bounded orientation conformance, not general model-input acceptance. | Retain negative results and optional adapter deferral; no repeat cohort or new model selected. |
-| External acceptance | Real photographic utility, professional-app XMP round trips and recovery are separate gates. | Follow the [external protocol](2026-09-17-external-acceptance-plan.md) in isolated authorized scope. No live deployment check or photo/XMP operation in the October 12–13 engineering continuation. |
+| Target deployment | October 14 native DockerMan update to `02d90568b8ec53c0cab85d739683c0d0cfcba299` passed executor self-review and controller review. Exact published image identity, idle API, unchanged DB/config bytes, read-only photo mount and historical backup integrity verified. | Run the separate bounded quality, RAW pipeline, CPU fallback and interruption/recovery cases; deployment alone does not pass them. |
+| External acceptance | Real photographic utility, professional-app XMP round trips and recovery are separate gates. Real ExifTool disposable-fixture checks passed; Adobe Bridge GUI roundtrip is unverified because the Mac remains locked. | Follow the [runtime protocol](2026-10-14-runtime-acceptance-protocol.md) and [external protocol](2026-09-17-external-acceptance-plan.md) in isolated authorized scope. Continue NAS diagnostics independently of Mac unlock. |
 
 ## Authorized continuation after engineering closure
 
@@ -45,7 +46,24 @@ A source access or label-semantics gap is initially an investigation task for th
 agent, not a user annotation assignment. Request human participation only for a
 specific unavoidable account interaction, unresolved personal preference or a
 separately scoped action outside the existing authorization. No such immediate
-user action has been established by this clarification.
+user action was established by that clarification. Subsequent actual computer-use
+checks identified one concrete interaction: unlock the Mac for Adobe Bridge GUI
+readback/writeback. The existing request remains pending; it does not block NAS
+work or require the user to annotate public quality datasets.
+
+October 14 deployment evidence: the reviewed image index is
+`sha256:a308c3e71293dfc2eb28fcb53f9b12016d04646aee825d48af6b8bb905049fab`,
+with amd64 image/config ID
+`sha256:3779460f3ce4473140f7d505f1b88b8493b64568b7525b2a8f26b6a8166dd3a2`.
+[Release CI](https://github.com/Team-Cyan/material-agent/actions/runs/38475944683)
+passed quality and publication checks. Native managed update preserved template
+metadata apart from Repository, and the post-update DockerMan audit reported
+zero issues. The approximately 1.81 GB online SQLite backup plus two configs
+passed integrity, logical-count and hash verification both before and after
+deployment. Production DB/config bytes remained unchanged, and a concrete
+old-digest rollback plan and boot/template backups are retained privately in the
+homelab controller. This backup scope excludes models, caches and logs; no restore
+or algorithm acceptance is inferred from successful deployment.
 
 ## Historical execution record
 

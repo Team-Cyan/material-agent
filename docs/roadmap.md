@@ -263,9 +263,10 @@
 ## Next
 
 - continue under the existing public-data and target-NAS deployment/test
-  authorization: refresh current runtime identity, deploy the reviewed release
-  through the homelab controller with rollback, then verify bounded isolated
-  native execution and recovery. Use public ground truth for its native task;
+  authorization: the October 14 native deployment of `02d9056` and independent
+  backup/config/DB verification are complete. Next verify bounded isolated
+  native execution, public-label quality, CPU fallback and interruption/recovery.
+  Use public ground truth for its native task;
   directed-coverage evidence gaps do not block these diagnostics. See the
   [authorized continuation](operations/2026-09-16-plan-status.md#authorized-continuation-after-engineering-closure)
 
