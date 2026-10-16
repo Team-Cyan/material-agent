@@ -1,6 +1,6 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 16, 2026. The dated filename is
+Single status entrypoint, updated October 17, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
@@ -25,9 +25,11 @@ owns batch scope and acceptance; older dated next-step statements below are hist
 | Future coverage mode | Direct final-keeper witnesses and unknown preservation are required; rejected SIFT/residual evidence is not admissible. | Preserve G3–G6, separate directional/cache/event identities and full-recomputation parity; no production promotion. |
 | FGAesthetics preference source | [Label-only preflight](benchmarks/2026-10-08-reference-source-preflight/README.md) complete; fields, terms and lineage unresolved. Aesthetic labels do not pass G1. | Parallel/deferred clarification; unsent outreach needs explicit authorization and does not block engineering. |
 | Public models / native input diagnostics | Frozen quality/copy cohorts complete; MUSIQ shared-core resource gate failed. [Two native DNGs](benchmarks/2026-10-08-native-raw-orientation/README.md) pass bounded orientation conformance, not general model-input acceptance. | Retain negative results and optional adapter deferral; no repeat cohort or new model selected. |
-| Target deployment | October 14 native DockerMan update to `02d90568b8ec53c0cab85d739683c0d0cfcba299` passed executor self-review and controller review. Exact published image identity, idle API, unchanged DB/config bytes, read-only photo mount and historical backup integrity verified. | Deployed application remains this revision; separately published helper `f3b01cf` passed [CI](https://github.com/Team-Cyan/material-agent/actions/runs/38738821952). Deployment and helper CI do not pass RAW-pipeline, forced fallback or recovery acceptance. |
+| Target deployment | October 14 native DockerMan update to `02d90568b8ec53c0cab85d739683c0d0cfcba299` passed executor self-review and controller review. Exact published image identity, idle API, unchanged DB/config bytes, read-only photo mount and historical backup integrity verified. | Deployed application/source build inputs remain unchanged through helper commits. `a21d299` passed [CI](https://github.com/Team-Cyan/material-agent/actions/runs/38850988032); helper publication is not a redeployment or a fallback/recovery result. |
 | Native public quality | Quality-v2 passed: all 256 original IDs/source hashes verified, NIMA/SSD actual CPU provenance 256/256, two deterministic repeats. Independent KonIQ MOS/KADID DMOS coefficients (128 images each) and controller recomputation accepted; historical raw/effective max score delta zero. | Retain the [partial native acceptance record](2026-10-15-native-runtime-acceptance.md). Fixed previously exposed cohort, not fresh holdout, full RAW rating, quality improvement or G1/G2 admission. |
-| External acceptance | Initial RAW staging returned failure/no local success receipt. Read-only inspection verifies all 20 DNGs, archive/script/manifest hashes and immutable inputs; production identity is unchanged. Original cause unknown; safe receipt reconciliation pending, with no retransmission currently indicated. All full-run, forced CPU fallback and interruption/restore cases remain unexecuted. ExifTool sidecar checks establish a partial physical subset; Bridge GUI remains unverified after locked-desktop/timeout evidence. | Reconcile the receipt before dispatch; follow the [runtime protocol](2026-10-14-runtime-acceptance-protocol.md) and [external protocol](2026-09-17-external-acceptance-plan.md) in isolated authorized scope. Continue NAS work independently of unavailable GUI interaction. |
+| Bounded RAW pipeline | Staging receipt reconciled read-only against all 20 immutable DNGs and archive/script/manifest hashes; no retransmission. After a separate RAW-v2 GNU OpenMP allocation failure, RAW-v3 passed: 20 SIMULATED, zero writes/errors, source/copy preservation, A1 grouping/A2 memory/A3 final artifacts. For each adapter, 15/20 serialized records carry native CPU provenance; five lack model evidence, cause unclassified. | Retain the [partial report](2026-10-15-native-runtime-acceptance.md); no unique-call, conditional-refinement, metadata-write or new quality claim. Failed-case root resource limit remains unproven; no production scheduling/limit change. |
+| Bounded NIMA fallback | One selected public RAW passed actual unavailable-GPU request to compiled/execution CPU, with explicit fallback reason and preserved source hashes. Score 4.434767 and all ten distribution buckets exactly match CPU control. An initially rejected status observation was retained; later read-only identity verification/export passed on the same container, without bypass/relaunch. | One-fixture NIMA only; not SSD fallback, GPU performance or all-fixture coverage. Initial observation rejection's cause remains unproven. See the [partial report](2026-10-15-native-runtime-acceptance.md). |
+| External acceptance | Recovery requested but not started; initial identity rejection remains unexplained, with plan hash matching. Exactly three read-only snapshots match both RAW-v3 stage and fallback handle, including complete mount multisets; ordering is only a hypothesis. No code change, SIGTERM/SIGKILL or restore case. ExifTool checks remain a partial physical subset; fresh Bridge name/bundle lookup timed out, with no UI read/edit/save or fresh lock-state confirmation. | Implement private failure-time diagnostics preserving the exact rejecting guard, then main review and one attempt. Follow the [runtime protocol](2026-10-14-runtime-acceptance-protocol.md) and [external protocol](2026-09-17-external-acceptance-plan.md); GUI acceptance remains separate. |
 
 ## Authorized continuation after engineering closure
 
@@ -47,10 +49,11 @@ A source access or label-semantics gap is initially an investigation task for th
 agent, not a user annotation assignment. Request human participation only for a
 specific unavoidable account interaction, unresolved personal preference or a
 separately scoped action outside the existing authorization. No such immediate
-user action was established by that clarification. Subsequent actual computer-use
-checks identified one concrete interaction: unlock the Mac for Adobe Bridge GUI
-readback/writeback. The existing request remains pending; it does not block NAS
-work or require the user to annotate public quality datasets.
+user action was established by that clarification. Earlier computer-use checks
+recorded a locked desktop. Fresh Bridge lookup by name and bundle identifier
+still timed out despite application inventory availability; the current lock
+state is not freshly confirmed. No GUI read/edit/save is accepted. This gap
+does not block independent NAS investigation or require public-quality annotation.
 
 October 14 deployment evidence: the reviewed image index is
 `sha256:a308c3e71293dfc2eb28fcb53f9b12016d04646aee825d48af6b8bb905049fab`,
@@ -75,15 +78,35 @@ independently recomputed public MOS/DMOS coefficients are recorded in the
 [partial native acceptance report](2026-10-15-native-runtime-acceptance.md).
 Original/copy hashes and both model execution paths pass for every item. The
 fixed cohort's unchanged historical scores do not demonstrate a quality
-improvement or directed-content coverage. Initial RAW staging returned failure
-without a local success receipt. Read-only inspection now verifies the complete
-20-DNG/archive/script/manifest hash inventory and immutable 0444 files/0555 source,
-with the same production identity before and after. Original failure cause is
-unknown; safe receipt reconciliation is pending, not a recovered-stage claim.
-Verified inputs do not currently require retransmission. Full RAW-pipeline,
-forced fallback and interruption/restore cases remain unexecuted;
-Bridge GUI acceptance remains incomplete. Preserve those separate gates
-and the existing product priorities rather than reopen model sweeps.
+improvement or directed-content coverage. The initial RAW staging command
+failed without a local success receipt; read-only verification reconciled that
+receipt against complete immutable inputs, without retransmission or production
+identity changes. Its original failure cause remains unknown. The subsequent
+RAW-v2 full-run failed with GNU `libgomp` thread allocation error/no OOM, without
+proving which resource limit was hit. Helper `a21d299` fixes only requested child
+OpenMP/BLAS thread controls and passed
+[CI](https://github.com/Team-Cyan/material-agent/actions/runs/38850988032).
+
+The separately reviewed RAW-v3 full-run passed with 20 SIMULATED, zero
+writes/errors and preserved original/copied hashes. A1 grouping, A2 preparation
+memory and A3 final artifacts are present; 15/20 serialized output records per
+adapter carry native CPU provenance. Five per adapter lack model evidence, with
+cause unclassified; these are not unique inference-call counts. No conditional
+refinement branch or new photographic-quality claim is inferred. The exact
+deployed image remains `02d9056`, with unchanged source build inputs through
+these helper commits. The separately reviewed one-fixture NIMA fallback now
+passes: actual unavailable-GPU request executes on CPU with explicit fallback,
+and score/distribution exactly match CPU control. It does not admit SSD fallback
+or all-fixture/GPU-performance claims. Recovery was requested but did not start:
+the production-identity guard rejected the staging-receipt comparison before a
+saved handle, despite a matching plan hash. Exactly three read-only snapshots
+now match both RAW-v3 stage and fallback handle with equal full mount multisets.
+The original differing field/cause remains unknown; ordering is unproven.
+Next implement private failure-time diagnostics without changing the exact
+rejecting guard, obtain main-agent review and make one attempt. No code change
+or recovery launch has occurred, and no SIGTERM/SIGKILL has run.
+Bridge GUI read/edit/save also remains unverified. Preserve those
+separate gates and existing product priorities rather than reopen model sweeps.
 
 ## Historical execution record
 

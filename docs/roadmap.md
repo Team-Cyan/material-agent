@@ -2,6 +2,24 @@
 
 ## Completed
 
+- verified the native NIMA unavailable-GPU fallback for one selected public RAW:
+  actual CPU execution/fallback provenance, preserved source bytes and exact
+  score/ten-bin distribution agreement with explicit CPU control. This does not
+  establish SSD fallback, GPU performance or all-fixture coverage. An initial
+  identity-observation rejection remains unexplained; read-only verification
+  and export subsequently passed on the same retained container without bypass
+  or relaunch. See the [partial native record](operations/2026-10-15-native-runtime-acceptance.md).
+
+- completed the bounded RAW-v3 full dry-run: 20 SIMULATED, zero writes/errors,
+  preserved source/copy hashes, A1 grouping diagnostics, A2 memory telemetry and
+  A3 final artifacts. For each adapter, 15/20 serialized output records carry
+  verified NIMA/SSD CPU provenance; five lack model evidence, with cause
+  unclassified. No unique-call count or conditional-refinement claim follows.
+  Thread-budget helper `a21d299` passed
+  [CI](https://github.com/Team-Cyan/material-agent/actions/runs/38850988032);
+  the deployed `02d9056` image/source build inputs remain unchanged. See the
+  [partial native acceptance record](operations/2026-10-15-native-runtime-acceptance.md).
+
 - completed the reviewed quality-v2 native diagnostic on the deployed `02d9056`
   image: 256 public images, actual NIMA/SSD CPU execution for every item, two
   deterministic repeats and preserved source bytes. Independent KonIQ/KADID
@@ -274,14 +292,23 @@
 - continue under the existing public-data and target-NAS deployment/test
   authorization: the October 14 native deployment of `02d9056` and independent
   backup/config/DB verification are complete, as is the separately reviewed
-  quality-v2 public-label native diagnostic. Initial RAW staging returned failure
-  without a local success receipt; read-only inspection now verifies all 20 DNGs,
-  archive/script/manifest hashes and immutable input modes, with unchanged
-  production identity. Original cause remains unknown and safe receipt
-  reconciliation is pending; no retransmission is currently indicated. Full
-  RAW-pipeline, forced CPU fallback and recovery cases remain unexecuted.
-  Adobe Bridge GUI roundtrip also
-  remains incomplete; physical ExifTool subset checks do not establish it.
+  quality-v2 public-label native diagnostic and bounded RAW-v3 full dry-run.
+  Staging receipt reconciliation verified immutable inputs without media
+  retransmission; its original failure cause remains unknown. RAW-v2's separate
+  GNU OpenMP allocation failure did not prove which resource limit was hit.
+  Preserve both failures and the accepted RAW-v3 thread-budget variant.
+  One-fixture NIMA fallback is accepted within its separate scope;
+  recovery was requested but not started: production identity disagrees with
+  the staging receipt before a saved handle, while the plan hash still matches.
+  Exactly three read-only snapshots now match both RAW-v3 stage and fallback
+  handle, including full mount multisets. Original difference/cause remains
+  unknown and ordering is unproven. Next add private failure-time diagnostics
+  preserving the exact rejecting guard, then main review and one attempt.
+  No code change or recovery launch has occurred; no SIGTERM/SIGKILL has run.
+  Fresh Bridge name/bundle lookup still times out
+  despite inventory availability; the current lock state is not freshly confirmed
+  and no UI read/edit/save has passed. Physical ExifTool subset checks do not
+  establish GUI acceptance.
   Use public ground truth for its native task;
   directed-coverage evidence gaps do not block these diagnostics. See the
   [authorized continuation](operations/2026-09-16-plan-status.md#authorized-continuation-after-engineering-closure)
