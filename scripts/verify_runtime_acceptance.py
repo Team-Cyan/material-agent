@@ -34,6 +34,7 @@ MAX_OUTPUT = 512 * MIB
 MAX_RSS = 2560 * MIB
 EXTENSIONS = {".jpg", ".jpeg", ".png", ".arw", ".cr3", ".nef", ".raf", ".dng", ".orf", ".rw2"}
 RAW_EXTENSIONS = EXTENSIONS - {".jpg", ".jpeg", ".png"}
+CHILD_THREAD_ENV = {"OMP_NUM_THREADS": "1", "OMP_THREAD_LIMIT": "1", "OPENBLAS_NUM_THREADS": "1"}
 CLI = [sys.executable, "-c", "from material_agent.shells.cli.main import main; raise SystemExit(main())"]
 # Static worker code only; there is no supplied command, shell, device or model option.
 FALLBACK_WORKER = """
@@ -234,7 +235,7 @@ def runtime_environment(work: Path, config: Path):
     # forkserver sockets and other ephemeral IPC. Persistent evidence stays owned.
     return dict(os.environ, MATERIAL_AGENT_WORK_DIR=str(work), MATERIAL_AGENT_CONFIG=str(config),
                 PYTHONDONTWRITEBYTECODE="1", TMPDIR="/tmp", TEMP="/tmp", TMP="/tmp",
-                XDG_CACHE_HOME=str(work / "cache"))
+                XDG_CACHE_HOME=str(work / "cache"), **CHILD_THREAD_ENV)
 
 
 def snapshot(db: Path):
@@ -506,6 +507,11 @@ def run_case(case, manifest, root, profile, output):
     output.mkdir(mode=0o700, parents=False)
     deadline = time.monotonic() + payload["bounds"]["wall_seconds"]
     report = {"schema_version": SCHEMA, "case": case, "status": "running",
+              "child_thread_budget": {
+                  "requested_environment": dict(CHILD_THREAD_ENV),
+                  "applies_before": "fresh child native-library imports",
+                  "scope": "OpenMP and OpenBLAS when present; excludes Python preparation pool and OpenVINO oneTBB",
+                  "global_thread_count_guaranteed": False},
               "expected_source_revision": payload["source_revision"],
               "runtime_revision_verified_by_runner": False,
               "manifest_sha256": digest(manifest), "script_sha256": digest(Path(__file__)),

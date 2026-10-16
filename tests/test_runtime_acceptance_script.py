@@ -271,7 +271,7 @@ def test_actual_cli_raw_telemetry_and_simulated_artifacts(tmp_path):
     baseline["grouping"]["enabled"] = True
     baseline["screening"]["enabled"] = False
     config.write_text(yaml.safe_dump(baseline))
-    env = dict(os.environ, MATERIAL_AGENT_WORK_DIR=str(work), PYTHONDONTWRITEBYTECODE="1")
+    env = module.runtime_environment(work, config)
     result = module.supervise([*module.CLI, "run", str(inputs), "--config", str(config), "--dry-run"],
                               env=env, log=tmp_path / "process.log", output=tmp_path,
                               bound={"wall_seconds": 30, "rss_bytes": 1024 * module.MIB,
@@ -379,3 +379,29 @@ def test_persistent_output_still_rejects_real_unix_socket_and_symlink(tmp_path):
             module.tree_size(tmp_path)
     finally:
         os.chdir(before)
+
+
+def test_fresh_native_child_receives_fixed_thread_controls_before_imports(tmp_path, monkeypatch):
+    expected = {"OMP_NUM_THREADS": "1", "OMP_THREAD_LIMIT": "1", "OPENBLAS_NUM_THREADS": "1"}
+    for key in expected:
+        monkeypatch.setenv(key, "128")
+    env = module.runtime_environment(tmp_path, tmp_path / "config.yaml")
+    assert {k: env[k] for k in expected} == expected
+    # A fresh interpreter observes the controls before loading real native modules.
+    # This tests transport of the budget, not OpenMP effect on a non-OpenMP Mac wheel.
+    code = """
+import json,os
+keys=('OMP_NUM_THREADS','OMP_THREAD_LIMIT','OPENBLAS_NUM_THREADS')
+before={k:os.environ[k] for k in keys}
+import rawpy,numpy
+print(json.dumps({'before_native_imports':before,'after_native_imports':{k:os.environ[k] for k in keys},
+                  'rawpy_openmp':rawpy.flags['OPENMP'],'numpy_version':numpy.__version__}))
+"""
+    result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True,
+                            text=True, timeout=15, check=True)
+    observed = json.loads(result.stdout)
+    assert observed["before_native_imports"] == expected
+    assert observed["after_native_imports"] == expected
+    assert type(observed["rawpy_openmp"]) is bool
+    assert observed["numpy_version"]
+    assert all(os.environ[k] == "128" for k in expected)

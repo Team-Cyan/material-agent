@@ -66,6 +66,26 @@ special entry, identifying the owned relative path and file type on failure.
 The original quality-v1 failure evidence must be retained; this environment-only
 correction requires a new reviewed script hash, plan and output namespace.
 
+The real RAW-v2 full-run later exited with GNU `libgomp` reporting thread
+creation failure (`Resource temporarily unavailable`), without an OOM kill.
+This proves an OpenMP thread-allocation failure, not which PID/host limit or
+library exhausted it. Production preparation flattens the semantic groups:
+with 20 files and the unchanged prefetch cap 32, up to 20 Python preparation
+workers can call RAW postprocessing. It is not limited to a five-frame group.
+
+The harness now fixes `OMP_NUM_THREADS=1`, `OMP_THREAD_LIMIT=1` and
+`OPENBLAS_NUM_THREADS=1` in every fresh child's environment before native
+imports, overriding inherited values. The report's `child_thread_budget`
+records these requested controls and their scope. They bound applicable
+OpenMP/OpenBLAS teams, not the Python preparation pool or all process threads;
+OpenVINO's default oneTBB runtime is not governed by these OpenMP variables.
+See the [GNU OpenMP thread controls](https://gcc.gnu.org/onlinedocs/libgomp/OMP_005fNUM_005fTHREADS.html),
+[OpenMP thread limit](https://gcc.gnu.org/onlinedocs/libgomp/OMP_005fTHREAD_005fLIMIT.html)
+and [OpenVINO threading properties](https://docs.openvino.ai/2026/openvino-workflow/running-inference/inference-devices-and-modes/query-device-properties.html).
+Production profile, scheduling and the two-CPU/128-PID/container bounds remain
+unchanged. A new reviewed runner hash/RAW namespace is required; earlier quality
+results remain unchanged and are not a performance comparison for this variant.
+
 ## Actual case behavior
 
 `full-run` launches the actual production CLI in a new process with
