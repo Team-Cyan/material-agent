@@ -298,17 +298,26 @@
   GNU OpenMP allocation failure did not prove which resource limit was hit.
   Preserve both failures and the accepted RAW-v3 thread-budget variant.
   One-fixture NIMA fallback is accepted within its separate scope;
-  recovery was requested but not started: production identity disagrees with
-  the staging receipt before a saved handle, while the plan hash still matches.
-  Exactly three read-only snapshots now match both RAW-v3 stage and fallback
-  handle, including full mount multisets. Original difference/cause remains
-  unknown and ordering is unproven. Next add private failure-time diagnostics
-  preserving the exact rejecting guard, then main review and one attempt.
-  No code change or recovery launch has occurred; no SIGTERM/SIGKILL has run.
-  Fresh Bridge name/bundle lookup still times out
-  despite inventory availability; the current lock state is not freshly confirmed
-  and no UI read/edit/save has passed. Physical ExifTool subset checks do not
-  establish GUI acceptance.
+  recovery attempt 2 passed the unchanged exact identity guard and launched
+  once, then failed to observe an interruptible committed milestone. Control
+  completed 20 SIMULATED, zero writes/errors and 15 serialized native CPU records
+  per adapter. The SIGTERM-designated child exited 0 without a signal; no
+  SIGKILL/backup/restore occurred. One of nine snapshots is available; original
+  hashes are unchanged, final copy verification was not reached. Preserve this
+  reviewed failure and the earlier unexplained prelaunch identity rejection.
+  Operator diagnostics/export commits `1f00a69`/`5b9b214` passed review and 149
+  wrapper checks with no guard bypass. Dry-run's at-most-32 fixtures stay below
+  the 2,048-update transaction batch: scores and finished status commit together,
+  so no committed running-plus-scores milestone is visible. Do not blindly tune
+  workload or prefetch. Next review a separately versioned isolated-write design
+  on disposable public RAW copies only, with originals read only, supported
+  `--reprocess`, independent DB/XMP evidence and an external stop barrier; it is
+  not implemented or accepted. See the [failed recovery record](operations/2026-10-15-native-runtime-acceptance.md#recovery-attempt-2--failed-october-17).
+  The October 17 single application-path Bridge lookup still timed out. The
+  application inventory was available in the October 16 `getState` result; that
+  does not establish current availability. Thirty-five hash checks passed review; current lock
+  state remains unknown and no UI read/edit/save has passed. Physical ExifTool
+  subset checks do not establish GUI acceptance.
   Use public ground truth for its native task;
   directed-coverage evidence gaps do not block these diagnostics. See the
   [authorized continuation](operations/2026-09-16-plan-status.md#authorized-continuation-after-engineering-closure)

@@ -29,7 +29,7 @@ owns batch scope and acceptance; older dated next-step statements below are hist
 | Native public quality | Quality-v2 passed: all 256 original IDs/source hashes verified, NIMA/SSD actual CPU provenance 256/256, two deterministic repeats. Independent KonIQ MOS/KADID DMOS coefficients (128 images each) and controller recomputation accepted; historical raw/effective max score delta zero. | Retain the [partial native acceptance record](2026-10-15-native-runtime-acceptance.md). Fixed previously exposed cohort, not fresh holdout, full RAW rating, quality improvement or G1/G2 admission. |
 | Bounded RAW pipeline | Staging receipt reconciled read-only against all 20 immutable DNGs and archive/script/manifest hashes; no retransmission. After a separate RAW-v2 GNU OpenMP allocation failure, RAW-v3 passed: 20 SIMULATED, zero writes/errors, source/copy preservation, A1 grouping/A2 memory/A3 final artifacts. For each adapter, 15/20 serialized records carry native CPU provenance; five lack model evidence, cause unclassified. | Retain the [partial report](2026-10-15-native-runtime-acceptance.md); no unique-call, conditional-refinement, metadata-write or new quality claim. Failed-case root resource limit remains unproven; no production scheduling/limit change. |
 | Bounded NIMA fallback | One selected public RAW passed actual unavailable-GPU request to compiled/execution CPU, with explicit fallback reason and preserved source hashes. Score 4.434767 and all ten distribution buckets exactly match CPU control. An initially rejected status observation was retained; later read-only identity verification/export passed on the same container, without bypass/relaunch. | One-fixture NIMA only; not SSD fallback, GPU performance or all-fixture coverage. Initial observation rejection's cause remains unproven. See the [partial report](2026-10-15-native-runtime-acceptance.md). |
-| External acceptance | Recovery requested but not started; initial identity rejection remains unexplained, with plan hash matching. Exactly three read-only snapshots match both RAW-v3 stage and fallback handle, including complete mount multisets; ordering is only a hypothesis. No code change, SIGTERM/SIGKILL or restore case. ExifTool checks remain a partial physical subset; fresh Bridge name/bundle lookup timed out, with no UI read/edit/save or fresh lock-state confirmation. | Implement private failure-time diagnostics preserving the exact rejecting guard, then main review and one attempt. Follow the [runtime protocol](2026-10-14-runtime-acceptance-protocol.md) and [external protocol](2026-09-17-external-acceptance-plan.md); GUI acceptance remains separate. |
+| External acceptance | Recovery attempt 2 passed the unchanged exact identity guard but failed to observe an interruptible committed milestone. Control: 20 SIMULATED, zero writes/errors, 15 serialized native CPU records per adapter. SIGTERM child exited 0 with no actual signal; no SIGKILL/backup/restore. One of nine snapshots is available; original hashes unchanged, final copy check not reached. Initial prelaunch identity rejection remains unexplained. October 17 single-path Bridge lookup timed out; 35 hash checks passed review, with no GUI read/edit/save or current lock-state confirmation. | Review the separately versioned isolated-write recovery design using disposable public RAW copies, supported `--reprocess`, independent DB/XMP evidence and an external stop barrier; not implemented or accepted. Preserve the [failed native record](2026-10-15-native-runtime-acceptance.md) and separate [GUI gate](2026-09-17-external-acceptance-plan.md); no blind workload/prefetch rerun. |
 
 ## Authorized continuation after engineering closure
 
@@ -50,9 +50,10 @@ agent, not a user annotation assignment. Request human participation only for a
 specific unavoidable account interaction, unresolved personal preference or a
 separately scoped action outside the existing authorization. No such immediate
 user action was established by that clarification. Earlier computer-use checks
-recorded a locked desktop. Fresh Bridge lookup by name and bundle identifier
-still timed out despite application inventory availability; the current lock
-state is not freshly confirmed. No GUI read/edit/save is accepted. This gap
+recorded a locked desktop. Earlier name/bundle Bridge lookups and the October 17
+single application-path lookup timed out. Application inventory was available
+in the October 16 `getState` result; current availability and lock state are not
+freshly confirmed. No GUI read/edit/save is accepted. This gap
 does not block independent NAS investigation or require public-quality annotation.
 
 October 14 deployment evidence: the reviewed image index is
@@ -97,16 +98,35 @@ deployed image remains `02d9056`, with unchanged source build inputs through
 these helper commits. The separately reviewed one-fixture NIMA fallback now
 passes: actual unavailable-GPU request executes on CPU with explicit fallback,
 and score/distribution exactly match CPU control. It does not admit SSD fallback
-or all-fixture/GPU-performance claims. Recovery was requested but did not start:
-the production-identity guard rejected the staging-receipt comparison before a
-saved handle, despite a matching plan hash. Exactly three read-only snapshots
-now match both RAW-v3 stage and fallback handle with equal full mount multisets.
-The original differing field/cause remains unknown; ordering is unproven.
-Next implement private failure-time diagnostics without changing the exact
-rejecting guard, obtain main-agent review and make one attempt. No code change
-or recovery launch has occurred, and no SIGTERM/SIGKILL has run.
-Bridge GUI read/edit/save also remains unverified. Preserve those
-separate gates and existing product priorities rather than reopen model sweeps.
+or all-fixture/GPU-performance claims. The initial recovery prelaunch identity
+rejection remains unexplained; three subsequent read-only snapshots matched the
+stage and fallback identities, and ordering was never proved as the cause.
+Private operator commits `1f00a69` (failure-time diagnostics) and `5b9b214` (nine
+fixed JSON exports) received review, passed 149 wrapper checks and were pushed
+without weakening exact identity comparisons.
+
+Recovery attempt 2 passed the unchanged guard and launched once, but failed with
+`job completed without an interruptible committed milestone`. Control completed
+20 SIMULATED, zero writes/errors and 15 serialized native CPU records per adapter
+in 26.563908 seconds, with sampled peak RSS 1,864,859,648 bytes. The
+SIGTERM-designated child finished with exit 0, no committed milestone and no
+actual signal. No SIGKILL, backup or restore ran. Only one of nine fixed snapshots
+is present; original source hashes are unchanged, and the final copy hash check
+was not reached. The failed export and independent controller review hashes are
+retained in the [native acceptance record](2026-10-15-native-runtime-acceptance.md#evidence-identities).
+
+Read-only tracing established the observation constraint: `JobExecutor` batches
+2,048 updates, while dry-run does not flush individually; this at-most-32-item
+case commits scored rows with finished status, not an observable committed
+running-plus-scores milestone. Do not rerun by enlarging workload or tuning
+prefetch. The next separately versioned design uses isolated writes on disposable
+public RAW copies only, original inputs read only, supported `--reprocess`,
+independent DB/XMP evidence and an external stop barrier. It is not implemented
+or accepted. The October 17 single-path Bridge lookup also timed out. The application
+inventory was available in the October 16 `getState` result, which does not
+establish current availability. Thirty-five hash checks passed review, but GUI
+read/edit/save and current lock state remain unverified. Preserve these separate
+gates and existing product priorities.
 
 ## Historical execution record
 

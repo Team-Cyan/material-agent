@@ -126,25 +126,64 @@ read-only verification matched the saved handle, and export from the same
 retained container passed. The initial rejection's cause remains unproven;
 there was no guard bypass or relaunch, and the failed observation is retained.
 
+## Recovery attempt 2 — failed, October 17
+
+The first recovery launch was blocked before a saved container handle by a
+production-identity mismatch against the staging receipt. The plan hash matched;
+exactly three later read-only snapshots matched the RAW-v3 staging receipt and
+fallback handle, including complete mount multisets. The original difference
+and cause remain unknown; mount ordering was never established as the cause.
+
+The private operator added failure-time identity diagnostics (`1f00a69`) and a
+bounded export of nine fixed recovery JSON snapshots (`5b9b214`). Both received
+review; the final wrapper suites passed 149 checks and the changes were pushed
+to the private operator repository. Exact identity comparisons remain unchanged,
+with no normalization or bypass. These are operator tooling changes, not a new
+application deployment.
+
+The single separately authorized attempt 2 passed that exact guard and launched
+one isolated container with the unchanged RAW-v3 plan, runner and bounds. It
+failed with `job completed without an interruptible committed milestone`.
+The uninterrupted control completed **20 SIMULATED**, **0 written**, **0 errors**;
+**15 serialized records per adapter** carry native CPU provenance. Control
+elapsed time was **26.563908 seconds**, with sampled process-group peak RSS
+**1,864,859,648 bytes**. The SIGTERM-designated child then finished with exit code
+**0**, no observed committed milestone and **no signal sent**. SIGKILL, consistent
+backup, restore and reconciliation were not executed. No interruption or restore
+acceptance follows from this attempt.
+
+The terminal export is retained and independently reviewed as failed: only the
+control `after-db.json` snapshot is available, with the other eight fixed
+snapshots explicitly missing. The supervisor verified original sources and the
+checkpoint records unchanged original hashes. The final copied-input hash check
+was not reached. There was no OOM kill, automatic retry or identity bypass.
+
+Read-only code tracing explains why this dry-run harness could not observe its
+required committed milestone: `JobExecutor` batches 2,048 logical updates, while
+dry-run does not flush them individually. In the successful unresumed dry-run fixture path used for this attempt, the
+fixtures stayed below that threshold; scores and finished status commit together,
+leaving no committed running-plus-scores state for the observer. This finding
+does not establish behavior for every possible set of 32 fixtures. This is a transaction-observation
+constraint, not evidence that the successful CLI work needed more fixtures or
+prefetch tuning. Do not blindly repeat that workload.
+
 ## Remaining acceptance
 
-Recovery was requested but did not start: the run was blocked before a saved
-container handle by a production-identity mismatch against the staging receipt.
-The plan hash still matches. Exactly three subsequent read-only snapshots match
-both the RAW-v3 staging receipt and fallback handle, including full mount
-multiset equality. They do not identify the original differing field or cause;
-an ordering hypothesis remains unproven. Next implement private failure-time
-diagnostics while preserving the exact rejecting guard, obtain main-agent review,
-then make one attempt. No code change or recovery launch has occurred, and no
-SIGTERM/SIGKILL or restore case has executed. Continue under the [bounded runtime
-protocol](2026-10-14-runtime-acceptance-protocol.md), retaining failed-case
-evidence and separating each case's acceptance.
+The next recovery design is separately versioned isolated-write execution on
+disposable public RAW copies only, with original fixtures remaining read only.
+It proposes the supported real CLI `--reprocess` path, independent database/XMP
+evidence and an external stop barrier. That design is not implemented or accepted;
+no broader resume claim follows. Continue under the [bounded runtime
+protocol](2026-10-14-runtime-acceptance-protocol.md), preserving the failed attempt
+and reviewing a concrete replacement before another run.
 
 Adobe Bridge 2026 GUI roundtrip has not passed. Earlier locked-desktop evidence
-is historical. Fresh application lookup by both name and bundle identifier
-timed out, although application inventory remains available. There is no fresh
-confirmation of the current lock state and no accepted UI read/edit/save result.
-Production writer/ExifTool checks on disposable public sidecars establish only
+is historical. Earlier name/bundle lookups and the October 17 single
+application-path lookup timed out. The application inventory was available in the October 16 `getState`
+result; that does not establish current availability. There is no fresh
+confirmation of the current lock state and no accepted UI read/edit/save result. The separate
+35 hash checks passed review. Production writer/ExifTool checks on disposable
+public sidecars establish only
 a partial physical-file subset. They do not demonstrate another application's
 display, edit/save or preservation behavior. The [external acceptance
 protocol](2026-09-17-external-acceptance-plan.md) remains applicable.
@@ -168,6 +207,8 @@ publishing those inputs.
 | Accepted RAW-v3 full-run controller review | `6febab9cdf29cf2edc8d27b05a374bde2cb2badad2e18fd13c180adfcd4c69e5` |
 | Actual RAW-v3 NIMA fallback operator export | `b5e412f8bda9a08aafa07f97d33b83333b49be26aae7c707be8c5983303b757e` |
 | Accepted bounded NIMA fallback controller review | `fa05173c8f6cbd88a55e6ea89f2a527db9a394ffb7480994188a9db94e3cb0fc` |
+| Failed RAW-v3 recovery attempt 2 operator export | `abe37672aca7200c5852d7acc8f236d806215bbd2e2741f617e51f5deb6772a3` |
+| Reviewed failed recovery attempt 2 controller receipt | `f7f07bd81f9d73e3263833662d2d6c15e0e7f286699f35d527339d64eefcd897` |
 | Independent analysis script | `0c21f57f21a94625d959224ba5c7f8915bb87034940828fbcb6847d2f745fa30` |
 | Independent quality analysis result | `d5acdfeda46621d665a75d91d001778e614757b6b65226bd2ae9dbe4c076744a` |
 | Accepted controller coefficient recomputation | `d8ea2b30b47e9d034451ea03fa1af7a22a7da04d0319a7c384f4d3531d5437c3` |
