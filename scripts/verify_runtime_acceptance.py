@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import ast
 from copy import deepcopy
+from datetime import datetime
 import hashlib
 import json
 import math
@@ -23,6 +24,8 @@ import stat
 import subprocess
 import sys
 import time
+from uuid import UUID
+import xml.etree.ElementTree as ET
 
 import yaml
 
@@ -292,6 +295,208 @@ def milestone(db: Path):
     return None
 
 
+def group_members(pgid):
+    """Linux-only identity/state observation for the new write-case barrier."""
+    if sys.platform != "linux":
+        raise ValueError("recovery-write stop barrier requires Linux /proc")
+    members = {}
+    for process in Path("/proc").iterdir():
+        if not process.name.isdecimal():
+            continue
+        try:
+            tail = (process / "stat").read_text().rsplit(")", 1)[1].split()
+            if int(tail[2]) == pgid:
+                members[process.name] = {"start_ticks": tail[19], "state": tail[0]}
+        except FileNotFoundError:
+            continue
+    return members
+
+
+def stopped_group(pgid, deadline, expected=None):
+    previous = None
+    while time.monotonic() < deadline:
+        current = group_members(pgid)
+        leader = current.get(str(pgid))
+        if leader is None or leader["state"] == "Z":
+            raise ValueError("stop barrier leader absent or terminal")
+        identities = {pid: r["start_ticks"] for pid, r in current.items()}
+        if expected is not None and identities != {pid: r["start_ticks"] for pid, r in expected.items()}:
+            raise ValueError("stop barrier process identities changed")
+        if (leader["state"] in {"T", "t"}
+                and all(r["state"] in {"T", "t", "Z"} for r in current.values())
+                and current == previous):
+            return current  # Z is explicitly nonexecuting, never described as stopped.
+        previous = current
+        time.sleep(0.01)
+    raise TimeoutError("stop barrier deadline")
+
+
+def no_executing_members(pgid, deadline):
+    while time.monotonic() < deadline:
+        members = group_members(pgid)
+        if all(r["state"] == "Z" for r in members.values()):
+            return members
+        time.sleep(0.01)
+    raise TimeoutError("owned process group still live or stopped after cleanup")
+
+
+def captured_milestone(state, mark):
+    jobs = state.get("jobs", [])
+    count = sum(r["kind"] == "score_payload" and r["job_id"] == mark["job_id"]
+                for r in state.get("artifacts", []))
+    if (len(jobs) != 1 or jobs[0]["id"] != mark["job_id"] or jobs[0]["status"] != "running"
+            or count != mark["committed_score_artifacts"] or count < 1):
+        raise ValueError("backup differs from stopped committed milestone")
+
+
+def write_input_names(items):
+    raws = [i["id"] + Path(i["path"]).suffix.lower() for i in items]
+    sidecars = [str(Path(p).with_suffix(".xmp")) for p in raws]
+    names = raws + sidecars
+    if len({n.casefold() for n in names}) != len(names):
+        raise ValueError("copied RAW/sidecar basename collision")
+    return dict(zip(raws, sidecars, strict=True))
+
+
+def raw_receipt(items, root, inputs):
+    result = {}
+    for item in items:
+        copied = inputs / (item["id"] + Path(item["path"]).suffix.lower())
+        for path in (root / item["path"], copied):
+            s = regular(path, MAX_FILE, readonly=True)
+            if s.st_size != item["size"] or digest(path) != item["sha256"]:
+                raise ValueError("phase RAW identity changed")
+        result[item["id"]] = {"size": item["size"], "sha256": item["sha256"],
+                              "original_unchanged": True, "copy_unchanged": True}
+    return result
+
+
+def xmp_semantics(data):
+    if not 0 < len(data) <= MIB or re.search(br"<!\s*(?:DOCTYPE|ENTITY)\b", data, re.I):
+        raise ValueError("unsafe or oversized sidecar XML")
+    text = data.decode("utf-8")
+    root = ET.fromstring(text)
+    xmp, mm = "{http://ns.adobe.com/xap/1.0/}", "{http://ns.adobe.com/xap/1.0/mm/}"
+    lifecycle = {xmp + "MetadataDate", xmp + "ModifyDate", mm + "DocumentID", mm + "InstanceID"}
+    for tag in lifecycle:
+        nodes = list(root.iter(tag))
+        if len(nodes) != 1 or len(nodes[0]) or not nodes[0].text:
+            raise ValueError("missing/duplicate/non-scalar XMP lifecycle value")
+        value = nodes[0].text
+        if tag.startswith(xmp):
+            if datetime.fromisoformat(value.replace("Z", "+00:00")).utcoffset() is None:
+                raise ValueError("XMP lifecycle timestamp lacks timezone")
+        else:
+            prefix = "xmp.did:" if tag.endswith("DocumentID") else "xmp.iid:"
+            if not value.startswith(prefix):
+                raise ValueError("invalid XMP lifecycle UUID prefix")
+            uid = UUID(value[len(prefix):])
+            if uid.version != 4 or str(uid) != value[len(prefix):]:
+                raise ValueError("invalid XMP lifecycle UUID4")
+    rating = list(root.iter(xmp + "Rating"))
+    if len(rating) != 1 or len(rating[0]) or rating[0].text not in set("012345"):
+        raise ValueError("invalid XMP rating")
+    required = [xmp + "CreatorTool", xmp + "Identifier",
+                "{http://purl.org/dc/elements/1.1/}subject",
+                "{http://purl.org/dc/elements/1.1/}description",
+                "{http://ns.adobe.com/photoshop/1.0/}Instructions"]
+    if any(len(list(root.iter(tag))) != 1 for tag in required):
+        raise ValueError("missing/duplicate XMP semantic field")
+    def project(node):
+        return {"tag": node.tag, "attributes": dict(sorted(node.attrib.items())),
+                "text": None if node.tag in lifecycle else (node.text if node.text and node.text.strip() else None),
+                "tail": node.tail if node.tail and node.tail.strip() else None,
+                "children": [project(child) for child in node]}
+    return project(root)
+
+
+def archive_sidecars(inputs, directory, names, receipts, *, complete=False, expected=None):
+    """Archive before removal; never delete entries outside the frozen allowlist."""
+    allowed = set(names) | set(names.values())
+    present = {}
+    for path in inputs.iterdir():
+        if path.name not in allowed:
+            raise ValueError("unexpected owned input entry: " + path.name)
+        regular(path, MAX_FILE if path.name in names else MIB, readonly=path.name in names)
+        if path.name in names.values():
+            present[path.name] = path
+    if complete and set(present) != set(names.values()):
+        raise ValueError("completed write phase lacks exact sidecars")
+    archive = directory / "sidecars"
+    archive.mkdir(mode=0o700)
+    entries, identities = {}, {}
+    for name, path in sorted(present.items()):
+        before = path.stat()
+        data = path.read_bytes()
+        identity = (before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns, before.st_ctime_ns)
+        target = archive / name
+        with target.open("xb") as stream:
+            os.chmod(target, 0o600)
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        sha256 = hashlib.sha256(data).hexdigest()
+        if digest(target) != sha256:
+            raise ValueError("sidecar archive hash mismatch")
+        entries[name] = {"xml": data.decode("utf-8"), "size": len(data), "sha256": sha256,
+                         "semantic": xmp_semantics(data)}
+        if expected is not None:
+            verify_written_sidecar(data, expected[name])
+        identities[name] = identity
+    atomic_json(directory / "sidecars.json", {
+        "schema_version": "material-agent.runtime-acceptance-sidecars.v1", "phase": directory.name,
+        "raw_to_sidecar": names, "raw_receipts": receipts, "entries": entries})
+    for parent in (archive, directory):
+        fd = os.open(parent, os.O_RDONLY)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+    # Validate the entire set before the first deletion. No child remains alive here.
+    for name, path in present.items():
+        s = regular(path, MIB)
+        if ((s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns) != identities[name]
+                or digest(path) != entries[name]["sha256"]):
+            raise ValueError("sidecar changed before owned cleanup")
+    for name, path in present.items():
+        s = regular(path, MIB)
+        if (s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns) != identities[name]:
+            raise ValueError("sidecar identity changed at owned cleanup")
+        path.unlink()
+    return {name: r["semantic"] for name, r in entries.items()}
+
+
+def verify_written_sidecar(data, output):
+    root = ET.fromstring(data)
+    preview, receipt = output["output_preview"], output["xmp_projection"]
+    fields = receipt.get("fields", {})
+    if (receipt.get("status") != "committed" or receipt.get("source") != "missing_sidecar"
+            or any(fields.get(k, {}).get("status") != "written"
+                   for k in ("rating", "keywords", "instructions", "description"))):
+        raise ValueError("missing committed fresh-sidecar write receipt")
+    tags = {"rating": "{http://ns.adobe.com/xap/1.0/}Rating",
+            "instructions": "{http://ns.adobe.com/photoshop/1.0/}Instructions",
+            "description": "{http://purl.org/dc/elements/1.1/}description"}
+    for key, tag in tags.items():
+        node = root.find(".//" + tag)
+        if key == "description":
+            node = node.find(".//{http://www.w3.org/1999/02/22-rdf-syntax-ns#}li")
+        actual = "" if node is None or node.text is None else node.text
+        if actual != str(preview[key]) or fields[key].get("effective") != preview[key]:
+            raise ValueError("sidecar differs from actual written " + key)
+    ns = "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}li"
+    identifiers = [n.text for n in root.findall(".//{http://ns.adobe.com/xap/1.0/}Identifier//" + ns)]
+    subjects = [n.text for n in root.findall(".//{http://purl.org/dc/elements/1.1/}subject//" + ns)]
+    if (identifiers != list(dict.fromkeys(preview["subject_tags"]))
+            or subjects != fields["keywords"].get("effective")):
+        raise ValueError("sidecar keywords/identifiers differ from actual write")
+    creator = root.find(".//{http://ns.adobe.com/xap/1.0/}CreatorTool")
+    # CreatorTool is a writer contract constant, read from the implementation.
+    from material_agent.adapters.metadata.exiftool_xmp import _CREATOR_TOOL
+    if creator is None or creator.text != _CREATOR_TOOL:
+        raise ValueError("sidecar creator/selection keywords differ from writer contract")
+
+
 def child_rss(pid):
     # Runner owns its process group; sum its processes, never unrelated jobs.
     if sys.platform == "linux":
@@ -325,7 +530,7 @@ def limits(bound):
 
 
 def supervise(command, *, env, log, output, bound, deadline, interrupt=None, db=None,
-              backup_path=None, on_phase=None):
+              backup_path=None, on_phase=None, stop_barrier=False, verify_group_cleanup=False):
     """Own and always reap a fixed child group, including failure/interruption paths."""
     started = time.monotonic()
     result = {"signal_sent": None, "milestone": None, "observed_peak_rss_bytes": 0}
@@ -347,17 +552,35 @@ def supervise(command, *, env, log, output, bound, deadline, interrupt=None, db=
                 if interrupt is not None and result["signal_sent"] is None:
                     mark = milestone(db)
                     if mark:
+                        if stop_barrier:
+                            os.killpg(child.pid, signal.SIGSTOP)
+                            result["stop_signal_sent"] = "SIGSTOP"
+                            result["stopped_members"] = stopped_group(child.pid, min(deadline, time.monotonic() + 5))
+                            mark = milestone(db)
+                            if mark is None:
+                                raise ValueError("job completed before stopped committed milestone")
+                            if on_phase:
+                                on_phase("group_stopped", result)
                         captured = backup(db, backup_path, deadline)
+                        if stop_barrier:
+                            captured_milestone(captured, mark)
+                            result["stopped_members_after_backup"] = stopped_group(
+                                child.pid, min(deadline, time.monotonic() + 5), result["stopped_members"])
                         # Backup may take time: never signal a completed job to claim interruption.
                         current = milestone(db)
                         if child.poll() is not None or current is None:
                             raise ValueError("job completed before actual interruption")
+                        if stop_barrier and current != mark:
+                            raise ValueError("stopped committed milestone changed")
                         result["milestone"] = mark
                         result["backup_snapshot"] = captured
                         if on_phase:
                             on_phase("online_backup_complete", {k: v for k, v in result.items() if k != "backup_snapshot"})
                         os.killpg(child.pid, interrupt)
                         result["signal_sent"] = signal.Signals(interrupt).name
+                        if stop_barrier and interrupt == signal.SIGTERM:
+                            os.killpg(child.pid, signal.SIGCONT)
+                            result["continue_signal_sent"] = "SIGCONT"
                         if on_phase:
                             on_phase("signal_sent", {k: v for k, v in result.items() if k != "backup_snapshot"})
                 time.sleep(0.025)
@@ -373,6 +596,8 @@ def supervise(command, *, env, log, output, bound, deadline, interrupt=None, db=
             except ProcessLookupError:
                 pass
             child.wait(timeout=5)
+            if stop_barrier or verify_group_cleanup:
+                result["cleanup_nonexecuting_members"] = no_executing_members(child.pid, time.monotonic() + 5)
             result["lifecycle"] = "reaped"
             result["exit_code"] = child.returncode
             if on_phase:
@@ -395,17 +620,20 @@ def telemetry(log: Path):
             "finalization": "real CLI artifact output; conditional refinement coverage not inferred"}
 
 
-def final_records(state, expected_count):
+def final_records(state, expected_count, *, written=False, job_id=None):
     jobs = state["jobs"]
-    finished = [r for r in jobs if r["status"] == "finished"]
+    finished = [r for r in jobs if r["status"] == "finished" and (job_id is None or r["id"] == job_id)]
     if not finished:
         raise ValueError("no finished job")
     job = finished[-1]
     summary = json.loads(job["summary_json"])
-    if summary.get("written_files") != 0 or summary.get("error_files") != 0 or summary.get("simulated_files") != expected_count:
+    if written and (summary.get("written_files") != expected_count or summary.get("error_files") != 0
+                    or summary.get("simulated_files") != 0 or summary.get("skipped_files") != 0):
+        raise ValueError("write run did not write every fixture without simulation/skips/errors")
+    if not written and (summary.get("written_files") != 0 or summary.get("error_files") != 0 or summary.get("simulated_files") != expected_count):
         raise ValueError("full dry-run did not simulate every fixture without writes/errors")
     files = [r for r in state["job_files"] if r["job_id"] == job["id"]]
-    if len(files) != expected_count or len({r["file_path"] for r in files}) != expected_count or any(r["status"] != "simulated" for r in files):
+    if len(files) != expected_count or len({r["file_path"] for r in files}) != expected_count or any(r["status"] != ("written" if written else "simulated") for r in files):
         raise ValueError("missing/duplicate/non-SIMULATED fixture outcomes")
     artifacts = [r for r in state["artifacts"] if r["job_id"] == job["id"] and r["kind"] == "score_payload"]
     if len(artifacts) != expected_count or len({r["job_file_id"] for r in artifacts}) != expected_count:
@@ -415,11 +643,15 @@ def final_records(state, expected_count):
     fields = ("score_total", "scores", "scene", "scene_raw", "decision", "decision_reasons",
               "screening_prior", "visible_breakdown", "policy_version", "group_commentary",
               "instructions", "signals", "boosted")
-    records = {}
+    records, written_outputs = {}, {}
     native = []
     for row in artifacts:
         file = by_id[row["job_file_id"]]
         value = json.loads(row["metadata_json"])
+        if written:
+            written_outputs[file["file_path"]] = {
+                "output_preview": value.get("output_preview", {}),
+                "xmp_projection": value.get("xmp_projection", {})}
         record = {k: value.get(k) for k in fields}
         record.update({k: file[k] for k in ("group_id", "rank", "status")})
         meta = value.get("meta", {})
@@ -435,8 +667,11 @@ def final_records(state, expected_count):
         native.append({"file_path": file["file_path"], **{
             key: meta.get(key) for key in ("aesthetic", "detection", "input_decode_format",
                                           "preview_source", "original_size", "preview_size")}})
-    return {"job_id": job["id"], "summary": summary, "semantic_records": records,
-            "native_records": native}
+    result = {"job_id": job["id"], "summary": summary, "semantic_records": records,
+              "native_records": native}
+    if written:
+        result["written_outputs"] = written_outputs
+    return result
 
 
 def verify_native(records, models=None, *, require_all=False):
@@ -492,11 +727,15 @@ def verify_fallback(records):
 
 
 def run_case(case, manifest, root, profile, output):
-    if case not in {"quality", "full-run", "fallback", "recovery"}:
+    if case not in {"quality", "full-run", "fallback", "recovery", "recovery-write"}:
         raise ValueError("unsupported execution case")
     payload, config = validate(manifest, root, profile, output,
                                item_limit=256 if case == "quality" else 32)
-    if case in {"full-run", "recovery"} and any(
+    writing = case == "recovery-write"
+    names = write_input_names(payload["items"]) if writing else None
+    if writing and sys.platform != "linux":
+        raise ValueError("recovery-write requires Linux /proc")
+    if case in {"full-run", "recovery", "recovery-write"} and any(
         Path(i["path"]).suffix.lower() not in RAW_EXTENSIONS for i in payload["items"]
     ):
         raise ValueError("production CLI decoder supports RAW only; JPEG/PNG diagnostic unsupported")
@@ -518,6 +757,9 @@ def run_case(case, manifest, root, profile, output):
               "profile_sha256": digest(profile), "results": {},
               "limits": ["diagnostic public fixtures; no directed-coverage acceptance",
                          "dry-run SIMULATED outcomes, no WRITTEN/completed metadata resume claim"]}
+    if writing:
+        report["limits"] = ["isolated public-copy writes and SQLite restore with new-job --reprocess",
+                            "no same-job resume, DB/XMP crash atomicity, vendor-ID preservation or GUI acceptance"]
     def checkpoint(stage):
         report["stage"] = stage
         atomic_json(output / "checkpoint.json", report)
@@ -549,7 +791,7 @@ def run_case(case, manifest, root, profile, output):
             if digest(target) != item["sha256"]:
                 raise ValueError("copied input identity mismatch")
             target.chmod(0o444)
-        inputs.chmod(0o555)
+        inputs.chmod(0o755 if writing else 0o555)
         checkpoint("fixtures_copied")
         def setup(name):
             directory = output / name
@@ -569,6 +811,12 @@ def run_case(case, manifest, root, profile, output):
             return directory, work, path, env
         def full(name, *, restore=None, interrupt=None):
             directory, work, path, env = setup(name)
+            if writing:
+                if {p.name for p in inputs.iterdir()} != set(names):
+                    raise ValueError("write phase must start with exact RAW copies and no sidecars")
+                report.setdefault("raw_phase_receipts", {})[name] = {
+                    "before": raw_receipt(payload["items"], root, inputs)}
+                checkpoint(name + "_raw_verified_before_cli")
             if restore is not None:
                 shutil.copyfile(restore[0], work / "state.db")
                 original_config = restore[0].parent / "config.yaml"
@@ -589,18 +837,22 @@ def run_case(case, manifest, root, profile, output):
                     raise ValueError("restored committed DB rows differ before fresh CLI")
                 atomic_json(directory / "restored-before-cli.json", captured)
                 checkpoint(name + "_db_restored_before_cli")
-            result = supervise([*CLI, "run", str(inputs), "--config", str(path), "--dry-run"],
+            result = supervise([*CLI, "run", str(inputs), "--config", str(path),
+                                "--reprocess" if writing else "--dry-run"],
                                env=env, log=directory / "process.log", output=output,
                                bound=payload["bounds"], deadline=deadline, interrupt=interrupt,
                                db=work / "state.db", backup_path=directory / "backup.db",
-                               on_phase=track_phase(name))
+                               on_phase=track_phase(name), stop_barrier=writing and interrupt is not None,
+                               verify_group_cleanup=writing)
             state = snapshot(work / "state.db")
             atomic_json(directory / "after-db.json", state)
             result["state"] = state
             if interrupt is None:
                 if result["exit_code"] != 0:
                     raise ValueError("real CLI failed; inspect retained process.log")
-                result["outcome"] = final_records(state, len(payload["items"]))
+                result["outcome"] = final_records(state, len(payload["items"]), written=writing)
+                if writing and set(result["outcome"]["semantic_records"]) != {str(inputs / p) for p in names}:
+                    raise ValueError("write outcomes differ from exact fixture paths")
                 result["native_cpu_counts"] = verify_native(result["outcome"]["native_records"], payload["models"])
                 result["native_observation_scope"] = {
                     "fixture_count": len(payload["items"]),
@@ -629,6 +881,14 @@ def run_case(case, manifest, root, profile, output):
             result.pop("state", None)
             result.pop("backup_snapshot", None)
             report.pop("active_process", None)
+            if writing:
+                receipts = raw_receipt(payload["items"], root, inputs)
+                report["raw_phase_receipts"][name]["after"] = receipts
+                result["sidecar_semantics"] = archive_sidecars(
+                    inputs, directory, names, receipts, complete=interrupt is None,
+                    expected={names[Path(p).name]: v for p, v in result["outcome"]["written_outputs"].items()}
+                    if interrupt is None else None)
+                checkpoint(name + "_sidecars_archived_and_reset")
             return result
         if case == "quality":
             directory, work, path, env = setup("quality")
@@ -686,7 +946,7 @@ def run_case(case, manifest, root, profile, output):
         else:
             report["results"]["control"] = full("control")
             checkpoint("control_complete")
-            if case == "recovery":
+            if case in {"recovery", "recovery-write"}:
                 for name, sig in (("sigterm", signal.SIGTERM), ("sigkill", signal.SIGKILL)):
                     report["results"][name] = full(name, interrupt=sig)
                     checkpoint(name + "_interrupted")
@@ -707,6 +967,8 @@ def run_case(case, manifest, root, profile, output):
                     control = report["results"]["control"]["outcome"]["semantic_records"]
                     if restored["outcome"]["semantic_records"] != control:
                         raise ValueError("fresh CLI reprocessing differs from uninterrupted semantic control")
+                    if writing and restored["sidecar_semantics"] != report["results"]["control"]["sidecar_semantics"]:
+                        raise ValueError("fresh CLI sidecar semantics differ from uninterrupted control")
                     restored["recovery_contract"] = "actual SQLite restore + abandoned reconciliation + fresh CLI new-job reprocessing"
                     report["results"][name + "-restored"] = restored
                     checkpoint(name + "_restored")
@@ -727,6 +989,11 @@ def run_case(case, manifest, root, profile, output):
     except BaseException as error:
         report["status"] = "failed"
         report["error"] = type(error).__name__ + ": " + str(error)
+        if writing and (output / "input").is_dir():
+            try:
+                report["failure_raw_receipts"] = raw_receipt(payload["items"], root, output / "input")
+            except Exception as raw_error:
+                report["failure_raw_error"] = type(raw_error).__name__ + ": " + str(raw_error)
         try:
             unchanged()
             report["original_source_hashes_unchanged"] = True
@@ -740,7 +1007,7 @@ def run_case(case, manifest, root, profile, output):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
-    parser.add_argument("--case", choices=("full-run", "fallback", "recovery", "quality", "status"), required=True)
+    parser.add_argument("--case", choices=("full-run", "fallback", "recovery", "recovery-write", "quality", "status"), required=True)
     parser.add_argument("--manifest", type=Path)
     parser.add_argument("--root", type=Path)
     parser.add_argument("--profile", type=Path)

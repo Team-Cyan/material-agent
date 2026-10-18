@@ -252,7 +252,8 @@ def test_status_is_read_only_and_disallows_execution_arguments(tmp_path, capsys)
         module.main(["--case", "status", "--output", str(tmp_path), "--root", str(tmp_path)])
 
 
-def test_actual_cli_raw_telemetry_and_simulated_artifacts(tmp_path):
+@pytest.mark.parametrize("written", [False, True])
+def test_actual_cli_raw_telemetry_and_simulated_artifacts(tmp_path, written):
     """Real local heuristic CLI evidence only; native target cases remain unverified."""
     source = Path(__file__).parents[1] / ".local/raw-fixtures/blackmagic-micro-cinema-camera-12bit-16-9.dng"
     if not source.exists():
@@ -272,14 +273,28 @@ def test_actual_cli_raw_telemetry_and_simulated_artifacts(tmp_path):
     baseline["screening"]["enabled"] = False
     config.write_text(yaml.safe_dump(baseline))
     env = module.runtime_environment(work, config)
-    result = module.supervise([*module.CLI, "run", str(inputs), "--config", str(config), "--dry-run"],
+    command = [*module.CLI, "run", str(inputs), "--config", str(config),
+               "--reprocess" if written else "--dry-run"]
+    result = module.supervise(command,
                               env=env, log=tmp_path / "process.log", output=tmp_path,
                               bound={"wall_seconds": 30, "rss_bytes": 1024 * module.MIB,
                                      "output_bytes": 64 * module.MIB}, deadline=time.monotonic() + 30)
     assert result["exit_code"] == 0, (tmp_path / "process.log").read_text()[-1500:]
-    outcome = module.final_records(module.snapshot(work / "state.db"), 1)
-    assert outcome["summary"]["written_files"] == 0
-    assert outcome["summary"]["simulated_files"] == 1
+    outcome = module.final_records(module.snapshot(work / "state.db"), 1, written=written)
+    assert outcome["summary"]["written_files"] == int(written)
+    assert outcome["summary"]["simulated_files"] == int(not written)
+    if written:
+        module.verify_written_sidecar((inputs / "public.xmp").read_bytes(),
+                                      outcome["written_outputs"][str(inputs / "public.dng")])
+        repeated = module.supervise(command, env=env, log=tmp_path / "repeat.log", output=tmp_path,
+                                   bound={"wall_seconds": 30, "rss_bytes": 1024 * module.MIB,
+                                          "output_bytes": 64 * module.MIB}, deadline=time.monotonic() + 30)
+        assert repeated["exit_code"] == 0
+        state = module.snapshot(work / "state.db")
+        new_ids = {r['id'] for r in state['jobs']} - {outcome['job_id']}
+        assert len(new_ids) == 1
+        second = module.final_records(state, 1, written=True, job_id=new_ids.pop())
+        assert second["job_id"] != outcome["job_id"]
     telemetry = module.telemetry(work / "run.log")
     assert telemetry["grouping"][0]["files"] == 1
     assert telemetry["preparation_memory"][0]["status"] == "complete"
@@ -405,3 +420,275 @@ print(json.dumps({'before_native_imports':before,'after_native_imports':{k:os.en
     assert type(observed["rawpy_openmp"]) is bool
     assert observed["numpy_version"]
     assert all(os.environ[k] == "128" for k in expected)
+
+
+def written_fixture(tmp_path):
+    from material_agent.adapters.metadata.exiftool_xmp import ExifToolXMPWriter
+    inputs = tmp_path / 'input'
+    inputs.mkdir()
+    raw = inputs / 'public.dng'
+    raw.write_bytes(b'owned copy')
+    raw.chmod(0o444)
+    writer = ExifToolXMPWriter()
+    preview = {'rating': 3, 'subject_tags': ['pj:decision=keep', 'pj:score=6.0'],
+               'instructions': 'test instructions', 'description': 'test description'}
+    receipt = writer.write(str(raw), **preview)
+    return inputs, raw.with_suffix('.xmp'), {'output_preview': preview, 'xmp_projection': receipt}
+
+
+def test_real_writer_archive_and_actual_output_comparison(tmp_path):
+    inputs, sidecar, expected = written_fixture(tmp_path)
+    data = sidecar.read_bytes()
+    module.verify_written_sidecar(data, expected)
+    phase = tmp_path / 'control'
+    phase.mkdir()
+    semantics = module.archive_sidecars(inputs, phase, {'public.dng': 'public.xmp'}, {},
+                                       complete=True, expected={'public.xmp': expected})
+    assert not sidecar.exists()
+    archived = phase / 'sidecars/public.xmp'
+    assert archived.read_bytes() == data
+    assert stat.S_IMODE(archived.stat().st_mode) == 0o600
+    entry = json.loads((phase / 'sidecars.json').read_text())['entries']['public.xmp']
+    assert entry['sha256'] == module.digest(archived)
+    assert entry['size'] == len(data)
+    assert entry['xml'].encode('utf-8') == data
+    assert semantics['public.xmp'] == module.xmp_semantics(data)
+    wrong = deepcopy(expected)
+    wrong['output_preview']['rating'] = 4
+    with pytest.raises(ValueError, match='written rating'):
+        module.verify_written_sidecar(data, wrong)
+
+
+def test_lifecycle_only_projection_and_raw_hashes(tmp_path):
+    import re
+    from uuid import uuid4
+    _, sidecar, _ = written_fixture(tmp_path)
+    data = sidecar.read_bytes()
+    changed = re.sub(br'xmp.did:[0-9a-f-]+', ('xmp.did:' + str(uuid4())).encode(), data)
+    changed = re.sub(br'xmp.iid:[0-9a-f-]+', ('xmp.iid:' + str(uuid4())).encode(), changed)
+    changed = re.sub(br'(<xmp:(?:MetadataDate|ModifyDate)>)[^<]+', br'\g<1>2026-10-18T00:00:00+00:00', changed)
+    assert data != changed
+    assert module.xmp_semantics(data) == module.xmp_semantics(changed)
+    assert module.xmp_semantics(data) != module.xmp_semantics(data.replace(b'test instructions', b'changed'))
+    assert module.xmp_semantics(data) != module.xmp_semantics(data.replace(b'<xmp:Rating>3', b'<xmp:Rating>4'))
+    assert module.xmp_semantics(data) != module.xmp_semantics(data.replace(b'<xmpMM:DocumentID>', b'<xmpMM:DocumentID extra="changed">'))
+    for bad in (data.replace(b'<xmp:MetadataDate>', b'<xmp:MetadataDate><nested/>'),
+                data.replace(b'xmp.did:', b'wrongid:'), b'<!DOCTYPE a [<!ENTITY x "a">]>' + data,
+                data.replace(b'<xmp:Rating>3', b'<xmp:Rating>-1')):
+        with pytest.raises((ValueError, module.ET.ParseError)):
+            module.xmp_semantics(bad)
+
+
+@pytest.mark.parametrize('unsafe', ['unknown', 'symlink', 'hardlink', 'malformed'])
+def test_archive_fail_closed_preserves_owned_sidecars(tmp_path, unsafe):
+    inputs, sidecar, _ = written_fixture(tmp_path)
+    if unsafe == 'unknown':
+        (inputs / 'unrelated.xmp').write_text('keep')
+    elif unsafe == 'symlink':
+        sidecar.rename(tmp_path / 'victim.xmp')
+        sidecar.symlink_to(tmp_path / 'victim.xmp')
+    elif unsafe == 'hardlink':
+        os.link(sidecar, tmp_path / 'linked.xmp')
+    else:
+        sidecar.write_text('malformed')
+    phase = tmp_path / 'phase'
+    phase.mkdir()
+    with pytest.raises((ValueError, module.ET.ParseError)):
+        module.archive_sidecars(inputs, phase, {'public.dng': 'public.xmp'}, {})
+    assert sidecar.exists()
+
+
+def test_sidecar_empty_interrupted_and_collision_and_raw_identity(tmp_path):
+    inputs, sidecar, _ = written_fixture(tmp_path)
+    sidecar.unlink()
+    phase = tmp_path / 'sigkill'
+    phase.mkdir()
+    assert module.archive_sidecars(inputs, phase, {'public.dng': 'public.xmp'}, {}) == {}
+    assert json.loads((phase / 'sidecars.json').read_text())['entries'] == {}
+    with pytest.raises(ValueError, match='collision'):
+        module.write_input_names([{'id': 'one', 'path': 'a.dng'}, {'id': 'ONE', 'path': 'b.dng'}])
+    source = tmp_path / 'source'
+    source.mkdir()
+    raw = inputs / 'public.dng'
+    (source / 'original.dng').write_bytes(raw.read_bytes())
+    (source / 'original.dng').chmod(0o444)
+    item = {'id': 'public', 'path': 'original.dng', 'size': raw.stat().st_size, 'sha256': module.digest(raw)}
+    assert module.raw_receipt([item], source, inputs)['public']['copy_unchanged']
+    raw.chmod(0o644)
+    raw.write_bytes(b'mutation')
+    raw.chmod(0o444)
+    with pytest.raises(ValueError, match='RAW identity'):
+        module.raw_receipt([item], source, inputs)
+
+
+def test_stopped_group_identities_zombie_and_leader_checks(monkeypatch):
+    inventories = iter([
+        {'1': {'start_ticks': '10', 'state': 'T'}, '2': {'start_ticks': '11', 'state': 'Z'}},
+        {'1': {'start_ticks': '10', 'state': 'T'}, '2': {'start_ticks': '11', 'state': 'Z'}}])
+    monkeypatch.setattr(module, 'group_members', lambda _: next(inventories))
+    result = module.stopped_group(1, time.monotonic() + 1)
+    assert result['2']['state'] == 'Z'
+    monkeypatch.setattr(module, 'group_members', lambda _: {'1': {'start_ticks': '99', 'state': 'T'}})
+    with pytest.raises(ValueError, match='identities changed'):
+        module.stopped_group(1, time.monotonic() + 1, result)
+    monkeypatch.setattr(module, 'group_members', lambda _: {'1': {'start_ticks': '10', 'state': 'Z'}})
+    with pytest.raises(ValueError, match='leader'):
+        module.stopped_group(1, time.monotonic() + 1)
+    monkeypatch.setattr(module, 'group_members', lambda _: {'1': {'start_ticks': '10', 'state': 'R'}})
+    with pytest.raises(TimeoutError, match='deadline'):
+        module.stopped_group(1, time.monotonic() + .03)
+    with pytest.raises(TimeoutError, match='live or stopped'):
+        module.no_executing_members(1, time.monotonic() + .03)
+
+
+# Real JobExecutor batching and separate processed connection; deliberately no native predictor.
+TRANSACTION_CHILD = '''
+import sys,time,signal,subprocess
+from pathlib import Path
+from material_agent.adapters.state.sqlite_runtime import SQLiteRuntimeRepository
+from material_agent.adapters.state.processed_sqlite import SQLiteProcessedRepository
+from material_agent.app.job_executor import JobExecutor
+from material_agent.app.dto import JobStage,JobStatus,JobType,SessionKind,SessionStatus,JobFileStatus
+r=SQLiteRuntimeRepository(Path(sys.argv[1]))
+p=SQLiteProcessedRepository(Path(sys.argv[1]))
+s=r.create_session(kind=SessionKind.CLI,input_root='/owned',config_snapshot={},status=SessionStatus.RUNNING)
+j=r.create_job(session_id=s,job_type=JobType.REVIEW_PHOTOS,stage=JobStage.SCORE,status=JobStatus.RUNNING)
+class Job:
+    repository=r
+    def run(self, job_id, paths):
+        f=r.upsert_job_file(job_id=j,file_path='/owned/a.dng',status=JobFileStatus.SCORED)
+        r.upsert_artifact(job_id=j,job_file_id=f,kind='score_payload',uri='memory://boundary',metadata={})
+        subprocess.Popen([sys.executable,'-c','import time;time.sleep(30)'])
+        if sys.argv[2]=='write':
+            r.flush_pending_writes()
+            p.mark_scored('/owned/a.dng',5.0,{}, {})
+        Path(sys.argv[1]+'.ready').write_text('ready')
+        time.sleep(30)
+        r.update_job(j,stage=JobStage.FINALIZE,status=JobStatus.FINISHED)
+JobExecutor(Job()).run(j, ['/owned/a.dng'])
+'''
+
+
+@pytest.mark.parametrize('mode', ['write', 'dry'])
+def test_actual_job_executor_transaction_visibility(tmp_path, mode):
+    db = tmp_path / 'state.db'
+    child = subprocess.Popen([sys.executable, '-c', TRANSACTION_CHILD, str(db), mode], start_new_session=True)
+    try:
+        deadline = time.monotonic() + 8
+        while not Path(str(db) + '.ready').exists() and child.poll() is None and time.monotonic() < deadline:
+            time.sleep(.01)
+        assert Path(str(db) + '.ready').exists()
+        assert (module.milestone(db) is not None) == (mode == 'write')
+    finally:
+        os.killpg(child.pid, signal.SIGKILL)
+        child.wait(timeout=5)
+
+
+@pytest.mark.skipif(sys.platform != 'linux', reason='actual /proc stop barrier requires Linux; no native acceptance claim')
+@pytest.mark.parametrize('sig', [signal.SIGTERM, signal.SIGKILL])
+def test_actual_job_executor_stop_backup_signal(tmp_path, sig):
+    db = tmp_path / 'state.db'
+    result = module.supervise([sys.executable, '-c', TRANSACTION_CHILD, str(db), 'write'],
+                              env=dict(os.environ), log=tmp_path / 'process.log', output=tmp_path,
+                              bound={'wall_seconds': 10, 'rss_bytes': 256 * module.MIB, 'output_bytes': 64 * module.MIB},
+                              deadline=time.monotonic() + 8, interrupt=sig, db=db,
+                              backup_path=tmp_path / 'backup.db', stop_barrier=True)
+    assert result['stopped_members'][str(result['pid'])]['state'] in {'T', 't'}
+    assert result['stop_signal_sent'] == 'SIGSTOP'
+    assert len(result['stopped_members']) >= 2
+    assert result['signal_sent'] == signal.Signals(sig).name
+    assert result['exit_code'] == -sig
+    assert all(r['state'] == 'Z' for r in result['cleanup_nonexecuting_members'].values())
+    module.captured_milestone(module.snapshot(tmp_path / 'backup.db'), result['milestone'])
+    if sig == signal.SIGTERM:
+        assert result['continue_signal_sent'] == 'SIGCONT'
+
+
+@pytest.mark.parametrize('dry_run', [False, True])
+def test_production_review_callbacks_flush_actual_job_executor_batch(tmp_path, monkeypatch, dry_run):
+    """Synthetic scores only; real production orchestration, SQL transactions and writer."""
+    from material_agent.adapters.state.processed_sqlite import SQLiteProcessedRepository
+    from material_agent.app import review_runtime
+    from material_agent.domain.scoring_engine import ScoreBundle
+    db = tmp_path / 'state.db'
+    repo = SQLiteRuntimeRepository(db)
+    state = SQLiteProcessedRepository(db, reprocess=True)
+    session = repo.create_session(kind=SessionKind.CLI, input_root=str(tmp_path),
+                                  config_snapshot={}, status=SessionStatus.RUNNING)
+    job = repo.create_job(session_id=session, job_type=JobType.REVIEW_PHOTOS,
+                          stage=JobStage.SCORE, status=JobStatus.RUNNING)
+    files = []
+    for i in range(2):
+        path = tmp_path / f'{i}.dng'
+        path.write_bytes(b'not decoded; synthetic score boundary')
+        files.append(str(path))
+    observed = []
+    mark_scored = state.mark_scored
+    def observe_processed_callback(*args, **kwargs):
+        mark_scored(*args, **kwargs)
+        observed.append(module.milestone(db))
+    monkeypatch.setattr(state, 'mark_scored', observe_processed_callback)
+    async def score(*args, **kwargs):
+        observed.append(module.milestone(db))
+        return ScoreBundle(scores={}, total=6., boosted=False, meta={}, scene='other',
+                           scene_raw='', instructions='synthetic boundary')
+    monkeypatch.setattr(review_runtime, 'make_client', lambda _: object())
+    monkeypatch.setattr(review_runtime, 'make_fast_screening_port', lambda _: None)
+    monkeypatch.setattr(review_runtime, 'decode_raw', lambda *args: object())
+    monkeypatch.setattr(review_runtime, 'compute_scores', score)
+    config = {'grouping': {'enabled': False}, 'preview': {}, 'commentary_enabled': False,
+              'local': {}, 'screening': {'enabled': False}}
+    class Progress:
+        def __getattr__(self, _):
+            return lambda *args, **kwargs: None
+    executor = review_runtime.build_review_job_executor(repository=repo, config=config,
+                                                        state=state, progress=Progress(), dry_run=dry_run)
+    executor.run(job, files)
+    outcome = module.final_records(module.snapshot(db), 2, written=not dry_run)
+    assert outcome['summary']['error_files'] == 0
+    assert any(mark is not None for mark in observed) == (not dry_run)
+    assert len(list(tmp_path.glob('*.xmp'))) == (0 if dry_run else 2)
+    for path in files:
+        if not dry_run:
+            module.verify_written_sidecar(Path(path).with_suffix('.xmp').read_bytes(), outcome['written_outputs'][path])
+
+
+def test_captured_milestone_requires_same_running_job_and_exact_count():
+    state = {'jobs': [{'id': 'one', 'status': 'running'}],
+             'artifacts': [{'job_id': 'one', 'kind': 'score_payload'}]}
+    mark = {'job_id': 'one', 'committed_score_artifacts': 1}
+    module.captured_milestone(state, mark)
+    for wrong in ({'job_id': 'two', 'committed_score_artifacts': 1},
+                  {'job_id': 'one', 'committed_score_artifacts': 2}):
+        with pytest.raises(ValueError, match='backup differs'):
+            module.captured_milestone(state, wrong)
+
+
+def test_archive_fsync_failure_preserves_sidecar(tmp_path, monkeypatch):
+    inputs, sidecar, _ = written_fixture(tmp_path)
+    phase = tmp_path / 'control'
+    phase.mkdir()
+    def failed_fsync(_):
+        raise OSError('test archive durability failure')
+    monkeypatch.setattr(module.os, 'fsync', failed_fsync)
+    with pytest.raises(OSError, match='durability failure'):
+        module.archive_sidecars(inputs, phase, {'public.dng': 'public.xmp'}, {})
+    assert sidecar.exists()
+
+
+@pytest.mark.skipif(sys.platform != 'linux', reason='Linux /proc barrier cleanup; no native acceptance claim')
+def test_stopped_group_failure_kills_leader_and_descendants(tmp_path):
+    seen = {}
+    def fail_stopped(stage, receipt):
+        seen.update(receipt)
+        if stage == 'group_stopped':
+            raise RuntimeError('test stopped backup-stage failure')
+    with pytest.raises(RuntimeError, match='backup-stage failure'):
+        module.supervise([sys.executable, '-c', TRANSACTION_CHILD, str(tmp_path / 'state.db'), 'write'],
+                         env=dict(os.environ), log=tmp_path / 'process.log', output=tmp_path,
+                         bound={'wall_seconds': 10, 'rss_bytes': 256 * module.MIB, 'output_bytes': 64 * module.MIB},
+                         deadline=time.monotonic() + 8, interrupt=signal.SIGTERM, db=tmp_path / 'state.db',
+                         backup_path=tmp_path / 'backup.db', stop_barrier=True, on_phase=fail_stopped)
+    assert len(seen['stopped_members']) >= 2
+    assert all(r['state'] == 'Z' for r in module.group_members(seen['pid']).values())
+    assert not (tmp_path / 'backup.db').exists()

@@ -177,3 +177,79 @@ The optional existing ignored public RAW integration executes the real local
 heuristic CLI and asserts SIMULATED artifacts and production telemetry; it is
 not target-native acceptance. Missing native models, target transport or public
 RAW fixtures remain unverified rather than replaced with simulated predictors.
+
+## Isolated write recovery case
+
+`recovery-write` is a separately reviewed case using a new frozen runner hash,
+manifest, controller plan and output namespace. Existing cases retain their
+contracts above. It uses the same immutable production image, baked CPU profile,
+models and bounded public RAW fixture identities; no production hooks or changes
+to batching/preparation settings are involved. It launches the actual CLI with
+`--reprocess` and without `--dry-run`. This authorizes writes only to isolated
+public copies after controller review; original public sources remain read-only.
+
+Exactly one shared `output/input` copy keeps RAW paths and membership-derived
+group IDs stable. Copied RAW files stay `0444`; only their containing directory
+is `0755` to permit new XMP sidecars. All five phases share the original total
+600-second, 2,560-MiB RSS and 512-MiB persistent-output bounds, including copied
+RAWs, archived XMP bytes and JSON evidence. The controller retains its two-CPU,
+128-PID, no-network, read-only models/source mounts and separate `/tmp` bound.
+
+The five phases are `control`, `sigterm`, `sigterm-restored`, `sigkill` and
+`sigkill-restored`. The uninterrupted control and both restored runs must each
+write every selected RAW exactly once, with zero simulated, skipped or error
+files, unique exact file paths and score artifacts, committed fresh-sidecar write
+receipts, and actual observed native CPU provenance. The frozen target contains
+20 RAWs; the generic runner retains its at-most-32 bound. Each interrupted phase
+starts from fresh state. Each restored phase loads the corresponding **pre-signal**
+SQLite backup into a separate state root, verifies all rows exactly before CLI
+startup, and restores the saved config with only owned paths remapped. It then
+creates a new job using explicit `--reprocess`, reconciles the captured running
+job exactly once and preserves that old job's file/artifact rows.
+
+For this new case, the external supervisor observes a real committed score
+artifact in the running job, sends `SIGSTOP` to its own process group and uses
+Linux `/proc` PID/start identities to confirm stable membership. The leader must
+be alive and stopped (`T/t`); all other members must be stopped or explicitly
+recorded nonexecuting zombies (`Z`). A zombie is never reported as stopped.
+The supervisor rechecks the same job/artifact milestone, takes a consistent
+SQLite online backup, verifies its captured running job and committed artifacts,
+and rechecks the group identities/states and milestone before the actual signal.
+SIGTERM is followed by SIGCONT to permit real cancellation; SIGKILL acts on the
+stopped group. Expected actual post-signal job states and exit codes remain
+cancelled/130 for SIGTERM and running/-9 for SIGKILL. Every path kills and reaps
+its child and checks that no live or stopped group members remain before any
+sidecar archive/reset. Failure to reach a barrier or backup within the bounded
+deadline fails closed and retains evidence; it does not trigger an automatic retry.
+
+After each successful phase, with the child group no longer executing, the
+runner verifies original/copied RAW size, modes and SHA256, then archives every
+present owned sidecar as `<phase>/sidecars/<exact-basename>`. It flushes/fsyncs the
+bytes and emits `<phase>/sidecars.json` with schema
+`material-agent.runtime-acceptance-sidecars.v1`, exact RAW-to-sidecar mapping,
+RAW invariance receipts, UTF-8 XML text, byte size, SHA256 and semantic projection.
+Only after archival and whole-set identity/hash verification does it remove the
+exact allowlisted copied sidecars for the next phase. Unknown entries, basename
+collisions, symlinks, hardlinks and special files fail closed; no recursive or
+glob deletion is allowed. Interrupted sidecar sets may be empty or partial, but
+the manifest must still exist. Failed phase files remain available. The controller
+may export exactly these five JSON files in addition to the existing nine fixed
+DB snapshot JSON files, and independently reparse XML and verify raw hashes.
+
+Completed phase XMP is checked against the actual artifact `output_preview` and
+committed write receipt: rating, creator, machine identifiers, selection keywords,
+instructions and description must match. Cross-phase XML comparison retains
+namespace-expanded names, attributes, ordered children and non-formatting text.
+Only the text values of `xmp:MetadataDate`, `xmp:ModifyDate`,
+`xmpMM:DocumentID` and `xmpMM:InstanceID` are excluded. Each must occur exactly
+once as a scalar, with timezone-aware timestamps or correctly prefixed UUID4 IDs;
+their raw bytes/hashes remain evidence. These exclusions reflect fresh-sidecar
+creation by the existing writer and do not establish vendor-ID preservation.
+
+This case proves SQLite restore followed by independent new-job full reprocessing
+and reproducible fresh XMP writes on isolated copies. It does not establish
+same-job resume, completed-write reuse, atomic DB/XMP crash consistency, original
+metadata restoration, production appdata restore or a professional-tool/GUI round
+trip. Local boundary tests and heuristic public-RAW CLI tests remain distinct from
+native target execution; Linux-only process-barrier tests are explicitly skipped
+on other hosts rather than represented as target acceptance.
