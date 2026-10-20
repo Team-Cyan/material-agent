@@ -1,11 +1,15 @@
 # Native runtime acceptance — partial, 2026-10-15
 
-Last updated October 17, 2026; the dated filename is retained for existing links.
+Last updated October 20, 2026; the dated filename is retained for existing links.
 
 Deployment, the fixed public native-quality diagnostic, a bounded full RAW
 dry-run and one-fixture NIMA CPU fallback passed independent controller review.
-Interruption/restore and professional-software GUI acceptance remain incomplete;
-the NIMA fallback does not establish SSD fallback or general fixture coverage.
+The separately reviewed isolated recovery-write case also passed bounded
+SQLite restore, fresh-job reprocessing and XMP verification on public RAW copies.
+Overall acceptance remains partial: bounded Bridge ARW/NEF GUI paths passed,
+while clean case 07 physical writer review passed and its final UI readback is
+blocked by the October 20 Mac lock; the NIMA fallback does not establish SSD fallback or general
+fixture coverage.
 
 ## Deployment and protection
 
@@ -167,26 +171,80 @@ does not establish behavior for every possible set of 32 fixtures. This is a tra
 constraint, not evidence that the successful CLI work needed more fixtures or
 prefetch tuning. Do not blindly repeat that workload.
 
+## Isolated recovery-write — accepted, October 19
+
+The separately versioned `recovery-write` case used the same 20 frozen public
+DNGs, immutable `02d9056` image, baked CPU profile/models and resource bounds.
+Helper commit `092f3141f086b05a535aae99881fefa0e4286862` passed exact
+[CI](https://github.com/Team-Cyan/material-agent/actions/runs/39146400398).
+Its runner was staged separately; production runtime/source build inputs remain
+unchanged. The dedicated plan permits only this case and public RAW input.
+Originals and staged controls remained read only; the real CLI used explicit
+`--reprocess` and wrote XMP only alongside owned RAW copies in isolated output.
+No production hook, production-media write or service reconfiguration was introduced.
+
+The control and both restored phases each completed **20 WRITTEN**, **0 errors**,
+**0 simulated**, **0 skipped**, with 20 score artifacts and 20 XMP sidecars.
+The SIGTERM phase observed three committed score artifacts and the SIGKILL phase
+one, each belonging to its running job. Actual SIGSTOP barriers recorded the
+same three process identities in stopped state before and after SQLite backup.
+SIGTERM followed by SIGCONT produced exit **130** and cancellation; SIGKILL
+produced exit **-9**, leaving the interrupted job running in its retained DB.
+Both interrupted sidecar maps were empty and remain valid retained evidence.
+
+Each consistent pre-signal backup was restored into a separate owned state root;
+all-table rows matched before CLI execution. Fresh `--reprocess` runs created
+distinct new jobs, reconciled each captured old job once, preserved its job-file
+and artifact rows, and wrote all 20 outputs. This accepts backup restore followed
+by new-job reprocessing. It does not establish same-job continuation.
+
+Independent controller review accepted all **14 fixed JSON evidence files**.
+The reviewer recomputed each complete phase's 20 XMP UTF-8 byte sizes/hashes,
+reparsed the XML, and compared its semantic projection and generated values
+against control. Original/copied RAW invariance is supported by frozen-plan-bound
+supervisor and per-phase receipts; original RAW bytes were not exported for an
+independent remote reread. JSON snapshot byte hashes were reconstructed from the
+runner's deterministic serialization. Export contents alone do not independently
+attest the launch image or actual process states; controller/transport receipts
+own those checks.
+
+Total child elapsed time across five phases was **88.656467 seconds**; sampled
+peak RSS was **1,864,622,080 bytes**. The recorded output size before final report/checkpoint serialization was
+**390,222,709 bytes**, including **2,803,326 bytes** in the fixed JSON evidence set. Each complete phase
+has 15 serialized native CPU records per adapter, preserving the earlier
+output-record coverage limitation. These measurements do not demonstrate a
+performance or photographic-quality improvement.
+
+The failed October 17 dry-run, its missing snapshots and unexplained earlier
+identity rejection remain unchanged evidence. The replacement neither retries
+that workload nor changes its result. This acceptance excludes production or
+whole-appdata restore, atomic DB/XMP crash consistency, preservation of existing
+vendor IDs, GUI roundtrip and G1/G2 admission. See the [bounded runtime
+protocol](2026-10-14-runtime-acceptance-protocol.md).
+
 ## Remaining acceptance
 
-The next recovery design is separately versioned isolated-write execution on
-disposable public RAW copies only, with original fixtures remaining read only.
-It proposes the supported real CLI `--reprocess` path, independent database/XMP
-evidence and an external stop barrier. That design is not implemented or accepted;
-no broader resume claim follows. Continue under the [bounded runtime
-protocol](2026-10-14-runtime-acceptance-protocol.md), preserving the failed attempt
-and reviewing a concrete replacement before another run.
+Adobe Bridge 2026 16.0.3 now has accepted October 19 read/edit/save/reopen
+observations for bounded ARW/NEF paths: cases 01, 02 and 05 cover rating/selection
+keyword changes and user-keyword preservation; case 06 covers Unicode, foreign
+fields and language alternatives. Case 03 DNG has correct read-only File Info
+metadata but no thumbnail. Case 04 JPEG shows rating 0 and empty metadata despite
+an adjacent rating -1 sidecar: retain this negative interoperability result, with
+no embedded write. Clean 07's GUI edit and correct writer repeat are distinct
+evidence: the October 20 physical writer review passed, while final post-writer
+UI readback is blocked by the currently locked Mac. The wrong-API first 07 attempt
+and its same-copy correction are preserved and excluded.
 
-Adobe Bridge 2026 GUI roundtrip has not passed. Earlier locked-desktop evidence
-is historical. Earlier name/bundle lookups and the October 17 single
-application-path lookup timed out. The application inventory was available in the October 16 `getState`
-result; that does not establish current availability. There is no fresh
-confirmation of the current lock state and no accepted UI read/edit/save result. The separate
-35 hash checks passed review. Production writer/ExifTool checks on disposable
-public sidecars establish only
-a partial physical-file subset. They do not demonstrate another application's
-display, edit/save or preservation behavior. The [external acceptance
-protocol](2026-09-17-external-acceptance-plan.md) remains applicable.
+See the [bounded Bridge review](2026-10-20-bridge-roundtrip-review.md) for exact
+paths, evidence and finite closeout. Earlier lock/lookup failures remain history;
+the blanket claim that no GUI path has passed is superseded by these scoped
+results. Overall acceptance stays partial until the controller reconciles clean
+07 after access is restored. Manual unlock is the concrete access prerequisite;
+it does not require new blanket permission. Finite stage closure will retain the
+JPEG limitation and does not certify
+Capture One, a complete format matrix or vendor-ID preservation. Optional JPEG
+embedded-write design is a separate follow-up requiring explicit opt-in scope;
+no implementation or embedded write is authorized by this stage.
 
 ## Evidence identities
 
@@ -212,3 +270,9 @@ publishing those inputs.
 | Independent analysis script | `0c21f57f21a94625d959224ba5c7f8915bb87034940828fbcb6847d2f745fa30` |
 | Independent quality analysis result | `d5acdfeda46621d665a75d91d001778e614757b6b65226bd2ae9dbe4c076744a` |
 | Accepted controller coefficient recomputation | `d8ea2b30b47e9d034451ea03fa1af7a22a7da04d0319a7c384f4d3531d5437c3` |
+| Recovery-write runner (`092f314`) | `445448bb6188a2a86ccf409a9904fd26c7bbc1f888823637d019d4260ca29508` |
+| Accepted recovery-write plan | `b781524f7d9631ece71969ce109cfc3dfca11a30a644e55664de1af4dcbb29ba` |
+| Accepted recovery-write manifest | `78b2211a138f93df18eb80792e358486098d4536a8dd7e1c625160473e8c7af8` |
+| Actual recovery-write operator export | `5a172e64b233d972ba568020b79ff6626672b37df54f4ced6dc02ca2737010ec` |
+| Recovery-write offline self-review | `e659d752ede9df5fdfecbdb05512b6b30d7fa9b607394dded1887a445116de77` |
+| Accepted main independent recovery-write review | `b735a204d584887366ac91ceb6400be6d12d3b07c70c41c8977033be15f6c446` |

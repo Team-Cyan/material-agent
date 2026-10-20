@@ -1,6 +1,6 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 17, 2026. The dated filename is
+Single status entrypoint, updated October 20, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
@@ -25,11 +25,11 @@ owns batch scope and acceptance; older dated next-step statements below are hist
 | Future coverage mode | Direct final-keeper witnesses and unknown preservation are required; rejected SIFT/residual evidence is not admissible. | Preserve G3–G6, separate directional/cache/event identities and full-recomputation parity; no production promotion. |
 | FGAesthetics preference source | [Label-only preflight](benchmarks/2026-10-08-reference-source-preflight/README.md) complete; fields, terms and lineage unresolved. Aesthetic labels do not pass G1. | Parallel/deferred clarification; unsent outreach needs explicit authorization and does not block engineering. |
 | Public models / native input diagnostics | Frozen quality/copy cohorts complete; MUSIQ shared-core resource gate failed. [Two native DNGs](benchmarks/2026-10-08-native-raw-orientation/README.md) pass bounded orientation conformance, not general model-input acceptance. | Retain negative results and optional adapter deferral; no repeat cohort or new model selected. |
-| Target deployment | October 14 native DockerMan update to `02d90568b8ec53c0cab85d739683c0d0cfcba299` passed executor self-review and controller review. Exact published image identity, idle API, unchanged DB/config bytes, read-only photo mount and historical backup integrity verified. | Deployed application/source build inputs remain unchanged through helper commits. `a21d299` passed [CI](https://github.com/Team-Cyan/material-agent/actions/runs/38850988032); helper publication is not a redeployment or a fallback/recovery result. |
+| Target deployment | October 14 native DockerMan update to `02d90568b8ec53c0cab85d739683c0d0cfcba299` passed executor self-review and controller review. Exact published image identity, idle API, unchanged DB/config bytes, read-only photo mount and historical backup integrity verified. | Deployed application/source build inputs remain unchanged through helper commits. `092f314` passed exact [CI](https://github.com/Team-Cyan/material-agent/actions/runs/39146400398); helper publication is not a redeployment. Actual bounded recovery-write evidence is recorded separately below. |
 | Native public quality | Quality-v2 passed: all 256 original IDs/source hashes verified, NIMA/SSD actual CPU provenance 256/256, two deterministic repeats. Independent KonIQ MOS/KADID DMOS coefficients (128 images each) and controller recomputation accepted; historical raw/effective max score delta zero. | Retain the [partial native acceptance record](2026-10-15-native-runtime-acceptance.md). Fixed previously exposed cohort, not fresh holdout, full RAW rating, quality improvement or G1/G2 admission. |
 | Bounded RAW pipeline | Staging receipt reconciled read-only against all 20 immutable DNGs and archive/script/manifest hashes; no retransmission. After a separate RAW-v2 GNU OpenMP allocation failure, RAW-v3 passed: 20 SIMULATED, zero writes/errors, source/copy preservation, A1 grouping/A2 memory/A3 final artifacts. For each adapter, 15/20 serialized records carry native CPU provenance; five lack model evidence, cause unclassified. | Retain the [partial report](2026-10-15-native-runtime-acceptance.md); no unique-call, conditional-refinement, metadata-write or new quality claim. Failed-case root resource limit remains unproven; no production scheduling/limit change. |
 | Bounded NIMA fallback | One selected public RAW passed actual unavailable-GPU request to compiled/execution CPU, with explicit fallback reason and preserved source hashes. Score 4.434767 and all ten distribution buckets exactly match CPU control. An initially rejected status observation was retained; later read-only identity verification/export passed on the same container, without bypass/relaunch. | One-fixture NIMA only; not SSD fallback, GPU performance or all-fixture coverage. Initial observation rejection's cause remains unproven. See the [partial report](2026-10-15-native-runtime-acceptance.md). |
-| External acceptance | Recovery attempt 2 passed the unchanged exact identity guard but failed to observe an interruptible committed milestone. Control: 20 SIMULATED, zero writes/errors, 15 serialized native CPU records per adapter. SIGTERM child exited 0 with no actual signal; no SIGKILL/backup/restore. One of nine snapshots is available; original hashes unchanged, final copy check not reached. Initial prelaunch identity rejection remains unexplained. October 17 single-path Bridge lookup timed out; 35 hash checks passed review, with no GUI read/edit/save or current lock-state confirmation. | Review the separately versioned isolated-write recovery design using disposable public RAW copies, supported `--reprocess`, independent DB/XMP evidence and an external stop barrier; not implemented or accepted. Preserve the [failed native record](2026-10-15-native-runtime-acceptance.md) and separate [GUI gate](2026-09-17-external-acceptance-plan.md); no blind workload/prefetch rerun. |
+| External acceptance | October 19 isolated recovery-write accepted: real SIGSTOP/TERM+CONT/KILL, consistent SQLite backups/restored all-table equality, distinct new jobs and preserved old artifacts. Control and both restored phases each wrote 20 files with zero errors/simulated/skipped; 20 XMPs per complete phase independently verified across all 14 fixed JSONs. Original/copied RAW receipts preserved. October 17 dry-run failure remains unchanged. Bridge 16.0.3 has bounded October 19 ARW/NEF GUI edit/save/reopen results, DNG read-only metadata and a JPEG sidecar interoperability negative result; clean 07 physical writer review passed, with final post-writer UI blocked by the October 20 Mac lock. | Overall acceptance remains partial pending clean 07 final UI readback after unlock; accepted bounded GUI paths do not certify a full matrix or Capture One. See the [Bridge review](2026-10-20-bridge-roundtrip-review.md). Preserve the [accepted recovery and failed dry-run record](2026-10-15-native-runtime-acceptance.md) and separate [GUI gate](2026-09-17-external-acceptance-plan.md). No same-job resume, production restore, atomic DB/XMP or existing vendor-ID claim. |
 
 ## Authorized continuation after engineering closure
 
@@ -50,11 +50,13 @@ agent, not a user annotation assignment. Request human participation only for a
 specific unavoidable account interaction, unresolved personal preference or a
 separately scoped action outside the existing authorization. No such immediate
 user action was established by that clarification. Earlier computer-use checks
-recorded a locked desktop. Earlier name/bundle Bridge lookups and the October 17
-single application-path lookup timed out. Application inventory was available
-in the October 16 `getState` result; current availability and lock state are not
-freshly confirmed. No GUI read/edit/save is accepted. This gap
-does not block independent NAS investigation or require public-quality annotation.
+recorded a locked desktop and lookup timeouts. Bridge became accessible on
+October 19; bounded ARW/NEF GUI edit/save/reopen paths now pass. Clean 07
+physical writer review passed October 20; its final UI readback is blocked by
+the currently locked Mac. DNG metadata readback and JPEG sidecar failure
+have separate limits in the [Bridge review](2026-10-20-bridge-roundtrip-review.md).
+This finite acceptance scope does not block
+independent NAS investigation or require public-quality annotation.
 
 October 14 deployment evidence: the reviewed image index is
 `sha256:a308c3e71293dfc2eb28fcb53f9b12016d04646aee825d48af6b8bb905049fab`,
@@ -119,14 +121,35 @@ Read-only tracing established the observation constraint: `JobExecutor` batches
 2,048 updates, while dry-run does not flush individually; this at-most-32-item
 case commits scored rows with finished status, not an observable committed
 running-plus-scores milestone. Do not rerun by enlarging workload or tuning
-prefetch. The next separately versioned design uses isolated writes on disposable
-public RAW copies only, original inputs read only, supported `--reprocess`,
-independent DB/XMP evidence and an external stop barrier. It is not implemented
-or accepted. The October 17 single-path Bridge lookup also timed out. The application
-inventory was available in the October 16 `getState` result, which does not
-establish current availability. Thirty-five hash checks passed review, but GUI
-read/edit/save and current lock state remain unverified. Preserve these separate
-gates and existing product priorities.
+prefetch. The separately versioned isolated-write replacement is now accepted:
+helper `092f3141f086b05a535aae99881fefa0e4286862` passed exact
+[CI](https://github.com/Team-Cyan/material-agent/actions/runs/39146400398), with the
+`02d9056` runtime/source build inputs unchanged. Original public RAWs remained
+read only; the real CLI used `--reprocess` on owned copies. Both actual stopped
+process-group barriers, SIGTERM+SIGCONT/exit 130 and SIGKILL/exit -9 passed
+receipt review. Consistent SQLite restores matched all-table rows before fresh
+CLI processing; distinct new jobs each regenerated 20 WRITTEN outputs and 20
+XMPs with zero errors/simulated/skipped, one old-job reconciliation and preserved
+old artifacts. Control also wrote 20 outputs. Independent main review accepted
+all 14 JSONs and recomputed embedded XMP bytes/hashes/semantics. RAW invariance
+is supported by frozen-plan-bound source/copy receipts rather than an independent
+remote media reread. See the [accepted bounded result](2026-10-15-native-runtime-acceptance.md#isolated-recovery-write--accepted-october-19).
+
+This proves SQLite backup restore and new-job reprocessing on disposable public
+copies, excluding same-job continuation, production/whole-appdata restore,
+atomic DB/XMP crash consistency or existing vendor-ID preservation. Bridge is
+accessible October 19: cases 01/02/05 and bounded 06 establish ARW/NEF GUI
+read/edit/save/reopen facts; case 03 DNG is read-only metadata without a thumbnail,
+and case 04 JPEG does not surface its adjacent sidecar. Clean 07 physical writer
+review passed October 20 (77 writer/state tests, 27 hash checks and 68 preserved
+non-owned fields); final post-writer UI readback is blocked by the current Mac
+lock. Manual unlock is an access prerequisite, not new blanket permission.
+Wrong-API/same-polluted-copy attempts are excluded.
+Close this finite stage after controller reconciliation, preserving the JPEG
+negative result rather than expanding the acceptance claim. A separate optional
+JPEG opt-in embedded-write design is backlog only; no implementation is authorized.
+Overall external acceptance remains partial, with Capture One, full-matrix and
+existing vendor-ID claims outside scope. See the [Bridge review](2026-10-20-bridge-roundtrip-review.md); preserve G1/G2 and existing product priorities.
 
 ## Historical execution record
 

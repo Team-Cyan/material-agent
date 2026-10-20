@@ -160,18 +160,32 @@ The ledger covers projection attempts, not an automatic external-app change watc
   ownership. The current writer can preserve user-modified scalar fields during
   explicit AI reset. Ordinary review/rewrite now protect nonzero ratings and
   project visible selection keywords, with in-memory compatibility checks.
-  Projection-attempt import/write receipts are locally tested; real software
-  round trips remain unverified.
+  Projection-attempt import/write receipts are locally tested. Bounded Bridge
+  16.0.3 ARW/NEF GUI paths are verified; Capture One two-way sync and a full
+  cross-application matrix remain unverified.
 - DaVinci Resolve compatibility is not guaranteed by this module. The target is
   standards-based XMP that common DAM/photo tools can read; Resolve should be
   verified with a real fixture matrix before claiming support.
 
 ## Current verification boundary
 
-The 2026-09-16 projection slice is verified with in-memory XML and intercepted
-ExifTool commands, without writing XMP or source media. See
-[full-plan status](../../operations/2026-09-16-plan-status.md). These tests do not
-replace an authorized physical sidecar or professional-software round trip.
+The original 2026-09-16 projection slice uses in-memory XML and intercepted
+ExifTool commands. Later authorized physical sidecar and October 19 Bridge
+16.0.3 observations add bounded ARW/NEF read/edit/save/reopen evidence, including
+rating/selection keyword changes and user/Unicode/unrelated-field preservation.
+DNG File Info metadata readback has no thumbnail acceptance; JPEG does not expose
+the adjacent sidecar in the tested path, and no embedded write was attempted.
+Clean case 07's correct writer repeat and physical review passed October 20:
+77 writer/state tests, 27 hash checks and all 68 non-owned fields preserved in
+the bounded comparison. Its final post-writer UI readback is blocked by the
+currently locked Mac; manual unlock is an access prerequisite. Exclude the wrong-API first attempt and its polluted-copy
+correction. See the [bounded Bridge review](../../operations/2026-10-20-bridge-roundtrip-review.md)
+and [full-plan status](../../operations/2026-09-16-plan-status.md).
+
+Finite stage closure does not establish Capture One, all-format compatibility,
+existing vendor-ID preservation or atomic DB/XMP crash consistency. Optional
+JPEG embedded-metadata support requires a separately reviewed explicit opt-in
+path; this evidence authorizes no implementation or embedded write.
 
 Rewrite preflight and execution share side-effect-free stored-payload preparation
 and projection validation. A malformed row counts as an error and does not stop

@@ -2,6 +2,27 @@
 
 ## Completed
 
+- verified bounded Adobe Bridge 2026 16.0.3 ARW/NEF GUI read/edit/save/reopen
+  paths on October 19: rating and selection-keyword changes, retained user and
+  similarly prefixed personal keywords, plus bounded Unicode/foreign/language
+  fields. DNG File Info metadata readback is accepted without thumbnail support;
+  JPEG adjacent-sidecar metadata did not surface and remains a negative result.
+  Clean 07 physical writer review passed October 20; final post-writer UI is
+  blocked by the current Mac lock, so the finite stage remains partial. See the [Bridge review](operations/2026-10-20-bridge-roundtrip-review.md).
+
+- accepted the October 19 isolated recovery-write run: control and both restored
+  phases each completed 20 WRITTEN, zero errors/simulated/skipped and 20 verified
+  XMPs. Actual SIGSTOP barriers, SIGTERM+SIGCONT/exit 130 and SIGKILL/exit -9,
+  consistent SQLite restore, distinct new jobs, one old-job reconciliation each
+  and preserved old artifacts passed independent controller review across 14
+  fixed JSONs. Source/copy RAW receipts remain unchanged. Helper `092f314`
+  passed exact [CI](https://github.com/Team-Cyan/material-agent/actions/runs/39146400398);
+  runtime/source build inputs remain `02d9056`. This accepts backup restore and
+  new-job reprocessing on public copies; same-job resume, production restore,
+  atomic DB/XMP consistency, existing vendor-ID preservation and GUI roundtrip
+  remain outside the claim. Preserve the failed October 17 dry-run result. See
+  the [partial native record](operations/2026-10-15-native-runtime-acceptance.md#isolated-recovery-write--accepted-october-19).
+
 - verified the native NIMA unavailable-GPU fallback for one selected public RAW:
   actual CPU execution/fallback provenance, preserved source bytes and exact
   score/ten-bin distribution agreement with explicit CPU control. This does not
@@ -143,7 +164,10 @@
 
 - implemented nonzero XMP rating protection and exact keep/reject keyword
   projection with in-memory compatibility checks and ordinary-write ownership
-  receipts; physical sidecar/software round trips remain unverified
+  receipts; physical sidecar checks and bounded Bridge ARW/NEF GUI paths now
+  have evidence. Clean 07 physical writer review passed; its final UI is blocked by the
+  October 20 Mac lock. Capture One and
+  full-matrix compatibility remain unverified
 
 - adopted configurable adjacent time AND hash grouping; hash threshold 0 selects
   time-only mode, without cross-gap or embedding-based merges
@@ -289,38 +313,15 @@
 
 ## Next
 
-- continue under the existing public-data and target-NAS deployment/test
-  authorization: the October 14 native deployment of `02d9056` and independent
-  backup/config/DB verification are complete, as is the separately reviewed
-  quality-v2 public-label native diagnostic and bounded RAW-v3 full dry-run.
-  Staging receipt reconciliation verified immutable inputs without media
-  retransmission; its original failure cause remains unknown. RAW-v2's separate
-  GNU OpenMP allocation failure did not prove which resource limit was hit.
-  Preserve both failures and the accepted RAW-v3 thread-budget variant.
-  One-fixture NIMA fallback is accepted within its separate scope;
-  recovery attempt 2 passed the unchanged exact identity guard and launched
-  once, then failed to observe an interruptible committed milestone. Control
-  completed 20 SIMULATED, zero writes/errors and 15 serialized native CPU records
-  per adapter. The SIGTERM-designated child exited 0 without a signal; no
-  SIGKILL/backup/restore occurred. One of nine snapshots is available; original
-  hashes are unchanged, final copy verification was not reached. Preserve this
-  reviewed failure and the earlier unexplained prelaunch identity rejection.
-  Operator diagnostics/export commits `1f00a69`/`5b9b214` passed review and 149
-  wrapper checks with no guard bypass. Dry-run's at-most-32 fixtures stay below
-  the 2,048-update transaction batch: scores and finished status commit together,
-  so no committed running-plus-scores milestone is visible. Do not blindly tune
-  workload or prefetch. Next review a separately versioned isolated-write design
-  on disposable public RAW copies only, with originals read only, supported
-  `--reprocess`, independent DB/XMP evidence and an external stop barrier; it is
-  not implemented or accepted. See the [failed recovery record](operations/2026-10-15-native-runtime-acceptance.md#recovery-attempt-2--failed-october-17).
-  The October 17 single application-path Bridge lookup still timed out. The
-  application inventory was available in the October 16 `getState` result; that
-  does not establish current availability. Thirty-five hash checks passed review; current lock
-  state remains unknown and no UI read/edit/save has passed. Physical ExifTool
-  subset checks do not establish GUI acceptance.
-  Use public ground truth for its native task;
-  directed-coverage evidence gaps do not block these diagnostics. See the
-  [authorized continuation](operations/2026-09-16-plan-status.md#authorized-continuation-after-engineering-closure)
+- finish the sole pending clean 07 Bridge post-writer UI readback after manual
+  Mac unlock. Open File Info read-only, verify rating 4 and the Unicode keywords
+  plus keep, close without saving and compare hashes. The writer has already
+  committed and passed independent file review; do not invoke it again or rerun
+  accepted recovery tests. Reconcile this last observation before closing the
+  finite acceptance stage. Preserve the JPEG adjacent-sidecar negative result
+  and DNG read-only/no-preview boundary. Optional JPEG embedded-metadata design
+  remains backlog; Capture One and full-matrix compatibility are unverified.
+  See the [review and exact next step](operations/2026-10-20-bridge-roundtrip-review.md).
 
 - keep the [current gate ledger](operations/2026-09-16-plan-status.md#current-gate-ledger)
   as the status entrypoint. Preserve G1 → G2 human-labeled oracle → frozen
