@@ -7,8 +7,10 @@
   similarly prefixed personal keywords, plus bounded Unicode/foreign/language
   fields. DNG File Info metadata readback is accepted without thumbnail support;
   JPEG adjacent-sidecar metadata did not surface and remains a negative result.
-  Clean 07 physical writer review passed October 20; final post-writer UI is
-  blocked by the current Mac lock, so the finite stage remains partial. See the [Bridge review](operations/2026-10-20-bridge-roundtrip-review.md).
+  Clean 07 physical writer review passed October 20. After the user unlocked
+  the Mac, the October 21 readback still could not bind to the running Bridge
+  app (`-10005: timeoutReached`), so the finite stage remains partial. See the
+  [Bridge review](operations/2026-10-20-bridge-roundtrip-review.md).
 
 - accepted the October 19 isolated recovery-write run: control and both restored
   phases each completed 20 WRITTEN, zero errors/simulated/skipped and 20 verified
@@ -165,9 +167,9 @@
 - implemented nonzero XMP rating protection and exact keep/reject keyword
   projection with in-memory compatibility checks and ordinary-write ownership
   receipts; physical sidecar checks and bounded Bridge ARW/NEF GUI paths now
-  have evidence. Clean 07 physical writer review passed; its final UI is blocked by the
-  October 20 Mac lock. Capture One and
-  full-matrix compatibility remain unverified
+  have evidence. Clean 07 physical writer review passed; its final UI remains
+  blocked by the October 21 Bridge app-binding timeout after Mac unlock.
+  Capture One and full-matrix compatibility remain unverified
 
 - adopted configurable adjacent time AND hash grouping; hash threshold 0 selects
   time-only mode, without cross-gap or embedding-based merges
@@ -313,11 +315,12 @@
 
 ## Next
 
-- finish the sole pending clean 07 Bridge post-writer UI readback after manual
-  Mac unlock. Open File Info read-only, verify rating 4 and the Unicode keywords
-  plus keep, close without saving and compare hashes. The writer has already
-  committed and passed independent file review; do not invoke it again or rerun
-  accepted recovery tests. Reconcile this last observation before closing the
+- finish the sole pending clean 07 Bridge post-writer UI readback after human
+  acknowledgment of a normal Bridge quit and reopen. Open File Info read-only,
+  verify rating 4 and the Unicode keywords plus keep, close without saving and
+  compare media and sidecar hashes. The writer has already committed and passed
+  independent file review; do not invoke it again or rerun accepted recovery
+  tests. Reconcile this last observation before closing the
   finite acceptance stage. Preserve the JPEG adjacent-sidecar negative result
   and DNG read-only/no-preview boundary. Optional JPEG embedded-metadata design
   remains backlog; Capture One and full-matrix compatibility are unverified.

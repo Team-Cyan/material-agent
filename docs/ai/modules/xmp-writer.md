@@ -177,9 +177,13 @@ DNG File Info metadata readback has no thumbnail acceptance; JPEG does not expos
 the adjacent sidecar in the tested path, and no embedded write was attempted.
 Clean case 07's correct writer repeat and physical review passed October 20:
 77 writer/state tests, 27 hash checks and all 68 non-owned fields preserved in
-the bounded comparison. Its final post-writer UI readback is blocked by the
-currently locked Mac; manual unlock is an access prerequisite. Exclude the wrong-API first attempt and its polluted-copy
-correction. See the [bounded Bridge review](../../operations/2026-10-20-bridge-roundtrip-review.md)
+the bounded comparison. After the user unlocked the Mac, the October 21
+post-writer readback still could not bind to the running Bridge app
+(`-10005: timeoutReached`); no File Info result was observed and target media
+and sidecar hashes were unchanged. The remaining step is read-only verification
+after human acknowledgment of a normal Bridge quit/reopen. Exclude the wrong-API
+first attempt and its polluted-copy correction. See the [bounded Bridge
+review](../../operations/2026-10-20-bridge-roundtrip-review.md)
 and [full-plan status](../../operations/2026-09-16-plan-status.md).
 
 Finite stage closure does not establish Capture One, all-format compatibility,

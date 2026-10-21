@@ -1,6 +1,6 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 20, 2026. The dated filename is
+Single status entrypoint, updated October 21, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
 
@@ -29,7 +29,7 @@ owns batch scope and acceptance; older dated next-step statements below are hist
 | Native public quality | Quality-v2 passed: all 256 original IDs/source hashes verified, NIMA/SSD actual CPU provenance 256/256, two deterministic repeats. Independent KonIQ MOS/KADID DMOS coefficients (128 images each) and controller recomputation accepted; historical raw/effective max score delta zero. | Retain the [partial native acceptance record](2026-10-15-native-runtime-acceptance.md). Fixed previously exposed cohort, not fresh holdout, full RAW rating, quality improvement or G1/G2 admission. |
 | Bounded RAW pipeline | Staging receipt reconciled read-only against all 20 immutable DNGs and archive/script/manifest hashes; no retransmission. After a separate RAW-v2 GNU OpenMP allocation failure, RAW-v3 passed: 20 SIMULATED, zero writes/errors, source/copy preservation, A1 grouping/A2 memory/A3 final artifacts. For each adapter, 15/20 serialized records carry native CPU provenance; five lack model evidence, cause unclassified. | Retain the [partial report](2026-10-15-native-runtime-acceptance.md); no unique-call, conditional-refinement, metadata-write or new quality claim. Failed-case root resource limit remains unproven; no production scheduling/limit change. |
 | Bounded NIMA fallback | One selected public RAW passed actual unavailable-GPU request to compiled/execution CPU, with explicit fallback reason and preserved source hashes. Score 4.434767 and all ten distribution buckets exactly match CPU control. An initially rejected status observation was retained; later read-only identity verification/export passed on the same container, without bypass/relaunch. | One-fixture NIMA only; not SSD fallback, GPU performance or all-fixture coverage. Initial observation rejection's cause remains unproven. See the [partial report](2026-10-15-native-runtime-acceptance.md). |
-| External acceptance | October 19 isolated recovery-write accepted: real SIGSTOP/TERM+CONT/KILL, consistent SQLite backups/restored all-table equality, distinct new jobs and preserved old artifacts. Control and both restored phases each wrote 20 files with zero errors/simulated/skipped; 20 XMPs per complete phase independently verified across all 14 fixed JSONs. Original/copied RAW receipts preserved. October 17 dry-run failure remains unchanged. Bridge 16.0.3 has bounded October 19 ARW/NEF GUI edit/save/reopen results, DNG read-only metadata and a JPEG sidecar interoperability negative result; clean 07 physical writer review passed, with final post-writer UI blocked by the October 20 Mac lock. | Overall acceptance remains partial pending clean 07 final UI readback after unlock; accepted bounded GUI paths do not certify a full matrix or Capture One. See the [Bridge review](2026-10-20-bridge-roundtrip-review.md). Preserve the [accepted recovery and failed dry-run record](2026-10-15-native-runtime-acceptance.md) and separate [GUI gate](2026-09-17-external-acceptance-plan.md). No same-job resume, production restore, atomic DB/XMP or existing vendor-ID claim. |
+| External acceptance | October 19 isolated recovery-write accepted: real SIGSTOP/TERM+CONT/KILL, consistent SQLite backups/restored all-table equality, distinct new jobs and preserved old artifacts. Control and both restored phases each wrote 20 files with zero errors/simulated/skipped; 20 XMPs per complete phase independently verified across all 14 fixed JSONs. Original/copied RAW receipts preserved. October 17 dry-run failure remains unchanged. Bridge 16.0.3 has bounded October 19 ARW/NEF GUI edit/save/reopen results, DNG read-only metadata and a JPEG sidecar interoperability negative result; clean 07 physical writer review passed. After the user's Mac unlock, the October 21 final UI attempt still could not bind to the running Bridge app (`-10005: timeoutReached`). | Overall acceptance remains partial pending clean 07 final UI readback after a human-confirmed normal Bridge quit/reopen; accepted bounded GUI paths do not certify a full matrix or Capture One. See the [Bridge review](2026-10-20-bridge-roundtrip-review.md). Preserve the [accepted recovery and failed dry-run record](2026-10-15-native-runtime-acceptance.md) and separate [GUI gate](2026-09-17-external-acceptance-plan.md). No same-job resume, production restore, atomic DB/XMP or existing vendor-ID claim. |
 
 ## Authorized continuation after engineering closure
 
@@ -52,8 +52,11 @@ separately scoped action outside the existing authorization. No such immediate
 user action was established by that clarification. Earlier computer-use checks
 recorded a locked desktop and lookup timeouts. Bridge became accessible on
 October 19; bounded ARW/NEF GUI edit/save/reopen paths now pass. Clean 07
-physical writer review passed October 20; its final UI readback is blocked by
-the currently locked Mac. DNG metadata readback and JPEG sidecar failure
+physical writer review passed October 20. The October 20 lock error is historical:
+after the user unlocked the Mac, Bridge remained running but both app-path and
+bundle-ID bindings timed out on October 21; Finder access and app activation
+worked, but no File Info was opened. The readback now awaits human acknowledgment
+of a normal Bridge quit/reopen. DNG metadata readback and JPEG sidecar failure
 have separate limits in the [Bridge review](2026-10-20-bridge-roundtrip-review.md).
 This finite acceptance scope does not block
 independent NAS investigation or require public-quality annotation.
@@ -137,13 +140,16 @@ remote media reread. See the [accepted bounded result](2026-10-15-native-runtime
 
 This proves SQLite backup restore and new-job reprocessing on disposable public
 copies, excluding same-job continuation, production/whole-appdata restore,
-atomic DB/XMP crash consistency or existing vendor-ID preservation. Bridge is
+atomic DB/XMP crash consistency or existing vendor-ID preservation. Bridge was
 accessible October 19: cases 01/02/05 and bounded 06 establish ARW/NEF GUI
 read/edit/save/reopen facts; case 03 DNG is read-only metadata without a thumbnail,
 and case 04 JPEG does not surface its adjacent sidecar. Clean 07 physical writer
 review passed October 20 (77 writer/state tests, 27 hash checks and 68 preserved
-non-owned fields); final post-writer UI readback is blocked by the current Mac
-lock. Manual unlock is an access prerequisite, not new blanket permission.
+non-owned fields); the October 21 UI attempt found Bridge running but its native
+bindings timed out (`-10005: timeoutReached`). Target media and sidecar hashes
+were unchanged. No File Info observation, writer replay or recovery replay
+occurred. The next step is read-only UI verification after human acknowledgment
+of a normal Bridge quit/reopen.
 Wrong-API/same-polluted-copy attempts are excluded.
 Close this finite stage after controller reconciliation, preserving the JPEG
 negative result rather than expanding the acceptance claim. A separate optional

@@ -1,6 +1,6 @@
 # Native runtime acceptance — partial, 2026-10-15
 
-Last updated October 20, 2026; the dated filename is retained for existing links.
+Last updated October 21, 2026; the dated filename is retained for existing links.
 
 Deployment, the fixed public native-quality diagnostic, a bounded full RAW
 dry-run and one-fixture NIMA CPU fallback passed independent controller review.
@@ -8,8 +8,8 @@ The separately reviewed isolated recovery-write case also passed bounded
 SQLite restore, fresh-job reprocessing and XMP verification on public RAW copies.
 Overall acceptance remains partial: bounded Bridge ARW/NEF GUI paths passed,
 while clean case 07 physical writer review passed and its final UI readback is
-blocked by the October 20 Mac lock; the NIMA fallback does not establish SSD fallback or general
-fixture coverage.
+blocked by Bridge's native app-binding timeout after the user unlocked the Mac;
+the NIMA fallback does not establish SSD fallback or general fixture coverage.
 
 ## Deployment and protection
 
@@ -231,16 +231,21 @@ fields and language alternatives. Case 03 DNG has correct read-only File Info
 metadata but no thumbnail. Case 04 JPEG shows rating 0 and empty metadata despite
 an adjacent rating -1 sidecar: retain this negative interoperability result, with
 no embedded write. Clean 07's GUI edit and correct writer repeat are distinct
-evidence: the October 20 physical writer review passed, while final post-writer
-UI readback is blocked by the currently locked Mac. The wrong-API first 07 attempt
-and its same-copy correction are preserved and excluded.
+evidence: the October 20 physical writer review passed. The October 21 readback
+attempt found Bridge running but its app-path and bundle-ID bindings timed out
+with `-10005: timeoutReached`; Finder accessibility worked, and Finder-based
+activation did not clear the timeout. No File Info result was observed; media
+and sidecar hashes remained unchanged, and no writer or recovery path ran. The
+wrong-API first 07 attempt and its same-copy correction are preserved and
+excluded.
 
 See the [bounded Bridge review](2026-10-20-bridge-roundtrip-review.md) for exact
 paths, evidence and finite closeout. Earlier lock/lookup failures remain history;
 the blanket claim that no GUI path has passed is superseded by these scoped
 results. Overall acceptance stays partial until the controller reconciles clean
-07 after access is restored. Manual unlock is the concrete access prerequisite;
-it does not require new blanket permission. Finite stage closure will retain the
+07 after the user acknowledges a normal Bridge quit and reopen. The October 20
+lock error remains historical; the current blocker is the app-specific binding
+timeout. Finite stage closure will retain the
 JPEG limitation and does not certify
 Capture One, a complete format matrix or vendor-ID preservation. Optional JPEG
 embedded-write design is a separate follow-up requiring explicit opt-in scope;
