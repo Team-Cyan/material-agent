@@ -7,8 +7,11 @@ below supersedes historical next-step statements on this page. On October 12,
 the user authorized continuing the engineering queue: each batch is delegated,
 self-reviewed by its executor, then reviewed and published by the controller.
 The A1–A4 engineering queue is complete as of October 13; implementation,
-audit decisions and verification are recorded below. Conditional scientific and
-external acceptance remains open.
+audit decisions and verification are recorded below. The [bounded Bridge
+technical stage](2026-10-20-bridge-roundtrip-review.md) closed October 21 after clean 07 GUI → writer → GUI readback,
+no-save hash reconciliation and main/advisory review. Scientific G1/G2 admission
+and broader format/application compatibility remain conditional; this closure
+does not authorize a new production mode or autorun.
 The [current gate ledger](2026-09-16-plan-status.md#current-gate-ledger)
 owns status; this plan owns scope and acceptance.
 

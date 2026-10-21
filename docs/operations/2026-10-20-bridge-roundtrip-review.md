@@ -5,10 +5,9 @@ Last updated October 21, 2026; the dated filename and title retain the original 
 Adobe Bridge 2026 **16.0.3** (installed build **16.0.3.21**) was exercised through its actual File Info UI on
 October 19 using fresh disposable public fixtures. The observations below accept
 specific read/edit/save/reopen paths. They do not establish a complete format or
-cross-application compatibility matrix. Clean case 07 still requires its final
-post-writer UI readback before this finite stage can close. Its physical writer
-review passed; the October 21 readback remains blocked by a Bridge-specific
-native app-binding timeout after the user unlocked the Mac.
+cross-application compatibility matrix. The bounded clean case 07 GUI → writer
+→ GUI roundtrip was accepted on October 21 after no-save hash reconciliation
+and main review. The finite stage is complete within these stated limits.
 
 ## Accepted observations and negative result
 
@@ -20,7 +19,7 @@ native app-binding timeout after the user unlocked the Mac.
 | 06 | NEF | Rating 3 → 4; reject → keep; Unicode keywords, foreign field and language alternatives retained. | Historical executor save/reopen observation reconciled by the controller with current file checks; no archived local screenshot or fresh October 20 UI check. |
 | 03 | DNG | Read-only File Info shows rating 5, keywords `旅行` and `material-agent:keep`, and the expected description. No thumbnail appears in the grid. | Metadata readback only; no edit/save or preview compatibility acceptance. |
 | 04 | JPEG | Read-only File Info shows rating 0 and empty keywords/description, while the adjacent sidecar contains rating -1. A JPEG thumbnail appears. No metadata was saved. | Negative interoperability result: this adjacent sidecar did not supply the displayed metadata in this path. No embedded JPEG write was attempted. |
-| 07 clean | NEF | GUI edit changed rating 3 → 4 and keep → reject. The correct production-writer repeat and physical review passed on October 20. The October 21 final readback could not bind to Bridge (`-10005: timeoutReached`). | Do not accept the complete GUI → writer → GUI roundtrip until the last UI result is reviewed. |
+| 07 clean | NEF | GUI edit changed rating 3 → 4 and keep → reject. The correct production-writer repeat and physical review passed on October 20. After the October 21 normal app reopen, File Info showed rating 4, `家族`, `café`, `東京`, `Ω`, `material-agent:keep`, and description `Repeat 家族 café 東京 Ω`; the no-save hash check passed. | Bounded GUI → writer → GUI roundtrip accepted for this exact clean fixture. |
 
 The clean 07 writer repeat requested rating 2 and `pj:decision=keep`. Its committed
 projection receipt preserves the existing nonzero rating 4, projects keep,
@@ -40,12 +39,29 @@ accessibility tree worked, and opening the installed Bridge app through Finder
 did not restore its binding. No File Info view or metadata was observed. The
 target media hash `6c46f9854033e7623ebbb5de8c951df6762ca44f05d45035ccc5cb7e9f4e5692`,
 target sidecar hash `3c2e785b08a06df363f6da0fdd9de3ba6059a570200d3c6dc0e00e34f9d0036c`
-and source-fixture hash matched before and after. No writer or recovery action
-ran. The next action awaits human acknowledgment
-of a normal Bridge quit and reopen; no force quit was attempted because an
-unsaved dialog could not be inspected. October 19 GUI edits, October 20 writer
-review and October 21 access follow-up retain separate dates. A physical writer
-receipt alone does not prove what Bridge displays after that write.
+and source-fixture hash matched before and after that attempt. No writer or
+recovery action ran. The October 21 binding timeout was resolved after a human
+normal quit/reopen of Bridge; no force quit was used because an unsaved dialog
+could not be inspected. These failed access attempts remain historical.
+
+### October 21 post-reopen readback — accepted bounded closeout
+
+The GUI worker opened File Info for the exact clean fixture
+`07-writer-repeat-clean.nef`. The private screenshot
+`07-writer-repeat-clean-final-ui-readback-20261021-after-reopen.jpg` shows rating 4, keywords
+`家族`, `café`, `東京`, `Ω`, and `material-agent:keep`, plus description
+`Repeat 家族 café 東京 Ω`. The main reviewer independently inspected that
+screenshot. The worker closed File Info with Escape without saving. The
+main reviewer recomputed all four pre/post file hashes and 27 fixture/copy
+inventory checks; they passed. Target media stayed at
+`6c46f9854033e7623ebbb5de8c951df6762ca44f05d45035ccc5cb7e9f4e5692`, target
+sidecar at `3c2e785b08a06df363f6da0fdd9de3ba6059a570200d3c6dc0e00e34f9d0036c`,
+source fixture media at the same media hash, and source fixture sidecar at
+`39ebf5454dc1ea9fd61097395127ad054c31ccbbfa8b3e3814d60d24f601da0f`.
+Post-UI ExifTool confirmed rating 4, exact subject/identifier values, and
+preserved localized descriptions and unrelated fields. The independent advisory
+review also passed with no actionable findings. Writer and recovery were not
+replayed.
 
 The first 07 attempt used the wrong writer API arguments. Its later correction
 reused that polluted copy. Both attempts and their receipts remain preserved and
@@ -61,22 +77,22 @@ verify their recorded file scope, not an unperformed GUI observation. The clean
 07 physical comparison preserved all **68 non-owned ExifTool fields**, the media
 hash and source fixtures, while applying the intended owned projections.
 
-The review separates the October 19 positive GUI observations from the October
-20 physical writer pass and October 21 binding-blocked final UI check. DNG
-metadata readback without a thumbnail and JPEG failure to expose adjacent-sidecar metadata remain
-explicit limitations. Neither test counts nor XML/ExifTool checks replace the
-missing clean 07 post-writer UI result. The October 20 main stage review accepted
-physical evidence and the existing GUI observations while retaining the 07 UI
-gate. The October 21 access review confirms the Mac is unlocked and records the
-Bridge-specific binding timeout. The 06 historical receipt was subsequently reconciled
-with current files in a separate final review addendum. It
-does not accept the entire stage as passed.
+The review separates the October 19 GUI observations, October 20 physical
+writer pass and October 21 post-reopen UI observation. No thumbnail was observed
+for DNG in the tested Bridge grid; the DNG result is metadata readback only. The
+JPEG result is limited to the tested adjacent-sidecar path. The October 21 main
+closeout recomputed the no-save hashes and fixture/copy inventory; post-UI
+ExifTool semantics passed. Earlier main and advisory reviews retain their
+bounded conclusions; the 06 historical receipt
+was separately reconciled with current files. The final advisory review found
+no actionable issues. This closes only the finite technical stage.
 
 ## Evidence and limits
 
 UI observations, physical XMP checks and media-hash receipts are separate
-sources of evidence. The controller reconciled the 06 historical receipt and clean 07 physical
-writer sequence. Only clean 07 post-writer UI remains unverified. Original fixtures and failed artifacts
+sources of evidence. The controller reconciled the 06 historical receipt and
+clean 07 physical writer sequence. Clean 07's UI values, no-save close, hashes
+and metadata semantics are accepted. Original fixtures and failed artifacts
 are preserved; private evidence paths and media remain outside the public repo.
 
 | Evidence | SHA256 |
@@ -92,11 +108,14 @@ are preserved; private evidence paths and media remain outside the public repo.
 | Final main reconciliation: 06 reviewed, only clean 07 UI remains | `92460f67941779c98e71f10a6f767e7bcd5357be16c2cba8ea899572550baa7b` |
 | October 21 clean 07 readback attempt; Bridge bindings timed out, hashes unchanged | `f203b5267e3e066290b484fcee4489babab056f3432e09c976eb90bb9b229094` |
 | October 21 main access review; Finder worked, Bridge binding still timed out after activation | `dd2fd2b169a886ee9dc94238f381dd6976aaa5145caae0075e28dc9c5b42e7dd` |
+| October 21 accepted clean 07 readback and no-save hash receipt | `6c5dcd5d6b1c84f88e0fc97e9a816fb94466b97eed3049b3f1a33c7bff2604d2` |
+| October 21 private after-reopen File Info screenshot | `d4a6f54481549a6f33cc14f5f46055420eb8513054919e765b655026e8558233` |
+| October 21 main technical closeout review | `c3c64ef56406666b5d18ea27940e7d7bebdf3d8c89077e862398f044d1e2daf8` |
 
-The existing application CI for `5f7b967e8d8190561f90a6ceefa42bf4a8ed4430`
-completed successfully on October 20 (run `39433460536`; 1,592 passed, 45
-skipped; quality and publication succeeded). It does not verify Bridge UI
-access or close this acceptance gate.
+The existing application CI for `2065599` ([run `39608751154`](https://github.com/Team-Cyan/material-agent/actions/runs/39608751154)) completed with
+quality and publication success, 1,592 passed and 45 skipped. This is release
+context only, not evidence for the Bridge UI or metadata roundtrip; no new CI
+result is claimed here.
 
 This stage does not verify Capture One, a full RAW/JPEG/DNG matrix, existing
 vendor-ID preservation, same-job resume, atomic DB/XMP crash consistency or a
@@ -107,19 +126,11 @@ substitutes for GUI evidence nor changes G1/G2 coverage gates.
 
 ## Finite closeout and follow-up
 
-1. After human acknowledgment that Bridge was normally quit and reopened, finish
-   the read-only clean 07 post-writer File Info readback, confirming rating 4
-   and the four Unicode keywords plus keep. Close without saving; compare media
-   and sidecar hashes afterward. Do not invoke the writer or recovery path again.
-   Physical checks own unrelated-field preservation. Main review decides
-   acceptance from the complete chain.
-2. Close this finite stage with the accepted paths and the JPEG negative result
-   explicitly retained. Closing a bounded stage does not certify universal
-   cross-application compatibility or require expanding to Capture One.
-3. Keep JPEG interoperability as a finite optional follow-up: review an explicit
-   opt-in embedded-metadata path, exact disposable fixtures, backup/rollback and
-   reader checks before any implementation or write. This stage authorizes no
-   JPEG implementation or embedded write.
+The bounded technical stage is complete after GUI worker self-review, main
+visual/hash/metadata review and independent advisory review. Preserve the JPEG
+negative result and DNG boundary. Optional JPEG interoperability remains backlog:
+an explicit opt-in design and separate review would be required before any
+implementation or embedded write; this closeout authorizes neither.
 
 See the [writer contract](../ai/modules/xmp-writer.md), [current status](2026-09-16-plan-status.md)
 and [external acceptance protocol](2026-09-17-external-acceptance-plan.md).

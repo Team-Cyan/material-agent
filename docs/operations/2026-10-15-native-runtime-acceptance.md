@@ -6,10 +6,11 @@ Deployment, the fixed public native-quality diagnostic, a bounded full RAW
 dry-run and one-fixture NIMA CPU fallback passed independent controller review.
 The separately reviewed isolated recovery-write case also passed bounded
 SQLite restore, fresh-job reprocessing and XMP verification on public RAW copies.
-Overall acceptance remains partial: bounded Bridge ARW/NEF GUI paths passed,
-while clean case 07 physical writer review passed and its final UI readback is
-blocked by Bridge's native app-binding timeout after the user unlocked the Mac;
-the NIMA fallback does not establish SSD fallback or general fixture coverage.
+The bounded Bridge technical stage is complete: clean case 07's post-writer UI
+values, no-save close and hashes passed worker, main and independent advisory
+review on October 21. Overall acceptance remains partial because this bounded
+stage does not establish SSD fallback, general fixture coverage or the broader
+cross-application and scientific gates.
 
 ## Deployment and protection
 
@@ -228,25 +229,32 @@ Adobe Bridge 2026 16.0.3 now has accepted October 19 read/edit/save/reopen
 observations for bounded ARW/NEF paths: cases 01, 02 and 05 cover rating/selection
 keyword changes and user-keyword preservation; case 06 covers Unicode, foreign
 fields and language alternatives. Case 03 DNG has correct read-only File Info
-metadata but no thumbnail. Case 04 JPEG shows rating 0 and empty metadata despite
-an adjacent rating -1 sidecar: retain this negative interoperability result, with
-no embedded write. Clean 07's GUI edit and correct writer repeat are distinct
+metadata; no thumbnail was observed in the tested Bridge grid. Case 04 JPEG
+shows rating 0 and empty metadata despite an adjacent rating -1 sidecar: retain
+this negative interoperability result, with no embedded write. Clean 07's GUI
+edit and correct writer repeat are distinct
 evidence: the October 20 physical writer review passed. The October 21 readback
 attempt found Bridge running but its app-path and bundle-ID bindings timed out
 with `-10005: timeoutReached`; Finder accessibility worked, and Finder-based
-activation did not clear the timeout. No File Info result was observed; media
-and sidecar hashes remained unchanged, and no writer or recovery path ran. The
-wrong-API first 07 attempt and its same-copy correction are preserved and
-excluded.
+activation did not clear the timeout. No File Info result was observed during
+that attempt; media and sidecar hashes remained unchanged, and no writer or
+recovery path ran. After the human-confirmed normal Bridge reopen, the GUI
+worker observed rating 4, keywords `家族`, `café`, `東京`, `Ω`,
+`material-agent:keep`, and description `Repeat 家族 café 東京 Ω` for
+`07-writer-repeat-clean.nef`. The main reviewer independently inspected the
+private after-reopen screenshot. File Info was closed with Escape without
+saving; root recomputed the four pre/post file hashes and 27 fixture/copy
+inventory checks, and post-UI ExifTool semantics passed. An independent advisory
+review found no actionable issue. The wrong-API first 07 attempt and its
+same-copy correction are preserved and excluded.
 
 See the [bounded Bridge review](2026-10-20-bridge-roundtrip-review.md) for exact
 paths, evidence and finite closeout. Earlier lock/lookup failures remain history;
 the blanket claim that no GUI path has passed is superseded by these scoped
-results. Overall acceptance stays partial until the controller reconciles clean
-07 after the user acknowledges a normal Bridge quit and reopen. The October 20
-lock error remains historical; the current blocker is the app-specific binding
-timeout. Finite stage closure will retain the
-JPEG limitation and does not certify
+results. The bounded Bridge technical stage is complete after worker
+self-review, main visual/hash/metadata review and independent advisory review.
+The October 20 lock error and October 21 binding timeout are resolved historical
+access failures. Preserve the JPEG limitation; this stage does not certify
 Capture One, a complete format matrix or vendor-ID preservation. Optional JPEG
 embedded-write design is a separate follow-up requiring explicit opt-in scope;
 no implementation or embedded write is authorized by this stage.

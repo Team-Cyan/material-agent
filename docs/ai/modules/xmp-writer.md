@@ -173,16 +173,18 @@ The original 2026-09-16 projection slice uses in-memory XML and intercepted
 ExifTool commands. Later authorized physical sidecar and October 19 Bridge
 16.0.3 observations add bounded ARW/NEF read/edit/save/reopen evidence, including
 rating/selection keyword changes and user/Unicode/unrelated-field preservation.
-DNG File Info metadata readback has no thumbnail acceptance; JPEG does not expose
-the adjacent sidecar in the tested path, and no embedded write was attempted.
+DNG File Info produced metadata readback only; no thumbnail was observed in the
+tested Bridge grid. JPEG did not expose the adjacent sidecar in the tested path,
+and no embedded write was attempted.
 Clean case 07's correct writer repeat and physical review passed October 20:
 77 writer/state tests, 27 hash checks and all 68 non-owned fields preserved in
-the bounded comparison. After the user unlocked the Mac, the October 21
-post-writer readback still could not bind to the running Bridge app
-(`-10005: timeoutReached`); no File Info result was observed and target media
-and sidecar hashes were unchanged. The remaining step is read-only verification
-after human acknowledgment of a normal Bridge quit/reopen. Exclude the wrong-API
-first attempt and its polluted-copy correction. See the [bounded Bridge
+the bounded comparison. After the resolved October 21 Bridge binding timeout
+and human-confirmed normal reopen, File Info showed rating 4, keywords `家族`,
+`café`, `東京`, `Ω`, `material-agent:keep`, and description
+`Repeat 家族 café 東京 Ω`. The worker closed without saving; main review
+recomputed the post-close hashes, and independent advisory review passed. The
+finite bounded Bridge stage is closed. Exclude the wrong-API first attempt and
+its polluted-copy correction. See the [bounded Bridge
 review](../../operations/2026-10-20-bridge-roundtrip-review.md)
 and [full-plan status](../../operations/2026-09-16-plan-status.md).
 
