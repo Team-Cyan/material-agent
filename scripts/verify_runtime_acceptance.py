@@ -219,15 +219,24 @@ def validate(manifest: Path, root: Path, profile: Path, output: Path, *, item_li
 
 
 def tree_size(root: Path):
+    if not stat.S_ISDIR(root.lstat().st_mode):
+        raise ValueError("experiment output root must be a real directory")
     total, count = 0, 0
     for path in root.rglob("*"):
-        s = path.lstat()
+        try:
+            s = path.lstat()
+        except FileNotFoundError:
+            # Live SQLite journals can disappear after enumeration. Only that
+            # observation is optional; all other errors and entry types fail.
+            continue
         if stat.S_ISLNK(s.st_mode) or not (stat.S_ISREG(s.st_mode) or stat.S_ISDIR(s.st_mode)):
             raise ValueError(f"unsafe experiment output entry: {path.relative_to(root)} "
                              f"stat_type={stat.S_IFMT(s.st_mode)}")
         if stat.S_ISREG(s.st_mode):
             total += s.st_size
             count += 1
+    if not stat.S_ISDIR(root.lstat().st_mode):
+        raise ValueError("experiment output root must be a real directory")
     if count > 10000:
         raise ValueError("output file count exceeds bound")
     return total

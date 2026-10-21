@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import errno
 import importlib.util
 import json
 import os
@@ -394,6 +395,126 @@ def test_persistent_output_still_rejects_real_unix_socket_and_symlink(tmp_path):
             module.tree_size(tmp_path)
     finally:
         os.chdir(before)
+
+
+def disappearing_output_entry(root, monkeypatch):
+    journal = root / "state.db-journal"
+    journal.write_bytes(b"transient journal")
+    rglob = Path.rglob
+
+    def enumerate_then_unlink(path, pattern):
+        assert path == root and pattern == "*"
+        entries = list(rglob(path, pattern))
+        assert journal in entries
+        # The sampler receives an enumerated path that vanishes before lstat.
+        journal.unlink()
+        yield journal
+        yield from (entry for entry in entries if entry != journal)
+
+    monkeypatch.setattr(Path, "rglob", enumerate_then_unlink)
+    return journal
+
+
+def test_output_sampling_tolerates_unlinked_journal_and_counts_remaining_bytes(tmp_path, monkeypatch):
+    (tmp_path / "state.db").write_bytes(b"retained database")
+    nested = tmp_path / "nested"
+    nested.mkdir()
+    (nested / "report.json").write_bytes(b"report")
+    journal = disappearing_output_entry(tmp_path, monkeypatch)
+    assert module.tree_size(tmp_path) == len(b"retained database") + len(b"report")
+    assert not journal.exists()
+
+
+@pytest.mark.parametrize("error_number", [errno.EACCES, errno.EIO, errno.ENOTDIR])
+def test_output_sampling_propagates_non_enoent_lstat_errors(tmp_path, monkeypatch, error_number):
+    retained = tmp_path / "state.db"
+    retained.write_bytes(b"database")
+    lstat = Path.lstat
+    error = OSError(error_number, "test output lstat failure", str(retained))
+
+    def fail_lstat(path, *args, **kwargs):
+        if path == retained:
+            raise error
+        return lstat(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "lstat", fail_lstat)
+    with pytest.raises(OSError) as raised:
+        module.tree_size(tmp_path)
+    assert raised.value is error
+
+
+def test_output_sampling_still_rejects_unsafe_entry_after_journal_disappears(tmp_path, monkeypatch):
+    (tmp_path / "linked").symlink_to("missing-target")
+    disappearing_output_entry(tmp_path, monkeypatch)
+    with pytest.raises(ValueError, match=r"linked stat_type=40960"):
+        module.tree_size(tmp_path)
+
+
+def test_output_sampling_still_enforces_file_count_after_journal_disappears(tmp_path, monkeypatch):
+    for index in range(10000):
+        (tmp_path / str(index)).touch()
+    assert module.tree_size(tmp_path) == 0
+    (tmp_path / "one-too-many").touch()
+    disappearing_output_entry(tmp_path, monkeypatch)
+    with pytest.raises(ValueError, match="output file count exceeds bound"):
+        module.tree_size(tmp_path)
+
+
+def test_supervisor_still_enforces_byte_bound_after_journal_disappears(tmp_path, monkeypatch):
+    limit = 64 * module.MIB
+    with (tmp_path / "oversized").open("wb") as stream:
+        stream.truncate(limit + 1)
+    disappearing_output_entry(tmp_path, monkeypatch)
+    with pytest.raises(ValueError, match="experiment output exceeds bound"):
+        module.supervise([sys.executable, "-c", "pass"], env=dict(os.environ),
+                         log=tmp_path / "process.log", output=tmp_path,
+                         bound={"wall_seconds": 5, "rss_bytes": 256 * module.MIB,
+                                "output_bytes": limit}, deadline=time.monotonic() + 5)
+
+
+@pytest.mark.parametrize("root_type", ["missing", "file", "symlink"])
+@pytest.mark.parametrize("phase", ["before", "after_empty_scan", "after_enumeration"])
+def test_output_sampling_requires_real_root_before_and_after_scan(tmp_path, monkeypatch, root_type,
+                                                               phase):
+    output = tmp_path / "output"
+    target = tmp_path / "target"
+    target.mkdir()
+
+    def replace_root():
+        if root_type == "file":
+            output.write_bytes(b"not a directory")
+        elif root_type == "symlink":
+            output.symlink_to(target, target_is_directory=True)
+
+    if phase != "before":
+        output.mkdir()
+        journal = output / "state.db-journal"
+        if phase == "after_enumeration":
+            journal.touch()
+        rglob = Path.rglob
+
+        def enumerate_then_remove_root(path, pattern):
+            entries = list(rglob(path, pattern))
+            assert entries == ([journal] if phase == "after_enumeration" else [])
+            if entries:
+                journal.unlink()
+            output.rmdir()
+            replace_root()
+            yield from entries
+
+        monkeypatch.setattr(Path, "rglob", enumerate_then_remove_root)
+    else:
+        replace_root()
+    if root_type == "missing":
+        with pytest.raises(FileNotFoundError):
+            module.tree_size(output)
+    elif phase == "after_enumeration" and root_type == "file":
+        # The stale child lookup sees ENOTDIR, which must not be swallowed.
+        with pytest.raises(NotADirectoryError):
+            module.tree_size(output)
+    else:
+        with pytest.raises(ValueError, match="output root must be a real directory"):
+            module.tree_size(output)
 
 
 def test_fresh_native_child_receives_fixed_thread_controls_before_imports(tmp_path, monkeypatch):

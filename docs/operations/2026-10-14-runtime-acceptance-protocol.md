@@ -56,6 +56,16 @@ RSS is at most 2,560 MiB. Linux sampling reads `/proc`; macOS boundary checks us
 `ps`. Resource/output sampling is observational and stops detected excesses;
 transport filesystem/container limits supply independent hard enforcement.
 
+Live output sampling tolerates only `ENOENT` when an enumerated entry disappears
+before `lstat`, such as a transient SQLite journal. The output root must be
+a real directory at both scan boundaries; root lookup failures, other `lstat`
+errors, unsafe entry types, and observed file-count/byte excesses still fail
+closed. Sampling is not an atomic filesystem snapshot. This helper
+correction does not change the accepted native/Bridge evidence frozen under
+runner SHA256 `445448bb6188a2a86ccf409a9904fd26c7bbc1f888823637d019d4260ca29508`,
+or regenerate its manifests/results. Future runs using the changed helper need
+a newly reviewed `script_sha256`, manifest and output namespace.
+
 Child `TMPDIR`, `TEMP` and `TMP` point to the transport's separate 64 MiB `/tmp`
 tmpfs. Python multiprocessing may create legitimate forkserver Unix sockets
 there. These ephemeral IPC/temp entries are outside persistent output accounting
