@@ -1,6 +1,16 @@
 # Roadmap
 
+Current implementation queue and acceptance criteria:
+[October 22 follow-up plan](operations/2026-10-22-follow-up-plan.md).
+Current evidence/status: [task ledger](operations/2026-09-16-plan-status.md).
+
 ## Completed
+
+- completed independent repository review and controller verification against
+  `973c116`: four scoped operational/preview/diagnostic defects are recorded in
+  the [review](operations/2026-10-22-repository-review.md). They are pending fixes,
+  not completed implementation. Existing exposure-normalization failures remain
+  deferred; no new model, grouping policy or media-write scope is selected
 
 - verified bounded Adobe Bridge 2026 16.0.3 ARW/NEF GUI read/edit/save/reopen
   paths on October 19: rating and selection-keyword changes, retained user and
@@ -59,7 +69,7 @@
 - completed the [A1–A4 engineering queue](operations/2026-09-26-culling-improvement-plan.md#current-follow-up-queue-after-the-october-8-review)
   with executor self-review followed by controller review: grouping diagnostics,
   sampled preparation memory/RSS and equivalent finalization helpers. A1–A3 were
-  pushed with successful release CI; latest application verification is 1,575 full
+  pushed with successful release CI; verification at that stage was 1,575 full
   tests / ten skipped, with 500 grouping and 84 finalization controller parity cases.
   The [17-script A4 audit](operations/2026-10-13-evaluator-maintenance-audit.md)
   closes without extraction because existing reuse and frozen identities outweigh
@@ -310,21 +320,32 @@
 
 ## In Progress
 
-- complete the broader preselection, evidence applicability/refinement and
-  metadata import/ledger plan; see [audited status](operations/2026-09-16-plan-status.md)
-
-- Capture One XMP interoperability design and real-application round-trip
-  validation; the standards-based contract is documented, while application
-  readback/writeback remains gated on an isolated Capture One fixture pass
+The October 22 review/planning pass is complete. The next implementation batch
+is R1 below; no reviewed defect is marked fixed by this documentation update.
+The completed A1–A4 and finite native/recovery/Bridge stages remain closed.
 
 ## Next
 
-- retain optional JPEG embedded-metadata interoperability as backlog. Any
-  future work needs a separately reviewed opt-in design, exact disposable
-  fixtures and reader checks before implementation or writes; this plan
-  authorizes no such work. Preserve the JPEG adjacent-sidecar negative result
-  and DNG read-only/no-preview boundary. Capture One, full-matrix compatibility
-  and vendor-ID guarantees remain unverified. See the [bounded Bridge review](operations/2026-10-20-bridge-roundtrip-review.md).
+- **R1 — Web task lifecycle:** reconcile surviving workers on manager restart;
+  keep task status/start/cancel and CLI cancellation results consistent. Verify
+  process ownership before signaling and preserve the shared runtime lock.
+- **R2 — Model asset lifetime:** prevent deletion of assets referenced by active
+  tasks after selection changes; cover lazy loading, start/delete interleavings
+  and R1 restart reconciliation.
+- **R3 — Cached dry-run previews:** persist complete current output previews for
+  unchanged `done` cache hits without rescoring or source/processed-state writes.
+- **R4 — Post-commit rewrite diagnostics:** distinguish committed XMP from failed
+  SQLite receipt/progress persistence, preserving an overall failure signal and
+  receipt context without replaying the writer.
+- **R5 — Existing RAW evidence diagnosis:** classify the five unclassified
+  RAW-v3 records per adapter from retained artifacts, distinguishing serialized
+  evidence from actual unique inference calls. No repeat native run is selected.
+
+Run one bounded executor/self-review/controller-review/check/push batch at a time
+under the [follow-up plan](operations/2026-10-22-follow-up-plan.md#executable-queue).
+Research labels and broader application compatibility do not block these fixes.
+
+## Conditional research follow-up
 
 - keep the [current gate ledger](operations/2026-09-16-plan-status.md#current-gate-ledger)
   as the status entrypoint. Preserve G1 → G2 human-labeled oracle → frozen
@@ -337,9 +358,7 @@
   before image acquisition or an existing-scorer preference diagnostic. Aesthetic
   targets cannot fill G1's directed coverage quotas. Author outreach remains unsent
   without explicit authorization; the A1–A4 engineering queue is complete. Do not reopen the
-  annotation viewer or change the admin WebUI
-
-## Conditional research follow-up
+  annotation viewer or turn the admin WebUI into an annotation product
 
 - retain optional MUSIQ adapter deferral after the
   [completed static lifecycle review](operations/2026-10-06-static-lifecycle-quality-validity.md).
@@ -376,6 +395,14 @@
 
 ## Later
 
+- Capture One and broader XMP/vendor-ID round trips need separately scoped
+  disposable fixtures and actual application results; they are not an active
+  engineering prerequisite. Preserve the [bounded Bridge result](operations/2026-10-20-bridge-roundtrip-review.md),
+  JPEG adjacent-sidecar negative result and DNG metadata-only/no-preview boundary
+- optional JPEG embedded metadata needs a reviewed opt-in design and fixture
+  acceptance before implementation or writes; no such work is selected
+- same-job resume, whole production-appdata restore and atomic DB/XMP crash
+  consistency require a concrete failure model and separate bounded scope
 - optionally add true sensor-resolution RAW ROI decoding for ambiguous
   candidates; the current subject/eye pass uses a bounded 2048-edge preview
 - remove copied OMLX/Ollama modules after the remaining deprecation inventory

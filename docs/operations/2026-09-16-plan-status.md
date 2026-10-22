@@ -1,8 +1,31 @@
 # Current implementation and acceptance status
 
-Single status entrypoint, updated October 21, 2026. The dated filename is
+Single status entrypoint, updated October 22, 2026. The dated filename is
 retained for existing links. Historical reports preserve their original results;
 this page, rather than appended handoff logs, defines current work and next steps.
+
+## Current execution queue
+
+The [October 22 repository review](2026-10-22-repository-review.md) and controller
+verification establish four scoped defects, with no P0/P1 finding in this review.
+The [new follow-up plan](2026-10-22-follow-up-plan.md) owns task scope, dependencies
+and acceptance. This update changes planning only; none of these fixes has run.
+
+| Order | Status | Next deliverable |
+| --- | --- | --- |
+| R1 — Web lifecycle (P2) | Pending | Reconcile a surviving scoring child across manager restart and align cancellation/status; validate identity before any process signal. |
+| R2 — Active model assets (P2) | Pending; coordinate with R1 | Protect task-referenced assets after selection changes, including lazy load and start/delete races. |
+| R3 — Cached output previews (P3) | Pending | Regenerate DB-only output/projection previews for unchanged cached `done` dry-runs; retain `skipped`, cache reuse and source protections. |
+| R4 — Rewrite diagnostics (P3) | Pending | Report committed XMP and failed receipt/progress persistence separately, retaining failure/receipt context without write replay. |
+| R5 — RAW provenance classification | Pending after fixes; diagnostic | Attribute 15/20 model-evidence coverage using the existing immutable 20-fixture artifacts; preserve unknowns if retained evidence is insufficient. |
+
+Controller checks: 79 grouping/coverage tests passed, plus isolated reproductions
+of manager restart with a live lock-holding child, selected-model path removal,
+cached dry-run preview omission and post-commit receipt failure. Independent
+review selected 26 boundary tests (134 deselected), all passed. These are not
+fresh target/deployment or physical media-write tests. Baseline `973c116` remote
+[quality/publication CI](https://github.com/Team-Cyan/material-agent/actions/runs/39619203742)
+was rechecked as successful; verification of this documentation batch is separate.
 
 ## Current gate ledger
 
@@ -11,8 +34,10 @@ base `493b04853c044916ab9c2ef300a6739eeab8da66`. The October 12–13 continuatio
 completed A1–A4 with executor self-review followed by controller review. A1–A3
 were pushed and their exact-commit release CI succeeded; A4 closes with a
 documentation-only maintenance audit.
-The [current follow-up queue](2026-09-26-culling-improvement-plan.md#current-follow-up-queue-after-the-october-8-review)
-owns batch scope and acceptance; older dated next-step statements below are history.
+The [October 22 follow-up plan](2026-10-22-follow-up-plan.md) owns the new execution
+queue. The [completed A1–A4 specifications](2026-09-26-culling-improvement-plan.md#current-follow-up-queue-after-the-october-8-review)
+and scientific gates remain unchanged; older dated next-step statements below
+are history.
 
 | Area | Current evidence / status | Next action or gate |
 | --- | --- | --- |
@@ -393,6 +418,12 @@ and score/grouping/discard policy changes remain excluded. Synthetic, video,
 real RAW, model proxy and human evidence must be distinguished. Historical external operations do not expand this scope.
 
 ## Task ledger
+
+Historical ledger through the earlier research/engineering stages. Its statuses
+and next-action columns are retained as dated evidence, not the active queue.
+In particular, the old external-input/authorization blocker below is superseded
+by the accepted October 19/21 bounded results in the current gate ledger.
+Use the [current execution queue](#current-execution-queue) for pending work.
 
 Status vocabulary: **Pending**, **In progress**, **Implemented**, **Accepted
 locally**, **Blocked**. Local acceptance never implies target-machine deployment

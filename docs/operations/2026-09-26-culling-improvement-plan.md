@@ -1,8 +1,13 @@
 # Culling improvement plan after the September 26 review
 
+Current executable priorities are in the [October 22 follow-up plan](2026-10-22-follow-up-plan.md),
+following the [repository review](2026-10-22-repository-review.md). This page retains
+the completed engineering specifications, historical experiments and future
+coverage gates; its old next-step statements are not an active TODO queue.
+
 Status: follow-up priorities reviewed October 10, 2026 against commit
 `493b04853c044916ab9c2ef300a6739eeab8da66` and the supplied
-`deep-research-report (3).md` (dated October 8). The current engineering queue
+`deep-research-report (3).md` (dated October 8). The historical engineering queue
 below supersedes historical next-step statements on this page. On October 12,
 the user authorized continuing the engineering queue: each batch is delegated,
 self-reviewed by its executor, then reviewed and published by the controller.
@@ -616,7 +621,7 @@ substitute more UI work, proxy labels or repeated historical tuning for it.
 ### Next substantive step and dispatch boundary
 
 Historical October 2–8 sequence; current priorities are in the
-[October 10 queue](#current-follow-up-queue-after-the-october-8-review).
+[October 22 follow-up plan](2026-10-22-follow-up-plan.md).
 
 October 2 public-benchmark search, explicitly requested by the user, found
 standard targets and published results; see the

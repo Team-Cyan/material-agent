@@ -176,14 +176,23 @@ Apple GPU acceleration should be native first. Docker's newer Model Runner can e
 
 ## Near-Term Work
 
-1. Calibrate the optional local blocks on a reviewed real-camera RAW set.
-2. Measure NIMA-specific warm CPU/GPU parity and utilization on the target Intel
-   NAS; the existing DINO matrix is not NIMA evidence.
-3. Run a separately authorized target-host isolated-XMP pilot and approve
-   promotion thresholds; keep the main photo mount read-only until then.
-4. Decide whether to retain or delete the remaining legacy teacher modules.
-5. Collect real human labels later; the durable empty label-store infrastructure
-   is already available.
+The [October 22 follow-up plan](docs/operations/2026-10-22-follow-up-plan.md)
+owns the executable TODOs; the [status ledger](docs/operations/2026-09-16-plan-status.md)
+separates implementation, CI, deployment and acceptance.
+
+1. Reconcile surviving scoring subprocesses after a Web manager restart, keeping
+   task status, start/cancel controls and process ownership consistent.
+2. Protect model assets still referenced by running tasks when selection changes.
+3. Preserve complete output previews for cached dry-run results without
+   rescoring or writing photo metadata.
+4. Distinguish committed XMP from a later failed SQLite receipt write.
+5. Classify the five RAW-v3 records per adapter without native model evidence
+   using existing immutable artifacts before selecting another runtime change.
+
+Preference/coverage research and broader application compatibility retain their
+explicit evidence gates. The bounded isolated recovery/XMP and Bridge stages
+are complete; they do not authorize primary-library writes or a new grouping/
+scoring policy. The main photo mount remains read-only.
 
 ## External Requirements
 
