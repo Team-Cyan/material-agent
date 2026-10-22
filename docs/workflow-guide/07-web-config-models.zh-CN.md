@@ -31,14 +31,18 @@ Web 的 ModelCatalogService 注册表目录固定在启动参数；评分 CLI �
 
 ## 工作目录、权限与网络边界
 
-一个 work directory 同时只允许一个 mutating CLI controller；`run`, rescore/rewrite/reset 等操作共享 run lock。容器入口脚本通过 photos read-only mount 与 work/appdata writable mount 的约定隔离源照片；Web index 本身写在应用状态库而非照片目录。CLI 可通过显式 `--work-dir` 设定独立状态位置。
+一个 work directory 同时只允许一个 mutating CLI controller；`run`, rescore/rewrite/reset 等操作共享 run lock。容器入口脚本通过 photos read-only mount 与 work/appdata writable mount 的约定隔离源照片；Web index 本身写在应用状态库而非照片目录。普通 CLI `run` 使用 `MATERIAL_AGENT_WORK_DIR` 指定独立状态目录；`web` 和 `review-scores` 才有显式 `--work-dir` 参数。
 
 Web API **没有应用层认证**，因此是 trusted-LAN operator surface。端口默认 8776，监听地址可配置；运行在 `0.0.0.0` 仅表示绑定全部网卡，不构成访问控制。不得将端口发布到 Internet 或不可信 VLAN。`/health` 成功也不证明任务可运行、共享锁空闲或 inference adapter 工作。
 
-## 当前 Web lifecycle 例外
+## Web 任务监督、重启与取消
 
-Web manager 启动时把持久化 snapshot 中 queued/running/cancelling 标成 `interrupted`，没有核验子进程 PID/进程组身份。旧 worker 存活时仍可能持 run lock，UI 却显示没有 active task；新 run 失败于锁冲突。不能只凭保存 PID 去 kill，PID 可能复用。R1 计划要求识别 owned worker、避免误发信号并与 lock/SQLite 终态协调，当前未实现。
+R1 将任务控制拆成 manager 与私有 [`web_worker.py`](../../src/material_agent/app/web_worker.py) 监督进程。每个任务在 queued 状态落盘前创建两份私有文件租约：生命周期 FD 由 manager → supervisor → CLI 继承，控制 FD 只由 manager → supervisor 继承。关闭副本不会显式解锁其他持有者。manager 重启后核对文件身份和私有回执；生命周期仍被持有时不会发布终态。任务状态、回执和取消请求保存在 appdata 的 `web/workers/`，控制能力不出现在 API 返回中。
 
-此外，如果子进程收到 API 之外的 SIGTERM，CLI 可能正常写入 cancelled 结果但返回 130；manager 仍可能按普通非零退出将 Web status 设为 failed。API cancel 先置 cancelling，因此路径不同。状态语义见 01 章与 [review](../operations/2026-10-22-repository-review.md)。
+取消先写入私有请求，由原监督进程向自己尚未回收的 CLI 进程组发 SIGTERM。manager 不会根据保存的 PID 发信号。终态以实际退出结果为准：0 为 finished，130 为 cancelled；消费取消请求后被 SIGTERM 终止也为 cancelled，其余非零为 failed。取消请求与自然完成相撞时不会覆盖成功/失败结果。外部 SIGTERM 若被 CLI 转为 130，也正确显示 cancelled。
+
+控制租约消失但 CLI 仍持生命周期租约时，状态为 `unknown`，API 明确拒绝无法执行的取消并阻止冲突启动；待生命周期释放后，没有终态回执则为 interrupted/退出未知。损坏、替换或不可读的租约/回执保持未知，损坏的 task snapshot 拒绝启动且保留原文件。旧 PID-only 记录无法授权取消。UI 的 unknown 行可提交取消请求，缺失控制器时会显示 API 错误；状态提示包含可用的失败原因。
+
+这不保证任意监督进程或整棵进程树故障后都能自动停止 surviving CLI；关闭继承 FD 的后代不在该生命周期证据内。共享 `run.lock` 仍是 CLI 最终写入互斥。历史发现见 [review](../operations/2026-10-22-repository-review.md)，实现契约见 [Task Process Lifetime](../ai/modules/web-operations.md#task-process-lifetime)。
 
 契约与测试：[Web operations](../ai/modules/web-operations.md)、[`tests/test_web_service.py`](../../tests/test_web_service.py)、[`tests/test_model_catalog_service.py`](../../tests/test_model_catalog_service.py)、[`tests/test_config_validator.py`](../../tests/test_config_validator.py)、[`tests/test_container_contract.py`](../../tests/test_container_contract.py)。

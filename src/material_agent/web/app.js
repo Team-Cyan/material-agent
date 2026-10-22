@@ -26,7 +26,7 @@ function showView(name){
 
 function renderTasks(tasks,target){
   if(!tasks.length){target.innerHTML='<p class="muted">暂无任务</p>';return}
-  target.innerHTML=tasks.map(task=>`<div class="row" data-task="${escapeHtml(task.id)}"><span><strong>${escapeHtml(task.id.slice(0,10))}</strong><br><span class="muted">${new Date(task.created_at*1000).toLocaleString()}</span></span><span>${escapeHtml(task.status)}</span><span>${task.max_files??'全量'}</span><span><button class="secondary task-log-button">日志</button>${['queued','running','cancelling'].includes(task.status)?' <button class="secondary danger task-cancel-button">取消</button>':''}</span></div>`).join('');
+  target.innerHTML=tasks.map(task=>`<div class="row" data-task="${escapeHtml(task.id)}"><span><strong>${escapeHtml(task.id.slice(0,10))}</strong><br><span class="muted">${new Date(task.created_at*1000).toLocaleString()}</span></span><span title="${escapeHtml(task.error)}">${escapeHtml(task.status)}</span><span>${task.max_files??'全量'}</span><span><button class="secondary task-log-button">日志</button>${['queued','running','cancelling','unknown'].includes(task.status)?' <button class="secondary danger task-cancel-button">取消</button>':''}</span></div>`).join('');
 }
 
 async function loadOverview(){

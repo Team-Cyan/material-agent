@@ -1,6 +1,6 @@
 # material-agent 工作流程指南
 
-> 面向使用者的源码导读。本文按 **代码快照 `24423c403aff29190d1ad3272b0035277ecd6132`（2026-10-22）**描述实现，不代表部署环境正在运行该版本。遇到本文与该快照的代码差异时，以代码和测试为准，并请在 review 中标出。
+> 面向使用者的源码导读。初版核对基线为 **`24423c403aff29190d1ad3272b0035277ecd6132`（2026-10-22）**；Web 生命周期章节已随 R1 修复更新。其余模块的初版基线不因文档发布而改变。部署状态另行记录，遇到文档与代码差异时，以代码和测试为准，并请在 review 中标出。
 
 ## 十分钟了解
 
@@ -45,9 +45,9 @@ flowchart LR
 
 这份指南基于上述源代码快照；所列测试是可定位的回归证据，不等同于本指南重新执行了每项测试、真实照片验收或目标主机部署。默认值以仓库 `config.yaml` 和归一化/校验代码为准，运行实例可能有自己的私有配置。
 
-2026-10-22 [repository review](../operations/2026-10-22-repository-review.md) 与 [follow-up plan](../operations/2026-10-22-follow-up-plan.md) 记录了四项尚待修复行为：Web manager 重启可能把仍存活的 worker 标成 `interrupted`；模型 A 被活动任务配置引用时可能被删除；匹配的 processed `done` 缓存 dry-run 可能没有 `output_preview`；XMP 已提交但 SQLite receipt 写入失败时 rewrite 命令可能误报为 XMP 写失败。后文按当前代码描述，不把计划中的 R1–R4 写成已经实现。
+2026-10-22 [repository review](../operations/2026-10-22-repository-review.md) 记录了四项待修复行为。R1 已增加私有监督进程、生命周期/控制双租约、重启对账和按实际退出结果判定的取消状态；本地验证与发布状态见 [follow-up plan](../operations/2026-10-22-follow-up-plan.md) 和 [状态台账](../operations/2026-09-16-plan-status.md)。R2–R4 仍待修复：活动任务引用的模型可能被删除；匹配的 processed `done` 缓存 dry-run 可能没有 `output_preview`；XMP 已提交但 receipt 写入失败可能误报为 XMP 写失败。文档不把这些待办写成已实现。
 
-同一 review 将曝光包围照片因 pHash 超阈值而分组断开的情况记录为已知合同限制，当前相邻时间 AND pHash 行为仍是实现。A1–A4 与有限 native/recovery/Bridge 阶段已完成，但证据只覆盖各报告声明的输入与格式；G1/G2 人类偏好门槛及广泛 RAW/应用互操作仍是条件性证据，不阻碍理解当前代码，也不构成普遍质量或兼容性保证。
+同一 review 将曝光包围照片因 pHash 超阈值而分组断开的情况记录为已知合同限制，当前相邻时间 AND pHash 行为仍是实现。A1–A4 与有限 native/recovery/Bridge 阶段已完成，但证据只覆盖各报告声明的输入与格式；G1/G2 定向重要内容覆盖门槛及广泛 RAW/应用互操作仍是条件性证据，不阻碍理解当前代码，也不构成普遍质量或兼容性保证。
 
 ## 与现有资料的关系
 

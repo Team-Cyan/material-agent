@@ -6,13 +6,14 @@ import io
 import json
 import os
 import shutil
-import signal
 import sqlite3
+import stat
 import subprocess
+import sys
 import threading
 import time
 import uuid
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -32,7 +33,12 @@ from .model_catalog_service import (
 )
 
 
+from .web_worker import lease_busy, read_private_json, write_private_json
+
+
 _REDACTED = "[REDACTED]"
+
+
 _TERMINAL_TASK_STATES = {"finished", "failed", "cancelled", "interrupted"}
 
 
@@ -413,9 +419,16 @@ class WebTask:
     exit_code: int | None = None
     finished_at: float | None = None
     error: str | None = None
+    worker_token: str | None = None
+    lease_identity: list[int] | None = None
+    control_identity: list[int] | None = None
 
     def as_dict(self) -> dict:
-        return self.__dict__.copy()
+        return {
+            key: value
+            for key, value in asdict(self).items()
+            if key not in {"worker_token", "lease_identity", "control_identity"}
+        }
 
 
 class WebTaskManager:
@@ -435,28 +448,36 @@ class WebTaskManager:
         self.config_dir = self.web_dir / "task-configs"
         self.log_dir = self.web_dir / "logs"
         self.state_path = self.web_dir / "tasks.json"
+        self.worker_dir = self.web_dir / "workers"
         self.config_dir.mkdir(parents=True, exist_ok=True)
         self.log_dir.mkdir(parents=True, exist_ok=True)
-        for directory in (self.web_dir, self.config_dir, self.log_dir):
+        self.worker_dir.mkdir(parents=True, exist_ok=True)
+        for directory in (self.web_dir, self.config_dir, self.log_dir, self.worker_dir):
             directory.chmod(0o700)
         secure_private_file(self.config_path)
         self._lock = threading.RLock()
         self._processes: dict[str, subprocess.Popen] = {}
         self._tasks = self._load()
-        for task in self._tasks.values():
-            if task.status in {"queued", "running", "cancelling"}:
-                task.status = "interrupted"
-                task.finished_at = time.time()
+        self._reconcile()
         self._persist()
 
     def _load(self) -> dict[str, WebTask]:
-        if not self.state_path.exists():
+        if not self.state_path.exists() and not self.state_path.is_symlink():
             return {}
         try:
-            payload = json.loads(self.state_path.read_text(encoding="utf-8"))
-            return {item["id"]: WebTask(**item) for item in payload if isinstance(item, dict)}
-        except OSError, TypeError, ValueError, json.JSONDecodeError:
-            return {}
+            descriptor = os.open(self.state_path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+            with os.fdopen(descriptor, encoding="utf-8") as handle:
+                if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+                    raise ValueError("task state is not a regular file")
+                payload = json.load(handle)
+            if not isinstance(payload, list) or any(not isinstance(item, dict) for item in payload):
+                raise ValueError("task state must be a list of task objects")
+            tasks = {item["id"]: WebTask(**item) for item in payload}
+            if len(tasks) != len(payload):
+                raise ValueError("task state contains duplicate identities")
+            return tasks
+        except (OSError, TypeError, ValueError, KeyError) as error:
+            raise ValueError(f"unable to load Web task state: {error}") from error
 
     def _persist(self) -> None:
         self.web_dir.mkdir(parents=True, exist_ok=True)
@@ -464,14 +485,96 @@ class WebTaskManager:
         _write_private_text(
             temporary,
             json.dumps(
-                [task.as_dict() for task in self._tasks.values()], ensure_ascii=False, indent=2
+                [asdict(task) for task in self._tasks.values()], ensure_ascii=False, indent=2
             ),
         )
         os.replace(temporary, self.state_path)
         secure_private_file(self.state_path)
 
+    def _runtime_busy(self) -> bool:
+        path = self.work_dir / "run.lock"
+        try:
+            return lease_busy(path)
+        except FileNotFoundError:
+            if path.is_symlink():
+                raise ValueError("runtime lock is a symbolic link")
+            return False
+        except OSError as error:
+            raise ValueError(f"unable to verify runtime lock: {error}") from error
+
+    def _worker_path(self, task: WebTask, suffix: str) -> Path:
+        return self.worker_dir / f"{task.id}.{suffix}"
+
+    def _reconcile(self) -> None:
+        changed = False
+        for task in self._tasks.values():
+            if task.status in _TERMINAL_TASK_STATES and not (
+                task.status == "interrupted" and not task.worker_token
+            ):
+                continue
+            previous = asdict(task)
+            try:
+                if not task.worker_token or not task.lease_identity:
+                    # Legacy snapshots cannot establish signal authority. Only
+                    # a missing process AND free runtime lock prove interruption.
+                    if not isinstance(task.pid, int) or task.pid <= 0:
+                        raise ValueError("legacy worker has no verifiable process identity")
+                    if task.pid is not None:
+                        try:
+                            os.kill(task.pid, 0)
+                        except ProcessLookupError:
+                            pass
+                        else:
+                            raise ValueError("legacy worker identity is unverified")
+                    if self._runtime_busy():
+                        raise ValueError("runtime lock is occupied")
+                    task.status = "interrupted"
+                    task.finished_at = task.finished_at or time.time()
+                    task.error = "legacy worker exited; exit status is unknown"
+                else:
+                    busy = lease_busy(self._worker_path(task, "lease"), task.lease_identity)
+                    try:
+                        receipt = read_private_json(self._worker_path(task, "receipt"))
+                    except FileNotFoundError:
+                        receipt = {}
+                    if receipt and receipt.get("token") != task.worker_token:
+                        raise ValueError("worker receipt identity is unverified")
+                    if busy:
+                        if not task.control_identity or not lease_busy(
+                            self._worker_path(task, "control"), task.control_identity
+                        ):
+                            raise ValueError(
+                                "worker is alive but its cancellation controller is unavailable"
+                            )
+                        status = receipt.get("status")
+                        if status not in {"running", "cancelling"}:
+                            raise ValueError("worker lease occupied; control state is unconfirmed")
+                        task.status = status
+                        task.pid = receipt.get("pid")
+                        task.error = None
+                    elif receipt.get("status") in _TERMINAL_TASK_STATES:
+                        task.status = receipt["status"]
+                        task.pid = receipt.get("pid")
+                        task.exit_code = receipt.get("exit_code")
+                        task.finished_at = receipt.get("finished_at", time.time())
+                        task.error = receipt.get("error")
+                    else:
+                        task.status = "interrupted"
+                        task.finished_at = time.time()
+                        task.error = (
+                            "worker lease released without terminal receipt; exit status unknown"
+                        )
+            except (OSError, ValueError, TypeError) as error:
+                task.status = "unknown"
+                task.finished_at = None
+                task.error = str(error)
+            changed |= asdict(task) != previous
+        if changed:
+            self._persist()
+
     def list(self) -> list[dict]:
         with self._lock:
+            self._reconcile()
             return [
                 task.as_dict()
                 for task in sorted(
@@ -481,6 +584,7 @@ class WebTaskManager:
 
     def active(self) -> dict | None:
         with self._lock:
+            self._reconcile()
             for task in self._tasks.values():
                 if task.status not in _TERMINAL_TASK_STATES:
                     return task.as_dict()
@@ -490,6 +594,8 @@ class WebTaskManager:
         with self._lock:
             if self.active() is not None:
                 raise ValueError("another scoring task is already active")
+            if self._runtime_busy():
+                raise ValueError("another scoring run holds the runtime lock")
             task_id = uuid.uuid4().hex
             raw = yaml.safe_load(self.config_path.read_text(encoding="utf-8")) or {}
             if not isinstance(raw, dict):
@@ -535,69 +641,97 @@ class WebTaskManager:
                 log_path=str(log_path),
                 max_files=max_files,
             )
-            self._tasks[task_id] = task
-            self._persist()
+            import fcntl
+
+            lease_path = self._worker_path(task, "lease")
+            lease_fd = os.open(lease_path, os.O_RDWR | os.O_CREAT | os.O_EXCL, 0o600)
+            control_fd = None
             try:
-                log_handle = _open_private_append(log_path)
-                process = subprocess.Popen(
-                    command,
-                    cwd=str(self.work_dir),
-                    stdout=log_handle,
-                    stderr=subprocess.STDOUT,
-                    start_new_session=True,
+                control_fd = os.open(
+                    self._worker_path(task, "control"), os.O_RDWR | os.O_CREAT | os.O_EXCL, 0o600
                 )
-            except OSError as error:
-                if "log_handle" in locals():
-                    log_handle.close()
-                task.status = "failed"
-                task.error = str(error)
-                task.finished_at = time.time()
-                self._persist()
-                raise ValueError(str(error)) from error
-            task.status = "running"
-            task.pid = process.pid
-            self._processes[task_id] = process
-            self._persist()
+                fcntl.flock(control_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                control_info = os.fstat(control_fd)
+                task.control_identity = [control_info.st_dev, control_info.st_ino]
+                fcntl.flock(lease_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                info = os.fstat(lease_fd)
+                task.lease_identity = [info.st_dev, info.st_ino]
+                task.worker_token = uuid.uuid4().hex
+                spec_path = self._worker_path(task, "json")
+                write_private_json(
+                    spec_path,
+                    {
+                        "token": task.worker_token,
+                        "command": command,
+                        "work_dir": str(self.work_dir),
+                    },
+                )
+                self._tasks[task_id] = task
+                try:
+                    self._persist()
+                except Exception:
+                    self._tasks.pop(task_id, None)
+                    raise
+                try:
+                    with _open_private_append(log_path) as log_handle:
+                        process = subprocess.Popen(
+                            [
+                                sys.executable,
+                                "-m",
+                                "material_agent.app.web_worker",
+                                str(spec_path),
+                                str(lease_fd),
+                                str(control_fd),
+                            ],
+                            cwd=str(self.work_dir),
+                            stdout=log_handle,
+                            stderr=subprocess.STDOUT,
+                            start_new_session=True,
+                            pass_fds=(lease_fd, control_fd),
+                        )
+                except OSError as error:
+                    task.status = "failed"
+                    task.error = str(error)
+                    task.finished_at = time.time()
+                    self._persist()
+                    raise ValueError(str(error)) from error
+                self._processes[task_id] = process
+            finally:
+                # No LOCK_UN: supervisor and CLI inherit this same locked FD.
+                os.close(lease_fd)
+                if control_fd is not None:
+                    os.close(control_fd)
             threading.Thread(
                 target=self._wait_for_process,
-                args=(task_id, process, log_handle),
+                args=(task_id, process),
                 daemon=True,
             ).start()
             return task.as_dict()
 
-    def _wait_for_process(self, task_id: str, process: subprocess.Popen, log_handle) -> None:
-        exit_code = process.wait()
-        log_handle.close()
+    def _wait_for_process(self, task_id: str, process: subprocess.Popen) -> None:
+        process.wait()
         with self._lock:
-            task = self._tasks[task_id]
-            task.exit_code = exit_code
-            task.finished_at = time.time()
-            if task.status == "cancelling":
-                task.status = "cancelled"
-            else:
-                task.status = "finished" if exit_code == 0 else "failed"
             self._processes.pop(task_id, None)
-            self._persist()
+            # The worker receipt is durable. Reconcile on the next API read;
+            # an old manager's waiter must not overwrite a newer snapshot.
 
     def cancel(self, task_id: str) -> dict:
         with self._lock:
+            self._reconcile()
             task = self._tasks.get(task_id)
             if task is None:
                 raise KeyError(task_id)
             if task.status in _TERMINAL_TASK_STATES:
                 return task.as_dict()
-            process = self._processes.get(task_id)
-            if process is None or process.poll() is not None:
-                task.status = "interrupted"
-                task.finished_at = time.time()
-                self._persist()
-                return task.as_dict()
-            task.status = "cancelling"
-            self._persist()
-            try:
-                os.killpg(process.pid, signal.SIGTERM)
-            except ProcessLookupError:
-                pass
+            if not task.worker_token or not task.lease_identity:
+                raise ValueError("cannot cancel an unverified legacy worker")
+            if not task.control_identity or not lease_busy(
+                self._worker_path(task, "control"), task.control_identity
+            ):
+                raise ValueError("worker cancellation controller is unavailable")
+            # A request is safe even if startup/exit races this write: only the
+            # original supervisor can consume this unique task capability.
+            write_private_json(self._worker_path(task, "cancel"), {"token": task.worker_token})
             return task.as_dict()
 
     def log_tail(self, task_id: str, maximum_bytes: int = 64_000) -> str:

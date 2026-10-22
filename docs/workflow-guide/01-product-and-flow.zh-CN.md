@@ -36,28 +36,31 @@ CLI 的默认写出模式会写入 sidecar；运行前应确认输入范围和�
 | `--reprocess` | 强制重新处理目标 | 写出模式执行 | 重建当前评分结果；仍受 XMP ownership/外部变化守卫 |
 | Web dry-run | miss 评分，hit 可复用 | 永不写源 XMP | 写 runtime/artifact；不写 processed score/done |
 
-`.material-agent/state.db` 是无权限写入工作目录时的一个常规落点选择；Web/容器可以通过明确 work-dir 指向 appdata。具体运行位置依据 `ensure_runtime_paths()`。
+未配置独立工作目录时，默认落点是照片目录下的 `.material-agent/state.db`；目录不可写时不会自动改用另一个位置。普通 CLI `run` 可通过 `MATERIAL_AGENT_WORK_DIR` 指向 appdata；Web 使用必需的 `--work-dir`。具体运行位置依据 `ensure_runtime_paths()`。
 
 ## Web dry-run：按钮/API 到详情页
 
-1. 静态 dashboard (`src/material_agent/web/app.js`) 调用 Web API。`WebTaskManager.start()` 读取并规范化运行配置，固定 `--dry-run`，写私有 task snapshot/log，再以子进程启动 CLI。library browse 使用索引路径解析和缩略图生成，不接受任意文件路径。
+1. 静态 dashboard (`src/material_agent/web/app.js`) 调用 Web API。`WebTaskManager.start()` 复制并验证运行配置，固定 `--dry-run`，创建私有 task snapshot/log 和两份租约，再启动 [`web_worker.py`](../../src/material_agent/app/web_worker.py) 监督进程；监督进程启动实际 CLI。library browse 使用索引路径解析和缩略图生成，不接受任意文件路径。
 2. 子进程照常扫描、分组、评分、组内 finalize，并把 job、job_file、event 与 `score_payload` 写入 runtime SQLite。首次新评分的 dry-run 调用 writer projection 构造逻辑，但仅把 rating、tags、instructions、description、group 字段和 `xmp_projection` 等 preview 放进 artifact；不会替换 sidecar，也不写 processed `done` 行。
 3. 列表/详情读取 library index 与最新 job-file artifact，展示 thumbnail、score、scene、decision、group 信息和可用 `output_preview`。这让 operator 能在真实写入前检查计划结果。
-4. 任务正常结束后由 manager 把子进程状态汇总为 Web task 状态；通过 API 取消时 manager 先将状态置为 `cancelling` 再发信号。CLI 将 SIGTERM 映射为取消，退出码 130 并落 `cancelled` runtime 状态。
+4. 监督进程写入实际退出回执；manager 在生命周期租约释放后汇总终态。API 取消写私有请求，由监督进程向自己尚未回收的 CLI 进程组发送 SIGTERM，manager 不向保存的 PID 发信号。CLI 处理取消时返回 130 并落 `cancelled` runtime 状态。若取消请求与自然完成/失败相撞，实际退出码 0/其他非零结果优先，不会仅因发出取消请求就改成 cancelled。
 
 当前有两条重要异常分支：
 
-- manager 进程重启时，`WebTaskManager.__init__` 会把磁盘中的 queued/running/cancelling task 标记为 `interrupted`，但不会确认或停止旧 PID。manager-only restart 后子进程可能仍活着并持有共享 run lock；界面此时可能没有 active task，新任务则会因锁冲突失败。整容器销毁是否留下子进程不能由此推断。
+- R1 修复后，manager 重启按匹配的私有租约/回执对账，不能把仍有生命周期持有者的任务误报为已结束。监督进程退出而 CLI 仍在时，会保持 `unknown`、拒绝无效取消并阻止新任务；旧 PID-only 状态也不会授权发信号。证据不足不是完成态，整容器/任意进程树恢复仍有单独边界。
 - 匹配的 processed `done` cache hit 若组信息不变，会走跳过路径而不调用 writer projection。结果仍为 `skipped`，最新 artifact 可能缺 `output_preview`，详情页因此显示空 tag/描述提示。这与 Web operations 契约希望的 dry-run preview 有偏差，当前未修复。
 
-外部 SIGTERM 与 API cancel 的报告也有区别：CLI/SQLite 可正确记为 cancelled，但 manager 在仍记录 `running` 时可能把任意非零退出归为 Web `failed`。这些行为和四项 R1/R3 计划见 [review](../operations/2026-10-22-repository-review.md) 与 [follow-up](../operations/2026-10-22-follow-up-plan.md)。
+R1 将外部 SIGTERM 经 CLI 转换后的退出码 130 同样报告为 cancelled；无法确认的退出结果保持 unknown/interrupted，不猜测 SQLite 内容。生命周期与缓存预览的历史问题见 [review](../operations/2026-10-22-repository-review.md)，各修复的实际进度见 [follow-up](../operations/2026-10-22-follow-up-plan.md)。
 
 ## 高层调用链
 
 ```mermaid
 flowchart TD
-  Shell[CLI shell / Web API] --> Cmd[commands.scoring / commands.web]
-  Cmd --> Service[ReviewRunService / WebTaskManager]
+  Web[Web API] --> Manager[WebTaskManager]
+  Manager --> Supervisor[web_worker supervisor]
+  Supervisor --> Shell[CLI shell]
+  Shell --> Cmd[commands.scoring]
+  Cmd --> Service[ReviewRunService]
   Service --> Executor[JobExecutor]
   Executor --> Job[ReviewPhotosJob]
   Job --> Runtime[review_runtime composition]

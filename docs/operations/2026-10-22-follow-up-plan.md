@@ -10,7 +10,8 @@ Historical next-step statements do not reopen completed work.
 
 - Review baseline: `973c11631198648d156b20dbc8a7196ae724d03d`.
 - Independent review and controller reproductions establish two P2 operational
-  defects and two P3 preview/diagnostic defects. None is fixed by this document.
+  defects and two P3 preview/diagnostic defects. Execution status is recorded
+  below and in the current ledger; the review retains its original baseline.
   The known exposure-bracket limitation remains deferred rather than a new bug.
 - The product remains a local photo-culling pipeline and admin dashboard.
   Adjacent time AND pHash grouping, threshold-zero time-only bypass, CPU fallback,
@@ -45,13 +46,13 @@ This item does not require another native inference, GUI edit or recovery test.
 
 Owner: Web operations (`app/web_service.py`, its tests and module contract).
 
-- [ ] Define safe reconciliation for a Web manager restart while a scoring
+- [x] Define safe reconciliation for a Web manager restart while a scoring
   subprocess survives. Do not mark a live worker terminal and then report no
   active task. Preserve the shared runtime lock as a second line of protection.
-- [ ] Keep start/cancel/status consistent with the reconciled worker. Validate
+- [x] Keep start/cancel/status consistent with the reconciled worker. Validate
   ownership and process identity before signaling; a saved PID alone is
   insufficient because it may have been reused.
-- [ ] Cover a surviving owned worker, an exited worker, queued/no-process state,
+- [x] Cover a surviving owned worker, an exited worker, queued/no-process state,
   stale/reused PID and cancellation during reconciliation. An uncertain identity
   must not cause an unrelated process to be signaled or another worker launched
   into a known occupied work directory.
@@ -63,6 +64,15 @@ permits a new task, with durable terminal state. Preserve logs and dry-run-only
 Web commands. Test without production jobs; do not infer that every container
 restart leaves a child alive. The current lock prevents concurrent writes, so
 this review establishes a control/status defect, not observed data corruption.
+
+October 22 execution: R1 passed executor self-review, independent protocol review
+and controller review. Private inherited lifetime/control leases and a narrow
+supervisor preserve ownership across manager restart; unknown evidence blocks
+relaunch, and no persisted PID grants signal authority. The final race regression
+preserves actual success/failure when cancellation arrives during exit. Owning
+checks: 45 passed / 87 deselected. Controller full suite: 1,675 passed / 13 skipped;
+lint, JavaScript syntax/render checks and scoped documentation checks pass.
+Remote CI and deployment are separate; no target deployment is claimed here.
 
 ### R2 — Protect model assets referenced by active tasks
 

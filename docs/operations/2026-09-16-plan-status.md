@@ -9,15 +9,24 @@ this page, rather than appended handoff logs, defines current work and next step
 The [October 22 repository review](2026-10-22-repository-review.md) and controller
 verification establish four scoped defects, with no P0/P1 finding in this review.
 The [new follow-up plan](2026-10-22-follow-up-plan.md) owns task scope, dependencies
-and acceptance. This update changes planning only; none of these fixes has run.
+and acceptance. The user authorized proceeding with the fixes on October 22.
+R1 has passed local implementation/review; remote CI and deployment are separate.
 
 | Order | Status | Next deliverable |
 | --- | --- | --- |
-| R1 — Web lifecycle (P2) | Pending | Reconcile a surviving scoring child across manager restart and align cancellation/status; validate identity before any process signal. |
+| R1 — Web lifecycle (P2) | Accepted locally; remote/target gates separate | Private inherited lifetime/control leases and supervisor reconcile restart/cancel without saved-PID signals. Unknown evidence blocks conflicting launch; actual exit result wins a cancel race. |
 | R2 — Active model assets (P2) | Pending; coordinate with R1 | Protect task-referenced assets after selection changes, including lazy load and start/delete races. |
 | R3 — Cached output previews (P3) | Pending | Regenerate DB-only output/projection previews for unchanged cached `done` dry-runs; retain `skipped`, cache reuse and source protections. |
 | R4 — Rewrite diagnostics (P3) | Pending | Report committed XMP and failed receipt/progress persistence separately, retaining failure/receipt context without write replay. |
 | R5 — RAW provenance classification | Pending after fixes; diagnostic | Attribute 15/20 model-evidence coverage using the existing immutable 20-fixture artifacts; preserve unknowns if retained evidence is insufficient. |
+
+R1 verification: executor self-review, independent protocol review and controller
+review completed. Final owning checks passed 45 / 87 deselected; controller full
+suite passed **1,675 / 13 skipped** in 72.41s. Lint, JavaScript syntax/rendering,
+links and diff checks pass. Missing/unreadable/replaced identity and supervisor
+loss keep an explicit unresolved state; no arbitrary crash-tree recovery or
+live target acceptance is inferred. The workflow guide now documents R1 and
+retains R2–R4 as pending.
 
 Controller checks: 79 grouping/coverage tests passed, plus isolated reproductions
 of manager restart with a live lock-holding child, selected-model path removal,

@@ -6,10 +6,17 @@ Current evidence/status: [task ledger](operations/2026-09-16-plan-status.md).
 
 ## Completed
 
+- implemented R1 Web lifecycle repair with executor self-review, independent
+  protocol review and controller verification: inherited private lifetime/control
+  leases, owned-child supervision and truthful restart/cancel/unknown states.
+  Actual exit results win cancellation races; no saved PID authorizes a signal.
+  Local full suite: 1,675 passed / 13 skipped; remote CI and deployment are
+  separate. See the [execution record](operations/2026-10-22-follow-up-plan.md#r1--reconcile-web-tasks-with-surviving-workers-after-restart)
+
 - completed independent repository review and controller verification against
   `973c116`: four scoped operational/preview/diagnostic defects are recorded in
-  the [review](operations/2026-10-22-repository-review.md). They are pending fixes,
-  not completed implementation. Existing exposure-normalization failures remain
+  the [review](operations/2026-10-22-repository-review.md). R1 is now accepted
+  locally; R2–R4 remain pending. Existing exposure-normalization failures remain
   deferred; no new model, grouping policy or media-write scope is selected
 
 - verified bounded Adobe Bridge 2026 16.0.3 ARW/NEF GUI read/edit/save/reopen
@@ -320,15 +327,13 @@ Current evidence/status: [task ledger](operations/2026-09-16-plan-status.md).
 
 ## In Progress
 
-The October 22 review/planning pass is complete. The next implementation batch
-is R1 below; no reviewed defect is marked fixed by this documentation update.
-The completed A1–A4 and finite native/recovery/Bridge stages remain closed.
+R1 is accepted locally following review and regression checks; R2 is the next
+implementation batch, with its cross-process model-lifetime seam traced.
+R2–R4 remain pending. The completed A1–A4 and finite native/recovery/Bridge
+stages remain closed; no target deployment of these fixes is claimed.
 
 ## Next
 
-- **R1 — Web task lifecycle:** reconcile surviving workers on manager restart;
-  keep task status/start/cancel and CLI cancellation results consistent. Verify
-  process ownership before signaling and preserve the shared runtime lock.
 - **R2 — Model asset lifetime:** prevent deletion of assets referenced by active
   tasks after selection changes; cover lazy loading, start/delete interleavings
   and R1 restart reconciliation.

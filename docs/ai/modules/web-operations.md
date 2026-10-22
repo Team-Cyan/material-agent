@@ -45,6 +45,43 @@ After group ranking, the score artifact is updated with `output_preview`, which
 contains the rating, machine tags, instructions, description, and group fields
 that would be sent to the metadata writer. This preview is DB-only in dry-run.
 
+## Task Process Lifetime
+
+`app/web_worker.py` supervises each Web CLI subprocess using only the standard
+library. Before publishing a queued task, the manager locks two unique private
+files under `web/workers/` and records their device/inode identities. It passes
+the lifetime lease descriptor to both supervisor and CLI, and the control lease
+only to the supervisor. Copies close without explicitly unlocking the shared
+open-file-description locks. The resolved `MATERIAL_AGENT_WORK_DIR` is passed to
+the CLI; the public task command remains the original dry-run command.
+
+A restarted manager observes matching existing lease files and token-bound
+private receipts. It reports a live task while the leases remain held, reads its
+actual exit result after lifetime lease release, and maps CLI exit 130 to
+`cancelled`. Cancellation writes an idempotent private request consumed by the
+original supervisor, which signals only its own unreaped child process group.
+The manager never signals a saved PID. Capabilities and lease identities stay
+out of API task dictionaries.
+
+Missing, replaced, unreadable or invalid ownership/control evidence yields
+nonterminal `unknown` and blocks another Web launch. A released lifetime lease
+without a terminal receipt yields `interrupted` with unknown exit status. A dead
+supervisor with a surviving CLI releases its control lease but leaves the CLI's
+lifetime lease held: status is `unknown`, cancellation returns an explicit
+unavailable-controller error, and a new task remains blocked until exit. This is
+not a guarantee of automatic recovery from arbitrary supervisor/process-tree
+crashes; descendants that close the inherited descriptor are outside the lease's
+lifetime evidence. The shared CLI `run.lock` remains the final write exclusion;
+Web probes an existing lock without rewriting its contents before launching.
+
+Legacy PID-only snapshots cannot authorize cancellation. A missing legacy
+process together with a free runtime lock can be marked interrupted; live,
+permission-unknown or PID-less legacy records remain unresolved. Corrupt task
+snapshots fail manager initialization without overwriting the retained state.
+No legacy task is replayed automatically. Keep unresolved evidence in private
+operator storage for reconciliation rather than deleting lease files to bypass
+an active task.
+
 ## Safe Editing Guidance
 
 - Treat the Web service as a trusted-LAN operator surface. It intentionally has
