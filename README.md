@@ -12,6 +12,8 @@ NAS-first local photo culling and scoring agent.
 
 ## Current Shape
 
+For a human-readable, source-linked walkthrough of the current product flow and module boundaries, see the [material-agent workflow guide](docs/workflow-guide/README.zh-CN.md).
+
 The production flow remains:
 
 ```text
